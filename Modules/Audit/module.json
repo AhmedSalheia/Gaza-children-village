@@ -1,0 +1,11 @@
+{
+    "name": "Audit",
+    "alias": "audit",
+    "description": "GCV DATA Foundation Audit module shell.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Audit\\Providers\\AuditServiceProvider"
+    ],
+    "files": []
+}

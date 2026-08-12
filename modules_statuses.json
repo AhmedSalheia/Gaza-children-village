@@ -1,0 +1,9 @@
+{
+    "Accounts": true,
+    "Organization": true,
+    "AcademicCalendar": true,
+    "People": true,
+    "Staff": true,
+    "Authorization": true,
+    "Audit": true
+}

@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/authorization",
+    "description": "GCV DATA Foundation Authorization module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Authorization\\": "app/",
+            "Modules\\Authorization\\Database\\Factories\\": "database/factories/",
+            "Modules\\Authorization\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Authorization\\Tests\\": "tests/"
+        }
+    }
+}

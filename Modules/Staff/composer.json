@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/staff",
+    "description": "GCV DATA Foundation Staff module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Staff\\": "app/",
+            "Modules\\Staff\\Database\\Factories\\": "database/factories/",
+            "Modules\\Staff\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Staff\\Tests\\": "tests/"
+        }
+    }
+}

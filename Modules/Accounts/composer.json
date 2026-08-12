@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/accounts",
+    "description": "GCV DATA Foundation Accounts module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Accounts\\": "app/",
+            "Modules\\Accounts\\Database\\Factories\\": "database/factories/",
+            "Modules\\Accounts\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Accounts\\Tests\\": "tests/"
+        }
+    }
+}

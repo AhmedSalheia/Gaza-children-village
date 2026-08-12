@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/academic-calendar",
+    "description": "GCV DATA Foundation AcademicCalendar module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\AcademicCalendar\\": "app/",
+            "Modules\\AcademicCalendar\\Database\\Factories\\": "database/factories/",
+            "Modules\\AcademicCalendar\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\AcademicCalendar\\Tests\\": "tests/"
+        }
+    }
+}

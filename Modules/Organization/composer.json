@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/organization",
+    "description": "GCV DATA Foundation Organization module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Organization\\": "app/",
+            "Modules\\Organization\\Database\\Factories\\": "database/factories/",
+            "Modules\\Organization\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Organization\\Tests\\": "tests/"
+        }
+    }
+}

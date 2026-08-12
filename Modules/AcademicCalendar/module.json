@@ -1,0 +1,11 @@
+{
+    "name": "AcademicCalendar",
+    "alias": "academic-calendar",
+    "description": "GCV DATA Foundation AcademicCalendar module shell.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AcademicCalendar\\Providers\\AcademicCalendarServiceProvider"
+    ],
+    "files": []
+}

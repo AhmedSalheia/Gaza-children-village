@@ -12,6 +12,9 @@ Do not silently decide items listed under unresolved decisions.
 ## Development approach
 
 - Build the application as a modular Laravel monolith.
+- Use `nwidart/laravel-modules` 13.x with package-managed modules under the repository-root `Modules/` directory.
+- Follow `docs/MODULE_CONVENTIONS.md` for module ownership, public contracts, and allowed dependency direction.
+- Keep the root Laravel application thin; Livewire is the preferred browser UI approach.
 - Implement one bounded module or workflow at a time.
 - Do not attempt to generate the complete system in one task.
 - Preserve historical records instead of overwriting historical facts.
@@ -44,6 +47,24 @@ For every implementation task:
 - Run formatting and relevant test commands.
 - Review the final diff.
 - Report unfinished decisions or exclusions.
+
+## Verified repository commands
+
+Run these commands from the repository root with PHP 8.4.1 or newer (required by the locked development dependencies), Composer 2, and Node.js 20.19 or newer:
+
+```text
+composer validate --strict
+composer dump-autoload
+php artisan package:discover --ansi
+php artisan about
+php artisan module:list
+php artisan route:list
+vendor/bin/pint
+php artisan test
+npm run build
+```
+
+After adding or renaming a module, verify that `php artisan module:list` reports it with the intended enabled state.
 
 ## Code review rules
 

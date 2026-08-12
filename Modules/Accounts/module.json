@@ -1,0 +1,11 @@
+{
+    "name": "Accounts",
+    "alias": "accounts",
+    "description": "GCV DATA Foundation Accounts module shell.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Accounts\\Providers\\AccountsServiceProvider"
+    ],
+    "files": []
+}

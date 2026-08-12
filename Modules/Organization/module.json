@@ -1,0 +1,11 @@
+{
+    "name": "Organization",
+    "alias": "organization",
+    "description": "GCV DATA Foundation Organization module shell.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Organization\\Providers\\OrganizationServiceProvider"
+    ],
+    "files": []
+}

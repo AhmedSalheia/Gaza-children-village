@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/people",
+    "description": "GCV DATA Foundation People module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\People\\": "app/",
+            "Modules\\People\\Database\\Factories\\": "database/factories/",
+            "Modules\\People\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\People\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,8 +1,8 @@
 # GCV DATA Foundation Release Implementation Plan
 
 **Status:** Planning only; no feature implementation or final migrations are authorized by this document.  
-**Prepared from:** `AGENTS.md` and the complete `docs/GCV_DATA_System_Specification.md` (version 0.2, 12 August 2026).  
-**Specification-path issue:** `AGENTS.md` names `docs/SYSTEM_SPECIFICATION.md`, but that file does not exist. The repository's apparent source specification is `docs/GCV_DATA_System_Specification.md`. Rename it or update `AGENTS.md` before implementation so automation has one unambiguous source of truth.
+**Prepared from:** `AGENTS.md` and the complete canonical `docs/SYSTEM_SPECIFICATION.md` (version 0.2, 12 August 2026).
+**Approved architecture decision:** Use `nwidart/laravel-modules` 13.x, the release line compatible with Laravel 13 and PHP 8.3+, for package-managed modules under the repository-root `Modules/` directory.
 
 ## 1. Scope and planning constraints
 
@@ -42,32 +42,22 @@ Implications:
 
 ## 3. Cross-cutting architectural proposal
 
-Use a modular Laravel monolith with one deployable application and one relational database. Organize bounded domain code under explicit module namespaces while retaining Laravel conventions for shared HTTP and framework bootstrapping. A candidate logical structure is:
+Use a modular Laravel monolith with one deployable application and one relational database. `nwidart/laravel-modules` manages bounded modules under the repository-root `Modules/` directory. Each module owns its domain application code, routes, migrations, factories, seeders, translations, views where applicable, and tests. The implemented logical structure begins as:
 
 ```text
-app/
-  Modules/
-    Accounts/
-    Organizations/
-    AcademicCalendar/
-    People/
-    Staff/
-    Authorization/
-    Audit/
-  Shared/
-    Domain/
-    Application/
-    Infrastructure/
-  Http/
-    Admin/
-    Staff/
-    Guardian/
-resources/views/{admin,staff,guardian,components}/
+Modules/
+  Accounts/
+  Organization/
+  AcademicCalendar/
+  People/
+  Staff/
+  Authorization/
+  Audit/
 routes/{admin,staff,guardian}.php
 tests/{Architecture,Feature,Unit}/...
 ```
 
-This is a namespace proposal, not approval for a particular third-party module package. Each module should expose application actions/services and policies; controllers and Livewire components orchestrate rather than contain domain rules. Cross-module references should point toward stable identifiers and public application contracts, not reach through another module's controllers. Transactions protect multi-record state changes. Foreign keys and indexes enforce structural integrity; policies, query scopes, services, and database constraints jointly enforce business scope.
+Each module exposes deliberate public contracts, actions, DTOs, or events. A module must not call another module's controllers, Livewire/UI components, internal HTTP layer, or other implementation classes. The root Laravel application remains thin and contains only genuinely cross-cutting framework integration. Livewire is the preferred browser UI approach. Composer discovers each module's own autoload rules using the package-required merge plugin; the obsolete root `Modules\\` PSR-4 mapping is forbidden. Dependency direction and public namespaces are documented in `docs/MODULE_CONVENTIONS.md` and enforced by F01 architecture tests. Transactions protect multi-record state changes. Foreign keys and indexes enforce structural integrity; policies, query scopes, services, and database constraints jointly enforce business scope.
 
 A request-scoped `OperationalContext` is proposed to carry the authenticated portal/account plus an explicitly selected institution, institution semester, and optional period. It must validate selections against current authorization; request parameters or session values are never trusted merely because they were hidden or previously selected. Later class/subject/course assignments can extend this context without weakening it.
 
@@ -88,8 +78,8 @@ A request-scoped `OperationalContext` is proposed to carry the authenticated por
 #### Blocking unresolved decisions
 
 - Final schema/table names and database engine/version.
-- Whether to use a package-based or namespace-only module convention.
-- Browser delivery architecture within Laravel (Livewire is installed, but its use for all portals is not confirmed).
+- The module convention is resolved: use `nwidart/laravel-modules` 13.x and root `Modules/` packages.
+- Livewire is the preferred browser UI approach; exact screen composition remains bounded to later PRs.
 - CI provider, supported PHP/database matrix, deployment environments, queue backend, hosting, backup, recovery, and retention.
 - Offline/synchronization architecture; it must remain excluded.
 
@@ -108,13 +98,16 @@ No business entity is needed solely for structure. Shared value objects/contract
 
 **PR F01 — Repository conventions and test harness**
 
-- Document module namespaces, dependency direction, action/policy conventions, synthetic fixture policy, and supported commands.
+- Install/configure `nwidart/laravel-modules` 13.x with per-module Composer files and create only the Accounts, Organization, AcademicCalendar, People, Staff, Authorization, and Audit shells.
+- Document module ownership, deliberate public surfaces, dependency direction, default-deny authorization, Livewire preference, synthetic fixture policy, and supported commands.
 - Split portal route files with placeholder route groups only; add architecture tests and CI-ready test configuration.
 - Do not create domain tables or portal features.
 
 Tests:
 
 - Architecture tests prevent module code from depending on portal controllers/views.
+- Architecture tests prevent cross-module internal HTTP access, reject root `App\\Models` domain growth, enforce public dependency surfaces/direction, and reject later-release modules.
+- Undefined authorization abilities are denied from F01; the full permission catalogue remains F17.
 - Route smoke tests prove each portal prefix/domain grouping can be loaded without sharing protected endpoints.
 - Default test environment uses no production services or personal data.
 - Pint and complete baseline Pest suite pass.
@@ -716,8 +709,8 @@ Every implementation PR must additionally:
 
 These should be resolved as focused ADRs/product decisions, not buried in migrations:
 
-1. Correct canonical specification path.
-2. Database engine/version, CI environment, module-directory convention, and Livewire delivery convention.
+1. The canonical specification path, module-directory convention, and preferred Livewire delivery approach are resolved in F01.
+2. Database engine/version and CI environment remain unresolved.
 3. Account storage topology, portal login identifiers, account-person cardinalities, security states/policies, provisioning, and recovery delivery.
 4. Approved organization/institution fields, names/codes/translations, field ownership, lifecycle, type-change policy, and authoritative list of 19 institutions.
 5. Module catalogue, type rule semantics, institution overrides, effective dating, and deactivation behavior.

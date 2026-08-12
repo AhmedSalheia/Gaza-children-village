@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/audit",
+    "description": "GCV DATA Foundation Audit module shell.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Audit\\": "app/",
+            "Modules\\Audit\\Database\\Factories\\": "database/factories/",
+            "Modules\\Audit\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Audit\\Tests\\": "tests/"
+        }
+    }
+}
