@@ -59,7 +59,7 @@ tests/{Architecture,Feature,Unit}/...
 
 Each module exposes deliberate public contracts, actions, DTOs, or events. A module must not call another module's controllers, Livewire/UI components, internal HTTP layer, or other implementation classes. The root Laravel application remains thin and contains only genuinely cross-cutting framework integration. Livewire is the preferred browser UI approach. Composer discovers each module's own autoload rules using the package-required merge plugin; the obsolete root `Modules\\` PSR-4 mapping is forbidden. Dependency direction and public namespaces are documented in `docs/MODULE_CONVENTIONS.md` and enforced by F01 architecture tests. Transactions protect multi-record state changes. Foreign keys and indexes enforce structural integrity; policies, query scopes, services, and database constraints jointly enforce business scope.
 
-A request-scoped `OperationalContext` is proposed to carry the authenticated portal/account plus an explicitly selected institution, institution semester, and optional period. It must validate selections against current authorization; request parameters or session values are never trusted merely because they were hidden or previously selected. Later class/subject/course assignments can extend this context without weakening it.
+The Authorization module owns an immutable `OperationalContext` carrying an explicit portal/actor reference plus a resolved institution, institution semester, and optional period. External values first enter an untrusted scope DTO and can become context only through the module's resolver/authorizer contract. A Laravel-scoped store is empty by default and prevents lifecycle leakage. The module deliberately provides no default authorizer. Opaque transport references do not choose a database key strategy. See `docs/OPERATIONAL_CONTEXT.md`.
 
 ## 4. Area plans
 
@@ -114,13 +114,16 @@ Tests:
 
 **PR F02 — Shared operational-context contracts**
 
-- Introduce immutable context/value contracts and middleware interfaces without granting access or implementing later modules.
+- In the Authorization module, introduce immutable portal, actor-source, actor-reference, untrusted/resolved/authorized scope, scope-requirement, and operational-context values.
+- Require all external scope candidates to pass through an explicit `OperationalScopeAuthorizer`; do not register a default implementation or authorization bypass.
+- Bind only the empty-by-default `OperationalContextStore` with Laravel's scoped lifetime. Request middleware and production F03/F07/F08 adapters remain later work.
+- Keep references opaque so F02 does not commit to UUID, ULID, integer, or another database-key strategy.
 
 Tests:
 
-- Context rejects missing/mismatched portal actor.
-- Institution/semester/period identifiers cannot be accepted until resolved through an authorizer.
-- Context is not leaked between requests/jobs.
+- Context rejects a missing/mismatched portal actor and mismatched account category.
+- Institution/semester/period references cannot be trusted until resolved through an authorizer, and mismatched parent chains fail closed.
+- Required scope, immutable values, explicit job/CLI actor source, absent default authorizer, and scoped-lifecycle isolation are verified.
 
 ### 4.2 Authentication separation: admin, staff, guardian
 
