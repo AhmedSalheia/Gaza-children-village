@@ -107,7 +107,7 @@ it('preserves lifecycle state on subsequent runs', function (): void {
 
     (new InstitutionReferenceSeeder)->run();
 
-    $inst = Institution::where('code', 'storage_unit_1')->first();
+    $inst = Institution::withoutGlobalScopes()->where('code', 'storage_unit_1')->first();
     expect($inst->is_active)->toBeFalse();
 });
 
@@ -116,7 +116,7 @@ it('remains queryable after deactivation', function (): void {
 
     Institution::where('code', 'medical_point_1')->update(['is_active' => false]);
 
-    $found = Institution::where('code', 'medical_point_1')->first();
+    $found = Institution::withoutGlobalScopes()->where('code', 'medical_point_1')->first();
     expect($found)->not->toBeNull()
         ->and($found->is_active)->toBeFalse();
 });

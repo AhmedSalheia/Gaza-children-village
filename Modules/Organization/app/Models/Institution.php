@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Organization\Database\Factories\InstitutionFactory;
+use Modules\Organization\Models\Scopes\ActiveInstitutionScope;
 
 /**
  * An individual GCV location belonging to an organization and typed by an InstitutionType.
@@ -30,6 +31,11 @@ class Institution extends Model
 {
     /** @use HasFactory<InstitutionFactory> */
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new ActiveInstitutionScope);
+    }
 
     protected static function newFactory(): InstitutionFactory
     {

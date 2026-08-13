@@ -76,7 +76,7 @@ class InstitutionReferenceSeeder extends Seeder
         }
 
         foreach (self::INSTITUTIONS as $code => [$nameEn, $typeCode]) {
-            if (Institution::where('code', $code)->exists()) {
+            if (Institution::withoutGlobalScopes()->where('code', $code)->exists()) {
                 continue;
             }
 

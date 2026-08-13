@@ -130,7 +130,7 @@ it('preserves a deactivated institution for historical reference', function (): 
 
     (new DeactivateInstitution)->execute($institution);
 
-    $found = Institution::where('code', 'historical-inst')->first();
+    $found = Institution::withoutGlobalScopes()->where('code', 'historical-inst')->first();
 
     expect($found)->not->toBeNull()
         ->and($found->is_active)->toBeFalse();
@@ -198,4 +198,37 @@ it('scope ofType returns an empty collection when no institutions have that type
     $result = Institution::ofType($unusedType)->get();
 
     expect($result)->toHaveCount(0);
+});
+
+it('active global scope excludes inactive institutions from default queries', function (): void {
+    $active = InstitutionFactory::new()->create();
+    $inactive = InstitutionFactory::new()->inactive()->create();
+
+    $results = Institution::all();
+
+    expect($results->contains('id', $active->id))->toBeTrue()
+        ->and($results->contains('id', $inactive->id))->toBeFalse();
+});
+
+it('inactive institutions are retrievable when the global scope is bypassed', function (): void {
+    $active = InstitutionFactory::new()->create();
+    $inactive = InstitutionFactory::new()->inactive()->create();
+
+    $results = Institution::withoutGlobalScopes()->get();
+
+    expect($results->contains('id', $active->id))->toBeTrue()
+        ->and($results->contains('id', $inactive->id))->toBeTrue();
+});
+
+it('active global scope applies when combining with other scopes', function (): void {
+    $org = OrganizationFactory::new()->create();
+
+    $activeInOrg = InstitutionFactory::new()->forOrganization($org)->create();
+    $inactiveInOrg = InstitutionFactory::new()->forOrganization($org)->inactive()->create();
+
+    $result = Institution::forOrganization($org)->get();
+
+    expect($result)->toHaveCount(1)
+        ->and($result->first()->id)->toBe($activeInOrg->id)
+        ->and($result->contains('id', $inactiveInOrg->id))->toBeFalse();
 });
