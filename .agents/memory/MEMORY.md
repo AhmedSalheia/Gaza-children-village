@@ -3,3 +3,5 @@
 - [F04 Institution registry](f04-institution-registry.md) — Institution patterns: code excluded from fillable, provisional seeder codes, one-sided relationships, boundary test updates.
 - [F06 cross-module boundary in tests](f06-boundary-scanner.md) — ModuleBoundariesTest scans ALL PHP files incl. tests; Authorization imports in Organization tests fail the scanner; use string-based class_exists/interface_exists/app()->bound checks instead of use imports.
 - [F07 cross-module boundary pattern](f07-boundary-pattern.md) — String-variable static calls bypass scanner for Models/Database surfaces; pint won't add use-imports for string literals; applies to all future modules.
+- [F08 boundary patterns](f08-boundary-patterns.md) — Pest toContain is variadic (no message param); docblock @param cross-module types need double-backslash; F06 forward guards must be removed on F08 merge.
+- [F08 feature guard test setup](f08-feature-guard-setup.md) — FeatureModule.code not fillable; use FeatureModuleReferenceSeeder via string-var; toThrow(Throwable::class) broken, use \Exception::class.

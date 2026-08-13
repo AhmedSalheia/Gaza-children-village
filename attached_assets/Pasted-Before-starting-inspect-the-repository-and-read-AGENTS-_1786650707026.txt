@@ -1,0 +1,219 @@
+Before starting, inspect the repository and read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- Existing F01–F07 implementations and tests
+
+Implement F08 only: institution semester activation and operational periods.
+
+Do not recreate or redesign F01–F07. Extend the existing AcademicCalendar, Organization, Authorization, and institution-feature abstractions.
+
+Ownership
+- Institution semesters and operational periods belong to Modules/AcademicCalendar.
+- Reuse the existing Institution, Semester, feature resolver, and F02 operational-context contracts.
+- Do not create parallel scope, feature, or lifecycle abstractions.
+
+1. Institution semesters
+
+Create the InstitutionSemester domain model and persistence with:
+
+- institution_id
+- semester_id
+- status: draft, open, closed, archived
+- copied_from_id, nullable self-reference
+- timestamps
+
+Rules:
+
+- An institution/semester combination must be unique.
+- The institution and the semester’s academic year must belong to the same organization.
+- The institution must be active when creating or opening an institution semester.
+- The institution must have the effective `academic_management` feature enabled, using the F06 resolver.
+- Feature availability does not replace authorization.
+- Disabling the feature later must not hide historical records.
+- Do not use database enums.
+- Do not add soft deletion or incomplete audit columns.
+
+Lifecycle:
+
+- draft → open
+- draft → archived, with a required reason, to abandon unused preparation
+- open → closed
+- closed → open only while the parent academic year and semester remain open, with a required reason
+- closed → archived only when the parent semester is closed or archived
+- archived is terminal
+
+Opening requirements:
+
+- Parent academic year is open.
+- Parent global semester is open.
+- Institution is active.
+- Effective `academic_management` is enabled.
+- At least one active operational period exists.
+- Only one institution semester may be open for an institution at a time.
+
+Enforce the one-open-semester invariant inside a transaction with appropriate locking. Do not depend only on application pre-checks.
+
+2. Operational periods
+
+Create an OperationalPeriod model and persistence owned by an InstitutionSemester.
+
+Fields:
+
+- institution_semester_id
+- code: stable machine-readable code
+- name_en: required
+- name_ar: nullable
+- sequence: positive integer
+- starts_at
+- ends_at
+- is_active, default true
+- timestamps
+
+Rules:
+
+- Code is unique within an institution semester.
+- Sequence is unique within an institution semester.
+- starts_at must be earlier than ends_at.
+- Overnight periods are not supported in F08.
+- Active periods in the same institution semester must not overlap.
+- Adjacent boundaries are allowed, for example 08:00–11:00 and 11:00–14:00.
+- Inactive periods remain queryable for historical use.
+- Do not hard-delete periods.
+- Ordinary period creation and modification are allowed only while the institution semester is draft.
+- Deactivation is used instead of deletion.
+- Changes to open or historical period configurations require a future controlled correction workflow and are outside F08.
+
+Do not assume there are exactly two periods. Morning and afternoon are common examples, but administrators may configure one, two, three, or more periods.
+
+3. Copy configuration
+
+Add an atomic application action that copies one institution semester’s configuration into a new target semester for the same institution.
+
+It must:
+
+- Validate that the target semester belongs to the same organization.
+- Require the target global semester to be draft or open.
+- Create a new draft InstitutionSemester.
+- Set copied_from_id.
+- Copy operational-period definitions into distinct new rows.
+- Preserve codes, names, sequence, times, and active state.
+- Reject the operation if the target institution-semester already exists.
+- Copy configuration only, never attendance, enrollment, audit, or other operational facts.
+
+4. Global-semester closure integration
+
+Extend the existing global Semester close operation:
+
+- It must reject closure while any linked InstitutionSemester is draft or open.
+- Open institution semesters must first be closed.
+- Unused draft institution semesters must first be archived explicitly.
+- Keep this logic inside the AcademicCalendar module.
+
+5. F02 operational-context integration
+
+Implement the database-backed F02 scope-resolution adapter using the existing F02 contracts.
+
+It must resolve and validate:
+
+Institution → InstitutionSemester → optional OperationalPeriod
+
+Requirements:
+
+- Reject mismatched institution, semester, and period relationships.
+- Return the existing resolved/trusted scope types; do not invent replacements.
+- Resolution confirms identity and hierarchy only—it does not grant authorization.
+- Closed, archived, or inactive records must still be resolvable for historical reads.
+- Do not register an implicit allow-all OperationalScopeAuthorizer.
+- Preserve the existing fail-closed authorization boundary.
+
+6. Application actions and queries
+
+Provide framework-independent application services/actions for:
+
+- Create institution semester
+- Open institution semester
+- Close institution semester
+- Reopen institution semester
+- Archive institution semester
+- Add operational period
+- Update operational period
+- Deactivate operational period
+- Copy institution-semester configuration
+- List institution semesters for an institution
+- List operational periods for an institution semester
+- Resolve the institution-semester-period hierarchy
+
+Use existing repository conventions for DTOs, exceptions, transactions, and query objects.
+
+7. Tests
+
+Add comprehensive tests covering:
+
+- Schema and foreign keys
+- Organization consistency
+- Institution active-state checks
+- F06 feature-resolution integration
+- Lifecycle transitions and invalid transitions
+- Required reasons
+- One-open-semester-per-institution enforcement
+- Period validation and overlap boundaries
+- Draft-only period mutation
+- Configuration copying and rollback behavior
+- Global-semester closure blockers
+- F02 hierarchy resolution
+- Historical closed/inactive resolution
+- Fail-closed authorization behavior
+- Module dependency rules
+
+8. Documentation
+
+Update the canonical documentation with:
+
+- Ownership and lifecycle rules
+- Global Semester versus InstitutionSemester distinction
+- Operational-period behavior
+- Copy semantics
+- F02 scope-resolution integration
+- F06 feature dependency
+- The unresolved future correction/audit workflow
+- The fact that non-academic reporting cycles are not implemented in F08
+
+Explicit exclusions
+
+Do not add:
+
+- Authentication UI
+- Admin screens
+- Public or mutating web routes
+- Student enrollment or placement
+- Classes, sections, attendance, or grades
+- Spreadsheet importing
+- Gaza civil-record integration
+- Permissions catalogue
+- Seed institution semesters or periods
+- F09 or later work
+
+Verification
+
+Run the exact repository-required commands from AGENTS.md, including:
+
+- Composer validation and platform checks
+- Autoload/package discovery
+- Laravel module and route checks
+- Pint
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Report:
+
+- Files and migrations added
+- Lifecycle and invariants implemented
+- F02/F06 integration
+- Tests and assertion counts
+- Any blockers
+- Confirmation that F09 and excluded features were not started

@@ -52,10 +52,11 @@ it('allows cross-module references only through approved public surfaces and dir
                 continue;
             }
 
-            expect($boundaries['dependencies'][$source] ?? [])
-                ->toContain($target, "$source may not depend on $target in $path")
-                ->and($boundaries['public_namespaces'])
-                ->toContain($surface, "$reference is not a public cross-module namespace");
+            expect(in_array($target, $boundaries['dependencies'][$source] ?? []))
+                ->toBeTrue("$source may not depend on $target in $path");
+
+            expect(in_array($surface, $boundaries['public_namespaces']))
+                ->toBeTrue("$reference is not a public cross-module namespace");
         }
     }
 });

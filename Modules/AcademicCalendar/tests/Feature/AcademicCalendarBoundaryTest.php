@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Modules\AcademicCalendar\Models\AcademicYear;
+use Modules\AcademicCalendar\Models\InstitutionSemester;
+use Modules\AcademicCalendar\Models\OperationalPeriod;
 use Modules\AcademicCalendar\Models\Semester;
 
 uses(RefreshDatabase::class);
@@ -18,41 +20,60 @@ it('all domain code for AcademicYear resides in Modules/AcademicCalendar', funct
     expect(Semester::class)->toStartWith('Modules\\AcademicCalendar\\');
 });
 
+it('InstitutionSemester and OperationalPeriod reside in Modules/AcademicCalendar', function (): void {
+    expect(InstitutionSemester::class)->toStartWith('Modules\\AcademicCalendar\\');
+    expect(OperationalPeriod::class)->toStartWith('Modules\\AcademicCalendar\\');
+});
+
 it('no model is added to App/Models', function (): void {
     $appModels = glob(base_path('app/Models').'/*.php') ?: [];
     $names = array_map(fn ($p) => basename($p), $appModels);
 
     expect($names)->not->toContain('AcademicYear.php')
-        ->and($names)->not->toContain('Semester.php');
+        ->and($names)->not->toContain('Semester.php')
+        ->and($names)->not->toContain('InstitutionSemester.php')
+        ->and($names)->not->toContain('OperationalPeriod.php');
 });
 
-it('no new physical Laravel module was created for F07', function (): void {
+it('no new physical Laravel module was created for F07 or F08', function (): void {
     $modules = glob(base_path('Modules').'/*/module.json') ?: [];
     $names = array_map(fn ($p) => basename(dirname($p)), $modules);
 
-    // The seven approved foundation modules (no new ones).
+    // The seven approved foundation modules (no new ones added in F07 or F08).
     expect($names)->toContain('AcademicCalendar')
         ->and(count($names))->toBe(7);
 });
 
 // ---------------------------------------------------------------------------
-// F08 artifacts must not exist yet
+// F08 artifacts exist (InstitutionSemester and OperationalPeriod are F08)
 // ---------------------------------------------------------------------------
 
-it('F08 InstitutionSemester model does not exist', function (): void {
-    expect(class_exists('Modules\\AcademicCalendar\\Models\\InstitutionSemester'))->toBeFalse();
+it('F08 InstitutionSemester model exists in AcademicCalendar', function (): void {
+    expect(class_exists('Modules\\AcademicCalendar\\Models\\InstitutionSemester'))->toBeTrue();
 });
 
-it('F08 OperationalPeriod model does not exist', function (): void {
-    expect(class_exists('Modules\\AcademicCalendar\\Models\\OperationalPeriod'))->toBeFalse();
+it('F08 OperationalPeriod model exists in AcademicCalendar', function (): void {
+    expect(class_exists('Modules\\AcademicCalendar\\Models\\OperationalPeriod'))->toBeTrue();
 });
 
-it('F08 institution_semesters table does not exist', function (): void {
-    expect(Schema::hasTable('institution_semesters'))->toBeFalse();
+it('F08 institution_semesters table exists', function (): void {
+    expect(Schema::hasTable('institution_semesters'))->toBeTrue();
 });
 
-it('F08 operational_periods table does not exist', function (): void {
-    expect(Schema::hasTable('operational_periods'))->toBeFalse();
+it('F08 operational_periods table exists', function (): void {
+    expect(Schema::hasTable('operational_periods'))->toBeTrue();
+});
+
+// ---------------------------------------------------------------------------
+// F09 and later artifacts must not exist yet
+// ---------------------------------------------------------------------------
+
+it('no student, attendance, marks, or civil-registry tables exist', function (): void {
+    $forbidden = ['students', 'attendance', 'student_marks', 'civil_registry'];
+
+    foreach ($forbidden as $table) {
+        expect(Schema::hasTable($table))->toBeFalse("Table '{$table}' must not exist in F08.");
+    }
 });
 
 // ---------------------------------------------------------------------------
@@ -60,7 +81,6 @@ it('F08 operational_periods table does not exist', function (): void {
 // ---------------------------------------------------------------------------
 
 it('Organization model does not reference AcademicCalendar classes', function (): void {
-    // Read the Organization model source and confirm no AcademicCalendar import.
     $source = file_get_contents(
         base_path('Modules/Organization/app/Models/Organization.php')
     );
@@ -73,9 +93,7 @@ it('AcademicYear depends on Organization but not the reverse', function (): void
         base_path('Modules/AcademicCalendar/app/Models/AcademicYear.php')
     );
 
-    // The class name is passed as a double-escaped string literal to avoid a
-    // cross-module import that the boundary scanner would flag. The raw file
-    // content therefore contains double-backslash sequences.
+    // Double-escaped string literal used to bypass the boundary scanner.
     expect($yearSource)->toContain('Modules\\\\Organization\\\\Models\\\\Organization');
 });
 
@@ -83,7 +101,7 @@ it('AcademicYear depends on Organization but not the reverse', function (): void
 // No UI artifacts
 // ---------------------------------------------------------------------------
 
-it('has no HTTP controllers for academic year or semester management', function (): void {
+it('has no HTTP controllers in the AcademicCalendar module', function (): void {
     $controllers = glob(base_path('Modules/AcademicCalendar/app/Http/Controllers').'/*.php') ?: [];
 
     expect($controllers)->toBeEmpty();
@@ -112,29 +130,24 @@ it('no allow-all authorizer is registered for AcademicCalendar', function (): vo
     expect(app()->bound('Modules\\Authorization\\Contracts\\OperationalScopeAuthorizer'))->toBeFalse();
 });
 
-it('F02 Authorization contracts remain intact after F07', function (): void {
-    // Verify F07 work did not alter F02 contracts.
-    // String-based checks to avoid cross-module class references.
+it('F02 Authorization contracts remain intact after F08', function (): void {
     expect(interface_exists('Modules\\Authorization\\Contracts\\OperationalScopeAuthorizer'))->toBeTrue()
         ->and(interface_exists('Modules\\Authorization\\Contracts\\OperationalContextStore'))->toBeTrue()
         ->and(class_exists('Modules\\Authorization\\Data\\OperationalContext'))->toBeTrue();
 });
 
-// ---------------------------------------------------------------------------
-// No other forbidden artifacts
-// ---------------------------------------------------------------------------
-
-it('no student, attendance, marks, or civil-registry tables exist', function (): void {
-    $forbidden = ['students', 'attendance', 'student_marks', 'civil_registry'];
-
-    foreach ($forbidden as $table) {
-        expect(Schema::hasTable($table))->toBeFalse("Table '{$table}' must not exist in F07.");
-    }
+it('ResolveInstitutionSemesterScope is not auto-bound as OperationalScopeAuthorizer', function (): void {
+    // The adapter is not registered; binding it would create an allow-all gateway.
+    expect(app()->bound('Modules\\Authorization\\Contracts\\OperationalScopeAuthorizer'))->toBeFalse();
+    // The resolver class itself exists and implements the contract.
+    expect(class_exists('Modules\\AcademicCalendar\\Actions\\ResolveInstitutionSemesterScope'))->toBeTrue();
 });
 
+// ---------------------------------------------------------------------------
+// No seeded records
+// ---------------------------------------------------------------------------
+
 it('no seeded academic year records exist', function (): void {
-    // No production calendar is seeded automatically; administrators create the
-    // actual approved calendar.
     expect(AcademicYear::count())->toBe(0);
 });
 
@@ -142,8 +155,16 @@ it('no seeded semester records exist', function (): void {
     expect(Semester::count())->toBe(0);
 });
 
+it('no seeded institution semester records exist', function (): void {
+    expect(InstitutionSemester::count())->toBe(0);
+});
+
+it('no seeded operational period records exist', function (): void {
+    expect(OperationalPeriod::count())->toBe(0);
+});
+
 // ---------------------------------------------------------------------------
-// All prior tests still pass (structural check)
+// Prior phase classes remain intact
 // ---------------------------------------------------------------------------
 
 it('F05 FeatureModule class remains intact', function (): void {

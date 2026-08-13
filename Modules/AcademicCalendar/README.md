@@ -99,11 +99,73 @@ The module places no minimum or maximum limit on the number of semesters within 
 
 ---
 
-## Global semester vs F08 InstitutionSemester
+## Global semester vs institution semester
 
-`Semester` (this module) is a **global catalogue entry** — it describes a period within an academic year for the organization as a whole. It carries no institution-specific operational facts.
+`Semester` is a **global catalogue entry** — it describes a period within an academic year for the organization as a whole. It carries no institution-specific operational facts.
 
-`InstitutionSemester` (planned for F08) will link a specific `Institution` to a global `Semester` and carry institution-owned lifecycle, preparation history, and current-semester state. F08 has not been implemented yet; its tables (`institution_semesters`, `operational_periods`) must not exist at F07 boundary.
+`InstitutionSemester` links a specific `Institution` to a global `Semester` and carries institution-owned lifecycle, preparation history, and current operational-period configuration. `OperationalPeriod` records the named time-of-day shifts (e.g. Morning, Afternoon) that apply within that institution semester.
+
+---
+
+## F08 — Institution semester activation and operational periods
+
+### Hierarchy (F08)
+
+```
+Organization
+└── AcademicYear  (global)
+    └── Semester  (global)
+        └── InstitutionSemester  (per Institution)
+            └── OperationalPeriod  (time-of-day shifts within the IS)
+```
+
+### InstitutionSemester lifecycle
+
+`InstitutionSemester` reuses the same four-state lifecycle as `AcademicYear` and `Semester`:
+
+```
+Draft → Open → Closed → Archived
+         ↑ (Reopen)
+```
+
+| Transition | Action | Requirements |
+|---|---|---|
+| Create | `CreateInstitutionSemester` | Institution active; `academic_management` feature enabled; semester not Archived; same organization; no duplicate pair |
+| Draft → Open | `OpenInstitutionSemester` | Parent year Open; parent semester Open; institution active; feature enabled; ≥ 1 active period; no other Open IS for the same institution |
+| Open → Closed | `CloseInstitutionSemester` | — |
+| Closed → Open | `ReopenInstitutionSemester` | Non-empty reason; parent year Open; parent semester Open; no other Open IS for the same institution |
+| Draft → Archived | `ArchiveInstitutionSemester` | Non-empty reason |
+| Closed → Archived | `ArchiveInstitutionSemester` | Parent semester must be Closed or Archived |
+| Copy | `CopyInstitutionSemesterConfiguration` | Target semester same org; target not Closed/Archived; no existing IS for the target pair; atomic |
+
+### OperationalPeriod rules
+
+- Periods may only be added, updated, or deactivated while the parent `InstitutionSemester` is **Draft**.
+- `code` and `sequence` are stable identifiers; they cannot be changed after creation.
+- Deactivation (`DeactivateOperationalPeriod`) replaces hard deletion. Deactivated periods remain queryable for historical reference.
+- Active periods within the same institution semester must not overlap (`starts_at < sibling.ends_at AND ends_at > sibling.starts_at`). Adjacent boundaries are permitted.
+- `starts_at` and `ends_at` are stored as `TIME` strings (`HH:MM:SS`). Overnight periods are not supported in F08.
+
+### Global-semester closure integration
+
+`CloseSemester` rejects closure while any linked `InstitutionSemester` is in **Draft** or **Open** status. All institution semesters must be explicitly closed (via `CloseInstitutionSemester`) or archived (via `ArchiveInstitutionSemester`) before the global semester can close.
+
+### Feature guard
+
+`CreateInstitutionSemester` and `OpenInstitutionSemester` verify that the institution has the `academic_management` feature enabled via `InstitutionFeatureResolver`. If the feature is not registered or not enabled for the institution, the action throws.
+
+### F02 scope resolution adapter
+
+`ResolveInstitutionSemesterScope` implements `OperationalScopeAuthorizer` and validates the institution → institution-semester → operational-period hierarchy from opaque string references. Key behaviours:
+
+- References are string-cast integer primary keys.
+- Closed, archived, and inactive records are still resolvable (historical reads).
+- Mismatched parent chains are rejected with a `RuntimeException`.
+- **Not registered** in the service container. Binding it would create an implicit allow-all authorizer. Callers requiring scope resolution must resolve the class by name directly.
+
+### One-open invariant
+
+At any moment, **at most one `InstitutionSemester` may be Open per institution**. Enforced in `DB::transaction()` within `OpenInstitutionSemester` and `ReopenInstitutionSemester`.
 
 ---
 
@@ -127,43 +189,69 @@ F18 will add actor-aware audit history for lifecycle transitions. The current ac
 Modules/AcademicCalendar/
 ├── app/
 │   ├── Actions/
+│   │   ├── AddOperationalPeriod.php
 │   │   ├── ArchiveAcademicYear.php
+│   │   ├── ArchiveInstitutionSemester.php
 │   │   ├── ArchiveSemester.php
 │   │   ├── ChangeAcademicYearDates.php
 │   │   ├── ChangeAcademicYearNames.php
 │   │   ├── ChangeSemesterDates.php
 │   │   ├── ChangeSemesterNames.php
 │   │   ├── CloseAcademicYear.php
-│   │   ├── CloseSemester.php
+│   │   ├── CloseInstitutionSemester.php
+│   │   ├── CloseSemester.php          ← modified F08: blocks if any IS is Draft/Open
+│   │   ├── CopyInstitutionSemesterConfiguration.php
 │   │   ├── CreateAcademicYear.php
+│   │   ├── CreateInstitutionSemester.php
 │   │   ├── CreateSemester.php
+│   │   ├── DeactivateOperationalPeriod.php
+│   │   ├── ListInstitutionSemesters.php
+│   │   ├── ListOperationalPeriods.php
 │   │   ├── OpenAcademicYear.php
+│   │   ├── OpenInstitutionSemester.php
 │   │   ├── OpenSemester.php
 │   │   ├── ReopenAcademicYear.php
-│   │   └── ReopenSemester.php
+│   │   ├── ReopenInstitutionSemester.php
+│   │   ├── ReopenSemester.php
+│   │   ├── ResolveInstitutionSemesterScope.php
+│   │   └── UpdateOperationalPeriod.php
 │   ├── Data/
 │   │   ├── ChangeAcademicYearDatesData.php
 │   │   ├── ChangeAcademicYearNamesData.php
 │   │   ├── ChangeSemesterDatesData.php
 │   │   ├── ChangeSemesterNamesData.php
 │   │   ├── CreateAcademicYearData.php
-│   │   └── CreateSemesterData.php
+│   │   ├── CreateInstitutionSemesterData.php
+│   │   ├── CreateOperationalPeriodData.php
+│   │   ├── CreateSemesterData.php
+│   │   └── UpdateOperationalPeriodData.php
 │   ├── Enums/
 │   │   └── AcademicStatus.php
 │   └── Models/
 │       ├── AcademicYear.php
+│       ├── InstitutionSemester.php
+│       ├── OperationalPeriod.php
 │       └── Semester.php
 ├── database/
 │   ├── factories/
 │   │   ├── AcademicYearFactory.php
+│   │   ├── InstitutionSemesterFactory.php
+│   │   ├── OperationalPeriodFactory.php
 │   │   └── SemesterFactory.php
 │   └── migrations/
 │       ├── 2026_08_13_000007_create_academic_years_table.php
-│       └── 2026_08_13_000008_create_semesters_table.php
+│       ├── 2026_08_13_000008_create_semesters_table.php
+│       ├── 2026_08_13_000009_create_institution_semesters_table.php
+│       └── 2026_08_13_000010_create_operational_periods_table.php
 └── tests/Feature/
-    ├── AcademicCalendarBoundaryTest.php
+    ├── AcademicCalendarBoundaryTest.php   ← updated F08
     ├── AcademicCalendarLifecycleTest.php
     ├── AcademicYearActionsTest.php
     ├── AcademicYearSchemaTest.php
+    ├── F08BoundaryTest.php
+    ├── InstitutionSemesterActionsTest.php
+    ├── InstitutionSemesterLifecycleTest.php
+    ├── InstitutionSemesterSchemaTest.php
+    ├── OperationalPeriodActionsTest.php
     └── SemesterActionsTest.php
 ```
