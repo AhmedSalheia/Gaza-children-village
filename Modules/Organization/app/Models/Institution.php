@@ -58,6 +58,23 @@ class Institution extends Model
     ];
 
     /**
+     * Filter institutions whose stable code matches the given value.
+     *
+     * Prefer this over raw where('code', ...) calls to make intent explicit
+     * and keep code lookups consistent across the codebase.
+     *
+     * Use ->first() to get the institution or null, or ->firstOrFail() to
+     * throw a ModelNotFoundException when no matching institution exists.
+     *
+     * @param  Builder<Institution>  $query
+     * @return Builder<Institution>
+     */
+    public function scopeWithCode(Builder $query, string $code): Builder
+    {
+        return $query->where('code', $code);
+    }
+
+    /**
      * Filter institutions belonging to the given organization.
      *
      * @param  Builder<Institution>  $query
