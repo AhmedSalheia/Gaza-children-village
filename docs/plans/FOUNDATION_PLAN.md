@@ -305,14 +305,44 @@ Module activation is capability configuration, not authorization: both an active
 
 #### Small PRs and tests
 
-**PR F05 — Module catalogue and type rules** (decision gate required)
+**PR F05 — Feature-module catalogue and institution-type rules** ✅ Complete
 
-Tests:
+Approved architecture decisions implemented in F05:
 
-- Only known modules can be related to types.
-- Type/module configuration mutations require explicit central permission and are audited.
-- University-space academic capability and medical-point Foundation limits match approved fixtures.
-- Duplicate rules are rejected.
+- Terminology: GCV business capabilities are named `FeatureModule` / `feature_modules` (not `ModuleDefinition`) to avoid collision with Nwidart physical-module concepts.
+- All F05 code lives in the existing `Modules/Organization` physical module. No new physical module was created.
+- `feature_modules` table: BIGINT PK, unique stable code, `name_en`, nullable `name_ar`, `is_active` boolean (default true), timestamps. No soft-delete, no ENUM, no actor-audit columns.
+- `institution_type_feature_rules` table: BIGINT PK, FK to `institution_types` (RESTRICT), FK to `feature_modules` (RESTRICT), bounded `rule` string column (not ENUM), unique on `(institution_type_id, feature_module_id)`, timestamps.
+- `FeatureModuleRule` PHP backed enum (`required`/`default`/`allowed`) persisted as bounded strings. PHP case name for `default` is `DefaultEnabled` (reserved PHP keyword workaround); stored value remains `'default'`.
+- Rule semantics: `Required` = enabled, cannot disable; `DefaultEnabled` = enabled, may disable (F06); `Allowed` = disabled, may enable (F06); no rule = unavailable, cannot enable.
+- Stable feature codes excluded from `$fillable`; all creation goes through `CreateFeatureModule` action.
+- Idempotent seeders: `FeatureModuleReferenceSeeder` (6 definitions), `InstitutionTypeFeatureRuleReferenceSeeder` (15 rules across 5 types). Seeder preserves administrator-edited display names; does not silently overwrite changed rule values.
+- `InstitutionTypeRuleInterpreter` service answers type-level baseline questions only; no institution-specific overrides (F06); no authorization claims.
+- Actions: `CreateFeatureModule`, `ChangeFeatureModuleName`, `ActivateFeatureModule`, `DeactivateFeatureModule`, `AssignInstitutionTypeRule`, `RemoveInstitutionTypeRule`.
+- Inactive feature module definitions remain queryable; deactivation does not delete existing type rules.
+- No `InstitutionModuleActivation` table, no F06 resolver, no routes, no controllers, no Livewire, no authentication.
+- `InstitutionType` gained a `featureRules()` HasMany relationship to `InstitutionTypeFeatureRule`.
+
+Approved institution-type mapping matrix (5 types × 3 rules each = 15 total):
+
+| Feature | academy | university_space | medical_point | womens_center | storage_unit |
+|---|:---:|:---:|:---:|:---:|:---:|
+| staff_management | required | required | required | required | required |
+| academic_management | required | required | — | — | — |
+| asset_management | default | default | default | default | default |
+| medical_services | — | — | allowed | — | — |
+| womens_center_programs | — | — | — | required | — |
+| inventory_management | — | — | — | — | required |
+
+Tests added:
+
+- Schema: F05 migrations apply after F03/F04; unique codes; required/nullable names; `is_active` default; no ENUM/soft-delete/audit columns; composite unique constraint; FK columns.
+- FeatureModule seeder: all 6 codes; approved labels; active by default; idempotency; name/lifecycle preservation; future-module representability.
+- InstitutionTypeFeatureRule seeder: all 15 rules; per-type rule correctness; idempotency; no silent overwrite of changed rules; stable-code-only matching; future-type representability.
+- FeatureModule actions: create, change name (code immutability), activate, deactivate (rules preserved), inactive remain queryable.
+- Rule actions: assign required/default/allowed; replace existing; reject inactive feature; reject duplicate at DB level; remove; remove no-op; inactive rules remain inspectable.
+- Interpreter: required/default/allowed/no-rule semantics for all four questions; no F06 overrides; no authorization implication.
+- Boundary: no InstitutionModuleActivation/F06 table; no auth/student/import tables; no new App/Models; no new physical module; no routes/controllers.
 
 **PR F06 — Institution activation resolver** (only if overrides are approved)
 

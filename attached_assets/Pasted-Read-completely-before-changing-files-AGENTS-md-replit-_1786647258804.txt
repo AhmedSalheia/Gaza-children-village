@@ -1,0 +1,371 @@
+Read completely before changing files:
+
+- AGENTS.md
+- replit.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/plans/FOUNDATION_PLAN.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- Organization module documentation
+- all F03 and F04 migrations, models, actions, seeders, and tests
+- recent Git history and checkpoint descriptions
+
+F01–F04 and F04b institution seeding are completed baselines.
+
+Implement only the original F05:
+Feature-module catalogue and institution-type rules.
+
+Do not recreate or broadly refactor previous phases.
+
+TERMINOLOGY
+
+Distinguish between:
+
+1. Physical Laravel packages managed by `nwidart/laravel-modules`, such as
+   Modules/Organization and Modules/Staff.
+2. Configurable GCV business capabilities, such as academic management and
+   inventory management.
+
+In code and database naming, use `FeatureModule` / `feature_modules` or an
+equally explicit existing convention that avoids collision with Nwidart's
+`Module` concept.
+
+The user-facing product may later label these capabilities “Modules.”
+
+OWNERSHIP
+
+- The Organization module owns feature-module definitions and institution-type
+  feature rules.
+- Do not create a new physical Laravel module.
+- F05 configures institution-type capabilities only.
+- Institution-specific overrides belong to F06 and must not be implemented.
+
+APPROVED RULE SEMANTICS
+
+Every institution-type/feature relationship has exactly one rule:
+
+- `required`
+  - enabled by default;
+  - a future F06 institution override may not disable it.
+
+- `default`
+  - enabled by default;
+  - a future F06 institution override may disable it.
+
+- `allowed`
+  - disabled by default;
+  - a future F06 institution override may enable it.
+
+- No rule:
+  - the feature is unavailable to that institution type;
+  - F06 must not allow an institution to enable it.
+
+Do not use a database ENUM.
+
+A closed PHP value object or backed enum may represent these three rule values
+inside application code if consistent with current conventions. Persist as a
+bounded string and enforce valid values at application and database levels
+where MySQL/MariaDB and SQLite compatibility can be maintained safely.
+
+INITIAL FEATURE-MODULE CATALOGUE
+
+Seed these stable codes and conservative English names:
+
+- `staff_management` → `Staff Management`
+- `academic_management` → `Academic Management`
+- `asset_management` → `Asset Management`
+- `medical_services` → `Medical Services`
+- `womens_center_programs` → `Women's Center Programs`
+- `inventory_management` → `Inventory Management`
+
+Use nullable Arabic display names. Do not invent unapproved Arabic
+terminology.
+
+INITIAL INSTITUTION-TYPE RULES
+
+Academy:
+
+- staff_management → required
+- academic_management → required
+- asset_management → default
+
+University space:
+
+- staff_management → required
+- academic_management → required
+- asset_management → default
+
+Medical point:
+
+- staff_management → required
+- asset_management → default
+- medical_services → allowed
+
+Women's center:
+
+- staff_management → required
+- womens_center_programs → required
+- asset_management → default
+
+Storage unit:
+
+- staff_management → required
+- inventory_management → required
+- asset_management → default
+
+Absence of a rule means unavailable.
+
+FEATURE-MODULE MODEL
+
+Create a module-owned model/table with:
+
+- unsigned BIGINT internal primary key;
+- immutable stable unique `code`;
+- required `name_en`;
+- nullable `name_ar`;
+- `is_active` boolean, active by default;
+- Laravel timestamps;
+- no soft deletion;
+- no database ENUM;
+- no partial actor-audit columns.
+
+`is_active` is lifecycle/configuration availability, not authorization and not
+proof that the business feature has already been implemented.
+
+INSTITUTION-TYPE RULE MODEL
+
+Create a module-owned relationship model/table with:
+
+- unsigned BIGINT internal primary key unless existing conventions justify a
+  composite-only pivot;
+- foreign key to institution_types;
+- foreign key to feature_modules;
+- bounded rule value: required, default, or allowed;
+- Laravel timestamps if treated as an administratively managed entity;
+- a unique constraint on institution_type_id + feature_module_id;
+- restrictive foreign-key behavior that does not erase historical
+  configuration accidentally;
+- no soft deletion;
+- no actor-audit fields yet.
+
+Prefer an explicit rule model over a featureless `belongsToMany` pivot because
+the relationship has behavior and will later participate in F06 resolution.
+
+RELATIONSHIPS
+
+Add composable relationships such as:
+
+- InstitutionType has many feature-module rules.
+- FeatureModule has many institution-type rules.
+- A rule belongs to one InstitutionType and one FeatureModule.
+
+Convenient many-to-many traversal may be added only if it does not hide the
+rule semantics.
+
+Do not attach feature modules directly to institutions in F05.
+
+REQUIRED ACTIONS/SERVICES
+
+Add request-independent application behavior for:
+
+- creating a feature-module definition;
+- changing bilingual display names;
+- activating/deactivating a feature-module definition;
+- assigning or changing an institution-type rule;
+- removing a rule only through an explicit action if removal is approved as
+  “make unavailable.”
+
+Stable feature codes must not be changed by ordinary updates.
+
+Actions must not expose an allow-all authorization implementation. Future HTTP
+callers will require the F17/F19 policy kernel.
+
+Do not build HTTP routes or UI.
+
+SEEDING
+
+Create idempotent seeding for:
+
+- the six feature-module definitions;
+- the approved institution-type rules.
+
+Seeder requirements:
+
+- create missing definitions and rules;
+- create rules only against the approved stable institution-type codes;
+- preserve administrator-edited feature display names;
+- preserve feature lifecycle state;
+- do not reset an existing rule silently if an administrator changed it;
+- report or test drift rather than silently overwriting it;
+- create no duplicates when rerun;
+- connect deliberately to the normal root/module seeding process;
+- remain safe under repeated `migrate:fresh --seed`.
+
+Do not rely on display names for matching.
+
+RESOLUTION BOUNDARY
+
+F05 may provide a pure baseline rule interpreter that answers questions such
+as:
+
+- Does this type require the feature?
+- Is it enabled by type default?
+- Is the type allowed to activate it later?
+- Is the feature unavailable to this type?
+
+However:
+
+- Do not implement institution-specific overrides.
+- Do not create InstitutionModuleActivation.
+- Do not register an OperationalScopeAuthorizer.
+- Do not add route middleware.
+- Do not claim that a configured feature grants permission.
+- Do not claim that a planned feature is implemented merely because a
+  definition exists.
+- The complete institution resolver belongs to F06.
+
+If a baseline interpreter is added, its expected results are:
+
+- required → baseline enabled, cannot disable;
+- default → baseline enabled, may disable later;
+- allowed → baseline disabled, may enable later;
+- no rule → baseline disabled, cannot enable.
+
+LIFECYCLE RULES
+
+- Inactive FeatureModule records remain queryable historically.
+- Inactive definitions cannot be newly assigned to types through ordinary
+  application behavior.
+- Deactivation does not delete type rules.
+- Existing rules pointing to an inactive definition remain inspectable.
+- No global scope may hide inactive records.
+- Stable codes remain immutable.
+- Deleting definitions or rules through ordinary Eloquent deletion should be
+  prevented or avoided according to existing module conventions.
+
+AUTHORIZATION AND SECURITY
+
+- These tables configure capability availability only.
+- They do not grant staff permissions.
+- They do not bypass institution or operational-context restrictions.
+- They do not expose routes.
+- Central configuration mutation will later require explicit permissions and
+  audit history.
+- No broad admin or super-admin bypass may be added.
+- No session or route value may be trusted as configuration authority.
+
+REQUIRED TESTS
+
+Schema:
+
+- F05 migrations are discovered and apply after F03/F04.
+- Stable feature codes are unique.
+- English names are required and Arabic names nullable.
+- `is_active` defaults to true.
+- Type/feature pair is unique.
+- Foreign keys use the approved key types.
+- Only valid rule values are accepted through supported application behavior.
+- No database ENUM, soft-delete, or partial actor-audit columns exist.
+
+Feature modules:
+
+- All six definitions seed idempotently.
+- Duplicate codes are rejected.
+- Stable codes are not changed by ordinary name/lifecycle actions.
+- Display-name changes do not affect relationships.
+- Inactive definitions remain queryable.
+- Inactive definitions cannot receive new ordinary type rules.
+- Seeder reruns preserve edited names and lifecycle state.
+
+Type rules:
+
+- All approved mappings are seeded.
+- Seeder reruns create no duplicates.
+- Seeder reruns do not silently overwrite changed rule values.
+- Duplicate type/feature pairs are rejected.
+- Rules use stable codes for lookup during seeding.
+- Required/default/allowed semantics match the approved definition.
+- No-rule behavior is unavailable.
+- A future additional institution type or feature module remains technically
+  representable.
+- Inactive feature rules remain historically inspectable.
+
+Baseline interpretation, if implemented:
+
+- required is enabled and non-disableable;
+- default is enabled and potentially disableable;
+- allowed is disabled and potentially enableable;
+- missing rule is disabled and non-enableable;
+- interpretation does not imply authorization;
+- interpretation does not use institution-specific overrides.
+
+Architecture:
+
+- All F05 domain code remains in Modules/Organization.
+- No new physical Laravel module is added.
+- No model is added to App/Models.
+- No institution-specific activation table/model exists.
+- No F06 override resolver exists.
+- No routes, controllers, Livewire components, dashboards, or management UI
+  are added.
+- No authentication, role, permission, import, registry, or student work is
+  introduced.
+- F01–F04 tests remain passing.
+
+DOCUMENTATION
+
+Update concise documentation to describe:
+
+- physical Laravel modules versus feature modules;
+- catalogue ownership;
+- stable codes and translated display names;
+- required/default/allowed/no-rule semantics;
+- lifecycle behavior;
+- the approved initial mapping matrix;
+- feature configuration versus implementation status;
+- feature configuration versus authorization;
+- F06 as the owner of institution-specific overrides and effective resolution.
+
+Update docs/plans/FOUNDATION_PLAN.md to mark the F05 decisions approved and
+implemented only after verification.
+
+Do not rewrite unrelated specification sections.
+
+VERIFICATION
+
+Run:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan migrate:fresh --seed
+- php artisan migrate:status
+- php artisan route:list
+- vendor/bin/pint --test
+- php artisan test
+- npm run build
+- git diff --check
+- git status --short
+
+Use only the isolated Replit development database.
+
+Also verify the post-merge script still succeeds, but do not edit that script
+unless F05 reveals a real defect. Do not connect it to production.
+
+AT COMPLETION REPORT
+
+1. Files changed.
+2. Tables, models, value objects, actions, factories, seeders, and tests added.
+3. Seeded feature-module codes.
+4. Seeded institution-type mapping matrix.
+5. Exact rule semantics implemented.
+6. Verification results and final test count.
+7. Warnings separately from failures.
+8. Explicit confirmation that no F06 overrides, permissions, authentication,
+   UI, imports, civil-registry integration, student records, or later modules
+   were added.
+
+Create a Replit checkpoint after successful verification and stop.
+Do not proceed to F06.

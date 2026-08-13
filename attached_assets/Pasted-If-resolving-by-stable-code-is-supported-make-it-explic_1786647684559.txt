@@ -1,0 +1,206 @@
+If resolving by stable code is supported, make it explicit:
+
+$resolver->resolveByCode($institution, 'academic_management');
+
+Do not create ambiguous mixed arguments accepting models, numeric IDs, and
+codes through one loosely typed method.
+
+RESOLUTION QUERY REQUIREMENTS
+
+Resolve by foreign-key relationships and stable machine codes.
+Never resolve by translated display name.
+Avoid N+1 queries when listing all features for an institution.
+enabledFor() must return only effectively enabled, active feature
+definitions.
+Provide a separate method if callers need all resolution results.
+Do not add a global scope that hides inactive configuration.
+Do not infer access from session, route, current user, or untrusted request
+values.
+
+OVERRIDE ACTION RULES
+
+Setting an override must reject:
+
+inactive institution;
+inactive feature definition;
+feature unavailable to the institution type;
+required feature;
+disabling an allowed feature;
+enabling a default feature;
+duplicate/conflicting override;
+institution/type/feature relationship inconsistencies.
+
+Clearing an override:
+
+removes only the explicit override;
+restores type-derived behavior;
+must not edit the institution-type rule;
+must be idempotent only if existing action conventions explicitly support
+idempotency; otherwise return a clear not-found/domain result;
+must not delete the FeatureModule or type rule.
+
+A reason should be required for mutation unless current project conventions
+demonstrate that actor/audit integration must precede enforcing it. If reason
+is temporarily nullable, document that management UI may not expose override
+mutation until actor, permission, and audit integration exists.
+
+INITIAL DATA
+
+Do not seed institution override rows.
+All existing institutions inherit their institution-type baseline.
+F05 definitions and mappings remain the authoritative initial configuration.
+Repeated seeding must not erase or rewrite institution overrides.
+
+INTEGRATION BOUNDARIES
+
+F06 may provide a feature-availability contract usable later by middleware and
+policies.
+
+Do not:
+
+register route middleware;
+register an OperationalScopeAuthorizer;
+change F02 trusted-context behavior;
+add authentication;
+add role or permission records;
+add a super-admin bypass;
+expose public routes;
+build Livewire components or dashboards;
+hide menu items;
+treat feature availability as user authorization;
+implement future business modules merely because their feature code is
+enabled.
+
+Future access must require both:
+
+effective feature availability;
+separately authorized actor, institution, semester/period, assignment, and
+record state.
+
+REQUIRED TESTS
+
+Schema:
+
+migration is discovered after F03–F05 migrations;
+foreign keys use approved unsigned BIGINT types;
+institution/feature pair is unique;
+is_enabled is required and boolean-compatible;
+reason follows the approved nullable/required decision;
+no database ENUM exists;
+no soft-delete or actor-audit columns exist;
+cascade deletion does not silently erase configuration.
+
+Resolution:
+
+required resolves enabled and cannot be disabled;
+default resolves enabled without override;
+default + disable override resolves disabled;
+clearing that override restores enabled;
+allowed resolves disabled without override;
+allowed + enable override resolves enabled;
+clearing that override restores disabled;
+no rule resolves unavailable;
+no-rule override is rejected;
+inactive feature resolves disabled;
+inactive institution resolves operationally disabled;
+inactive institution type does not erase existing institution resolution;
+display-name changes do not affect resolution;
+Arabic/English names do not affect resolution;
+stable codes continue resolving correctly.
+
+Override validation:
+
+required feature override is rejected;
+redundant default-enable override is rejected;
+redundant allowed-disable override is rejected;
+inactive institution mutation is rejected;
+inactive feature mutation is rejected;
+unavailable feature mutation is rejected;
+duplicate/conflicting override attempts remain consistent;
+override mutation is transactional;
+clearing an override does not change the type rule;
+no seed rerun deletes or modifies overrides.
+
+Listing:
+
+enabledFor returns all and only effectively enabled active features;
+all-resolution listing returns correct sources/states;
+listing avoids obvious N+1 behavior using query-count assertions where
+practical and stable;
+two institutions of the same type may resolve differently through permitted
+overrides;
+institutions of different types resolve from their own rules;
+future additional feature definitions remain representable.
+
+Authorization separation:
+
+feature enabled does not imply account permission;
+resolver accepts trusted domain inputs, not request authorization;
+no allow-all authorizer is registered;
+no route gains access because a feature is enabled;
+F02 operational-context tests remain unchanged and passing.
+
+Architecture:
+
+all F06 code remains in Modules/Organization;
+no new physical Laravel module is added;
+no models are added to App/Models;
+no F07 academic-calendar work is added;
+no routes, controllers, middleware, Livewire components, or UI are added;
+no authentication, roles, permissions, imports, civil registry, or Student
+implementation is added;
+all prior tests remain passing.
+
+DOCUMENTATION
+
+Update concise documentation to cover:
+
+institution-type baseline versus institution override;
+the resolution table;
+meaningful override rows only;
+current-state override limitation;
+inactive institution/feature behavior;
+feature availability versus authorization;
+resolver usage examples;
+F17/F19 authorization and Audit prerequisites before management UI;
+F06 completion in docs/plans/FOUNDATION_PLAN.md after verification.
+
+Do not rewrite unrelated sections.
+
+VERIFICATION
+
+Run:
+
+composer validate --strict
+composer check-platform-reqs
+composer dump-autoload
+php artisan package:discover
+php artisan module:list
+php artisan migrate:fresh --seed
+php artisan migrate:status
+php artisan route:list
+vendor/bin/pint --test
+php artisan test
+npm run build
+git diff --check
+git status --short
+
+Use only the isolated Replit development database.
+
+Verify the post-merge script remains valid, but do not edit it unless F06
+exposes a real defect.
+
+AT COMPLETION REPORT
+
+Files changed.
+Migration, model, actions/services, result values, factories, and tests.
+Exact override and resolution semantics.
+Resolver usage examples.
+Verification results and final test count.
+Warnings separately from failures.
+Explicit confirmation that no authorization grants, route middleware,
+authentication, UI, F07 work, imports, civil-registry integration, or
+Student records were added.
+
+Create a Replit checkpoint after successful verification and stop.
+Do not proceed to F07.

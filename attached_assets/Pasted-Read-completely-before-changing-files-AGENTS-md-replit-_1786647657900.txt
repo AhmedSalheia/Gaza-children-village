@@ -1,0 +1,183 @@
+Read completely before changing files:
+
+- AGENTS.md
+- replit.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/plans/FOUNDATION_PLAN.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- all Organization-module documentation
+- all F03, F04, F04b, and F05 migrations, models, actions, seeders, and tests
+- recent Git history and checkpoint descriptions
+
+F01–F05 are completed and approved baselines.
+
+Implement only F06:
+Institution-specific feature overrides and effective feature resolution.
+
+Do not recreate or broadly refactor earlier phases.
+
+PREREQUISITE CHECK
+
+Before implementation:
+
+1. Confirm F05 is committed/checkpointed and all tests pass.
+2. Confirm the existing names and namespaces for:
+   - Institution
+   - InstitutionType
+   - FeatureModule
+   - InstitutionTypeFeatureRule
+   - the required/default/allowed rule representation
+3. Reuse those names and conventions rather than creating parallel concepts.
+4. Present a concise proposed file map.
+5. Report any conflict with this prompt before making consequential changes.
+
+OWNERSHIP
+
+- Modules/Organization owns F06.
+- Do not create a new physical Laravel module.
+- Do not add models to App/Models.
+- Do not confuse feature modules with Nwidart Laravel modules.
+
+APPROVED RESOLUTION SEMANTICS
+
+For an active institution and active feature definition:
+
+1. Type rule `required`
+   - effective state: enabled;
+   - source: required;
+   - institution cannot disable it;
+   - institution-specific overrides are rejected.
+
+2. Type rule `default`
+   - effective state: enabled without an override;
+   - an institution may explicitly disable it;
+   - clearing the override restores enabled-by-default behavior;
+   - a redundant enabled override should be rejected rather than stored.
+
+3. Type rule `allowed`
+   - effective state: disabled without an override;
+   - an institution may explicitly enable it;
+   - clearing the override restores disabled-by-default behavior;
+   - a redundant disabled override should be rejected rather than stored.
+
+4. No type rule
+   - effective state: disabled and unavailable;
+   - the institution cannot enable it;
+   - override creation is rejected.
+
+5. Inactive FeatureModule
+   - effective state: disabled;
+   - existing configuration remains inspectable;
+   - no new override may be created or changed through ordinary actions.
+
+6. Inactive Institution
+   - operational effective state: disabled;
+   - configuration remains inspectable for administration/history;
+   - no new override may be created or changed through ordinary actions.
+
+7. Inactive InstitutionType
+   - does not erase rules from already-existing institutions;
+   - existing institutions continue resolving against their assigned type;
+   - inactivity prevents ordinary new use of the type elsewhere, as already
+     defined by F03/F04.
+
+Configuration availability is not authorization.
+
+OVERRIDE MODEL
+
+Create an explicit module-owned model/table such as
+`institution_feature_overrides`, using the existing naming conventions.
+
+Required fields:
+
+- unsigned BIGINT internal primary key;
+- foreign key to institutions;
+- foreign key to feature_modules;
+- `is_enabled` boolean;
+- nullable textual `reason`;
+- Laravel timestamps;
+- unique institution_id + feature_module_id;
+- no soft deletion;
+- no actor-audit columns yet;
+- no database ENUM.
+
+Use restrictive foreign-key behavior. Deleting an institution or feature must
+not cascade-delete configuration silently.
+
+Only meaningful override rows are permitted:
+
+- default rule → `is_enabled = false`
+- allowed rule → `is_enabled = true`
+
+Do not store override rows for:
+
+- required rules;
+- unavailable/no-rule features;
+- default → true;
+- allowed → false.
+
+Clearing an override restores inheritance from the institution type.
+
+Current-state overrides are approved for F06 to keep implementation bounded.
+Effective date scheduling, approval workflows, and immutable configuration
+history remain deferred. Document this explicitly. Future Audit integration
+must capture override creation/removal and reasons before management UI is
+released.
+
+REQUIRED APPLICATION SERVICES
+
+Implement focused request-independent behavior for:
+
+1. Setting a meaningful institution override.
+2. Clearing an existing institution override.
+3. Resolving one feature for one institution.
+4. Listing effective features for an institution.
+5. Optionally listing all resolution results, including disabled/unavailable
+   features, when useful for future configuration UI.
+
+Use transactions for override mutation.
+
+Use row locking where supported and useful to avoid conflicting concurrent
+override changes. Keep SQLite test compatibility.
+
+Do not add a repository layer if focused Eloquent queries and application
+services are sufficient.
+
+RESOLUTION RESULT
+
+Return an immutable result/value object rather than a bare boolean for the main
+resolver.
+
+It should expose at least:
+
+- institution reference;
+- feature reference/code;
+- effective enabled state;
+- availability state;
+- resolution source;
+- whether the institution may enable it;
+- whether the institution may disable it;
+- whether an override currently exists;
+- a stable reason/key suitable for logs and future UI.
+
+Recommended resolution sources:
+
+- `required`
+- `type_default`
+- `institution_override`
+- `allowed_but_disabled`
+- `unavailable`
+- `feature_inactive`
+- `institution_inactive`
+
+Use the existing code style for closed internal values. Do not use a database
+ENUM.
+
+The primary API should support clear usage equivalent to:
+
+```php
+$result = $resolver->resolve($institution, $feature);
+$result->isEnabled();
+
+$enabled = $resolver->enabledFor($institution);

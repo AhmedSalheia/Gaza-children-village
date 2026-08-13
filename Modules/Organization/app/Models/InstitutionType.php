@@ -60,4 +60,12 @@ class InstitutionType extends Model
     {
         return $this->hasMany(Institution::class);
     }
+
+    /**
+     * @return HasMany<InstitutionTypeFeatureRule, $this>
+     */
+    public function featureRules(): HasMany
+    {
+        return $this->hasMany(InstitutionTypeFeatureRule::class);
+    }
 }
