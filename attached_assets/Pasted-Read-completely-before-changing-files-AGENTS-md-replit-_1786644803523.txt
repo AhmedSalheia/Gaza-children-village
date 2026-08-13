@@ -1,0 +1,304 @@
+Read completely before changing files:
+
+- AGENTS.md
+- replit.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/plans/FOUNDATION_PLAN.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+
+F01 and F02 are completed, verified baselines. Do not recreate or refactor them.
+
+Implement only F03:
+Organization and institution-type reference model.
+
+Also record two newly confirmed future requirements in the appropriate
+planning/specification sections, without implementing them in F03.
+
+NEW FUTURE REQUIREMENT 1 — EXCEL IMPORTS
+
+The future import engine must support explicitly selected modes:
+
+1. `insert_only`
+   - Create rows that do not already exist according to an approved stable
+     matching key.
+   - Skip matching existing records.
+   - Report every created, skipped, and invalid row.
+
+2. `patch_existing`
+   - Match existing records using an approved stable matching key.
+   - Update only explicitly permitted/importable fields.
+   - Skip rows with no existing match.
+   - Report old/new proposed values before commitment.
+
+Do not call insert-only behavior “patch importing” in technical documentation.
+
+All future imports must use:
+
+- uploaded-file registration;
+- staged rows;
+- schema/header validation;
+- normalized matching keys;
+- duplicate detection within the file;
+- preview/dry run;
+- row-level errors and warnings;
+- explicit confirmation before official writes;
+- transactional or recoverable batches;
+- idempotency protection;
+- import actor and scope;
+- created/skipped/updated/failed counts;
+- downloadable result report;
+- institution, semester, period, permission, and field-level enforcement;
+- no direct unreviewed Excel-to-production-table writes.
+
+Do not create import tables, services, routes, jobs, or modules in F03.
+
+NEW FUTURE REQUIREMENT 2 — GAZA CIVIL-REGISTRY LOOKUP
+
+When an authorized user registers a student in a later Student module:
+
+1. The user enters the student’s national ID.
+2. The ID is normalized and validated.
+3. The system queries the Gaza civil-registry reference source through a
+   deliberate application contract/service.
+4. A matching registry record may suggest/autofill approved identity fields.
+5. The user reviews the suggestions before saving the student.
+6. The civil-registry source is advisory, not unquestionable authority.
+7. A missing match must not prevent authorized manual student registration.
+8. A registry match must not automatically overwrite an existing person or
+   student.
+9. Conflicting data must be shown for review and handled through a controlled
+   correction/identity-resolution workflow.
+10. The student uses a stable synthetic internal primary key. National ID is
+    an identifier, not the Student table primary key.
+11. National IDs and registry data are sensitive and require masking,
+    permission controls, safe logging, and audit redaction.
+12. The system should preserve data provenance where useful: registry-
+    suggested, user-entered, imported, or later corrected.
+13. The future Student module must not couple itself directly to a raw registry
+    table throughout the codebase; use a stable lookup contract and adapter.
+14. Do not assume the final physical table name is
+    `gaza_civil_records`. Record the exact source/table naming as unresolved
+    until the existing dataset/schema is reviewed.
+
+Do not create civil-registry migrations, models, adapters, student tables,
+lookup endpoints, or registration UI in F03.
+
+F03 APPROVED ARCHITECTURE
+
+1. `Modules/Organization` owns F03.
+2. Production schema remains MySQL/MariaDB compatible.
+3. SQLite may be used for automated tests where behavior is equivalent.
+4. Use unsigned auto-incrementing BIGINT internal primary keys.
+5. Use unique stable string codes as machine identifiers.
+6. GCV is the only current organization.
+7. Keep the relationship future-capable; do not create a permanent
+   database-level single-organization constraint.
+8. Use explicit `name_en` and nullable `name_ar` fields for centrally managed
+   bilingual names.
+9. Do not invent the official Arabic name of GCV.
+10. Use active/inactive lifecycle state.
+11. Do not use database ENUM columns.
+12. Do not use soft deletion for these referenced master records.
+13. Do not add a partial actor-audit design. Full actor audit belongs to the
+    Audit module’s later phase.
+14. Do not expose management HTTP routes or UI before authorization exists.
+15. Do not implement F04 or create individual institutions.
+
+INITIAL INSTITUTION-TYPE CODES
+
+- academy
+- university_space
+- medical_point
+- womens_center
+- storage_unit
+
+These are stable machine codes stored as rows, not a PHP or database enum that
+prevents adding future types.
+
+REQUIRED F03 MODEL
+
+Organization:
+
+- unsigned BIGINT internal primary key;
+- stable unique `code`;
+- required `name_en`;
+- nullable `name_ar`;
+- `is_active` boolean, active by default;
+- Laravel timestamps;
+- no soft deletion.
+
+InstitutionType:
+
+- unsigned BIGINT internal primary key;
+- stable unique `code`;
+- required `name_en`;
+- nullable `name_ar`;
+- `is_active` boolean, active by default;
+- Laravel timestamps;
+- no soft deletion.
+
+Do not add:
+
+- institutions;
+- organization/institution contact or address fields;
+- module activation tables;
+- academic records;
+- account or authentication records;
+- import tables;
+- civil-registry tables;
+- student tables;
+- routes, controllers, Livewire components, or management screens.
+
+REQUIRED IMPLEMENTATION
+
+- Module-owned migrations.
+- Organization and InstitutionType Eloquent models inside
+  `Modules/Organization`.
+- Explicit model casts.
+- A deliberate mass-assignment strategy consistent with AGENTS.md.
+- Request-independent data/command objects where they provide concrete value.
+- Controlled application actions for:
+  - creating a record;
+  - changing display names;
+  - activating;
+  - deactivating.
+- Ordinary update behavior must not modify stable codes.
+- Do not add an allow-all authorization implementation.
+- Factories using synthetic data only.
+- An idempotent reference seeder for:
+  - organization code `gcv`;
+  - all five approved institution-type codes.
+- Seeder reruns must not overwrite administrator-edited display names.
+- The application may configure or resolve `gcv` as the current organization,
+  but the database must technically permit future organizations.
+- Inactive records remain queryable for historical references.
+- No record is deleted during deactivation.
+- Appropriate unique constraints and indexes.
+- No unrelated dependency changes.
+
+SEEDING RULES
+
+Use conservative English labels:
+
+- `academy` → `Academy`
+- `university_space` → `University Space`
+- `medical_point` → `Medical Point`
+- `womens_center` → `Women's Center`
+- `storage_unit` → `Storage Unit`
+
+Leave unapproved Arabic labels nullable rather than inventing organizational
+terminology.
+
+The GCV English display name may use the approved English brand name from the
+specification/logo. Leave its Arabic name nullable until supplied and approved.
+
+The reference seeder should:
+
+- create missing records;
+- preserve existing display names and lifecycle state;
+- avoid resetting administrator changes;
+- remain safe when executed repeatedly.
+
+AUTHORIZATION BOUNDARY
+
+- F03 has no public management endpoints.
+- Application actions are internal application services for future authorized
+  callers.
+- They must not register a default allow-all
+  `OperationalScopeAuthorizer`.
+- Document that future HTTP use requires the F17/F19 policy kernel.
+- Seeder/CLI behavior must not create a reusable web authorization bypass.
+
+REQUIRED TESTS
+
+Schema:
+
+- Module migrations are discovered and run.
+- Tables use the approved internal key strategy.
+- Codes are unique.
+- English names are required.
+- Arabic names are nullable.
+- `is_active` defaults to true.
+- No soft-delete columns exist.
+- No partial actor-audit columns exist.
+
+Organization:
+
+- GCV is seeded idempotently.
+- A future second organization remains technically representable.
+- Duplicate codes are rejected.
+- Ordinary name/lifecycle actions cannot modify the stable code.
+- Deactivation preserves the record and makes it inactive.
+- Inactive records remain queryable.
+
+Institution types:
+
+- All five stable codes are seeded.
+- Repeated seeding creates no duplicates.
+- Repeated seeding does not overwrite edited display names or lifecycle state.
+- Duplicate codes are rejected.
+- Inactive types remain queryable.
+- No exact-count rule prevents adding a future type.
+
+Architecture:
+
+- Domain code remains within Modules/Organization.
+- No models are placed in App/Models.
+- No dependency on later-release modules is introduced.
+- No Institution model/table is created.
+- No module-activation table is created.
+- No import, registry, or Student implementation is added.
+- No routes, controllers, Livewire components, or management UI are added.
+- All F01 and F02 tests continue passing.
+
+DOCUMENTATION
+
+Create or update concise Organization module documentation covering:
+
+- record ownership;
+- stable codes versus translated display names;
+- lifecycle behavior;
+- seeding behavior;
+- the pending official Arabic GCV name;
+- institutions beginning in F04;
+- module activation beginning in F05.
+
+Update the system specification and Foundation plan only as needed to record
+the two new future requirements and approved F03 decisions. Do not rewrite
+unrelated sections.
+
+VERIFICATION
+
+Run:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan migrate:fresh --seed
+- php artisan route:list
+- vendor/bin/pint --test
+- php artisan test
+- npm run build
+- git diff --check
+- git status --short
+
+Use the isolated Replit development database only. Do not operate on any
+external or production database.
+
+At completion report:
+
+1. Files changed.
+2. Migrations, models, actions, factories, seeders, and tests created.
+3. Seeded organization and institution-type codes.
+4. Where the two future requirements were documented.
+5. All verification results.
+6. Any warnings separately from failures.
+7. Explicit confirmation that no institutions, module activations,
+   authentication, permissions, imports, civil-registry integration, student
+   records, management UI, or F04 work were added.
+
+Create a Replit checkpoint after successful verification and stop.
+Do not proceed to F04.

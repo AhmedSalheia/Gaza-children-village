@@ -1519,7 +1519,73 @@ These decisions should be resolved through focused design documents before relat
 
 ---
 
-## 32. Instructions for developers and AI coding tools
+## 32. Confirmed future requirements
+
+These requirements are confirmed but must not be implemented until their owning module PR is explicitly approved. Record them here to prevent conflicting design decisions in earlier modules.
+
+### 32.1 Excel import engine
+
+All future Excel imports must use staged, reviewed, explicitly confirmed imports. No direct unreviewed Excel-to-production-table writes are permitted.
+
+#### Import modes
+
+The import engine must support two explicitly named modes:
+
+1. **`insert_only`**
+   - Create rows that do not already exist according to an approved stable matching key.
+   - Skip matching existing records.
+   - Report every created, skipped, and invalid row.
+   - Do not call this behavior "patch importing" in technical documentation.
+
+2. **`patch_existing`**
+   - Match existing records using an approved stable matching key.
+   - Update only explicitly permitted/importable fields.
+   - Skip rows with no existing match.
+   - Report old and new proposed values before commitment.
+
+#### Required import pipeline
+
+Every import must include:
+
+- Uploaded-file registration.
+- Staged rows with schema and header validation.
+- Normalized matching keys.
+- Duplicate detection within the file.
+- Preview/dry run.
+- Row-level errors and warnings.
+- Explicit confirmation before official writes.
+- Transactional or recoverable batches.
+- Idempotency protection.
+- Import actor and operational scope.
+- Created/skipped/updated/failed row counts.
+- Downloadable result report.
+- Institution, semester, period, permission, and field-level enforcement.
+
+Do not create import tables, services, routes, jobs, or modules before this feature is approved in its own PR.
+
+### 32.2 Gaza civil-registry lookup for student registration
+
+When an authorized user registers a student in a future Student module:
+
+1. The user enters the student's national ID.
+2. The ID is normalized and validated.
+3. The system queries the Gaza civil-registry reference source through a deliberate application contract/service — not by reaching directly into a raw registry table throughout the codebase.
+4. A matching registry record may suggest or autofill approved identity fields.
+5. The user reviews the suggestions before saving the student.
+6. The civil-registry source is advisory, not unquestionable authority.
+7. A missing match must not prevent authorized manual student registration.
+8. A registry match must not automatically overwrite an existing person or student record.
+9. Conflicting data must be shown for review and handled through a controlled correction/identity-resolution workflow.
+10. The student uses a stable synthetic internal primary key. National ID is an identifier, not the student table primary key.
+11. National IDs and registry data are sensitive and require masking, permission controls, safe logging, and audit redaction.
+12. The system should preserve data provenance where useful: registry-suggested, user-entered, imported, or later corrected.
+13. The exact physical table name for the civil-registry source is **unresolved** and must not be assumed to be `gaza_civil_records` until the existing dataset and schema are reviewed.
+
+Do not create civil-registry migrations, models, adapters, student tables, lookup endpoints, or registration UI before this feature is approved in its own PR.
+
+---
+
+## 33. Instructions for developers and AI coding tools
 
 When implementing from this specification:
 
@@ -1561,7 +1627,7 @@ Before merging a module, provide:
 
 ---
 
-## 33. Suggested first engineering tasks
+## 34. Suggested first engineering tasks
 
 The safest implementation order is:
 
@@ -1580,7 +1646,7 @@ Each task should be implemented as a complete, tested vertical slice rather than
 
 ---
 
-## 34. Definition of success
+## 35. Definition of success
 
 GCV DATA succeeds when:
 

@@ -1,6 +1,6 @@
 # GCV DATA Foundation Release Implementation Plan
 
-**Status:** Planning only; no feature implementation or final migrations are authorized by this document.  
+**Status:** F01 complete · F02 complete · F03 complete — F04 and later are planning only.
 **Prepared from:** `AGENTS.md` and the complete canonical `docs/SYSTEM_SPECIFICATION.md` (version 0.2, 12 August 2026).
 **Approved architecture decision:** Use `nwidart/laravel-modules` 13.x, the release line compatible with Laravel 13 and PHP 8.3+, for package-managed modules under the repository-root `Modules/` directory.
 
@@ -232,14 +232,34 @@ Tests:
 
 #### Small PRs and tests
 
-**PR F03 — Organization and institution-type reference model**
+**PR F03 — Organization and institution-type reference model** ✅ Complete
 
-Tests:
+Approved architecture decisions implemented in F03:
 
-- Institution must belong to the GCV organization and an allowed active type.
-- Stable codes are unique in the approved scope.
-- Unauthorized staff cannot create/update types or organization data.
-- Fixtures contain invented names and identifiers only.
+- Unsigned auto-incrementing BIGINT internal primary keys.
+- Unique stable string codes as machine identifiers (rows, not enums).
+- GCV seeded as the only current organization; schema is future-capable (no single-row DB constraint).
+- `name_en` required, `name_ar` nullable; GCV Arabic name left null until officially supplied.
+- `active`/`inactive` lifecycle via `is_active` boolean; no soft deletion; inactive records remain queryable.
+- No database ENUM columns; no partial actor-audit columns; no created_by/updated_by in F03.
+- Module-owned migrations in `Modules/Organization/database/migrations/`.
+- `Organization` and `InstitutionType` Eloquent models in `Modules/Organization/app/Models/`.
+- Application actions: `CreateOrganization`, `ChangeOrganizationName`, `ActivateOrganization`, `DeactivateOrganization`, `CreateInstitutionType`, `ChangeInstitutionTypeName`, `ActivateInstitutionType`, `DeactivateInstitutionType`.
+- Stable codes excluded from `$fillable`; all mutations go through actions.
+- Idempotent reference seeders using `firstOrCreate` — preserve administrator-edited display names and lifecycle state.
+- Approved institution-type codes: `academy`, `university_space`, `medical_point`, `womens_center`, `storage_unit`.
+- No HTTP routes, controllers, Livewire components, or management UI.
+- No institutions, module-activation tables, import tables, civil-registry tables, or student tables.
+- No default allow-all authorization; future HTTP callers require F17/F19 policy kernel.
+
+Tests added:
+
+- Schema: key strategy, unique codes, required/nullable names, default `is_active`, no soft-delete, no audit columns.
+- Organization seeder: idempotency, name preservation, lifecycle preservation, second-org representability.
+- InstitutionType seeder: all five codes, idempotency, name/lifecycle preservation, no count enforcement.
+- Organization actions: create, change name (code immutability), activate, deactivate (record preserved).
+- InstitutionType actions: create, change name (code immutability), activate, deactivate (record preserved).
+- Boundary: no Institution/module-activation/import/student tables; no controllers/Livewire/views in module.
 
 **PR F04 — Institution registry**
 
