@@ -15,15 +15,16 @@ it('does not create an institution_module_activations table in F05', function ()
     expect(Schema::hasTable('institution_module_activations'))->toBeFalse();
 });
 
-it('does not create an f06 override table in F05', function (): void {
+it('does not create spurious override or activation tables beyond the approved F06 table', function (): void {
+    // institution_feature_overrides is approved — created by F06.
+    // institution_module_overrides and institution_feature_activations are not approved.
     $forbidden = [
-        'institution_feature_overrides',
         'institution_module_overrides',
         'institution_feature_activations',
     ];
 
     foreach ($forbidden as $table) {
-        expect(Schema::hasTable($table))->toBeFalse("Unexpected F06 table: {$table}");
+        expect(Schema::hasTable($table))->toBeFalse("Unexpected table: {$table}");
     }
 });
 
@@ -50,9 +51,9 @@ it('has no InstitutionModuleActivation model', function (): void {
     expect(file_exists(base_path('Modules/Organization/app/Models/InstitutionModuleActivation.php')))->toBeFalse();
 });
 
-it('has no F06 override resolver', function (): void {
-    expect(file_exists(base_path('Modules/Organization/app/Services/InstitutionFeatureResolver.php')))->toBeFalse()
-        ->and(file_exists(base_path('Modules/Organization/app/Services/F06Resolver.php')))->toBeFalse();
+it('has no spurious F06-era resolver beyond the approved InstitutionFeatureResolver', function (): void {
+    // InstitutionFeatureResolver is approved (F06). A separate F06Resolver would be a duplicate.
+    expect(file_exists(base_path('Modules/Organization/app/Services/F06Resolver.php')))->toBeFalse();
 });
 
 it('has no new model in App/Models', function (): void {

@@ -66,4 +66,12 @@ class FeatureModule extends Model
     {
         return $this->hasMany(InstitutionTypeFeatureRule::class);
     }
+
+    /**
+     * @return HasMany<InstitutionFeatureOverride, $this>
+     */
+    public function institutionOverrides(): HasMany
+    {
+        return $this->hasMany(InstitutionFeatureOverride::class);
+    }
 }

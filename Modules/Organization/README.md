@@ -1,6 +1,6 @@
 # Organization Module
 
-**Phase:** F03 – F05  
+**Phases:** F03 – F06  
 **Owner:** `Modules/Organization`  
 **Dependency graph position:** May depend on `Authorization` and `Audit` public surfaces. `AcademicCalendar` and `Staff` may depend on this module's public surface.
 
@@ -14,9 +14,9 @@ The Organization module owns:
 - Institution-type classifications.
 - The institution registry.
 - The **feature-module catalogue** — configurable GCV business capabilities.
-- **Institution-type feature rules** — the type-level mapping that declares which capabilities are required, optionally available, or unavailable for each institution type.
-
-It provides the stable foundation that later modules (F06 institution-specific activation resolver, F17/F19 authorization) build upon.
+- **Institution-type feature rules** — type-level mapping of which capabilities are required, allowed, or unavailable for each institution type.
+- **Institution-specific feature overrides** — explicit per-institution departures from the type baseline.
+- The **effective feature resolver** — combines type rule + institution override into a single authoritative answer.
 
 ---
 
@@ -31,15 +31,14 @@ These are distinct concepts. The user-facing product may later label feature mod
 
 ---
 
-## Records
+## Domain records
 
 ### Organization
 
-Represents the top-level organization. GCV is currently the only organization. The schema does not enforce a single-row database constraint.
+Represents the top-level organization. GCV is currently the only organization.
 
-- **Stable code:** `gcv`
-- **Arabic name:** `قرية أطفال غزة` (stakeholder-approved)
-- **Lifecycle:** active/inactive via `is_active`; no soft deletion; records remain queryable
+- **Stable code:** `gcv` | **Arabic name:** `قرية أطفال غزة` (stakeholder-approved)
+- Lifecycle: `is_active`; no soft deletion; records remain queryable
 
 ### InstitutionType
 
@@ -51,48 +50,52 @@ Centrally controlled classification. Codes are rows, not enums.
 
 An individual GCV location belonging to an organization and typed by an InstitutionType.
 
-- Active institutions are returned by default (global `ActiveInstitutionScope`).
-- Inactive institutions are reachable via `withoutGlobalScopes()`.
+- Active institutions are returned by default (`ActiveInstitutionScope` global scope).
+- Inactive institutions: bypass with `withoutGlobalScopes()`.
 
 ### FeatureModule
 
-A configurable GCV business capability. `is_active` is lifecycle/configuration availability — not authorization and not proof that the feature has been implemented in code.
+A configurable GCV business capability. `is_active` = lifecycle/configuration availability; not authorization and not proof of implementation.
 
-**Approved stable codes:**
-
-| Code | English label |
-|---|---|
-| `staff_management` | Staff Management |
-| `academic_management` | Academic Management |
-| `asset_management` | Asset Management |
-| `medical_services` | Medical Services |
-| `womens_center_programs` | Women's Center Programs |
-| `inventory_management` | Inventory Management |
-
-Arabic labels are intentionally null until official approved translations are supplied.
+**Approved stable codes:** `staff_management`, `academic_management`, `asset_management`, `medical_services`, `womens_center_programs`, `inventory_management`
 
 ### InstitutionTypeFeatureRule
 
-The explicit rule governing a feature module's availability to an institution type. An explicit model rather than a featureless pivot because the relationship has behavior and will participate in F06 resolution.
+The type-level rule governing a feature module's availability to an institution type.
+
+### InstitutionFeatureOverride
+
+An explicit per-institution departure from the type baseline. Only meaningful rows are stored:
+
+| Type rule | Permitted override |
+|---|---|
+| `DefaultEnabled` | `is_enabled = false` (disable an on-by-default feature) |
+| `Allowed` | `is_enabled = true` (enable an off-by-default feature) |
+| `Required` | **Rejected** — required features cannot be disabled |
+| No rule | **Rejected** — unavailable features cannot be enabled |
 
 ---
 
-## Rule semantics
+## Resolution semantics
 
-Every institution-type/feature relationship has exactly one rule, or no rule:
+Every institution/feature pair resolves to one of these sources:
 
-| Rule | Stored value | Baseline state | F06 institution override may… |
-|---|---|---|---|
-| `Required` | `'required'` | Enabled | Not disable it |
-| `DefaultEnabled` | `'default'` | Enabled | Disable it |
-| `Allowed` | `'allowed'` | Disabled | Enable it |
-| *(no rule)* | *(no row)* | Disabled | Not enable it |
+| Source | Enabled? | Override? | Institution may |
+|---|:---:|:---:|---|
+| `required` | ✓ | No | Nothing |
+| `type_default` | ✓ | No | Disable (creates override) |
+| `institution_override` (from DefaultEnabled) | ✗ | Yes | Clear override (restores enabled) |
+| `allowed_but_disabled` | ✗ | No | Enable (creates override) |
+| `institution_override` (from Allowed) | ✓ | Yes | Clear override (restores disabled) |
+| `unavailable` | ✗ | No | Nothing |
+| `feature_inactive` | ✗ | No | Nothing |
+| `institution_inactive` | ✗ | No | Nothing |
 
-The rule column is a bounded string, not a database ENUM. PHP-level validation via `FeatureModuleRule` enum is the primary enforcement boundary.
+**Clearing an override** removes the row and restores the type-derived baseline — it does not modify the institution-type rule or the FeatureModule.
 
 ---
 
-## Approved institution-type mapping matrix (F05)
+## Approved institution-type mapping matrix (F05 baseline)
 
 | Feature | academy | university_space | medical_point | womens_center | storage_unit |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -103,39 +106,80 @@ The rule column is a bounded string, not a database ENUM. PHP-level validation v
 | `womens_center_programs` | — | — | — | required | — |
 | `inventory_management` | — | — | — | — | required |
 
-`—` = no rule = unavailable; F06 must not allow enabling it.
+`—` = no rule = unavailable; F06 cannot enable it via override.
 
 ---
 
 ## Feature configuration vs authorization vs implementation
 
-- **Configuration** (this module): declares which features are available to which types.
+- **Configuration** (this module): declares which features are available and enabled for which institutions.
 - **Authorization** (F17/F19): governs which staff may perform actions within an enabled feature.
 - **Implementation**: a configured feature does not imply the business code has been built.
 
-All three are required for a feature to be usable. This module provides only configuration.
+All three are required for a feature to be usable. This module provides configuration only.
 
 ---
 
-## Stable codes vs translated display names
+## Resolver API
 
-Stable codes (`code`) are machine identifiers:
-- Set at creation; never modified by name-change or lifecycle actions.
-- Used by application code to resolve records (e.g. `FeatureModule::where('code', 'academic_management')`).
+```php
+use Modules\Organization\Services\InstitutionFeatureResolver;
 
-Display names (`name_en`, `name_ar`) are human-readable labels:
-- May be changed by administrators through change-name actions.
-- Must never be used as matching keys in seeders or business logic.
+$resolver = new InstitutionFeatureResolver;
+
+// Resolve one feature
+$result = $resolver->resolve($institution, $feature);
+$result->isEnabled();           // effective enabled state
+$result->isAvailable();         // type has a rule (not unavailable/inactive)
+$result->source();              // ResolutionSource enum case
+$result->reasonKey();           // stable string for logs ('required', 'type_default', …)
+$result->canBeEnabled();        // institution may create an enable override
+$result->canBeDisabled();       // institution may create a disable override
+$result->hasOverride();         // explicit override row exists
+
+// Resolve by stable feature code (explicit, separately named)
+$result = $resolver->resolveByCode($institution, 'academic_management');
+
+// Return only effectively enabled, active feature models (3 queries, N+1 safe)
+$features = $resolver->enabledFor($institution);
+
+// Return all resolution results including disabled/unavailable (3 queries, N+1 safe)
+$results = $resolver->resolveAll($institution);
+```
+
+**Do not** mix model, numeric ID, and code arguments through one method. Use `resolve()` for models and `resolveByCode()` for codes.
 
 ---
 
-## Lifecycle behavior
+## Override action API
 
-- **Active:** available for normal operation and new rule assignments.
-- **Inactive:** preserved for historical reference; existing rules remain inspectable; no new rules may be assigned through ordinary application behavior.
-- Deactivation does not delete institution-type rules.
-- No global scope hides inactive `FeatureModule` or `InstitutionType` records.
-- Active institutions are hidden by default via `ActiveInstitutionScope` (bypass with `withoutGlobalScopes()`).
+```php
+use Modules\Organization\Actions\SetInstitutionFeatureOverride;
+use Modules\Organization\Actions\ClearInstitutionFeatureOverride;
+use Modules\Organization\Data\SetInstitutionFeatureOverrideData;
+
+// Set a meaningful override (validates all rejection cases; runs in DB transaction)
+$override = (new SetInstitutionFeatureOverride)->execute(
+    $institution,
+    $feature,
+    new SetInstitutionFeatureOverrideData(isEnabled: false, reason: 'Not needed here')
+);
+
+// Clear an override (no-op if absent; runs in DB transaction)
+(new ClearInstitutionFeatureOverride)->execute($institution, $feature);
+```
+
+---
+
+## Override mutation prerequisites (F17+)
+
+`reason` is temporarily nullable. Management UI **must not** expose override mutation until:
+
+1. Actor tracking (`who changed this`) is implemented.
+2. An explicit permission check gates the action (F17/F19 policy kernel).
+3. Audit module integration records every mutation with actor reference and timestamp.
+
+At that point `reason` should be made non-nullable and the constraint enforced in the action.
 
 ---
 
@@ -145,8 +189,8 @@ All seeders are idempotent:
 
 - Create missing records.
 - Preserve administrator-edited display names and lifecycle state.
-- Do not silently overwrite existing institution-type rules that an administrator may have changed.
-- Use stable codes for matching; display names are never matching keys.
+- Do not silently overwrite existing institution-type rules.
+- Do not touch institution-specific override rows.
 
 **Run order** (enforced in `DatabaseSeeder`):
 1. `OrganizationReferenceSeeder`
@@ -154,51 +198,48 @@ All seeders are idempotent:
 3. `FeatureModuleReferenceSeeder`
 4. `InstitutionTypeFeatureRuleReferenceSeeder`
 
----
-
-## Baseline rule interpreter
-
-`InstitutionTypeRuleInterpreter` answers type-level questions:
-
-```php
-$interpreter->isBaselineEnabled($type, $feature); // true for required/default
-$interpreter->canBeDisabled($type, $feature);      // true only for default
-$interpreter->canBeEnabled($type, $feature);       // true only for allowed
-$interpreter->isUnavailable($type, $feature);      // true when no rule row exists
-$interpreter->ruleFor($type, $feature);            // ?FeatureModuleRule
-```
-
-This interpreter is **not** an authorization check and does not apply institution-specific overrides. The complete institution-level resolver belongs to F06.
+No override rows are seeded. All institutions inherit the type-derived baseline on first boot.
 
 ---
 
-## Authorization boundary
+## Stable codes vs translated display names
 
-No HTTP endpoints are exposed through F05. All application actions are internal services for future authorized callers:
+Stable codes are machine identifiers used in all application logic. Display names (`name_en`, `name_ar`) are administrator-editable labels. **Never use display names as lookup keys** in seeders, resolvers, or business logic.
 
-**FeatureModule actions:** `CreateFeatureModule`, `ChangeFeatureModuleName`, `ActivateFeatureModule`, `DeactivateFeatureModule`
+---
 
-**Rule actions:** `AssignInstitutionTypeRule`, `RemoveInstitutionTypeRule`
+## Lifecycle behavior
 
-Future HTTP callers must go through the F17/F19 policy kernel. No allow-all bypass may be added.
+| Entity | Inactive behavior |
+|---|---|
+| `FeatureModule` | Queries return `feature_inactive`; existing type rules and overrides remain inspectable; no new overrides may be created |
+| `Institution` | Queries return `institution_inactive`; configuration remains inspectable for administration; no new overrides may be created |
+| `InstitutionType` | Existing institutions continue resolving against their assigned type's rules; type inactivity does not erase those rules |
+
+---
+
+## Foreign key strategy
+
+`institution_feature_overrides` uses **RESTRICT** FKs to `institutions` and `feature_modules`. Deleting an institution or feature throws a database exception rather than silently cascade-deleting historical configuration. Deactivation (not deletion) is the approved lifecycle pattern.
 
 ---
 
 ## Public surface
 
-Per `docs/MODULE_CONVENTIONS.md`, only these namespaces may be accessed by other modules:
+Per `docs/MODULE_CONVENTIONS.md`, other modules may only access:
 
 - `Modules\Organization\Actions\`
-- `Modules\Organization\Contracts\` *(none in F05)*
+- `Modules\Organization\Contracts\` *(none yet)*
 - `Modules\Organization\Data\`
 - `Modules\Organization\Enums\`
-- `Modules\Organization\Events\` *(none in F05)*
+- `Modules\Organization\Events\` *(none yet)*
 
-Services (`app/Services/`) are currently internal. If `InstitutionTypeRuleInterpreter` is needed by another module, promote it to a Contract.
+Services (`app/Services/`) are currently internal. If `InstitutionFeatureResolver` is needed by another module, promote it to a Contract.
 
 ---
 
 ## Coming in later phases
 
-- **F06** — Institution-specific feature activation overrides and the effective resolution engine (decision gate required).
-- **F17/F19** — Policy kernel; HTTP callers use it before invoking any management action.
+- **F17/F19** — Policy kernel; HTTP callers use it before invoking any management or override action.
+- **Audit module integration** — Every override mutation must be audited with actor reference, timestamp, and non-nullable reason before management UI is released.
+- **F08** — `OperationalScopeAuthorizer` implementation; institution lookup consumed via this module's public surface.

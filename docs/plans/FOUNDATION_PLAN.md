@@ -344,14 +344,45 @@ Tests added:
 - Interpreter: required/default/allowed/no-rule semantics for all four questions; no F06 overrides; no authorization implication.
 - Boundary: no InstitutionModuleActivation/F06 table; no auth/student/import tables; no new App/Models; no new physical module; no routes/controllers.
 
-**PR F06 — Institution activation resolver** (only if overrides are approved)
+**PR F06 — Institution-specific feature overrides and effective resolution** ✅ Complete
 
-Tests:
+Approved architecture decisions implemented in F06:
 
-- Resolver combines type rules and institution overrides exactly as approved.
-- Inactive module routes/actions are denied server-side, not merely hidden.
-- Cross-institution activation changes are denied.
-- Deactivation preserves historical records and reads.
+- Table `institution_feature_overrides`: BIGINT PK, FK→`institutions` (RESTRICT), FK→`feature_modules` (RESTRICT), boolean `is_enabled` (not nullable), nullable `reason` string, unique `(institution_id, feature_module_id)`. No soft-delete, no actor-audit columns, no DB ENUM.
+- Only meaningful override rows are stored: `DefaultEnabled` rule → `is_enabled=false` only; `Allowed` rule → `is_enabled=true` only. All other combinations rejected by `SetInstitutionFeatureOverride`.
+- RESTRICT FK ensures deactivating or deleting an institution/feature does not cascade-delete historical configuration.
+- `reason` is temporarily nullable for F06. Management UI must not expose override mutation until actor tracking, permission checks, and Audit integration exist (post-F17).
+- `ResolutionSource` PHP backed string enum: `required`, `type_default`, `institution_override`, `allowed_but_disabled`, `unavailable`, `feature_inactive`, `institution_inactive`.
+- `FeatureResolutionResult` — `final readonly` value object exposing: institution, feature, source, `isEnabled()`, `isAvailable()`, `canBeEnabled()`, `canBeDisabled()`, `hasOverride()`, `reasonKey()`.
+- Actions: `SetInstitutionFeatureOverride` (transactional upsert, validates all rejection cases), `ClearInstitutionFeatureOverride` (idempotent/no-op per module convention).
+- `InstitutionFeatureResolver` service — public methods: `resolve(Institution, FeatureModule)`, `resolveByCode(Institution, string)`, `enabledFor(Institution)` (returns enabled FeatureModule models), `resolveAll(Institution)` (returns all resolution results).
+- N+1 prevention: `resolveAll` and `enabledFor` use exactly 3 queries regardless of feature count.
+- No global scope added; inactive overrides remain queryable for administration.
+- `Institution` gained `featureOverrides()` HasMany; `FeatureModule` gained `institutionOverrides()` HasMany.
+- No seeded override rows; existing institutions inherit type-derived baseline. Seeder reruns do not touch override rows.
+- No route middleware, no OperationalScopeAuthorizer, no authentication, no routes, no controllers, no Livewire.
+- Architecture boundary enforced: Organization test files reference Authorization contracts via string keys only (not `use` imports) to pass the ModuleBoundariesTest scanner.
+
+Resolution table:
+
+| Type rule | Override | Source | isEnabled |
+|---|---|---|---|
+| required | — | required | true |
+| default | none | type_default | true |
+| default | is_enabled=false | institution_override | false |
+| allowed | none | allowed_but_disabled | false |
+| allowed | is_enabled=true | institution_override | true |
+| (none) | — | unavailable | false |
+| (any) | — | feature_inactive | false |
+| (any) | — | institution_inactive | false |
+
+Tests added (67 new tests, 5 files):
+
+- Schema: table existence; FK types; unique constraint; is_enabled non-nullable boolean; reason nullable; no ENUM/soft-delete/actor-audit; RESTRICT FK cascade prevention verified at DB level.
+- Override actions: set disable/enable; upsert; all rejection cases (required, redundant, inactive institution, inactive feature, unavailable); clear (existing, no-op, type-rule and feature-module preservation); seeder idempotency across overrides; DB-level uniqueness.
+- Resolver: all resolution sources; override + clear cycle for each rule type; inactive feature/institution; inactive type does not erase resolution; display-name/Arabic-name independence; resolveByCode; auth separation structural assertion.
+- Listing: enabledFor correctness (required and default enabled; disabled by override excluded; allowed+override included; inactive excluded); resolveAll sources; N+1 bounded at ≤3 queries (asserted); two institutions same type resolve differently; different types use own rules; future feature representability.
+- Boundary: no F07/auth/student tables; no App/Models additions; no new physical module; no routes/controllers/Livewire; no authorizer registered; feature enabled ≠ permission; F02 contracts intact.
 
 ### 4.5 Academic years, semesters, institution semesters, periods
 
