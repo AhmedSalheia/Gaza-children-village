@@ -1,0 +1,108 @@
+The baseline inspection is approved.
+
+Perform only the Replit environment setup required to run and verify the
+existing Laravel repository. Do not start F03 and do not change application
+architecture or business code.
+
+Authoritative files remain:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/plans/FOUNDATION_PLAN.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+
+Required work:
+
+1. Update the Replit runtime from PHP 8.2 to PHP 8.4 or the nearest available
+   PHP release satisfying all locked Composer platform requirements.
+2. Before editing `.replit`, verify the exact PHP runtime/module identifier
+   currently supported by Replit. Do not assume an unavailable identifier.
+3. Preserve Node and web support.
+4. Install PHP dependencies using:
+   composer install --no-interaction --prefer-dist
+5. Install frontend dependencies using:
+   npm ci
+   Do not use npm install unless package-lock.json is missing or invalid,
+   and report that before changing it.
+6. Create the local development `.env` from `.env.example` only if `.env`
+   does not exist.
+7. Do not commit `.env` or expose its values.
+8. Generate a local APP_KEY.
+9. Keep SQLite for the Replit development/test environment.
+10. Create database/database.sqlite if it does not exist.
+11. Run the existing migrations so database-backed session and cache storage
+    work.
+12. Configure a Replit development workflow that:
+    - runs Laravel as a long-running process;
+    - listens on 0.0.0.0;
+    - uses a Replit-supported internal port, preferably 8000;
+    - exposes that port correctly in `.replit`;
+    - runs Vite for development where needed;
+    - does not modify Laravel architecture merely to satisfy Replit;
+    - does not add Replit Database, PostgreSQL, or another database service.
+13. Create a concise root `replit.md` recording:
+    - this is an existing Laravel 13 modular monolith;
+    - F01 and F02 are completed and must not be regenerated;
+    - AGENTS.md is the engineering authority;
+    - docs/SYSTEM_SPECIFICATION.md is the product authority;
+    - docs/plans/FOUNDATION_PLAN.md controls sequencing;
+    - docs/MODULE_CONVENTIONS.md controls module boundaries;
+    - docs/OPERATIONAL_CONTEXT.md controls trusted scope handling;
+    - modules use nwidart/laravel-modules v13;
+    - only explicitly requested Foundation phases may be implemented;
+    - framework replacement or Replit Database requires explicit approval.
+14. Do not duplicate the full specification inside replit.md.
+15. Do not change composer.json, composer.lock, package.json, or
+    package-lock.json unless an actual installation error proves a repository
+    inconsistency. Report the error before changing dependency metadata.
+
+Do not add:
+
+- migrations other than running existing migrations;
+- Eloquent models;
+- authentication;
+- roles or permissions;
+- routes or endpoints;
+- business modules;
+- institution records;
+- F03 implementation;
+- framework replacements.
+
+After setup, verify:
+
+- php --version
+- composer --version
+- node --version
+- npm --version
+- composer validate --strict
+- composer check-platform-reqs
+- php artisan package:discover
+- php artisan module:list
+- php artisan migrate:status
+- php artisan route:list
+- vendor/bin/pint --test
+- php artisan test
+- npm run build
+- git diff --check
+- git status --short
+
+Also start the configured Run workflow and confirm:
+
+- Laravel remains running;
+- it listens on 0.0.0.0;
+- the configured internal and external ports match;
+- the Replit web preview responds successfully;
+- no secrets or `.env` values appear in output.
+
+At completion, report:
+
+1. Files changed.
+2. Runtime versions installed.
+3. Workflow command and port configuration.
+4. Verification results.
+5. Whether the preview works.
+6. Any files intentionally left untracked or ignored.
+7. Explicit confirmation that F03 and business implementation were not started.
+
+Stop after environment setup.
