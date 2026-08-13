@@ -6,6 +6,7 @@ namespace Modules\Organization\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Organization\Database\Factories\InstitutionTypeFactory;
 
 /**
@@ -51,4 +52,12 @@ class InstitutionType extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * @return HasMany<Institution, $this>
+     */
+    public function institutions(): HasMany
+    {
+        return $this->hasMany(Institution::class);
+    }
 }
