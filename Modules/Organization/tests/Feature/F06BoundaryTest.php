@@ -17,16 +17,16 @@ uses(RefreshDatabase::class);
 // Tables that must NOT be added in F06
 // ---------------------------------------------------------------------------
 
-it('does not add any F07 academic-calendar tables', function (): void {
+it('does not add F08+ institution-semester or operational-period tables', function (): void {
+    // academic_years and semesters are legitimately present in F07.
+    // Only F08+ institution-scoped tables are restricted here.
     $forbidden = [
-        'academic_years',
-        'semesters',
         'institution_semesters',
         'operational_periods',
     ];
 
     foreach ($forbidden as $table) {
-        expect(Schema::hasTable($table))->toBeFalse("Unexpected F07 table: {$table}");
+        expect(Schema::hasTable($table))->toBeFalse("Unexpected post-F07 table: {$table}");
     }
 });
 

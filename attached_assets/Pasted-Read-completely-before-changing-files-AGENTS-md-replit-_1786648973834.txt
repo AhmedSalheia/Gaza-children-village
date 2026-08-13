@@ -1,0 +1,391 @@
+Read completely before changing files:
+
+- AGENTS.md
+- replit.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/plans/FOUNDATION_PLAN.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- all F01–F06 implementation and documentation
+- recent Git history and checkpoint descriptions
+
+F01–F06 are completed and approved baselines.
+
+Implement only F07:
+Academic-year and semester catalogue.
+
+Do not recreate or broadly refactor previous phases.
+
+PREREQUISITES
+
+Before changing files:
+
+1. Confirm F06 is committed/checkpointed.
+2. Run the existing complete test suite.
+3. Confirm the worktree has no unrelated changes.
+4. Inspect current module dependency conventions.
+5. Confirm AcademicCalendar may depend on Organization but Organization must
+   not depend on AcademicCalendar.
+6. Present a concise proposed file map.
+7. Report conflicts before making consequential changes.
+
+OWNERSHIP
+
+- Modules/AcademicCalendar owns academic years and semesters.
+- Do not create another physical Laravel module.
+- Do not put models in App/Models.
+- Do not create institution semesters or periods; those belong to F08.
+
+ACADEMIC YEAR MODEL
+
+AcademicYear contains:
+
+- unsigned auto-incrementing BIGINT primary key;
+- foreign key to organizations;
+- stable string `code`;
+- required `name_en`;
+- nullable `name_ar`;
+- `starts_on` date;
+- `ends_on` date;
+- bounded string `status`;
+- Laravel timestamps;
+- no soft deletion;
+- no database ENUM;
+- no created_by/updated_by/deleted_by fields.
+
+Approved statuses:
+
+- draft
+- open
+- closed
+- archived
+
+Constraints:
+
+- code is unique within its organization;
+- start date must precede end date;
+- stable code cannot be changed through ordinary updates;
+- bilingual display names may change through controlled actions;
+- archived records remain readable;
+- inactive/deactivated organization cannot receive a new academic year through
+  ordinary application behavior;
+- no hard deletion.
+
+SEMESTER MODEL
+
+Semester contains:
+
+- unsigned auto-incrementing BIGINT primary key;
+- foreign key to academic_years;
+- stable string `code`;
+- required `name_en`;
+- nullable `name_ar`;
+- positive integer `sequence`;
+- `starts_on` date;
+- `ends_on` date;
+- bounded string `status`;
+- Laravel timestamps;
+- no soft deletion;
+- no database ENUM;
+- no partial actor-audit fields.
+
+Approved statuses:
+
+- draft
+- open
+- closed
+- archived
+
+Constraints:
+
+- semester code is unique within its academic year;
+- sequence is unique within its academic year;
+- sequence must be positive;
+- semester dates must fall within the academic year;
+- semester start must precede semester end;
+- semesters in one academic year must not overlap;
+- any positive number of semesters is allowed;
+- never assume exactly two semesters;
+- summer and exceptional semesters are permitted;
+- stable code cannot change through ordinary updates;
+- archived semesters remain readable;
+- no hard deletion.
+
+Do not enforce semantic codes such as S1/S2/SUMMER in the database. Those are
+examples, not a fixed catalogue.
+
+RELATIONSHIPS
+
+Implement:
+
+- Organization has many AcademicYears through an approved cross-module
+  relationship mechanism.
+- AcademicYear belongs to Organization.
+- AcademicYear has many Semesters ordered by sequence where explicitly
+  requested.
+- Semester belongs to AcademicYear.
+
+Do not introduce a default ordering global scope that surprises callers.
+
+Follow existing module conventions for cross-module relationships. Do not make
+Organization depend on AcademicCalendar merely to add a convenience method if
+that would violate dependency direction. A relationship may instead be exposed
+from the AcademicCalendar side or through an approved extension mechanism.
+
+LIFECYCLE TRANSITIONS
+
+AcademicYear:
+
+- draft → open
+- open → closed
+- closed → open, requiring a non-empty reason
+- closed → archived
+- archived is terminal for ordinary actions
+
+Semester:
+
+- draft → open
+- open → closed
+- closed → open, requiring a non-empty reason
+- closed → archived
+- archived is terminal for ordinary actions
+
+Additional lifecycle rules:
+
+- only one academic year may be open per organization;
+- an academic year must contain at least one valid semester before opening;
+- opening an academic year does not automatically open its semesters;
+- a semester may open only while its academic year is open;
+- only one semester may be open within an academic year at one time;
+- an academic year may close only when all its semesters are closed or
+  archived;
+- an academic year may archive only from closed;
+- archiving an academic year must not automatically rewrite or delete child
+  semesters;
+- a semester may archive only from closed;
+- an archived academic year prevents ordinary mutation of its semesters;
+- opening, closing, reopening, and archiving occur through explicit actions;
+- reopening reason must be passed through the lifecycle action for later Audit
+  integration;
+- do not create a partial audit system in F07;
+- document that F18 will persist actor-aware audit history.
+
+Do not silently cascade lifecycle transitions between parent and children.
+
+DATE AND UPDATE RULES
+
+- Dates may be changed while the record is draft.
+- Ordinary date changes are prohibited after opening.
+- Date corrections for opened/closed records require a future controlled
+  correction workflow and are outside F07.
+- Changing year dates must validate all existing semester dates.
+- Changing semester dates must check parent containment and sibling overlap.
+- Display names may be changed unless the record or parent is archived.
+- Stable codes are immutable through ordinary application behavior.
+- All multi-record checks and lifecycle changes use transactions.
+- Use locking where appropriate without breaking SQLite tests.
+
+IMPLEMENTATION
+
+Create:
+
+- module-owned migrations;
+- AcademicYear model;
+- Semester model;
+- lifecycle value representation;
+- request-independent data/command objects where concretely useful;
+- action for creating an academic year;
+- action for changing academic-year names/dates while allowed;
+- academic-year lifecycle actions;
+- action for creating a semester;
+- action for changing semester names/dates/sequence while allowed;
+- semester lifecycle actions;
+- factories using synthetic data;
+- composable query scopes where useful;
+- tests;
+- concise module documentation.
+
+Do not create:
+
+- academic-year or semester seed data;
+- production dates invented by the Agent;
+- institution semesters;
+- operational periods;
+- classes;
+- students;
+- staff positions;
+- attendance;
+- marks;
+- controllers;
+- routes;
+- Livewire components;
+- dashboards;
+- feature overrides;
+- authentication or permissions.
+
+No academic year should be seeded automatically because administrators/data
+administrators must create the actual approved calendar.
+
+STATUS REPRESENTATION
+
+A PHP backed enum or equivalent closed value representation may be used.
+
+Database storage remains a string and must not use a database ENUM.
+
+Follow the existing F05/F06 bounded-value conventions where applicable rather
+than introducing a second incompatible pattern.
+
+Use portable validation/database constraints compatible with:
+
+- MySQL/MariaDB production;
+- SQLite automated tests.
+
+AUTHORIZATION BOUNDARY
+
+F07 exposes no public management endpoints.
+
+Application actions must not:
+
+- register an allow-all authorizer;
+- assume that an admin role exists;
+- trust request, route, session, or cookie values;
+- bypass future policy checks;
+- alter F02 operational-context behavior.
+
+Future HTTP callers require the F17/F19 policy kernel.
+
+REQUIRED TESTS
+
+Schema:
+
+- F07 migrations are discovered;
+- academic years reference organizations using matching key types;
+- semesters reference academic years using matching key types;
+- academic-year code is unique within organization;
+- semester code is unique within academic year;
+- semester sequence is unique within academic year;
+- required fields are non-null;
+- Arabic names are nullable;
+- no database ENUM exists;
+- no soft-delete or partial actor-audit columns exist.
+
+Academic years:
+
+- creation succeeds with valid values;
+- invalid date order is rejected;
+- duplicate organization/code is rejected;
+- the same code may exist for a future different organization;
+- inactive organization rejects new academic years;
+- stable code cannot be changed through ordinary updates;
+- display names may be changed while allowed;
+- draft dates may be changed;
+- opened dates cannot be changed ordinarily;
+- archived records remain queryable;
+- archived records reject ordinary mutation;
+- no hard-delete action exists.
+
+Semesters:
+
+- any positive number of semesters can be created;
+- no two-semester assumption exists;
+- summer semester is representable;
+- dates must remain inside the academic year;
+- invalid date order is rejected;
+- overlapping semesters are rejected;
+- duplicate year/code is rejected;
+- duplicate year/sequence is rejected;
+- same semester code may exist in another academic year;
+- stable code remains immutable;
+- sequence must be positive;
+- parent archived state rejects mutation.
+
+Lifecycle:
+
+- year draft → open succeeds with at least one valid semester;
+- a second open academic year in the same organization is rejected;
+- different organizations may technically have their own open academic year;
+- opening a year does not automatically open a semester;
+- semester cannot open while year is not open;
+- one open semester per academic year is enforced;
+- year cannot close while a semester is draft or open;
+- semester open → closed succeeds;
+- semester closed → open requires a reason;
+- year open → closed succeeds after all semesters are closed/archived;
+- year closed → open requires a reason;
+- closed → archived succeeds;
+- archived transitions are rejected;
+- lifecycle operations preserve records;
+- no lifecycle operation deletes children;
+- failures are transactional.
+
+Architecture:
+
+- all domain code remains in Modules/AcademicCalendar;
+- permitted dependency direction toward Organization is preserved;
+- Organization does not gain an illegal reverse dependency;
+- no model is added to App/Models;
+- no F08 InstitutionSemester or OperationalPeriod exists;
+- no routes, controllers, Livewire components, or UI are added;
+- no authentication, permissions, imports, civil-registry, Student, attendance,
+  or marks work is introduced;
+- all prior tests remain passing.
+
+DOCUMENTATION
+
+Document:
+
+- organization → academic year → semester hierarchy;
+- stable codes versus bilingual names;
+- date containment;
+- non-overlapping semesters;
+- lifecycle state and transition rules;
+- one open year per organization;
+- one open semester per year;
+- no automatic two-semester assumption;
+- absence of production calendar seeding;
+- distinction between global Semester and F08 InstitutionSemester;
+- future Audit integration;
+- F07 completion in docs/plans/FOUNDATION_PLAN.md after verification.
+
+Do not rewrite unrelated sections or renumber phases.
+
+VERIFICATION
+
+Run:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan migrate:fresh --seed
+- php artisan migrate:status
+- php artisan route:list
+- vendor/bin/pint --test
+- php artisan test
+- npm run build
+- git diff --check
+- git status --short
+
+Use only the isolated Replit development database.
+
+Confirm the post-merge script remains valid. Do not edit it unless F07 exposes
+a genuine defect.
+
+AT COMPLETION REPORT
+
+Report:
+
+1. Files changed.
+2. Migrations, models, value representations, actions, factories, and tests.
+3. Exact lifecycle transition rules.
+4. Date and uniqueness constraints.
+5. Verification results and final test count.
+6. Warnings separately from failures.
+7. Confirmation that no academic calendar records were automatically seeded.
+8. Explicit confirmation that no F08 institution semesters/periods, UI,
+   authentication, permissions, imports, civil-registry integration, students,
+   attendance, or marks were added.
+
+Create a Replit checkpoint after successful verification and stop.
+Do not proceed to F08.

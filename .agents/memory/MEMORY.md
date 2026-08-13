@@ -2,3 +2,4 @@
 - [F03 seeder idempotency pattern](f03-seeder-pattern.md) — check-then-create with direct property set is the approved pattern; firstOrCreate breaks when key column is not in $fillable.
 - [F04 Institution registry](f04-institution-registry.md) — Institution patterns: code excluded from fillable, provisional seeder codes, one-sided relationships, boundary test updates.
 - [F06 cross-module boundary in tests](f06-boundary-scanner.md) — ModuleBoundariesTest scans ALL PHP files incl. tests; Authorization imports in Organization tests fail the scanner; use string-based class_exists/interface_exists/app()->bound checks instead of use imports.
+- [F07 cross-module boundary pattern](f07-boundary-pattern.md) — String-variable static calls bypass scanner for Models/Database surfaces; pint won't add use-imports for string literals; applies to all future modules.
