@@ -1,0 +1,84 @@
+This is an existing Laravel project imported from GitHub. It is not a new
+application and must not be regenerated, replaced, scaffolded from scratch,
+or converted to another stack.
+
+Codex has already completed and verified Foundation phases F01 and F02.
+Treat the current repository state and Git history as the accepted baseline.
+
+Do not modify any files during this task. Work in Plan Mode only.
+
+Read these files completely:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/plans/FOUNDATION_PLAN.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- composer.json
+- Modules/*/composer.json
+- module_statuses.json
+- existing architecture and operational-context tests
+- replit.md, if Replit has already generated it
+
+The current approved baseline includes:
+
+F01:
+- Laravel 13 modular monolith.
+- nwidart/laravel-modules v13.
+- Seven existing modules:
+  - Accounts
+  - Organization
+  - AcademicCalendar
+  - People
+  - Staff
+  - Authorization
+  - Audit
+- Per-module Composer autoloading.
+- Admin, Staff, and Guardian placeholder route separation.
+- Module ownership and dependency rules.
+- Default-deny architectural conventions.
+
+F02:
+- Authorization-owned operational-context contracts.
+- Explicit Admin, Staff, and Guardian portals.
+- Portal-bound actor/account references.
+- Request, job, CLI, and system actor sources.
+- Untrusted, resolved, authorized, and trusted scope stages.
+- Institution → institution-semester → optional period hierarchy.
+- Immutable trusted operational context.
+- Fail-closed resolver and authorizer contracts.
+- Request-lifecycle isolation.
+- No default allow-all OperationalScopeAuthorizer.
+
+Your task is to adopt and verify this existing architecture, not reproduce it.
+
+Inspect:
+
+1. Git status and recent commit history.
+2. The seven existing module shells.
+3. Composer package and module discovery configuration.
+4. Existing portal route files.
+5. Existing F01 architecture tests.
+6. Existing F02 operational-context contracts and tests.
+7. Whether replit.md conflicts with AGENTS.md or the authoritative project
+   documents.
+8. Whether Replit has the PHP, Composer, Node, and required PHP extensions
+   needed by the repository.
+9. Whether the current Replit Run workflow is suitable for Laravel without
+   changing application architecture.
+
+Attempt these read-only verification commands where the environment permits:
+
+- php --version
+- composer --version
+- node --version
+- npm --version
+- composer validate --strict
+- composer check-platform-reqs
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- vendor/bin/pint --test
+- php artisan test
+- npm run build
+- git diff --check
