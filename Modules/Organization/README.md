@@ -22,7 +22,7 @@ Represents the top-level organization. GCV is currently the only organization. T
 - **Lifecycle:** `is_active` boolean, active by default
 - **No soft deletion:** deactivating preserves the record and all historical references
 
-**Pending:** The official approved Arabic name for GCV has not yet been supplied. The `name_ar` field remains `null` in the reference seeder until it is provided and approved. Do not invent organizational terminology.
+**Arabic name:** The stakeholder-approved Arabic name is `قرية أطفال غزة`. New deployments receive this value through `OrganizationReferenceSeeder`. Existing deployments receive it via the `2026_08_13_000003_set_gcv_arabic_name` data migration.
 
 ### InstitutionType
 

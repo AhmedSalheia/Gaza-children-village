@@ -26,12 +26,12 @@ it('seeds the gcv organization with the approved english name', function (): voi
         ->and($gcv->is_active)->toBeTrue();
 });
 
-it('leaves the gcv arabic name null until an approved translation is supplied', function (): void {
+it('seeds the gcv record with the stakeholder-approved arabic name', function (): void {
     (new OrganizationReferenceSeeder)->run();
 
     $gcv = Organization::where('code', 'gcv')->firstOrFail();
 
-    expect($gcv->name_ar)->toBeNull();
+    expect($gcv->name_ar)->toBe('قرية أطفال غزة');
 });
 
 it('does not overwrite administrator-edited display names on repeated seeding', function (): void {

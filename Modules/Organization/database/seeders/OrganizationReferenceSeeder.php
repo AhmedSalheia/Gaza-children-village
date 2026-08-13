@@ -18,8 +18,7 @@ use Modules\Organization\Models\Organization;
  * to stay consistent with the module's mass-assignment strategy, which
  * excludes codes from $fillable to prevent bulk overwrites.
  *
- * The Arabic name is intentionally left null until the official approved
- * Arabic name for GCV is supplied. Do not invent organizational terminology.
+ * The Arabic name is the stakeholder-approved value 'قرية أطفال غزة'.
  *
  * Although GCV is currently the only organization, the schema does not
  * enforce a single-row constraint. Future organizations may be added without
@@ -39,7 +38,7 @@ class OrganizationReferenceSeeder extends Seeder
         $organization = new Organization;
         $organization->code = 'gcv';
         $organization->name_en = 'Gaza Children Village';
-        $organization->name_ar = null;
+        $organization->name_ar = 'قرية أطفال غزة';
         $organization->is_active = true;
         $organization->save();
     }
