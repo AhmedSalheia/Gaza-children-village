@@ -1,2 +1,3 @@
 - [Organization module mass-assignment](organization-mass-assignment.md) — codes excluded from $fillable; seeders must use direct property assignment, not firstOrCreate.
 - [F03 seeder idempotency pattern](f03-seeder-pattern.md) — check-then-create with direct property set is the approved pattern; firstOrCreate breaks when key column is not in $fillable.
+- [F04 Institution registry](f04-institution-registry.md) — Institution patterns: code excluded from fillable, provisional seeder codes, one-sided relationships, boundary test updates.
