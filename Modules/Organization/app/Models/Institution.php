@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Organization\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,6 +56,28 @@ class Institution extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Filter institutions belonging to the given organization.
+     *
+     * @param  Builder<Institution>  $query
+     * @return Builder<Institution>
+     */
+    public function scopeForOrganization(Builder $query, Organization $organization): Builder
+    {
+        return $query->where('organization_id', $organization->id);
+    }
+
+    /**
+     * Filter institutions of the given institution type.
+     *
+     * @param  Builder<Institution>  $query
+     * @return Builder<Institution>
+     */
+    public function scopeOfType(Builder $query, InstitutionType $institutionType): Builder
+    {
+        return $query->where('institution_type_id', $institutionType->id);
+    }
 
     /**
      * @return BelongsTo<Organization, $this>

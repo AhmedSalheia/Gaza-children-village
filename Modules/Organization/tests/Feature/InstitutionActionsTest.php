@@ -151,3 +151,51 @@ it('resolves the institution type relationship', function (): void {
     expect($institution->institutionType->id)->toBe($type->id)
         ->and($institution->institutionType->code)->toBe('academy');
 });
+
+it('scope forOrganization returns only institutions belonging to that organization', function (): void {
+    $orgA = OrganizationFactory::new()->create();
+    $orgB = OrganizationFactory::new()->create();
+
+    $instA1 = InstitutionFactory::new()->forOrganization($orgA)->create();
+    $instA2 = InstitutionFactory::new()->forOrganization($orgA)->create();
+    InstitutionFactory::new()->forOrganization($orgB)->create();
+
+    $result = Institution::forOrganization($orgA)->get();
+
+    expect($result)->toHaveCount(2)
+        ->and($result->pluck('id')->sort()->values()->all())
+        ->toBe(collect([$instA1->id, $instA2->id])->sort()->values()->all());
+});
+
+it('scope forOrganization returns an empty collection when the organization has no institutions', function (): void {
+    $emptyOrg = OrganizationFactory::new()->create();
+    InstitutionFactory::new()->create();
+
+    $result = Institution::forOrganization($emptyOrg)->get();
+
+    expect($result)->toHaveCount(0);
+});
+
+it('scope ofType returns only institutions of that type', function (): void {
+    $typeA = InstitutionTypeFactory::new()->create();
+    $typeB = InstitutionTypeFactory::new()->create();
+
+    $instA1 = InstitutionFactory::new()->ofType($typeA)->create();
+    $instA2 = InstitutionFactory::new()->ofType($typeA)->create();
+    InstitutionFactory::new()->ofType($typeB)->create();
+
+    $result = Institution::ofType($typeA)->get();
+
+    expect($result)->toHaveCount(2)
+        ->and($result->pluck('id')->sort()->values()->all())
+        ->toBe(collect([$instA1->id, $instA2->id])->sort()->values()->all());
+});
+
+it('scope ofType returns an empty collection when no institutions have that type', function (): void {
+    $unusedType = InstitutionTypeFactory::new()->create();
+    InstitutionFactory::new()->create();
+
+    $result = Institution::ofType($unusedType)->get();
+
+    expect($result)->toHaveCount(0);
+});
