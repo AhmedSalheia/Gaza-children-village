@@ -26,7 +26,7 @@ describe('F09 portal route boundaries', function (): void {
 
             $this->actingAs($account, 'admin')
                 ->get('/staff/dashboard')
-                ->assertStatus(401);
+                ->assertRedirect(route('staff.login'));
         });
 
         it('admin session is anonymous in the guardian portal', function (): void {
@@ -34,11 +34,11 @@ describe('F09 portal route boundaries', function (): void {
 
             $this->actingAs($account, 'admin')
                 ->get('/guardian/dashboard')
-                ->assertStatus(401);
+                ->assertRedirect(route('guardian.login'));
         });
 
         it('unauthenticated request to admin dashboard is denied', function (): void {
-            $this->get('/admin/dashboard')->assertStatus(401);
+            $this->get('/admin/dashboard')->assertRedirect(route('admin.login'));
         });
 
     });
@@ -58,7 +58,7 @@ describe('F09 portal route boundaries', function (): void {
 
             $this->actingAs($account, 'staff')
                 ->get('/admin/dashboard')
-                ->assertStatus(401);
+                ->assertRedirect(route('admin.login'));
         });
 
         it('staff session is anonymous in the guardian portal', function (): void {
@@ -66,11 +66,11 @@ describe('F09 portal route boundaries', function (): void {
 
             $this->actingAs($account, 'staff')
                 ->get('/guardian/dashboard')
-                ->assertStatus(401);
+                ->assertRedirect(route('guardian.login'));
         });
 
         it('unauthenticated request to staff dashboard is denied', function (): void {
-            $this->get('/staff/dashboard')->assertStatus(401);
+            $this->get('/staff/dashboard')->assertRedirect(route('staff.login'));
         });
 
     });
@@ -90,7 +90,7 @@ describe('F09 portal route boundaries', function (): void {
 
             $this->actingAs($account, 'guardian')
                 ->get('/admin/dashboard')
-                ->assertStatus(401);
+                ->assertRedirect(route('admin.login'));
         });
 
         it('guardian session is anonymous in the staff portal', function (): void {
@@ -98,11 +98,11 @@ describe('F09 portal route boundaries', function (): void {
 
             $this->actingAs($account, 'guardian')
                 ->get('/staff/dashboard')
-                ->assertStatus(401);
+                ->assertRedirect(route('staff.login'));
         });
 
         it('unauthenticated request to guardian dashboard is denied', function (): void {
-            $this->get('/guardian/dashboard')->assertStatus(401);
+            $this->get('/guardian/dashboard')->assertRedirect(route('guardian.login'));
         });
 
     });

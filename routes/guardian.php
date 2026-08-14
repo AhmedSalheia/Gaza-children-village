@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Guardian\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,28 +10,34 @@ use Illuminate\Support\Facades\Route;
 | Parent/Student Portal Routes
 |--------------------------------------------------------------------------
 |
-| All routes in this file are prefixed with /guardian and named guardian.*.
-| The user-facing name is "Parent/Student Portal", but the authenticated
-| account belongs to a parent or authorized guardian, never to a student.
+| All routes are prefixed with /guardian and named guardian.*.
+| The user-facing name is "Parent/Student Portal"; the authenticated account
+| belongs to a parent or authorized guardian, never to a student.
 |
-| Protected routes require the 'guardian' guard, which authenticates only
-| GuardianAccount models. Guardian sessions are anonymous in the admin and
-| staff portals.
+| Protected routes require the 'guardian' guard (GuardianAccount only).
+| Guardian sessions are anonymous in the admin and staff portals.
 |
-| Guardian authentication grants no student access until a future verified
-| guardian-student relationship exists (deferred to F13/F15).
-|
-| Login, logout, and account-management routes are deferred to F10/F11.
+| Guardian authentication grants a guardian account actor identity only.
+| No student records are accessible until a future verified guardian-student
+| relationship exists (deferred to F13/F15).
 |
 */
 
 Route::prefix('guardian')->name('guardian.')->group(function (): void {
 
-    // Protected dashboard — requires Guardian Portal authentication.
-    Route::middleware(['auth:guardian'])->group(function (): void {
+    // ── Login / logout (F10) ─────────────────────────────────────────────
+
+    Route::get('/login', [LoginController::class, 'show'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+    // ── Protected routes ─────────────────────────────────────────────────
+
+    Route::middleware(['auth:guardian', 'portal.version:guardian'])->group(function (): void {
         Route::get('/dashboard', fn () => view('portals.guardian.dashboard'))->name('dashboard');
     });
 
-    // Unprotected placeholder (for smoke tests).
+    // ── Unprotected smoke-test placeholder ────────────────────────────────
+
     Route::get('/', static fn () => response()->noContent())->name('placeholder');
 });

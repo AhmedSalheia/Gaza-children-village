@@ -6,3 +6,4 @@
 - [F08 boundary patterns](f08-boundary-patterns.md) — Pest toContain is variadic (no message param); docblock @param cross-module types need double-backslash; F06 forward guards must be removed on F08 merge.
 - [F08 feature guard test setup](f08-feature-guard-setup.md) — FeatureModule.code not fillable; use FeatureModuleReferenceSeeder via string-var; toThrow(Throwable::class) broken, use \Exception::class.
 - [F09 account topology](f09-account-topology.md) — Three-table accounts, lifecycle-aware provider, App\Models\ scanner pitfall, boundary guard updates on new-table merges.
+- [F10 portal authentication](f10-portal-auth.md) — HMAC throttle keys, session-version revocation, guard cache reset in tests, append-only events, PortalAuthConfig factory pattern.

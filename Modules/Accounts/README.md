@@ -103,11 +103,111 @@ No login, logout, recovery, or account-management routes exist in F09. These are
 
 ### Deferred to later phases
 
-- F10: Login, logout, throttling, and audit events
 - F11: Password setup and recovery (password broker tables exist but no endpoints)
 - F13: StaffProfile model and StaffAccount profile linkage
 - F15: Person/guardian profile linkage for GuardianAccount
 - F17: Roles and permissions catalogue
+
+---
+
+## F10 — Portal login, logout, throttling, and authentication events
+
+### Login flow
+
+Each portal exposes a thin `LoginController` in `app/Http/Controllers/{Admin,Staff,Guardian}/` (root namespace, not inside `Modules/`). Controllers delegate entirely to `AuthenticatePortalAccount`, which owns all credential logic.
+
+Portal-specific configuration (guard name, field name, route targets) is encapsulated in `PortalAuthConfig` data objects with factory methods `::admin()`, `::staff()`, and `::guardian()`. Guard names and redirect targets never come from request input.
+
+Login field per portal:
+- Admin and Staff portals: `username`
+- Guardian portal: `login_identifier`
+
+### Authentication action (`AuthenticatePortalAccount`)
+
+The action performs these steps in sequence on every login POST:
+
+1. **Throttle check** — reject immediately if either rate limiter is hit; record `LoginThrottled` event and return `LoginResult::throttled()`
+2. **Identifier lookup** — `retrieveByCredentials` queries by identifier only
+3. **Password check** — `Hash::check` separately against the retrieved model
+4. **Lifecycle check** — `canAuthenticate()` separately against the model
+5. **Session login** — `Auth::guard()->login($account)`
+6. **Session version stamp** — write `auth_version_{guard}` to session
+7. **Session regeneration** — `$request->session()->regenerate()`
+8. **Throttle clear** — clear both rate-limiter counters
+9. **Event** — record `LoginSucceeded` event
+
+Steps 3 and 4 produce identical public error messages regardless of which check fails, so neither account existence nor account state is disclosed to the caller.
+
+### Throttle design (`BuildLoginThrottleKey`)
+
+Two independent rate limiters per login attempt:
+
+| Limiter | Key basis | Default | Env override |
+|---|---|---|---|
+| Per-identifier | portal + HMAC(identifier) | 5/min | `THROTTLE_MAX_IDENTIFIER_ATTEMPTS` |
+| Per-IP | portal + HMAC(IP) | 30/min | `THROTTLE_MAX_IP_ATTEMPTS` |
+
+Raw identifiers and raw IPs never appear in cache keys — they are HMAC-SHA256 hashed with `APP_KEY` as the secret. Event fingerprints use the first 16 hex characters of the same hash for correlation without leaking the input.
+
+Configuration lives in `config/portal-auth.php` and is fully env-overridable.
+
+### Session revocation (`RevokePortalAccountSessions`)
+
+Each account table has an `auth_version` column (unsigned int, default 0). Revocation increments this in a DB transaction and records a `SessionsRevoked` event.
+
+`VerifyPortalSessionVersion` middleware runs on every protected request after `auth:*`. It compares `auth_version_{guard}` stored in the session against the account's current DB value. On mismatch:
+
+- `Auth::guard($guard)->logout()` — removes only that guard's session keys
+- `$request->session()->forget($sessionKey)` — clears the version key
+- `$request->session()->regenerateToken()` — rotates the CSRF token
+- Redirect to the portal login page
+
+Other portal guards in the same browser session are completely unaffected. The middleware alias `portal.version` is registered in `bootstrap/app.php`. Usage: `Route::middleware(['auth:admin', 'portal.version:admin'])`.
+
+### Logout (`LogoutPortalAccount`)
+
+Guard-specific logout: `Auth::guard($portal)->logout()` removes only that portal's session keys. The CSRF token is rotated; the session itself is not invalidated (other portal sessions remain valid). A `Logout` event is recorded.
+
+### Authentication events (`AuthenticationEvent`)
+
+Append-only model (`UPDATED_AT = null`) stored in `authentication_events`:
+
+| Column | Purpose |
+|---|---|
+| `id` | Auto-increment PK |
+| `portal` | `admin` / `staff` / `guardian` |
+| `event_type` | `LoginSucceeded` / `LoginFailed` / `LoginThrottled` / `Logout` / `SessionsRevoked` |
+| `account_id` | Nullable — null for unknown-identifier failures |
+| `account_type` | Nullable — maps to account model class |
+| `identifier_fingerprint` | First 16 hex chars of HMAC(identifier) — correlates attempts without storing the raw value |
+| `ip_fingerprint` | First 16 hex chars of HMAC(IP) |
+| `failure_category` | Nullable enum: `BadCredentials` / `AccountNotActive` / `Throttled` |
+| `metadata` | Nullable JSON for future extension |
+| `created_at` | Only timestamp; no `updated_at` |
+
+**Privacy rules:** raw identifiers, raw IP addresses, and passwords are never stored. The fingerprints allow internal security analysis without retaining PII in the event log.
+
+`RecordAuthenticationEvent` silently absorbs all exceptions — recording failures never change the authentication outcome.
+
+### Unauthenticated request handling
+
+`app/Http/Middleware/Authenticate.php` is updated to redirect to the portal-specific login page by URL prefix:
+
+- `/admin/*` → `admin.login`
+- `/staff/*` → `staff.login`
+- `/guardian/*` → `guardian.login`
+- Anything else → HTTP 401
+
+### Deferred to F11
+
+- Password setup token generation and delivery
+- Password reset endpoints
+- Guardian first-time credential activation
+- Recovery code rate-limiting
+
+### F18 bridge direction
+
+`AuthenticationEvent` rows are the source for future F18 security-analytics queries. The append-only contract and fingerprint columns are deliberately aligned with F18 reporting requirements. No schema changes to `authentication_events` are expected before F18.
 
 ---
 

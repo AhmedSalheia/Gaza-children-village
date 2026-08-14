@@ -8,22 +8,25 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
 
 /**
- * Custom Authenticate middleware.
+ * Portal-aware Authenticate middleware.
  *
- * Overrides the default redirect behavior to return null (401) instead of
- * redirecting to route('login'), which does not exist in F09.
+ * Redirects unauthenticated requests to the appropriate portal login page
+ * based on the URL prefix. The framework stores the originally-requested URL
+ * in the session (url.intended) via redirect()->guest(), so after successful
+ * login the user can be sent back to their intended destination.
  *
- * F10 will introduce portal-specific login routes and update this class to
- * redirect unauthenticated requests to the correct portal login page based
- * on the requested URL prefix.
+ * Non-browser routes (API, unknown prefixes) receive a null redirect, which
+ * the exception handler in bootstrap/app.php converts to a 401 response.
  */
 final class Authenticate extends Middleware
 {
     protected function redirectTo(Request $request): ?string
     {
-        // No login routes exist in F09. Return null to produce a 401 response
-        // rather than a redirect to a non-existent login route.
-        // F10 will add: return match(true) { ... } to redirect to portal login.
-        return null;
+        return match (true) {
+            str_starts_with($request->path(), 'admin/') => route('admin.login'),
+            str_starts_with($request->path(), 'staff/') => route('staff.login'),
+            str_starts_with($request->path(), 'guardian/') => route('guardian.login'),
+            default => null,
+        };
     }
 }

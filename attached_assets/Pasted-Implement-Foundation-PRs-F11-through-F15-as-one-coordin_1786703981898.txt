@@ -1,0 +1,662 @@
+Implement Foundation PRs F11 through F15 as one coordinated assignment.
+
+This is one assignment, but it must be executed as five sequential phases:
+
+1. F11 — Account setup/recovery primitives
+2. F12 — Person-model and privacy ADR
+3. F13 — Person and identifiers
+4. F14 — Contact points and verification
+5. F15 — Staff profiles and institution-assignment history
+
+Run focused verification after each phase. Do not continue to the next phase while the current phase has failing tests.
+
+Do not implement F16 or later work.
+
+Before changing anything, read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- Account-topology ADR from F09
+- Existing F01–F10 implementation, migrations, routes, and tests
+
+Preserve all working F01–F10 behavior.
+
+==================================================
+GLOBAL APPROVED DECISIONS
+==================================================
+
+These decisions apply throughout F11–F15:
+
+- One stable Person represents a real human.
+- Accounts, people, staff profiles, assignments, and positions are separate concepts.
+- Person uses a surrogate internal database ID.
+- National ID is never the Person primary key.
+- A Person may exist without a national ID.
+- A StaffProfile may exist without an account.
+- Creating a Person or StaffProfile never creates an account automatically.
+- StaffAccount links one-to-one with StaffProfile when explicitly provisioned.
+- Guardian account linkage remains deferred until guardian-profile eligibility is designed.
+- National identifiers and contacts are encrypted at rest.
+- Search uses a keyed deterministic lookup fingerprint, never plaintext.
+- Raw identifiers and contact values never enter logs, ordinary audit payloads, URLs, cache keys, or exceptions.
+- Gaza civil-registry data is advisory and must never silently overwrite trusted system records.
+- Civil-registry lookup/import is not implemented in this bundle.
+- A staff member may be assigned to only one institution at a time.
+- Historical staff assignments are retained.
+- Transfers close the previous assignment and create a new one atomically.
+- F16 will add semester positions, responsibilities, and period scopes.
+- F17 will add the permission catalogue.
+- F18 will add generic append-only audit infrastructure.
+- Reuse existing authorization/audit/transition contracts where they already exist; do not create competing foundations.
+
+==================================================
+PHASE F11 — SETUP AND RECOVERY PRIMITIVES
+==================================================
+
+Implement Accounts-owned secure setup/recovery primitives for all three account portals.
+
+Do not add a real email, SMS, or WhatsApp provider yet.
+
+Create a delivery interface with:
+
+- Production-safe null/unavailable implementation
+- Test fake
+- Clear extension point for future email/SMS delivery
+
+Guardian self-service recovery must remain disabled until guardian legal eligibility and person linkage are approved.
+
+Challenge purposes:
+
+- initial_password_setup
+- password_reset
+
+Challenge requirements:
+
+- Portal-bound
+- Account-bound
+- Purpose-bound
+- Cryptographically random
+- Stored only as a secure hash
+- Short-lived
+- Single-use
+- Attempt-limited
+- Revocable
+- Invalidated after password change
+- Invalidated when the account becomes suspended, locked, or revoked
+
+Approved defaults:
+
+- 30-minute lifetime
+- Maximum 5 verification attempts
+- Plaintext token returned only to the test delivery fake
+- Never return a plaintext token from a production application response
+
+Password policy:
+
+- Minimum 10 characters
+- Maximum 128 characters
+- Must contain letters and numbers
+- Password confirmation required
+- Hash using Laravel’s configured secure password hasher
+- Do not log password validation input
+- Make policy centrally configurable/testable
+
+Provide application actions for:
+
+- Request account setup
+- Request password recovery
+- Validate a challenge
+- Complete password setup/reset
+- Revoke outstanding account challenges
+
+All request operations return the same generic public outcome whether:
+
+- Account exists or not
+- Identifier is valid or invalid
+- Account is eligible or ineligible
+- Contact exists or does not exist
+- Account is active, suspended, locked, or revoked
+
+Only a verified, active, explicitly recovery-eligible ContactPoint may eventually receive recovery. Define the eligibility contract now and connect it during F14.
+
+Password reset must:
+
+- Rotate the password securely
+- Consume the challenge
+- Revoke other active challenges
+- Revoke existing sessions using the F10 mechanism
+- Emit the existing Accounts-owned security event without secrets
+
+Do not add public recovery pages until a delivery provider is configured. Application services and synthetic tests are sufficient for F11.
+
+F11 tests:
+
+- Existing and unknown identifiers receive identical public responses
+- Tokens are hashed
+- Tokens are portal/account/purpose-bound
+- Tokens expire
+- Tokens are single-use
+- Attempts are limited
+- Account-state changes invalidate tokens
+- Password reset revokes account sessions
+- No password/token appears in logs or events
+- Guardian self-service recovery remains unavailable
+- Cross-portal token use fails
+
+Run the focused F11 tests and all existing F01–F10 tests before F12.
+
+==================================================
+PHASE F12 — PERSON-MODEL ADR AND PRIVACY
+==================================================
+
+Create the canonical Person Model and Privacy Classification ADR before creating F13 migrations.
+
+Approve this model direction:
+
+Person:
+
+- Stable surrogate internal ID
+- full_name_ar, required
+- full_name_en, nullable
+- birth_date, nullable
+- birth_date_precision: exact, month, year, unknown
+- timestamps
+- No institution, semester, account, role, or position fields
+
+Do not add gender/sex, marital status, religion, disability, health, address, deceased state, or civil-registry fields to Person in this Foundation bundle. Those require domain-specific decisions.
+
+PersonIdentifier:
+
+- Separate child entity
+- Person may have zero or more
+- Identifier type is centralized
+- Initial supported types:
+  - ps_national_id
+  - passport
+  - other
+- Country/issuer metadata
+- Encrypted value
+- Deterministic lookup fingerprint
+- Masked display representation
+- Verification status/history
+- Current/superseded state
+- Effective dates where applicable
+
+Palestinian national-ID normalization:
+
+- Convert supported Arabic digits to ASCII
+- Remove spaces and hyphens
+- Require exactly nine numeric digits
+- Do not assume the civil registry is authoritative
+- Do not implement automatic checksum rejection unless an approved test specification exists
+
+Privacy classification must define treatment for every proposed field across:
+
+- Storage
+- Display
+- Search
+- Mutation
+- Logging
+- Authentication use
+- Audit
+- Export
+- Central access
+- Institution-scoped access
+
+Suggested classifications:
+
+- Internal: surrogate IDs, lifecycle state
+- Personal: names and birth-date information
+- Restricted: full national/passport identifiers
+- Restricted contact: phone and email values
+- Security secret: passwords, challenges, tokens, session secrets
+
+The ADR must explicitly document:
+
+- One Person may later have staff, guardian, student, or beneficiary profiles
+- Different portal accounts do not duplicate Person
+- Names never trigger automatic merges
+- Missing national ID is allowed
+- Duplicate detection produces a review condition, never an automatic merge
+- Gaza civil-registry lookup is advisory
+- Civil-registry imports/lookups are deferred
+- Identifier correction is historical, not overwrite-only
+- Full identifier visibility requires explicit permission
+- F17/F19 will complete authorization integration
+
+Add synthetic normalization and masking test vectors to the ADR/test fixtures.
+
+F12 is documentation/design only. Do not create F13 tables before the ADR is complete.
+
+==================================================
+PHASE F13 — PERSON AND IDENTIFIERS
+==================================================
+
+Implement Person and PersonIdentifier in Modules/People according to the approved F12 ADR.
+
+Person requirements:
+
+- Stable surrogate primary key
+- Required Arabic full name
+- Optional English full name
+- Optional birth date and precision
+- Must survive identifier correction/removal
+- Must not belong directly to an institution or semester
+- No soft deletion
+- No automatic merging
+
+PersonIdentifier requirements:
+
+- Belongs to Person
+- Type, issuer, and country metadata
+- Encrypted identifier value
+- Deterministic keyed lookup fingerprint
+- Safe masked representation
+- Verification state
+- Current/superseded state
+- Effective/history metadata
+- Timestamps
+
+Security:
+
+- Use Laravel’s reviewed encryption facilities.
+- Use a dedicated configured lookup-key secret for deterministic HMAC/fingerprints.
+- Do not reuse raw APP_KEY text as a database lookup value.
+- Fail clearly and safely if required production secrets are absent.
+- Never expose the encrypted storage column through serialization.
+- Default model serialization returns only masked values where allowed.
+- Raw values may be revealed only through an explicit authorized service.
+- Do not include raw values in validation exceptions.
+
+Uniqueness:
+
+- A normalized current identifier cannot silently belong to two people.
+- Enforce uniqueness under concurrent writes at the database level where supported.
+- Application checks alone are insufficient.
+- Historical corrected values remain reserved/reviewable rather than silently reassigned.
+- A collision must return a domain conflict requiring human review.
+- Never automatically merge people.
+
+Identifier correction:
+
+- Must require actor, source, and reason.
+- Must create a new identifier record/version.
+- Must mark the previous record superseded.
+- Must preserve old/new record references in immutable correction history.
+- History stores references and safe metadata, not plaintext identifiers.
+- Correction is atomic.
+- Stable Person ID remains unchanged.
+
+Provide framework-independent actions/queries for:
+
+- Create Person
+- Add PersonIdentifier
+- Find Person by normalized identifier using authorized lookup
+- Return masked identifier
+- Explicitly reveal identifier when authorized
+- Correct/supersede identifier
+- List identifier history
+
+Authorization:
+
+- Use existing fail-closed authorization contracts.
+- No public web routes.
+- Cross-institution/full-identifier access defaults to denied.
+- Tests may use explicit allowing/denying authorization fakes.
+- Do not start the F17 permission catalogue.
+
+F13 tests:
+
+- Person exists without an identifier
+- Stable Person survives correction
+- Arabic-digit normalization
+- Spaces/hyphens normalization
+- Invalid format rejection
+- Concurrent uniqueness protection
+- Collision does not merge
+- Masking
+- Encryption at rest
+- Raw values excluded from serialization/logging
+- Unauthorized reveal fails
+- Correction requires reason/actor
+- Correction preserves history
+- Names alone never merge people
+
+Run focused and complete tests before F14.
+
+==================================================
+PHASE F14 — CONTACT POINTS AND VERIFICATION
+==================================================
+
+Implement ContactPoint in Modules/People.
+
+Supported types:
+
+- phone
+- email
+
+ContactPoint fields/concepts:
+
+- person_id
+- type
+- encrypted value
+- deterministic lookup fingerprint
+- masked representation
+- ownership classification
+- lifecycle state
+- verified_at
+- verification method
+- recovery_eligible
+- effective/history metadata
+- timestamps
+
+Approved ownership values:
+
+- personal
+- shared_household
+- organization_managed
+
+Approved lifecycle states:
+
+- pending
+- verified
+- inactive
+
+Rules:
+
+- A Person may have multiple phone/email contacts.
+- A phone number may legitimately be shared by family members.
+- Do not enforce global ownership uniqueness.
+- Prevent duplicate active contact rows for the same Person/type/value.
+- Contacts are never moved silently from one Person to another.
+- Changing a value creates a new record and inactivates/supersedes the old one.
+- Contact history remains readable.
+- Unverified or inactive contacts cannot be recovery eligible.
+- Recovery eligibility is explicit; verification alone does not imply eligibility.
+- Organization-managed contacts are not recovery eligible by default.
+- Shared-household contacts require explicit verified control before becoming recovery eligible.
+- Manual verification requires an actor and reason.
+- Challenge verification uses the F11 challenge primitives.
+- Deactivation immediately removes recovery eligibility.
+
+Normalization:
+
+Email:
+
+- Trim surrounding whitespace
+- Normalize domain casing
+- Validate safely
+- Preserve enough correctly normalized form for delivery
+
+Phone:
+
+- Store/deliver in explicit international format
+- Accept `+970` and other valid explicitly supplied country codes
+- Do not silently guess ambiguous local-country codes
+- Do not reject a valid `+972` number merely because the organization is in Palestine
+- Keep phone normalization in a dedicated tested service
+
+Connect F11 recovery eligibility to F14 contacts:
+
+- Admin/staff recovery primitives may target only verified, active, recovery-eligible contacts linked through an approved account/profile relationship.
+- Guardian self-service remains disabled.
+- No real delivery provider is added.
+- Test fake may capture delivery.
+
+Provide actions/queries for:
+
+- Add contact
+- Verify contact
+- Mark/unmark recovery eligibility
+- Deactivate contact
+- Correct/replace contact
+- List masked contacts
+- Explicit authorized reveal
+- Resolve eligible recovery destinations
+
+F14 tests:
+
+- Multiple independent contacts
+- Shared household phone support
+- Per-person duplicate prevention
+- Independent verification
+- Verification history
+- Unverified recovery denial
+- Inactive recovery denial
+- Ineligible recovery denial
+- Deactivation revokes eligibility
+- Correction preserves history
+- Unauthorized reveal/change fails
+- Raw values absent from logs/events
+- F11 recovery selects only eligible contacts
+
+Run focused and complete tests before F15.
+
+==================================================
+PHASE F15 — STAFF PROFILES AND ASSIGNMENTS
+==================================================
+
+Implement StaffProfile and effective-dated institution-assignment history in Modules/Staff.
+
+StaffProfile:
+
+- Belongs one-to-one to Person
+- Uses its own surrogate ID
+- Has a unique stable staff_code
+- Has employment lifecycle state
+- May exist without StaffAccount
+- May exist without a current institution assignment
+- Does not contain passwords, permissions, roles, semester positions, or period scopes
+
+Approved employment states:
+
+- active
+- inactive
+- ended
+
+Minimal fields:
+
+- person_id
+- staff_code
+- employment_status
+- hired_on, nullable
+- ended_on, nullable
+- timestamps
+
+Do not add salary, contracts, HR notes, bank data, health data, or documents.
+
+StaffAccount linkage:
+
+- Add nullable staff_profile_id to StaffAccount
+- One StaffProfile may have at most one StaffAccount
+- One StaffAccount links to at most one StaffProfile
+- Linking is explicit
+- StaffProfile creation never creates an account
+- Non-login staff and guards remain valid StaffProfiles
+- Account suspension/revocation does not alter employment history
+- Employment ending must fail closed for staff portal operational access
+
+StaffInstitutionAssignment:
+
+- staff_profile_id
+- institution_id
+- started_on
+- ended_on, nullable
+- closure/transfer reason where required
+- source actor/context
+- timestamps
+
+Date semantics:
+
+- started_on and ended_on are inclusive calendar dates
+- Assignments must not overlap
+- A staff member may work at only one institution on any date
+- Future scheduled assignments are allowed if they do not overlap
+- Same-institution responsibilities will be modeled as positions in F16
+- Do not create duplicate assignments to simulate multiple responsibilities
+
+Transfer workflow:
+
+- Requires current assignment
+- Requires a different target institution
+- Requires transfer effective date
+- Old assignment ends on the day before the transfer date
+- New assignment begins on the transfer date
+- Entire operation is atomic
+- Requires actor and reason
+- Preserves the old assignment
+- Never repoints the historical row
+- Target institution must be active
+- Concurrent transfers/assignments must not create overlaps
+
+If transferring on the assignment’s original start date cannot produce a valid prior interval, reject it and require correction/cancellation through a future controlled workflow.
+
+Database enforcement:
+
+- Use PostgreSQL-native exclusion/range protection where safely compatible with the repository.
+- Maintain SQLite-compatible tests where required.
+- Also use transactions and locking.
+- Do not rely solely on “check then insert.”
+- Migration rollback must be safe.
+
+Provide actions/queries for:
+
+- Create StaffProfile
+- Link StaffAccount explicitly
+- Unlink/revoke account linkage according to existing account rules
+- Start institution assignment
+- End institution assignment
+- Transfer staff atomically
+- Resolve assignment on a date
+- List complete assignment history
+- List current staff for an institution
+- List unassigned staff
+
+Authorization:
+
+- Institution A cannot read restricted StaffProfile/assignment data for Institution B.
+- Central read-only access cannot mutate assignments.
+- Mutations require explicit authorization using existing fail-closed boundaries.
+- Do not introduce role-name checks.
+- Do not start F17 permissions.
+- F16 will connect assignments to semesters, positions, and periods.
+
+History/audit:
+
+- Reuse existing immutable transition/audit contracts where present.
+- Assignment start/end/transfer requires actor and reason as appropriate.
+- Preserve immutable transition history sufficient to bridge into F18.
+- Do not create a competing generic audit framework.
+
+F15 tests:
+
+- One Person has at most one StaffProfile
+- StaffProfile exists without account
+- StaffProfile exists without assignment
+- Account creation is not automatic
+- Explicit one-to-one StaffAccount linkage
+- Non-login guard/staff profile works
+- One institution at a time
+- Same-date and partial overlaps rejected
+- Concurrent overlap attempts rejected
+- Future non-overlapping assignment accepted
+- Transfer atomically closes old and opens new
+- Failed transfer rolls back completely
+- Historical assignments remain readable
+- Institution A cannot access restricted Institution B records
+- Central read-only cannot mutate
+- Employment ending fails closed for operational access
+- No F16 positions or period scopes were added
+
+==================================================
+CROSS-PHASE INTEGRATION TESTS
+==================================================
+
+Add tests proving:
+
+- A Person can have StaffProfile plus StaffAccount without identity duplication.
+- A Person can exist with no account or profile.
+- StaffProfile creation never creates StaffAccount.
+- StaffAccount authentication alone grants no institutional access.
+- Active StaffAccount plus active StaffProfile but no assignment grants no institutional access.
+- Assignment organization/institution chains use existing F02/F03/F04 relationships.
+- National ID correction does not change Person, StaffProfile, or StaffAccount IDs.
+- Account recovery cannot use an unverified contact.
+- Account recovery cannot use an inactive contact.
+- Account recovery never searches civil-registry data.
+- Raw national IDs, contacts, passwords, and tokens are absent from logs and security events.
+- Existing F01–F10 tests remain unchanged and passing.
+
+==================================================
+EXPLICIT EXCLUSIONS
+==================================================
+
+Do not implement:
+
+- Civil-registry tables, imports, or API lookup
+- Excel importing
+- Students
+- Guardian profiles or guardian-student relationships
+- Guardian self-service recovery
+- Real email/SMS/WhatsApp delivery
+- Person automatic merge
+- Facial/biometric identity
+- Staff roles or permission grants
+- Semester positions
+- Period scopes
+- Class, subject, or course assignments
+- Attendance
+- Payroll, contracts, or HR case notes
+- Generic F18 audit infrastructure
+- Account/staff management UI
+- F16 or later work
+
+==================================================
+VERIFICATION AND CHECKPOINTS
+==================================================
+
+After each phase:
+
+1. Run its focused tests.
+2. Run all previously completed Foundation tests.
+3. Run Pint on changed files.
+4. Run database migrations from a clean database.
+5. Run migration rollback/refresh tests where supported.
+6. Stop and report if verification fails.
+
+After F15, run every command required by AGENTS.md, including:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Inspect the final diff for:
+
+- F11–F15 only
+- No plaintext secrets or personal identifiers
+- No generic User authentication
+- No unauthorized module dependency
+- No F16 positions or period scopes
+- No real personal data in fixtures
+- No destructive modification of existing migrations
+
+Final report must be separated by F11, F12, F13, F14, and F15 and include:
+
+- Decisions implemented
+- Migrations/models/actions added
+- Security and privacy behavior
+- Integration between phases
+- Tests and assertion counts
+- Migration verification
+- Any blockers or consciously deferred items
+- Confirmation that F16 and later work were not started

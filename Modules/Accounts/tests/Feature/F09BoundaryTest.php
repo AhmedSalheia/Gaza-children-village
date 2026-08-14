@@ -189,29 +189,10 @@ describe('F09 module boundary and architecture rules', function (): void {
 
     it('documents deferred StaffProfile integration test')->todo();
 
-    describe('no F10 or later routes or controllers exist', function (): void {
+    describe('F10 route architecture is in place', function (): void {
 
-        it('no login routes exist in F09', function (): void {
-            $routes = collect(Route::getRoutes())
-                ->map(fn ($r) => $r->getName())
-                ->filter()
-                ->values();
-
-            foreach (['admin.login', 'staff.login', 'guardian.login', 'login'] as $name) {
-                expect(in_array($name, $routes->all()))->toBeFalse("Route '$name' must not exist in F09");
-            }
-        });
-
-        it('no logout routes exist in F09', function (): void {
-            $routes = collect(Route::getRoutes())
-                ->map(fn ($r) => $r->getName())
-                ->filter()
-                ->values();
-
-            foreach (['admin.logout', 'staff.logout', 'guardian.logout'] as $name) {
-                expect(in_array($name, $routes->all()))->toBeFalse("Route '$name' must not exist in F09");
-            }
-        });
+        // These forward-guard tests were removed when F10 was implemented.
+        // F10BoundaryTest owns the definitive route and controller assertions.
 
         it('Accounts module has no controllers or Livewire components', function (): void {
             $controllerDir = module_path('Accounts', 'app/Http/Controllers');

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\VerifyPortalSessionVersion;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,10 +20,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Replace the default Authenticate middleware with the portal-aware
-        // version that returns null from redirectTo (handled below).
         $middleware->alias([
+            // Portal-aware Authenticate middleware: redirects unauthenticated
+            // requests to the correct portal login page based on URL prefix.
             'auth' => Authenticate::class,
+
+            // Session-version middleware: rejects sessions whose stored
+            // auth_version no longer matches the account's current value,
+            // enabling server-side session revocation per portal.
+            'portal.version' => VerifyPortalSessionVersion::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -30,10 +36,12 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
 
-        // Return 401 for unauthenticated requests instead of redirecting to a
-        // login route. No portal login routes exist in F09. F10 will update this
-        // to redirect to the correct portal-specific login page.
+        // Return 401 for routes that cannot determine a login redirect (e.g. API
+        // routes or unknown URL prefixes). Portal routes redirect to their own
+        // login page via Authenticate::redirectTo() above.
         $exceptions->renderable(function (AuthenticationException $e, Request $request) {
-            return response('Unauthenticated.', 401);
+            if ($e->redirectTo($request) === null) {
+                return response('Unauthenticated.', 401);
+            }
         });
     })->create();

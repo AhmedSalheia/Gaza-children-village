@@ -1,0 +1,376 @@
+Inspect the repository and read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- The F09 account-topology ADR
+- Existing F01–F09 implementation and tests
+
+Implement F10 only: portal login, logout, throttling, session revocation, and authentication security events.
+
+Preserve F01–F09. Do not redesign the approved three-account topology.
+
+==================================================
+1. EXISTING F09 TOPOLOGY
+==================================================
+
+Reuse exactly:
+
+- AdministrativeAccount → admin guard
+- StaffAccount → staff guard
+- GuardianAccount → guardian guard
+- Separate providers
+- Separate password brokers
+- Separate portal route groups
+- Separate protected layouts
+- Central account lifecycle enforcement
+- Existing identifier normalization
+- Existing F02 actor-reference integration
+
+Do not reintroduce Laravel’s generic User model.
+
+Do not merge account tables, providers, guards, or sessions.
+
+==================================================
+2. LOGIN ROUTES AND SCREENS
+==================================================
+
+Implement separate login experiences:
+
+Admin Portal:
+
+- GET /admin/login
+- POST /admin/login
+- POST /admin/logout
+
+Staff Portal:
+
+- GET /staff/login
+- POST /staff/login
+- POST /staff/logout
+
+Parent/Student Portal:
+
+- GET /guardian/login
+- POST /guardian/login
+- POST /guardian/logout
+
+Use the repository’s established route prefixes and names if they differ slightly.
+
+Requirements:
+
+- Each login handler uses only its portal’s guard and provider.
+- Admin and staff accept their approved usernames.
+- Guardian accepts the existing opaque login identifier.
+- Do not label or persist it as a national ID yet.
+- Guardian national-ID resolution remains deferred until approved person identifiers exist.
+- Already authenticated users may be redirected only within their current portal.
+- Validate intended redirects to prevent open redirects.
+- No “remember me” feature in F10.
+- No social login, MFA, PIN, email login, or phone login.
+
+Use minimal Blade/Livewire interfaces consistent with the existing layouts. Do not begin the final F20–F22 design system.
+
+==================================================
+3. AUTHENTICATION BEHAVIOR
+==================================================
+
+For every portal:
+
+- Only active accounts may log in.
+- Pending, suspended, locked, and revoked accounts are denied.
+- Unknown identifiers and invalid passwords produce the same public response.
+- Account-state failures must not disclose that the account exists.
+- Successful authentication regenerates the session identifier.
+- Failed authentication must never place an account into the session.
+- Authentication through one guard must not authenticate another guard.
+- Staff authentication grants no institution access by itself.
+- Guardian authentication grants no student access by itself.
+
+Use a single generic public error such as:
+
+“The provided credentials could not be verified.”
+
+Do not reveal:
+
+- Whether the account exists
+- Whether the password was wrong
+- Whether the account is pending
+- Whether the account is suspended
+- Whether the account is locked
+- Whether the account is revoked
+
+Passwords and submitted credentials must not appear in logs, exceptions, events, session data, or validation dumps.
+
+==================================================
+4. RATE LIMITING
+==================================================
+
+Add independent login throttling for all three portals.
+
+Use configurable defaults:
+
+- 5 attempts per minute for the combination of portal, normalized identifier fingerprint, and IP address
+- 30 attempts per minute for the combination of portal and IP address
+
+Requirements:
+
+- Admin failures must not consume staff or guardian limits.
+- Staff failures must not consume admin or guardian limits.
+- Guardian failures must not consume admin or staff limits.
+- Never use a raw username, guardian identifier, or national ID inside the cache key.
+- Generate a deterministic keyed fingerprint/HMAC for limiter keys.
+- Successful login clears only the corresponding identifier-specific limiter.
+- Return a generic throttled response.
+- Do not expose whether the identifier exists.
+- Do not automatically change an account’s status to locked.
+- Persistent lockout policy remains deferred.
+
+Make the thresholds and decay period configurable and testable without weakening production defaults.
+
+==================================================
+5. LOGOUT
+==================================================
+
+Implement portal-specific logout.
+
+Requirements:
+
+- Logout uses the explicitly named portal guard.
+- It removes only that portal’s authentication.
+- It must not silently log out another portal account in the same browser session.
+- Regenerate the CSRF token.
+- Safely rotate/migrate session state as required.
+- Redirect only to that portal’s login page.
+- Repeated logout requests fail safely.
+- Logout requires POST and CSRF protection.
+- Do not add GET logout routes.
+
+==================================================
+6. SESSION REVOCATION PRIMITIVE
+==================================================
+
+Implement an Accounts-owned service that can revoke all sessions for one specific portal account.
+
+Requirements:
+
+- Revoking an admin account invalidates admin authentication only.
+- Revoking a staff account invalidates staff authentication only.
+- Revoking a guardian account invalidates guardian authentication only.
+- Other portal guards in the same browser must remain unaffected.
+- Revoked sessions must fail on their next protected request.
+- The implementation must work with the project’s configured Laravel session driver.
+- Do not parse or mutate serialized Laravel session payloads unsafely.
+
+Prefer a portal/account session-version mechanism if compatible with F09:
+
+- Store a session/authentication version on the account.
+- Store the authenticated version in the portal-specific session state.
+- Protected portal middleware compares both versions.
+- Incrementing the account version invalidates all sessions for that account.
+- A mismatch logs out only the affected guard.
+
+If F09 already established a safe equivalent, extend it rather than adding a second mechanism.
+
+Do not create account-management routes or UI for revocation yet. Test the application service directly.
+
+==================================================
+7. AUTHENTICATION SECURITY EVENTS
+==================================================
+
+Add an Accounts-owned append-only AuthenticationEvent model/table.
+
+This is a narrow security-event stream, not the generic F18 business-audit infrastructure.
+
+Capture:
+
+- portal
+- event type
+- account reference, nullable when the account is unknown
+- safe identifier fingerprint, never the raw submitted identifier
+- occurred_at
+- success/failure result
+- safe failure category
+- request/correlation identifier where available
+- privacy-conscious request metadata
+- timestamps only if required by repository convention
+
+Supported event types:
+
+- login_succeeded
+- login_failed
+- login_throttled
+- logout
+- sessions_revoked
+
+Rules:
+
+- Events are append-only.
+- No update or delete application actions.
+- Never record passwords, submitted credentials, session IDs, CSRF tokens, reset tokens, national IDs, or raw cookies.
+- Truncate or normalize user-agent data if retained.
+- Treat IP addresses according to the project’s privacy conventions; hash or minimize them if raw storage is not explicitly approved.
+- Event persistence failure must not accidentally authenticate a failed request.
+- Define and test transaction/error behavior for successful login event persistence.
+
+Create an abstraction that F18 can later bridge into the system-wide audit infrastructure without rewriting authentication.
+
+==================================================
+8. CONTROLLERS AND ACTIONS
+==================================================
+
+Keep portal controllers thin.
+
+Create Accounts-owned application actions/services for:
+
+- AuthenticatePortalAccount
+- LogoutPortalAccount
+- RevokePortalAccountSessions
+- RecordAuthenticationEvent
+- BuildLoginThrottleKey
+
+Use existing F09 portal and account-type value objects.
+
+Do not duplicate the same authentication algorithm independently in three controllers. Portal-specific differences should be supplied through trusted configuration/contracts.
+
+Never accept a guard, provider, account model, or redirect target directly from untrusted request input.
+
+==================================================
+9. AUTHORIZATION BOUNDARIES
+==================================================
+
+After login:
+
+- Admin authentication provides an admin actor identity only.
+- Staff authentication provides a staff account actor identity only.
+- Staff still requires an eligible future position and F02 operational context before institutional access.
+- Guardian authentication provides a guardian account actor identity only.
+- Guardian receives no student records until a verified, active, portal-eligible relationship exists later.
+- Authentication does not bypass policies.
+- Controllers must not derive organization or institution authority from request parameters.
+
+Keep all currently unavailable business data fail-closed.
+
+==================================================
+10. TESTS
+==================================================
+
+Add comprehensive tests for each portal covering:
+
+- Login page loads
+- Successful login
+- Invalid password
+- Unknown identifier
+- Pending account denial
+- Suspended account denial
+- Locked account denial
+- Revoked account denial
+- Identical public errors for all credential/state failures
+- Session regeneration after successful login
+- Password never appears in session/log/event output
+- Correct dashboard redirect
+- Cross-guard isolation
+- Cross-portal route denial
+- POST-only logout
+- CSRF-protected logout
+- Portal-specific logout
+- Other portal sessions survive logout
+- Independent portal rate limits
+- Identifier-specific throttling
+- IP-level throttling
+- Raw identifiers absent from limiter keys
+- Successful-login limiter clearing
+- Login success event
+- Login failure event
+- Throttled event
+- Logout event
+- Session-revocation event
+- Unknown-account events contain no raw identifier
+- Authentication events cannot be updated/deleted through application services
+- Session revocation invalidates the targeted account
+- Session revocation does not invalidate other portals
+- Authentication grants no institution/student access
+- Generic User remains unused
+
+Use synthetic identities only.
+
+Do not use real staff, guardian, student, or national-ID data.
+
+==================================================
+11. DOCUMENTATION
+==================================================
+
+Update canonical documentation with:
+
+- Portal login/logout flow
+- Generic anti-enumeration behavior
+- Rate-limit keys and defaults
+- Session-revocation mechanism
+- AuthenticationEvent ownership
+- Privacy rules for authentication metadata
+- Authentication versus authorization boundaries
+- F18 integration direction
+- Deferred recovery, MFA, guardian verification, and account administration
+
+Do not mark F11 or later work complete.
+
+==================================================
+12. EXPLICIT EXCLUSIONS
+==================================================
+
+Do not add:
+
+- Password setup or recovery
+- Password-reset emails
+- SMS or WhatsApp delivery
+- MFA or PINs
+- Guardian national-ID storage
+- Person or StaffProfile models
+- Guardian-student relationships
+- Staff positions
+- Roles or permissions
+- Account administration screens
+- Business audit infrastructure
+- Student or institutional data access
+- Seeded production accounts
+- F11 or later work
+
+==================================================
+13. VERIFICATION
+==================================================
+
+Run all commands required by AGENTS.md, including:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Inspect the final route list and verify:
+
+- Exactly three separate login route groups
+- Exactly three POST logout endpoints
+- No GET logout endpoints
+- Each portal uses its exact guard
+- No password recovery endpoints
+- No generic User authentication routes
+- No F11 work
+
+Report:
+
+- Routes and screens added
+- Authentication services added
+- Throttling behavior
+- Session-revocation mechanism
+- Authentication-event schema
+- Tests and assertion counts
+- Any blockers
+- Confirmation that F11 and later work were not started
