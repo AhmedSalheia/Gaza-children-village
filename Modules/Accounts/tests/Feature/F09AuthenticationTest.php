@@ -182,7 +182,7 @@ describe('F09 authentication — lifecycle enforcement', function (): void {
         expect($resolvedUser)->toBeInstanceOf(AdministrativeAccount::class);
 
         // Now suspend the account (simulating admin action between requests)
-        (new SuspendAccount)($account);
+        app(SuspendAccount::class)($account);
 
         // On the next request, retrieveById must return null for non-active accounts
         $resolvedAfterSuspend = Auth::guard('admin')->getProvider()->retrieveById($account->id);
@@ -195,7 +195,7 @@ describe('F09 authentication — lifecycle enforcement', function (): void {
         $resolvedBefore = Auth::guard('admin')->getProvider()->retrieveById($account->id);
         expect($resolvedBefore)->not->toBeNull();
 
-        (new LockAccount)($account);
+        app(LockAccount::class)($account);
 
         $resolvedAfter = Auth::guard('admin')->getProvider()->retrieveById($account->id);
         expect($resolvedAfter)->toBeNull();
@@ -204,7 +204,7 @@ describe('F09 authentication — lifecycle enforcement', function (): void {
     it('account becoming revoked is rejected on subsequent session requests', function (): void {
         $account = AdministrativeAccount::factory()->active()->create();
 
-        (new RevokeAccount)($account);
+        app(RevokeAccount::class)($account);
 
         $resolvedAfter = Auth::guard('admin')->getProvider()->retrieveById($account->id);
         expect($resolvedAfter)->toBeNull();
@@ -227,7 +227,7 @@ describe('F09 lifecycle actions', function (): void {
     it('SuspendAccount sets status to Suspended and records timestamp', function (): void {
         $account = AdministrativeAccount::factory()->active()->create();
 
-        (new SuspendAccount)($account);
+        app(SuspendAccount::class)($account);
         $account->refresh();
 
         expect($account->status)->toBe(AccountStatus::Suspended);
@@ -237,7 +237,7 @@ describe('F09 lifecycle actions', function (): void {
     it('LockAccount sets status to Locked and records timestamp', function (): void {
         $account = AdministrativeAccount::factory()->active()->create();
 
-        (new LockAccount)($account);
+        app(LockAccount::class)($account);
         $account->refresh();
 
         expect($account->status)->toBe(AccountStatus::Locked);
@@ -247,7 +247,7 @@ describe('F09 lifecycle actions', function (): void {
     it('RevokeAccount sets status to Revoked and records timestamp', function (): void {
         $account = AdministrativeAccount::factory()->active()->create();
 
-        (new RevokeAccount)($account);
+        app(RevokeAccount::class)($account);
         $account->refresh();
 
         expect($account->status)->toBe(AccountStatus::Revoked);

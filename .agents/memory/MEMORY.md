@@ -7,3 +7,4 @@
 - [F08 feature guard test setup](f08-feature-guard-setup.md) — FeatureModule.code not fillable; use FeatureModuleReferenceSeeder via string-var; toThrow(Throwable::class) broken, use \Exception::class.
 - [F09 account topology](f09-account-topology.md) — Three-table accounts, lifecycle-aware provider, App\Models\ scanner pitfall, boundary guard updates on new-table merges.
 - [F10 portal authentication](f10-portal-auth.md) — HMAC throttle keys, session-version revocation, guard cache reset in tests, append-only events, PortalAuthConfig factory pattern.
+- [F15 boundary-safe cross-module string pattern](f15-boundary-pattern.md) — Double-backslash strings bypass scanner for non-public surfaces; pint --test vs fix oscillation is known, trust fix mode.

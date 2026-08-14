@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Accounts\Data;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Modules\Accounts\Models\AdministrativeAccount;
 use Modules\Accounts\Models\GuardianAccount;
 use Modules\Accounts\Models\StaffAccount;
@@ -68,5 +69,26 @@ final readonly class PortalAuthConfig
             dashboardRoute: 'guardian.dashboard',
             accountModelClass: GuardianAccount::class,
         );
+    }
+
+    /**
+     * Resolve the portal config from an authenticated account instance.
+     *
+     * Used by lifecycle actions (suspend, lock, revoke) that receive an
+     * account object and need to know which portal it belongs to in order
+     * to revoke portal-bound challenges.
+     *
+     * @throws \InvalidArgumentException for unrecognised account types.
+     */
+    public static function fromAccount(Authenticatable $account): self
+    {
+        return match ($account::class) {
+            AdministrativeAccount::class => self::admin(),
+            StaffAccount::class => self::staff(),
+            GuardianAccount::class => self::guardian(),
+            default => throw new \InvalidArgumentException(
+                'Cannot resolve PortalAuthConfig for unknown account type: '.$account::class
+            ),
+        };
     }
 }

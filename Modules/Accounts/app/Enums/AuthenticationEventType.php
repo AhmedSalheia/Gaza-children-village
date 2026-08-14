@@ -18,6 +18,8 @@ enum AuthenticationEventType: string
     case LoginThrottled = 'login_throttled';
     case Logout = 'logout';
     case SessionsRevoked = 'sessions_revoked';
+    case PasswordSetupCompleted = 'password_setup_completed';
+    case PasswordResetCompleted = 'password_reset_completed';
 
     public function isSuccess(): bool
     {
