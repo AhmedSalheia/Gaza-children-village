@@ -18,24 +18,17 @@ uses(RefreshDatabase::class);
 // ---------------------------------------------------------------------------
 
 it('does not add authentication or permission tables in F06', function (): void {
-    // institution_semesters and operational_periods are legitimate F08 tables;
-    // they are now present and tested in the AcademicCalendar module's F08 boundary test.
-    // This guard has been intentionally removed after F08 was merged.
-    expect(true)->toBeTrue(); // placeholder — keep test count stable
-});
-
-it('does not add authentication or permission tables', function (): void {
+    // institution_semesters and operational_periods are legitimate F08 tables — guard removed after F08.
+    // administrative_accounts, staff_accounts, guardian_accounts are legitimate F09 tables — guard removed after F09.
+    // Only check for permission/role tables which are deferred to F17.
     $forbidden = [
-        'admin_accounts',
-        'staff_accounts',
-        'guardian_accounts',
         'roles',
         'permissions',
         'role_permissions',
     ];
 
     foreach ($forbidden as $table) {
-        expect(Schema::hasTable($table))->toBeFalse("Unexpected auth table: {$table}");
+        expect(Schema::hasTable($table))->toBeFalse("Unexpected auth/permission table: {$table}");
     }
 });
 

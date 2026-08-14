@@ -481,23 +481,23 @@ it('rejects every invalid transition on AcademicYear', function (string $state, 
         ->toThrow(RuntimeException::class);
 })->with([
     // OpenAcademicYear — valid only from Draft
-    'open year: open → open'      => ['open',     OpenAcademicYear::class],
-    'open year: closed → open'    => ['closed',   OpenAcademicYear::class],
-    'open year: archived → open'  => ['archived', OpenAcademicYear::class],
+    'open year: open → open' => ['open',     OpenAcademicYear::class],
+    'open year: closed → open' => ['closed',   OpenAcademicYear::class],
+    'open year: archived → open' => ['archived', OpenAcademicYear::class],
 
     // CloseAcademicYear — valid only from Open
-    'close year: draft → closed'    => ['draft',    CloseAcademicYear::class],
-    'close year: closed → closed'   => ['closed',   CloseAcademicYear::class],
+    'close year: draft → closed' => ['draft',    CloseAcademicYear::class],
+    'close year: closed → closed' => ['closed',   CloseAcademicYear::class],
     'close year: archived → closed' => ['archived', CloseAcademicYear::class],
 
     // ReopenAcademicYear — valid only from Closed (requires non-empty reason)
-    'reopen year: draft → open'    => ['draft',    ReopenAcademicYear::class, ['reason']],
-    'reopen year: open → open'     => ['open',     ReopenAcademicYear::class, ['reason']],
+    'reopen year: draft → open' => ['draft',    ReopenAcademicYear::class, ['reason']],
+    'reopen year: open → open' => ['open',     ReopenAcademicYear::class, ['reason']],
     'reopen year: archived → open' => ['archived', ReopenAcademicYear::class, ['reason']],
 
     // ArchiveAcademicYear — valid only from Closed
-    'archive year: draft → archived'    => ['draft',    ArchiveAcademicYear::class],
-    'archive year: open → archived'     => ['open',     ArchiveAcademicYear::class],
+    'archive year: draft → archived' => ['draft',    ArchiveAcademicYear::class],
+    'archive year: open → archived' => ['open',     ArchiveAcademicYear::class],
     'archive year: archived → archived' => ['archived', ArchiveAcademicYear::class],
 ]);
 
@@ -509,23 +509,23 @@ it('rejects every invalid transition on Semester', function (string $state, stri
 })->with([
     // OpenSemester — valid only from Draft (and requires parent year to be Open;
     // the status guard fires first so factory state alone is sufficient here)
-    'open semester: open → open'     => ['open',     OpenSemester::class],
-    'open semester: closed → open'   => ['closed',   OpenSemester::class],
+    'open semester: open → open' => ['open',     OpenSemester::class],
+    'open semester: closed → open' => ['closed',   OpenSemester::class],
     'open semester: archived → open' => ['archived', OpenSemester::class],
 
     // CloseSemester — valid only from Open
-    'close semester: draft → closed'    => ['draft',    CloseSemester::class],
-    'close semester: closed → closed'   => ['closed',   CloseSemester::class],
+    'close semester: draft → closed' => ['draft',    CloseSemester::class],
+    'close semester: closed → closed' => ['closed',   CloseSemester::class],
     'close semester: archived → closed' => ['archived', CloseSemester::class],
 
     // ReopenSemester — valid only from Closed (requires non-empty reason)
-    'reopen semester: draft → open'    => ['draft',    ReopenSemester::class, ['reason']],
-    'reopen semester: open → open'     => ['open',     ReopenSemester::class, ['reason']],
+    'reopen semester: draft → open' => ['draft',    ReopenSemester::class, ['reason']],
+    'reopen semester: open → open' => ['open',     ReopenSemester::class, ['reason']],
     'reopen semester: archived → open' => ['archived', ReopenSemester::class, ['reason']],
 
     // ArchiveSemester — valid only from Closed
-    'archive semester: draft → archived'    => ['draft',    ArchiveSemester::class],
-    'archive semester: open → archived'     => ['open',     ArchiveSemester::class],
+    'archive semester: draft → archived' => ['draft',    ArchiveSemester::class],
+    'archive semester: open → archived' => ['open',     ArchiveSemester::class],
     'archive semester: archived → archived' => ['archived', ArchiveSemester::class],
 ]);
 
@@ -545,8 +545,8 @@ it('OpenSemester is blocked for every non-Open parent year state', function (str
     expect(fn () => (new OpenSemester)->execute($semester))
         ->toThrow(RuntimeException::class);
 })->with([
-    'open semester: parent year is draft'    => ['draft'],
-    'open semester: parent year is closed'   => ['closed'],
+    'open semester: parent year is draft' => ['draft'],
+    'open semester: parent year is closed' => ['closed'],
     'open semester: parent year is archived' => ['archived'],
 ]);
 
@@ -557,7 +557,7 @@ it('ReopenSemester is blocked for every non-Open parent year state', function (s
     expect(fn () => (new ReopenSemester)->execute($semester, 'correction'))
         ->toThrow(RuntimeException::class);
 })->with([
-    'reopen semester: parent year is draft'    => ['draft'],
-    'reopen semester: parent year is closed'   => ['closed'],
+    'reopen semester: parent year is draft' => ['draft'],
+    'reopen semester: parent year is closed' => ['closed'],
     'reopen semester: parent year is archived' => ['archived'],
 ]);

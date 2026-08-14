@@ -29,10 +29,9 @@ it('does not create spurious override or activation tables beyond the approved F
 });
 
 it('does not create authentication, student, or import tables in F05', function (): void {
+    // administrative_accounts, staff_accounts, and guardian_accounts are legitimate F09 tables;
+    // they are now present and tested in the Accounts module's F09 boundary test.
     $forbidden = [
-        'admin_accounts',
-        'staff_accounts',
-        'guardian_accounts',
         'students',
         'import_files',
         'import_rows',

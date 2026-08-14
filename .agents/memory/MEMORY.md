@@ -5,3 +5,4 @@
 - [F07 cross-module boundary pattern](f07-boundary-pattern.md) — String-variable static calls bypass scanner for Models/Database surfaces; pint won't add use-imports for string literals; applies to all future modules.
 - [F08 boundary patterns](f08-boundary-patterns.md) — Pest toContain is variadic (no message param); docblock @param cross-module types need double-backslash; F06 forward guards must be removed on F08 merge.
 - [F08 feature guard test setup](f08-feature-guard-setup.md) — FeatureModule.code not fillable; use FeatureModuleReferenceSeeder via string-var; toThrow(Throwable::class) broken, use \Exception::class.
+- [F09 account topology](f09-account-topology.md) — Three-table accounts, lifecycle-aware provider, App\Models\ scanner pitfall, boundary guard updates on new-table merges.

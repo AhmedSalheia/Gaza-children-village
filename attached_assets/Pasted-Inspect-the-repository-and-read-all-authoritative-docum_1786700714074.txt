@@ -1,0 +1,385 @@
+Inspect the repository and read all authoritative documentation before changing anything:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- Existing F01–F08 code, migrations, configuration, and tests
+
+Implement F09 only: approved account topology and three authentication guards.
+
+Preserve F01–F08. Do not implement F10 login workflows or F11 setup/recovery.
+
+==================================================
+1. APPROVED F09 ARCHITECTURE DECISIONS
+==================================================
+
+Record these decisions in an Authentication Account Topology ADR before implementation.
+
+A. Physical account topology
+
+Use three separate account models and database tables:
+
+- AdministrativeAccount
+- StaffAccount
+- GuardianAccount
+
+Each account type has its own:
+
+- Eloquent authentication provider
+- Session guard
+- Password broker configuration
+- Authentication middleware boundary
+- Route namespace and route-name prefix
+- Protected portal layout
+- Account factory for synthetic tests
+
+Do not use a single polymorphic users table.
+
+B. Portal mapping
+
+- Admin Portal → AdministrativeAccount → `admin` guard
+- Staff Portal → StaffAccount → `staff` guard
+- Parent/Student Portal → GuardianAccount → `guardian` guard
+
+“Parent/Student Portal” remains the user-facing name, but the authenticated account belongs to a parent or authorized guardian, never to a student.
+
+C. Login identifiers
+
+- Administrative accounts use a normalized unique username.
+- Staff accounts use a normalized unique username.
+- Guardian accounts use an opaque normalized `login_identifier`.
+
+The final guardian experience is intended to accept a national ID, but F09 must not store a permanent civil identity fact directly on an account.
+
+Future F11/F13 work will resolve submitted guardian national IDs through approved person-identifier records into the guardian account.
+
+Do not add national-ID columns to account tables in F09.
+
+D. Account/profile cardinality
+
+- Staff and guardian account existence is optional.
+- Creating a staff/person record must never automatically create an account.
+- Eventually, each staff or guardian profile may have at most one account of its corresponding portal type.
+- A person may hold different portal account types when legitimately needed.
+- StaffProfile and Person do not exist yet; do not start F13 or F15 merely to add these links.
+- Add the profile foreign keys later, in their owning Foundation PRs.
+
+E. Account lifecycle
+
+Use one centralized account-state value object/enum shared by the account models:
+
+- pending
+- active
+- suspended
+- locked
+- revoked
+
+Only `active` accounts can authenticate or retain an authenticated session.
+
+Definitions:
+
+- pending: provisioned but not activated
+- active: authentication permitted
+- suspended: temporarily denied administratively
+- locked: denied because of a security decision
+- revoked: permanently disabled unless a future explicitly approved recovery rule says otherwise
+
+Do not implement automatic lockout thresholds in F09.
+
+Lifecycle checks must be enforced centrally, not independently inside controllers.
+
+F. Decisions deferred
+
+Do not decide or implement:
+
+- Automatic lockout thresholds
+- Login rate limits
+- Concurrent-session policy
+- MFA or PIN authentication
+- Password setup/reset delivery
+- Guardian verification evidence
+- Guardian-student eligibility
+- Administrative provisioning UI
+- Authentication audit events
+- Session-revocation workflows
+
+These belong to F10, F11, or later decision gates.
+
+==================================================
+2. MODULE OWNERSHIP
+==================================================
+
+All three account models, lifecycle rules, providers, and account authentication contracts belong to Modules/Accounts.
+
+Portal controllers, layouts, and route definitions may consume Accounts contracts but must not own account-domain rules.
+
+The Authorization module may consume authenticated actor references but must not own credentials.
+
+Do not place permanent person identity, employment, guardian relationship, institution scope, or student-access facts in Accounts.
+
+==================================================
+3. DATABASE STRUCTURE
+==================================================
+
+Create separate tables for:
+
+- administrative_accounts
+- staff_accounts
+- guardian_accounts
+
+Each table should contain only the credential/account facts required by F09:
+
+- id
+- normalized unique login identifier
+- password
+- status
+- activated_at, nullable
+- suspended_at, nullable
+- locked_at, nullable
+- revoked_at, nullable
+- timestamps
+
+Use:
+
+- `username` for administrative and staff accounts
+- `login_identifier` for guardian accounts
+
+Rules:
+
+- Identifiers must be normalized consistently.
+- Identifier uniqueness is portal-local, not global across all account types.
+- Passwords must always be hashed through a centralized model cast/service.
+- Passwords must be hidden from arrays, JSON serialization, logs, exceptions, and debug output.
+- Do not use database enums.
+- Do not add soft deletion.
+- Do not add fake audit columns before F18.
+- Do not add person_id, staff_profile_id, student_id, or national_id yet.
+
+Handle the default Laravel User scaffold safely:
+
+- Remove it as an authentication authority.
+- Remove generic `users` provider/guard assumptions from authentication configuration.
+- Do not destructively drop an existing table containing real data.
+- If the unused default users table remains for migration compatibility, document it clearly as deprecated and prove that no guard/provider references it.
+- Do not silently migrate generic users into one of the three account types.
+
+==================================================
+4. AUTHENTICATION PROVIDERS AND GUARDS
+==================================================
+
+Configure exactly these web session guards:
+
+- admin
+- staff
+- guardian
+
+Configure matching providers:
+
+- administrative_accounts
+- staff_accounts
+- guardian_accounts
+
+Configure distinct password broker names for the three portals, but do not implement recovery endpoints or token delivery in F09.
+
+Authentication infrastructure must fail closed:
+
+- A pending, suspended, locked, or revoked account cannot authenticate.
+- If an authenticated account later becomes non-active, the next protected request must no longer treat it as authenticated.
+- An account authenticated through one guard remains anonymous to the other two guards.
+- No default guard fallback may grant portal access.
+- No provider may search another portal’s table.
+- No account type may be passed into a different guard successfully.
+
+Use a shared lifecycle-aware provider or middleware abstraction where appropriate, but preserve the three physical providers and guards.
+
+==================================================
+5. PORTAL ROUTE BOUNDARIES
+==================================================
+
+Preserve the existing portal route-file separation from F01.
+
+Configure protected placeholder/dashboard routes with:
+
+- Admin prefix and route namespace
+- Staff prefix and route namespace
+- Guardian/Parent-Student prefix and route namespace
+
+Each protected group must require its exact guard.
+
+Examples of required behavior:
+
+- Admin session may access the admin placeholder dashboard only.
+- Admin session is anonymous in staff and guardian portals.
+- Staff session may access the staff placeholder dashboard only.
+- Guardian session may access the guardian placeholder dashboard only.
+- Unauthenticated access is denied safely.
+
+Do not create functional login, logout, recovery, or account-management routes. Those begin in F10/F11.
+
+Do not grant staff institution data merely because the staff guard authenticated them. Staff operational access still requires future eligible positions, F02 trusted operational context, and Authorization policies.
+
+Guardian authentication grants no student access until a future verified guardian-student relationship exists.
+
+==================================================
+6. DISTINCT PORTAL LAYOUTS
+==================================================
+
+Create or adapt three minimal, separate Blade layouts:
+
+- Admin
+- Staff
+- Parent/Student
+
+Requirements:
+
+- Layouts must not inherit authentication behavior from one another.
+- Keep them minimal; this PR establishes topology, not final UI design.
+- Existing brand tokens may be reused if already implemented.
+- Do not start F20–F22 localization, RTL, component, or branding work.
+- Do not build polished login pages in F09.
+
+==================================================
+7. SESSION AND CSRF SECURITY BASELINE
+==================================================
+
+Establish and test the browser-session baseline:
+
+- HTTP-only session cookies
+- SameSite configuration appropriate for first-party portals
+- Secure cookies configurable by environment and enabled in production
+- Session regeneration support
+- CSRF middleware remains enabled for browser routes
+- No credentials or passwords are stored in session payloads
+- No cross-portal authentication caused by a shared browser session
+
+Do not break Replit’s HTTP development workflow by forcing secure cookies in local development.
+
+Do not implement concurrent-session enforcement or administrative session revocation yet.
+
+==================================================
+8. APPLICATION CONTRACTS
+==================================================
+
+Add focused Accounts-owned contracts/services for:
+
+- Portal/account-type identification
+- Login-identifier normalization
+- Checking whether an account can authenticate
+- Converting an authenticated account into the existing F02 actor-reference representation
+- Account lifecycle transitions required to test the approved state model
+
+Do not duplicate F02 actor, portal, source, or operational-context value objects.
+
+Account lifecycle transitions must be explicit and tested. Do not expose public management endpoints.
+
+==================================================
+9. TESTS
+==================================================
+
+Add comprehensive tests covering:
+
+- All three account tables and models
+- Portal-local identifier uniqueness
+- Identifier normalization
+- Secure password hashing
+- Password serialization/logging protection
+- Only active accounts authenticate
+- Pending accounts are rejected
+- Suspended accounts are rejected
+- Locked accounts are rejected
+- Revoked accounts are rejected
+- State changes invalidate continued protected access
+- Every account type authenticates only through its own guard
+- Cross-guard login attempts fail
+- Cross-portal protected routes fail
+- A session for one portal remains anonymous in the other portals
+- Generic Laravel User is not used by any configured guard
+- Staff/person records do not automatically create accounts
+- Guardian accounts do not represent students
+- Authentication alone grants no institution or student access
+- Correct F02 portal actor mapping
+- CSRF coverage for browser portal route groups
+- Environment-sensitive secure-session configuration
+- Architecture/module dependency rules
+
+Use synthetic test identities only. Never add real national IDs or personal data to fixtures.
+
+Where a StaffProfile-specific test cannot exist before F15, document that exact deferred integration test instead of creating a premature StaffProfile model.
+
+==================================================
+10. DOCUMENTATION
+==================================================
+
+Add the account-topology ADR and update canonical documentation with:
+
+- Why separate account tables were approved
+- Portal-to-account-to-guard mapping
+- Identifier decisions
+- Guardian national-ID resolution direction
+- Account lifecycle definitions
+- Account versus permanent-person identity boundary
+- Staff and guardian profile linkage deferred to F13/F15
+- Authentication versus authorization distinction
+- Explicit F10/F11 deferrals
+- Default User scaffold disposition
+- Security and session assumptions
+
+Mark the F09 decision gate as resolved using these approved decisions.
+
+==================================================
+11. EXPLICIT EXCLUSIONS
+==================================================
+
+Do not add:
+
+- Functional login/logout forms or handlers
+- Login throttling
+- Authentication audit-event tables
+- Password setup or recovery flows
+- Emails, SMS, WhatsApp, or other delivery integrations
+- MFA or PINs
+- Person or StaffProfile models
+- Guardian-student relationships
+- Roles or permissions catalogue
+- Institution assignment or staff positions
+- Account-management UI
+- Student access
+- Seeded real accounts
+- F10 or later business work
+
+==================================================
+12. VERIFICATION
+==================================================
+
+Run every required command from AGENTS.md, including:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Also inspect the final route list and authentication configuration to prove:
+
+- Exactly three project portal guards exist.
+- Every protected portal route uses its intended guard.
+- The generic User provider cannot authenticate into any portal.
+- No F10/F11 routes or workflows were added.
+
+Report:
+
+- ADR and decisions recorded
+- Models/tables/providers/guards added
+- Default User scaffold disposition
+- Portal route/layout boundaries
+- Security behavior
+- Test and assertion counts
+- Any blockers
+- Confirmation that F10 and later work were not started
