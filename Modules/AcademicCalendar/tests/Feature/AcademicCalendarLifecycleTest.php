@@ -457,3 +457,74 @@ it('archiving a semester is rejected when the parent year is archived', function
     expect(fn () => (new ArchiveSemester)->execute($sem))
         ->toThrow(RuntimeException::class);
 });
+
+// ---------------------------------------------------------------------------
+// Parametrized invalid-transition regression guard
+//
+// Every disallowed (source-status, action) combination for AcademicYear and
+// Semester is enumerated here.  If a new action is introduced or the status
+// enum is reused in a later feature, adding it here prevents a silent guard
+// omission from reaching production.
+//
+// Valid transitions (not listed — covered by the happy-path tests above):
+//   Draft  → Open     (Open*)
+//   Open   → Closed   (Close*)
+//   Closed → Open     (Reopen* — requires a non-empty reason)
+//   Closed → Archived (Archive*)
+//   Archived → (none) terminal
+// ---------------------------------------------------------------------------
+
+it('rejects every invalid transition on AcademicYear', function (string $state, string $action, array $args = []): void {
+    $year = AcademicYearFactory::new()->{$state}()->create();
+
+    expect(fn () => (new $action)->execute($year, ...$args))
+        ->toThrow(RuntimeException::class);
+})->with([
+    // OpenAcademicYear — valid only from Draft
+    'open year: open → open'      => ['open',     OpenAcademicYear::class],
+    'open year: closed → open'    => ['closed',   OpenAcademicYear::class],
+    'open year: archived → open'  => ['archived', OpenAcademicYear::class],
+
+    // CloseAcademicYear — valid only from Open
+    'close year: draft → closed'    => ['draft',    CloseAcademicYear::class],
+    'close year: closed → closed'   => ['closed',   CloseAcademicYear::class],
+    'close year: archived → closed' => ['archived', CloseAcademicYear::class],
+
+    // ReopenAcademicYear — valid only from Closed (requires non-empty reason)
+    'reopen year: draft → open'    => ['draft',    ReopenAcademicYear::class, ['reason']],
+    'reopen year: open → open'     => ['open',     ReopenAcademicYear::class, ['reason']],
+    'reopen year: archived → open' => ['archived', ReopenAcademicYear::class, ['reason']],
+
+    // ArchiveAcademicYear — valid only from Closed
+    'archive year: draft → archived'    => ['draft',    ArchiveAcademicYear::class],
+    'archive year: open → archived'     => ['open',     ArchiveAcademicYear::class],
+    'archive year: archived → archived' => ['archived', ArchiveAcademicYear::class],
+]);
+
+it('rejects every invalid transition on Semester', function (string $state, string $action, array $args = []): void {
+    $semester = SemesterFactory::new()->{$state}()->create();
+
+    expect(fn () => (new $action)->execute($semester, ...$args))
+        ->toThrow(RuntimeException::class);
+})->with([
+    // OpenSemester — valid only from Draft (and requires parent year to be Open;
+    // the status guard fires first so factory state alone is sufficient here)
+    'open semester: open → open'     => ['open',     OpenSemester::class],
+    'open semester: closed → open'   => ['closed',   OpenSemester::class],
+    'open semester: archived → open' => ['archived', OpenSemester::class],
+
+    // CloseSemester — valid only from Open
+    'close semester: draft → closed'    => ['draft',    CloseSemester::class],
+    'close semester: closed → closed'   => ['closed',   CloseSemester::class],
+    'close semester: archived → closed' => ['archived', CloseSemester::class],
+
+    // ReopenSemester — valid only from Closed (requires non-empty reason)
+    'reopen semester: draft → open'    => ['draft',    ReopenSemester::class, ['reason']],
+    'reopen semester: open → open'     => ['open',     ReopenSemester::class, ['reason']],
+    'reopen semester: archived → open' => ['archived', ReopenSemester::class, ['reason']],
+
+    // ArchiveSemester — valid only from Closed
+    'archive semester: draft → archived'    => ['draft',    ArchiveSemester::class],
+    'archive semester: open → archived'     => ['open',     ArchiveSemester::class],
+    'archive semester: archived → archived' => ['archived', ArchiveSemester::class],
+]);
