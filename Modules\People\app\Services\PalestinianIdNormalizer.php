@@ -72,6 +72,6 @@ final class PalestinianIdNormalizer
      */
     public function mask(string $normalized): string
     {
-        return str_repeat('X', 5) . substr($normalized, -4);
+        return str_repeat('X', 5).substr($normalized, -4);
     }
 }

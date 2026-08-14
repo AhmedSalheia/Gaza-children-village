@@ -1,0 +1,317 @@
+/**
+ * GCV DATA Design Token System — F22
+ *
+ * Layer 1: Brand anchors (immutable; never use raw hex outside this file)
+ * Layer 2: Accessible primitives (tonal scale + semantic aliases)
+ * Layer 3: Semantic tokens (purpose-named; used in component tokens)
+ * Layer 4: Component tokens (scoped to specific UI components)
+ *
+ * WCAG AA contrast targets:
+ *   Normal text:  ≥ 4.5:1 against background
+ *   Large text:   ≥ 3:1 against background
+ *   Focus ring:   ≥ 3:1 against adjacent color
+ *
+ * All font stacks are self-hosted WOFF2 (see _fonts.css / public/fonts/).
+ * Bunny Fonts CDN must NOT be used in production (F22 requirement).
+ */
+
+/* ============================================================
+   LAYER 1 — Brand anchors
+   ============================================================ */
+:root {
+  --brand-teal:       #254151;
+  --brand-gold:       #EEC219;
+  --brand-offwhite:   #EAEAE8;
+  --brand-dark-gray:  #616153;
+  --brand-red:        #D55342;
+  --brand-green:      #518245;
+  --brand-black:      #000000;
+}
+
+/* ============================================================
+   LAYER 2 — Tonal scale (computed from brand anchors)
+   ============================================================ */
+:root {
+  /* Teal scale */
+  --teal-50:  #EBF2F5;
+  --teal-100: #C2D8E2;
+  --teal-200: #99BDCE;
+  --teal-300: #6FA2BA;
+  --teal-400: #4688A7;
+  --teal-500: #1C6D93;
+  --teal-600: var(--brand-teal);   /* #254151 — primary */
+  --teal-700: #1C3240;
+  --teal-800: #142330;
+  --teal-900: #0B141F;
+
+  /* Gold scale */
+  --gold-50:  #FEF9E7;
+  --gold-100: #FBF0BC;
+  --gold-200: #F8E691;
+  --gold-300: #F5DD66;
+  --gold-400: #F2D33B;
+  --gold-500: var(--brand-gold);   /* #EEC219 — accent */
+  --gold-600: #C9A315;
+  --gold-700: #A48411;
+  --gold-800: #7F650D;
+  --gold-900: #5A4609;
+
+  /* Neutral scale (based on off-white to dark-gray) */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  var(--brand-offwhite);  /* #EAEAE8 */
+  --neutral-100: #D5D5D3;
+  --neutral-200: #BFBFBD;
+  --neutral-300: #AAAAAA;
+  --neutral-400: #959593;
+  --neutral-500: var(--brand-dark-gray); /* #616153 */
+  --neutral-600: #4D4D40;
+  --neutral-700: #39392D;
+  --neutral-800: #25251A;
+  --neutral-900: #111107;
+
+  /* Status */
+  --status-danger:  var(--brand-red);    /* #D55342 */
+  --status-success: var(--brand-green);  /* #518245 */
+  --status-warning: var(--gold-500);
+  --status-info:    var(--teal-400);
+}
+
+/* ============================================================
+   LAYER 3 — Semantic tokens
+   ============================================================ */
+:root {
+  /* Surfaces */
+  --surface-page:       var(--neutral-50);
+  --surface-card:       var(--neutral-0);
+  --surface-overlay:    rgba(0, 0, 0, 0.5);
+  --surface-sidebar:    var(--teal-600);
+  --surface-header:     var(--teal-700);
+
+  /* Text */
+  --text-primary:       var(--brand-black);
+  --text-secondary:     var(--neutral-500);
+  --text-disabled:      var(--neutral-300);
+  --text-inverse:       var(--neutral-0);
+  --text-link:          var(--teal-500);
+  --text-link-hover:    var(--teal-700);
+  --text-danger:        #B2382A; /* Darkened red for 4.5:1 on white */
+  --text-success:       #3D6233; /* Darkened green for 4.5:1 on white */
+
+  /* Borders */
+  --border-default:     var(--neutral-200);
+  --border-focus:       var(--teal-400);
+  --border-danger:      var(--brand-red);
+  --border-success:     var(--brand-green);
+
+  /* Interactive */
+  --interactive-primary:        var(--teal-600);
+  --interactive-primary-hover:  var(--teal-700);
+  --interactive-primary-active: var(--teal-800);
+  --interactive-primary-text:   var(--neutral-0);
+
+  --interactive-secondary:        var(--gold-500);
+  --interactive-secondary-hover:  var(--gold-600);
+  --interactive-secondary-text:   var(--brand-black);
+
+  --interactive-danger:       var(--brand-red);
+  --interactive-danger-hover: #B2382A;
+  --interactive-danger-text:  var(--neutral-0);
+
+  --interactive-ghost-hover:  var(--teal-50);
+
+  /* Focus ring */
+  --focus-ring-color:  var(--gold-400);
+  --focus-ring-width:  3px;
+  --focus-ring-offset: 2px;
+
+  /* Status badges */
+  --badge-draft-bg:     var(--neutral-100);
+  --badge-draft-text:   var(--neutral-600);
+  --badge-open-bg:      #D4EDDA;
+  --badge-open-text:    #3D6233;
+  --badge-closed-bg:    #F8D7DA;
+  --badge-closed-text:  #B2382A;
+  --badge-archived-bg:  var(--neutral-200);
+  --badge-archived-text:var(--neutral-600);
+  --badge-pending-bg:   #FFF3CD;
+  --badge-pending-text: #856404;
+  --badge-active-bg:    var(--badge-open-bg);
+  --badge-active-text:  var(--badge-open-text);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 6px rgba(0,0,0,0.07);
+  --shadow-lg:  0 10px 15px rgba(0,0,0,0.10);
+
+  /* Spacing (logical — works for LTR and RTL) */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ============================================================
+   LAYER 4 — Component tokens
+   ============================================================ */
+:root {
+  /* Button */
+  --btn-radius:         var(--radius-sm);
+  --btn-padding-y:      var(--space-2);
+  --btn-padding-x:      var(--space-4);
+  --btn-font-weight:    600;
+  --btn-font-size:      0.9375rem;
+  --btn-transition:     var(--transition-fast);
+
+  /* Form inputs */
+  --input-bg:           var(--neutral-0);
+  --input-border:       var(--border-default);
+  --input-border-focus: var(--border-focus);
+  --input-radius:       var(--radius-sm);
+  --input-padding-y:    var(--space-2);
+  --input-padding-x:    var(--space-3);
+  --input-font-size:    1rem;
+
+  /* Table */
+  --table-header-bg:    var(--neutral-50);
+  --table-row-hover-bg: var(--teal-50);
+  --table-border:       var(--border-default);
+
+  /* Sidebar navigation */
+  --nav-item-hover-bg:   rgba(255,255,255,0.1);
+  --nav-item-active-bg:  rgba(255,255,255,0.2);
+  --nav-item-text:       var(--neutral-0);
+  --nav-item-font-size:  0.9375rem;
+
+  /* Header */
+  --header-height:     3.5rem;
+  --header-bg:         var(--surface-header);
+  --header-text:       var(--text-inverse);
+
+  /* Card */
+  --card-bg:           var(--surface-card);
+  --card-border:       var(--border-default);
+  --card-radius:       var(--radius-md);
+  --card-shadow:       var(--shadow-sm);
+  --card-padding:      var(--space-6);
+
+  /* Alert */
+  --alert-radius:      var(--radius-sm);
+  --alert-padding:     var(--space-4);
+
+  /* Locale switcher */
+  --locale-btn-gap:    var(--space-2);
+}
+
+/* ============================================================
+   F22 — Typography scale (self-hosted fonts; see _fonts.css)
+   ============================================================ */
+:root {
+  /* Font families */
+  --font-display-en:   'League Spartan', 'Montserrat', sans-serif;
+  --font-body-en:      'Montserrat', sans-serif;
+  --font-arabic:       'Noto Sans Arabic', 'Segoe UI', sans-serif;
+
+  /* Sizes */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+
+  /* Line heights */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.625;
+
+  /* Letter spacing */
+  --tracking-tight:  -0.025em;
+  --tracking-normal:  0em;
+  --tracking-wide:    0.025em;
+}
+
+/* ============================================================
+   RTL / LTR directional overrides (F21)
+   ============================================================ */
+[dir='rtl'] {
+  /* Text alignment defaults */
+  text-align: start;
+
+  /* Flip directional shadows */
+  --shadow-start: -2px 0 8px rgba(0,0,0,0.08);
+  --shadow-end:    2px 0 8px rgba(0,0,0,0.08);
+}
+
+[dir='ltr'] {
+  text-align: start;
+  --shadow-start:  2px 0 8px rgba(0,0,0,0.08);
+  --shadow-end:   -2px 0 8px rgba(0,0,0,0.08);
+}
+
+/* ============================================================
+   Base reset using logical properties (F21)
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-body-en);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+[lang='ar'] body,
+[lang='ar'],
+:lang(ar) {
+  font-family: var(--font-arabic);
+}
+
+/* Focus ring — WCAG 2.4.7 */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Skip to main content link */
+.skip-link {
+  position: absolute;
+  inset-block-start: -3rem;
+  inset-inline-start: 0;
+  background: var(--interactive-primary);
+  color: var(--interactive-primary-text);
+  padding: var(--space-2) var(--space-4);
+  z-index: 9999;
+  transition: inset-block-start var(--transition-fast);
+}
+
+.skip-link:focus {
+  inset-block-start: 0;
+}

@@ -22,7 +22,7 @@ final class StaffInstitutionAssignment extends Model
 
     protected $casts = [
         'started_on' => 'date',
-        'ended_on'   => 'date',
+        'ended_on' => 'date',
     ];
 
     /** @return BelongsTo<StaffProfile, $this> */

@@ -6,6 +6,8 @@ namespace Modules\Authorization\Providers;
 
 use Modules\Authorization\Context\ScopedOperationalContextStore;
 use Modules\Authorization\Contracts\OperationalContextStore;
+use Modules\Authorization\Contracts\PolicyKernel;
+use Modules\Authorization\Services\PolicyKernelService;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
 final class AuthorizationServiceProvider extends ModuleServiceProvider
@@ -19,5 +21,6 @@ final class AuthorizationServiceProvider extends ModuleServiceProvider
         parent::register();
 
         $this->app->scoped(OperationalContextStore::class, ScopedOperationalContextStore::class);
+        $this->app->scoped(PolicyKernel::class, PolicyKernelService::class);
     }
 }

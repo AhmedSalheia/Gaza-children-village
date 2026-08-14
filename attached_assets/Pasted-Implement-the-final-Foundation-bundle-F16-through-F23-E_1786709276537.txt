@@ -1,0 +1,636 @@
+Implement the final Foundation bundle: F16 through F23.
+
+Execute it as eight sequential checkpoints:
+
+1. F16 — Semester positions and period scopes
+2. F17 — Permission catalogue and policy kernel
+3. F18 — Append-only audit infrastructure
+4. F19 — Foundation-wide authorization integration
+5. F20 — Locale routing and preferences
+6. F21 — Bidirectional terminology/layout baseline
+7. F22 — Brand and semantic design tokens
+8. F23 — Minimal shared portal shell/components
+
+Run focused verification after each checkpoint. Stop if a checkpoint fails rather than continuing over broken foundations.
+
+Before changing anything, read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- All ADRs created during F01–F15
+- Existing F01–F15 implementation and tests
+
+Preserve all working behavior.
+
+Do not implement students, enrolment, attendance, assessments, documents, inventory, civil-registry integration, spreadsheet imports, or later business modules.
+
+==================================================
+F16 — SEMESTER POSITIONS AND PERIOD SCOPES
+==================================================
+
+Implement in Modules/Staff:
+
+- PositionDefinition
+- StaffPosition
+- StaffPositionPeriod
+
+Reuse:
+
+- StaffProfile
+- StaffInstitutionAssignment
+- Institution
+- InstitutionSemester
+- OperationalPeriod
+- F02 operational context
+- F06 module activation
+
+Initial controlled position definitions:
+
+- principal
+- deputy_principal
+- secretary
+- teacher
+- counselor
+- trainer
+- medical_staff
+- women_center_staff
+- storage_staff
+- guard
+- general_staff
+
+Position names do not grant permissions by themselves.
+
+Rules:
+
+- Every StaffPosition belongs to an active StaffProfile and a valid StaffInstitutionAssignment.
+- The assignment and position must reference the same institution.
+- Academic-institution positions reference an InstitutionSemester.
+- Non-academic institution positions may be institution-wide without an InstitutionSemester.
+- A position referencing an InstitutionSemester must fall within the assignment’s institution and effective dates.
+- Closed or archived institution semesters reject ordinary position mutation.
+- Historical positions remain readable.
+- StaffPosition creation never creates an account.
+- Guards and other non-login staff may have complete position history.
+- Teacher/trainer positions grant no class, course, subject, student, or mark access.
+
+Period scopes:
+
+- Period-restricted positions use explicit StaffPositionPeriod rows.
+- Every referenced period must belong to the position’s InstitutionSemester.
+- No period ID supplied by a request is trusted without relationship resolution.
+- A secretary may be assigned to one, several, or all periods.
+- “All periods” must be represented explicitly by links to all currently approved periods; do not implement an implicit unrestricted wildcard.
+- Adding a new period later does not silently expand existing staff access.
+- A one-period secretary is denied access to every other period.
+- Institution-wide non-academic positions cannot have period links.
+
+Compatibility:
+
+- Duplicate overlapping instances of the same position definition are rejected.
+- Principal and deputy_principal are mutually exclusive for the same person during the same effective interval.
+- Other distinct same-institution responsibilities may coexist initially.
+- Acting/delegated positions and approval workflows remain deferred.
+- Use effective dates and prevent invalid overlaps transactionally.
+
+Provide actions/queries for:
+
+- Assign position
+- End position
+- Replace position scopes
+- Resolve active positions for a date/context
+- List position history
+- Determine whether a position covers a requested period
+
+Tests must cover relationship chains, dates, concurrency, compatibility, historical reads, one-period denial, explicit all-period scope, non-login staff, and no inferred teaching access.
+
+==================================================
+F17 — PERMISSION CATALOGUE AND POLICY KERNEL
+==================================================
+
+Create an ADR approving a first-party authorization kernel.
+
+Do not install a broad roles/permissions package unless the existing repository already approved one.
+
+Entities:
+
+- Permission
+- Role
+- RolePermission
+- AdministrativeAccountRole
+- PositionRoleGrant
+
+Do not add direct account permission overrides.
+
+Authorization precedence:
+
+1. Invalid/inactive portal account → deny
+2. Wrong portal → deny
+3. Missing required module → deny
+4. Invalid organization/institution chain → deny
+5. Missing active assignment/position → deny
+6. Wrong semester/period → deny
+7. Closed/archived mutation → deny
+8. Missing explicit permission → deny
+9. Otherwise allow
+
+There is no implicit super-admin bypass.
+
+Multiple valid roles combine granted permissions, but they never bypass scope, lifecycle, account state, module availability, or field classification.
+
+Create stable Foundation permission keys for:
+
+- Organization metadata read/manage
+- Institution metadata read/manage/lifecycle
+- Module configuration read/manage
+- Academic calendar read/manage/lifecycle
+- Institution semester read/manage/lifecycle
+- Person basic read/manage
+- Restricted identifier read/manage
+- Contact read/manage/verify
+- Staff profile read/manage
+- Staff assignment read/manage/transfer
+- Staff position read/manage
+- Account read/manage/revoke sessions
+- Audit read
+
+Keep organization-wide read permissions separate from institution-owned mutation permissions.
+
+Initial protected role templates:
+
+Administrative:
+
+- system_administrator
+- data_administrator
+- central_auditor
+
+Staff-position roles:
+
+- principal
+- deputy_principal
+- secretary
+- teacher
+- counselor
+- trainer
+- medical_staff
+- women_center_staff
+- storage_staff
+
+Guardian access remains relationship-derived later and receives no staff-style role.
+
+Important:
+
+- `system_administrator` is still a permission bundle, not a domain bypass.
+- Central data administrators may read authorized organization-wide records.
+- Central read does not silently authorize institution-owned mutations.
+- Teacher/trainer roles receive no student/class/subject permission yet.
+- Unknown permissions and resources deny by default.
+- Role codes and permission codes are stable and code-governed.
+- Display labels use translation keys.
+
+Add:
+
+- AuthorizationDecisionContext
+- Policy decision/result type
+- Denial reason codes safe for internal diagnostics
+- Query-scope contracts
+- Policy-kernel service
+- Module/lifecycle/scope constraint evaluators
+
+Public responses must not disclose inaccessible record existence.
+
+Test every precedence rule and central-read/local-mutate separation.
+
+==================================================
+F18 — APPEND-ONLY AUDIT INFRASTRUCTURE
+==================================================
+
+Implement a first-party Audit module.
+
+Do not adopt a package or create ordinary mutable audit records.
+
+AuditEvent must capture:
+
+- Immutable event ID
+- Actor type/reference
+- Portal
+- Source: web, job, CLI, import, system
+- Action key
+- Subject type/reference
+- Organization, institution, institution-semester and period references where applicable
+- Safe before/after changes
+- Required reason where applicable
+- Request/correlation ID
+- Occurred timestamp
+- Safe metadata
+- Schema/version marker
+
+Rules:
+
+- Append-only in application code.
+- Add database-level protection against ordinary UPDATE and DELETE where safely supported.
+- No model update/delete API.
+- No audit editing UI.
+- No ordinary purge operation.
+- Retention is indefinite during Foundation until legal retention rules are approved.
+- Cryptographic hash chaining/tamper sealing is deferred; document this explicitly.
+- Database access, backups, and administrator privileges remain infrastructure trust boundaries.
+
+Redaction:
+
+- Never store passwords, recovery tokens, session IDs, cookies, encryption keys, raw national IDs, raw passport IDs, or raw contact values.
+- Sensitive before/after fields use classification-aware redaction.
+- Prefer IDs and masked values.
+- Omit raw IP addresses by default.
+- If request-source correlation is needed, use a keyed privacy-preserving fingerprint.
+- Do not store full user-agent strings unless explicitly justified.
+
+Transaction behavior:
+
+- Required audit creation participates in the same business transaction.
+- If required audit persistence fails, the protected mutation rolls back.
+- Audit writes cannot be disabled by an ordinary actor.
+- Reads require explicit audit permission and scope.
+- Audit access is read-only.
+- Cross-institution audit access defaults to denied.
+
+Integrate without rewriting F10:
+
+- Keep AuthenticationEvent as its specialized Accounts-owned security stream.
+- Provide a read/projection adapter so authorized audit inspection can include authentication security events.
+- Do not duplicate secrets or copy raw credential data.
+- Do not destructively migrate working F10 events unless required and proven safe.
+
+Create framework-independent AuditRecorder and AuditReader contracts.
+
+Tests must prove immutability, rollback-on-failure, redaction, portal/source distinction, scope restrictions, and authentication-event projection.
+
+==================================================
+F19 — FOUNDATION-WIDE POLICY INTEGRATION
+==================================================
+
+Replace temporary authorization stubs introduced before F17.
+
+Integrate the F17 policy kernel and F18 audit recorder across every Foundation mutation/query from F03–F16.
+
+Create a documented authorization matrix covering:
+
+- Admin portal
+- Staff portal
+- Guardian portal
+- Account state
+- Organization
+- Institution
+- Institution type/module activation
+- Academic year
+- Global semester
+- Institution semester
+- Operational period
+- Person
+- Identifier
+- Contact
+- Staff profile
+- Institution assignment
+- Staff position
+- Position period scope
+- Audit events
+- Record lifecycle
+
+Requirements:
+
+- Every protected route has explicit portal middleware.
+- Every protected action has policy enforcement.
+- Every protected query applies scope before retrieving records.
+- Policies recheck individual resources.
+- No controller trusts organization/institution/semester/period IDs as authority.
+- No hard-coded role-name checks inside controllers.
+- No implicit central mutation.
+- Guardian still has no student/person access.
+- Inactive modules deny new mutations but preserve authorized historical reads.
+- Closed/archived scopes deny ordinary mutation.
+- Staff access requires active account, StaffProfile, assignment, position, permission, and matching operational scope.
+- Authentication alone grants no domain access.
+- Important mutations emit F18 events.
+- Cross-institution denial occurs without confirming record existence.
+
+Add a matrix-driven regression suite ensuring no Foundation route/action is missing protection.
+
+==================================================
+F20 — LOCALE ROUTING AND PREFERENCES
+==================================================
+
+Approved locale decisions:
+
+- Supported locales: Arabic (`ar`) and English (`en`)
+- Default locale: Arabic
+- Fallback locale: English
+- Operational timezone: Asia/Gaza
+- Store timestamps in UTC and render in the operational timezone
+- Use Gregorian calendar
+- Use day-month-year presentation
+- Use Latin digits for identifiers, dates, codes, and data-entry consistency in both locales
+- Prefer locale-specific name when available, falling back to Arabic and then the stable code
+- Static interface copy uses Laravel language files
+- Do not create a translation database for static copy
+
+Locale preference:
+
+- Authenticated accounts persist their preference on their own account table.
+- Unauthenticated pages use a portal-safe session preference.
+- Locale switching must not change authentication or operational context.
+- Add a POST locale-switch action with CSRF protection.
+- Validate against the exact supported-locale list.
+- Invalid locale values fall back safely.
+- Avoid open redirects after switching.
+
+Translate all current Foundation-facing text, including:
+
+- Login/logout
+- Validation
+- Authentication failures
+- Throttling
+- Empty/error states
+- Portal names
+- Lifecycle labels
+- Account states
+- Institution terminology
+- Permission-denied messages
+
+Anti-enumeration responses must remain semantically identical across locales.
+
+==================================================
+F21 — BIDIRECTIONAL AND TERMINOLOGY BASELINE
+==================================================
+
+Implement:
+
+- Correct `<html lang>` and `dir`
+- RTL for Arabic
+- LTR for English
+- CSS logical properties
+- Direction-safe spacing/alignment
+- Direction-aware navigation
+- Correct focus and keyboard order
+- Explicit icon-mirroring rules
+- Direction-safe forms, tables, alerts, badges, pagination, breadcrumbs, and empty states
+- Localized date/name formatting services
+- TerminologyResolver
+
+Stable schema/domain keys never change with language or institution type.
+
+Initial terminology:
+
+- institution:
+  - Arabic: المؤسسة
+  - English: Institution
+- academy:
+  - Arabic: أكاديمية
+  - English: Academy
+- university_space:
+  - Arabic: مساحة جامعية
+  - English: University Space
+- medical_point:
+  - Arabic: نقطة طبية
+  - English: Medical Point
+- women_center:
+  - Arabic: مركز نسائي
+  - English: Women’s Center
+- storage_unit:
+  - Arabic: مستودع
+  - English: Storage Unit
+- academic_year:
+  - Arabic: العام الدراسي
+  - English: Academic Year
+- semester:
+  - Arabic: الفصل الدراسي
+  - English: Semester
+- operational_period:
+  - Arabic: الفترة
+  - English: Operational Period
+
+Keep terminology in centralized language/catalogue files so wording can be revised without migrations.
+
+Tests must cover Arabic/English navigation, forms, tables, long text, focus order, icon behavior, dates, names, and terminology without changing stable domain keys.
+
+==================================================
+F22 — BRAND AND SEMANTIC DESIGN TOKENS
+==================================================
+
+Implement centralized layered design tokens.
+
+Immutable GCV brand anchors:
+
+- Teal primary: #254151
+- Gold secondary: #EEC219
+- Off-white: #EAEAE8
+- Dark gray: #616153
+- Red: #D55342
+- Green: #518245
+- Black: #000000
+
+Typography:
+
+- English display/headings: League Spartan
+- English body/interface: Montserrat
+- Arabic interface/body/headings: Noto Sans Arabic
+- Self-host fonts as WOFF2
+- Include and verify font license files
+- Do not depend on Google Fonts or another runtime CDN
+- Use system fallbacks when font loading fails
+
+Logo:
+
+- Reuse the supplied GCV logo already present in the repository.
+- Preserve its aspect ratio.
+- Do not redraw, stretch, recolor, crop, or generate a replacement.
+- Use only on suitable high-contrast surfaces.
+- Keep the logo asset replaceable.
+- If the supplied logo is missing, report the blocker instead of inventing one.
+
+Token layers:
+
+1. Brand anchors
+2. Derived accessible primitives
+3. Semantic tokens
+4. Component tokens
+
+Required semantic categories:
+
+- Page and raised surfaces
+- Primary/secondary text
+- Muted text
+- Borders/dividers
+- Primary actions
+- Secondary actions
+- Links
+- Focus rings
+- Success
+- Warning
+- Danger
+- Information
+- Disabled/read-only states
+- Table headers/rows
+- Navigation states
+
+Rules:
+
+- Teal carries structure and primary actions.
+- Gold is accent/highlight, not ordinary body text on white.
+- Green/red status meaning is never communicated by color alone.
+- Derive darker accessible success/danger text tokens where required.
+- Meet WCAG AA contrast.
+- Visible keyboard focus is mandatory.
+- No dark theme in Foundation.
+- No scattered raw brand color or font literals outside approved token definitions/generated assets.
+- Prefer CSS logical properties.
+
+Add automated contrast tests and static checks for unauthorized raw brand literals.
+
+==================================================
+F23 — MINIMAL SHARED PORTAL SHELL AND COMPONENTS
+==================================================
+
+Build minimal, polished shared components using Blade + Livewire only.
+
+Do not introduce Vue or React.
+
+Create:
+
+- Admin portal shell
+- Staff portal shell
+- Parent/Student portal shell
+- Responsive header/navigation
+- Portal identity indicator
+- Current account display
+- Locale switcher
+- Logout action
+- Logo treatment
+- Page title/header component
+- Buttons
+- Links
+- Form fields and labels
+- Validation messages
+- Alerts
+- Status badges with text/icons
+- Accessible tables
+- Pagination
+- Empty state
+- Loading state
+- Generic error state
+- Permission-denied state
+- Read-only/closed-record state
+- Confirmation dialog/pattern for destructive actions
+- Responsive mobile navigation
+
+Requirements:
+
+- Arabic RTL and English LTR must both look intentional.
+- Layouts must be calm, professional, responsive, and table-friendly.
+- Components consume semantic tokens only.
+- Buttons never authorize actions; backend policy remains authoritative.
+- Hidden controls do not replace route/action authorization.
+- Statuses use text/icons in addition to color.
+- Tables remain readable on narrow screens.
+- Forms have visible labels and errors.
+- All interactive elements are keyboard accessible.
+- Focus order follows logical document order.
+- Logo alt text is correct for decorative/informative usage.
+- No business management screens.
+- Existing dashboard placeholders may use the shell to demonstrate authenticated portal separation.
+
+Add representative visual/browser tests at desktop and mobile sizes for:
+
+- Arabic admin shell
+- English admin shell
+- Arabic staff shell
+- English staff shell
+- Arabic guardian shell
+- English guardian shell
+- Forms
+- Tables
+- Alerts/statuses
+- Permission denied
+- Long translated content
+
+==================================================
+EXPLICIT EXCLUSIONS
+==================================================
+
+Do not add:
+
+- Students or StudentProfile
+- GuardianProfile or guardian-student relationships
+- Academic levels, grades, classes, sections, or subjects
+- Teaching assignments
+- Student/staff attendance
+- Assessments, marks, results, or publication
+- Civil-registry integration
+- Excel import/export
+- Documents or formal requests
+- Medical records
+- Inventory/assets
+- Women’s-center courses
+- Notifications
+- Full account/permission management UI
+- Full Admin Portal
+- Offline synchronization
+- F24 or post-Foundation business work
+
+==================================================
+VERIFICATION
+==================================================
+
+After every checkpoint:
+
+1. Run focused tests.
+2. Run all previous Foundation tests.
+3. Run Pint.
+4. Run migrations from a clean database.
+5. Verify rollback where supported.
+6. Run frontend build when frontend files change.
+7. Stop on failure.
+
+Final verification must include all commands from AGENTS.md:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Also run:
+
+- Architecture tests
+- Authorization-matrix tests
+- Cross-institution tests
+- Period-scope tests
+- Audit immutability/redaction tests
+- Translation completeness checks
+- RTL/LTR browser/component tests
+- Accessibility checks
+- WCAG contrast checks
+- Production asset build
+
+Final report must be grouped by F16–F23 and include:
+
+- ADR decisions
+- Migrations/models/services/policies added
+- Permission catalogue and role templates
+- Audit behavior
+- Foundation-wide policy coverage
+- Arabic/English behavior
+- Brand/font/logo implementation
+- Shared components
+- Test and assertion counts
+- Build/accessibility/contrast results
+- Any blockers
+- Remaining deferred decisions
+- Explicit confirmation that no post-Foundation business module was started
+- Explicit assessment against every Foundation completion criterion

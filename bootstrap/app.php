@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\VerifyPortalSessionVersion;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -20,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // F20 — run locale detection on every web request (after session starts).
+        $middleware->web(append: [SetLocale::class]);
+
         $middleware->alias([
             // Portal-aware Authenticate middleware: redirects unauthenticated
             // requests to the correct portal login page based on URL prefix.

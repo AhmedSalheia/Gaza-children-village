@@ -6,7 +6,6 @@ namespace Modules\Staff\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Staff\Database\Factories\StaffProfileFactory;
@@ -31,8 +30,8 @@ final class StaffProfile extends Model
 
     protected $casts = [
         'employment_status' => EmploymentStatus::class,
-        'hired_on'          => 'date',
-        'ended_on'          => 'date',
+        'hired_on' => 'date',
+        'ended_on' => 'date',
     ];
 
     /** @return HasMany<StaffInstitutionAssignment, $this> */

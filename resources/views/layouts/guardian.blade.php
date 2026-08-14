@@ -1,27 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
+>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Parent / Student Portal') — GCV DATA</title>
-</head>
-<body>
-    <header>
-        <strong>GCV DATA — Parent / Student Portal</strong>
-    </header>
+    <title>@yield('title', __('auth.guardian_portal')) — GCV DATA</title>
 
-    <main>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="gcv-layout gcv-layout--guardian">
+
+<a href="#main-content" class="skip-link">{{ __('ui.skip_to_content', [], null, 'Skip to main content') }}</a>
+
+<header class="portal-header" role="banner">
+    <div class="portal-header__inner">
+        <a href="{{ url('/guardian') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.guardian_portal') }}">
+            <img
+                src="{{ asset('brand/gcv-logo-dark.png') }}"
+                alt="GCV DATA"
+                class="portal-header__logo"
+                width="120"
+                height="40"
+            >
+        </a>
+
+        <div class="portal-header__actions">
+            @include('layouts.partials.locale-switcher')
+
+            @auth('guardian')
+            <form method="POST" action="{{ route('guardian.logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn--ghost btn--sm">
+                    {{ __('ui.logout') }}
+                </button>
+            </form>
+            @endauth
+        </div>
+    </div>
+</header>
+
+<div class="portal-body">
+    @if(session('success'))
+        <div class="alert alert--success" role="alert">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert--danger" role="alert">{{ session('error') }}</div>
+    @endif
+
+    <main id="main-content" class="portal-main" tabindex="-1">
         @yield('content')
         {{ $slot ?? '' }}
     </main>
+</div>
 
-    {{--
-        F09: Minimal layout establishing topology, not final UI design.
-        The account belongs to a parent or authorized guardian, never to a student.
-        Design tokens, branding, Tailwind, and full RTL/LTR support are
-        deferred to the F20–F22 localization and branding phases.
-        Login pages and Guardian Portal UI are deferred to F10 and later.
-    --}}
+@include('layouts.partials.confirm-dialog')
+
 </body>
 </html>
