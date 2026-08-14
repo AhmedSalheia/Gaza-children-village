@@ -528,3 +528,36 @@ it('rejects every invalid transition on Semester', function (string $state, stri
     'archive semester: open → archived'     => ['open',     ArchiveSemester::class],
     'archive semester: archived → archived' => ['archived', ArchiveSemester::class],
 ]);
+
+// ---------------------------------------------------------------------------
+// Parametrized parent-year state guard for OpenSemester and ReopenSemester
+//
+// The generic invalid-transition table above exercises wrong *semester* states.
+// These two datasets cover the complementary gap: the semester is in a valid
+// source state but the *parent academic year* is in a non-Open state, which
+// must also be rejected.
+// ---------------------------------------------------------------------------
+
+it('OpenSemester is blocked for every non-Open parent year state', function (string $yearState): void {
+    $year = AcademicYearFactory::new()->{$yearState}()->create();
+    $semester = SemesterFactory::new()->draft()->forYear($year)->create();
+
+    expect(fn () => (new OpenSemester)->execute($semester))
+        ->toThrow(RuntimeException::class);
+})->with([
+    'open semester: parent year is draft'    => ['draft'],
+    'open semester: parent year is closed'   => ['closed'],
+    'open semester: parent year is archived' => ['archived'],
+]);
+
+it('ReopenSemester is blocked for every non-Open parent year state', function (string $yearState): void {
+    $year = AcademicYearFactory::new()->{$yearState}()->create();
+    $semester = SemesterFactory::new()->closed()->forYear($year)->create();
+
+    expect(fn () => (new ReopenSemester)->execute($semester, 'correction'))
+        ->toThrow(RuntimeException::class);
+})->with([
+    'reopen semester: parent year is draft'    => ['draft'],
+    'reopen semester: parent year is closed'   => ['closed'],
+    'reopen semester: parent year is archived' => ['archived'],
+]);
