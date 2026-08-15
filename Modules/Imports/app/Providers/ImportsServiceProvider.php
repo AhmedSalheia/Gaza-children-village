@@ -11,4 +11,17 @@ final class ImportsServiceProvider extends ModuleServiceProvider
     protected string $name = 'Imports';
 
     protected string $nameLower = 'imports';
+
+    public function register(): void
+    {
+        parent::register();
+
+        // Register module migrations.
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+    }
 }
