@@ -1,0 +1,430 @@
+Begin the post-Foundation implementation.
+
+Implement the first operational business release:
+
+STUDENT REGISTRY AND ENROLMENT RELEASE
+
+This release must produce a genuinely usable internal Admin/Secretary workflow, not backend placeholders.
+
+It must include:
+
+1. Complete synthetic Foundation and business demo data
+2. Modern Tailwind/Blade/Livewire UI
+3. Student and guardian profiles
+4. Guardian–student relationships
+5. Academic levels, classes, classrooms, and subjects
+6. Semester enrolment and class placement
+7. Student transfer and placement history
+8. Gaza civil-record lookup and reviewed autofill
+9. Staged Excel patch importing
+10. Full authorization, audit, tests, and bilingual UI
+
+Attendance, assessments, marks, documents, medical, inventory, and women’s-center operations are scheduled for subsequent releases. They are not cancelled, and this release must not claim that the complete system is finished.
+
+==================================================
+0. PREFLIGHT
+==================================================
+
+Before changing anything, read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- All Foundation ADRs
+- Existing F01–F23 code and tests
+- Existing database migrations
+- Existing Tailwind/Blade/Livewire implementation
+
+Verify first:
+
+- php artisan migrate:fresh
+- Existing full test suite
+- npm run build
+- php artisan route:list
+- php artisan module:list
+
+Do not proceed over a broken Foundation.
+
+Create:
+
+docs/plans/MASTER_IMPLEMENTATION_PLAN.md
+
+It must list the complete remaining product releases:
+
+- Student Registry and Enrolment
+- Attendance
+- Assessments, Marks and Publication
+- Parent/Student Portal
+- Documents, Requests, Reports and Exports
+- Medical Point
+- Storage and Inventory
+- Assets and Facilities
+- Women’s Center
+- Full Admin Portal
+- Notifications, deployment, backups and offline synchronization
+
+Mark only the current Student Registry and Enrolment release as in progress.
+
+==================================================
+1. MODULE OWNERSHIP
+==================================================
+
+Create bounded modules where they do not already exist:
+
+Students:
+
+- StudentProfile
+- GuardianProfile
+- GuardianStudentRelationship
+- Student lifecycle
+- Student search and registration
+
+AcademicManagement:
+
+- AcademicLevel
+- Classroom/facility reference
+- ClassGroup/section
+- Subject
+- Institution subject offering
+- StudentEnrollment
+- StudentPlacement
+- Transfer/promotion foundations
+
+CivilRegistry:
+
+- Read-only Gaza civil-record integration
+- Lookup and import adapter
+- Registry normalization
+- Autofill proposal DTOs
+- No ownership of official Person or Student records
+
+Imports:
+
+- Shared staged import batches
+- Uploaded source files
+- Row parsing and validation
+- Preview
+- Approval/application
+- Result reporting
+- Row-to-domain-record mappings
+
+Follow existing module conventions. Do not create cyclic module dependencies.
+
+==================================================
+2. STUDENT PROFILE
+==================================================
+
+StudentProfile belongs one-to-one to the existing Person.
+
+Use a stable surrogate primary key and a stable unique student_code.
+
+StudentProfile must not use national ID as its primary key.
+
+Minimum fields/concepts:
+
+- person_id
+- student_code
+- lifecycle status
+- registered_at
+- timestamps
+
+Approved lifecycle states:
+
+- prospective
+- active
+- inactive
+- withdrawn
+- graduated
+- deceased
+
+Do not use database enums.
+
+Extend the Person model only through an approved ADR/migration for student registration data:
+
+- full_name_ar
+- full_name_en, nullable
+- birth_date and precision
+- sex/gender reference needed for registration
+- basic birthplace/location fields where approved
+
+Do not place institution, semester, grade, class, or period directly on Person or StudentProfile. Those belong to enrolment and placement.
+
+Sensitive welfare, detailed health, counselor, and medical data must not be placed in the general StudentProfile table.
+
+Creating a StudentProfile:
+
+- Requires an existing or newly created Person.
+- Does not automatically create a GuardianAccount.
+- Does not automatically trust civil-registry data.
+- Does not automatically enrol the student.
+- Requires explicit authorization and audit.
+
+==================================================
+3. GUARDIANS AND RELATIONSHIPS
+==================================================
+
+GuardianProfile belongs one-to-one to Person.
+
+GuardianAccount linkage is optional and explicit.
+
+Creating a GuardianProfile must not automatically create an account.
+
+GuardianStudentRelationship fields/concepts:
+
+- guardian_profile_id
+- student_profile_id
+- relationship_type
+- starts_on
+- ends_on, nullable
+- verification status
+- verified_at/by
+- legal/authorized guardian indicator
+- portal_access_eligible
+- contact priority
+- emergency contact indicator
+- restricted notes with appropriate visibility
+- evidence status/reference for future documents
+- timestamps/history
+
+Relationship types:
+
+- father
+- mother
+- legal_guardian
+- grandparent
+- sibling
+- relative
+- foster_carer
+- other
+
+Rules:
+
+- A student may have multiple guardians.
+- A guardian may be related to multiple students.
+- Do not model relationships only as father_id/mother_id columns.
+- Portal access requires an active, verified, portal-eligible relationship.
+- Matching a national ID alone never grants access.
+- Relationship corrections preserve history.
+- Guardian users cannot edit official student data directly.
+
+Do not implement uploaded legal documents yet, but keep an evidence-status extension point.
+
+==================================================
+4. GAZA CIVIL-RECORD LOOKUP
+==================================================
+
+Implement a restricted, advisory civil-registry integration.
+
+Use the actual configured project database engine. Do not assume PostgreSQL when the application is currently using MySQL/MariaDB.
+
+Support a configurable existing table/connection named by configuration, with a default logical source such as:
+
+gaza_civil_records
+
+Expected source fields may include:
+
+- national ID
+- full name
+- gender
+- area
+- city
+- street
+- father ID
+- mother ID
+- birth date
+- marital status
+- deceased indicator
+- religion
+- birth country
+- representative ID
+- relationship
+
+Do not commit the real civil-registry dump or real personal data.
+
+Provide:
+
+- CivilRegistryLookup contract
+- Database-backed adapter
+- Restricted lookup by normalized national ID
+- Masked search result
+- Full authorized result for registration review
+- AutofillProposal DTO
+- Source/version metadata
+- Lookup audit event
+- “No match” result
+- Ambiguous/duplicate result handling
+- Unavailable-source handling
+
+Registration workflow:
+
+1. Authorized secretary enters national ID.
+2. System normalizes and searches the civil registry.
+3. Matching registry data appears as a proposal.
+4. Existing GCV Person/identifier matches are checked.
+5. Secretary reviews every proposed field.
+6. Secretary explicitly accepts or rejects proposed values.
+7. Official Person and StudentProfile records are created/updated through domain actions.
+8. Accepted source fields and decisions are audited.
+9. Registry data never silently overwrites trusted GCV data.
+
+Father/mother/representative IDs may be shown as relationship suggestions, but must not automatically create guardian relationships or portal access.
+
+Security:
+
+- Lookup requires explicit permission and institutional purpose.
+- Rate-limit sensitive lookup.
+- Do not place national IDs in URLs.
+- Use POST requests.
+- Do not put raw IDs in logs, audit payloads, Livewire query strings, browser history, or cache keys.
+- Default result display is masked.
+- Prevent broad enumeration.
+- Registry data is read-only from the application.
+
+Add a streamed/chunked CLI importer or adapter for loading the separately supplied registry source without loading 1.5 million rows into memory.
+
+==================================================
+5. ACADEMIC STRUCTURES
+==================================================
+
+Implement:
+
+AcademicLevel:
+
+- Stable code
+- Arabic and English name
+- Sequence/order
+- Active state
+- Optional next-level reference
+- Organization-owned
+
+Initial levels must support:
+
+- Kindergarten
+- Grades 1–12
+
+Do not hard-code that every institution offers every level.
+
+InstitutionAcademicLevel:
+
+- Institution
+- Academic level
+- Effective availability
+- Capacity where applicable
+
+Classroom:
+
+- Physical room/facility
+- Belongs to institution
+- Stable code
+- Arabic/English name
+- Capacity
+- Active state
+
+ClassGroup:
+
+- InstitutionSemester
+- OperationalPeriod
+- AcademicLevel
+- Section code/name
+- Optional Classroom
+- Capacity
+- Lifecycle state
+
+Classes and physical classrooms are distinct.
+
+Subject:
+
+- Stable organization-level code
+- Arabic/English name
+- Active state
+
+InstitutionSubjectOffering:
+
+- Institution
+- Subject
+- Effective availability
+
+Teaching assignments, assessments, and marks are not part of this release, but these structures must support them later.
+
+==================================================
+6. ENROLMENT AND PLACEMENT
+==================================================
+
+Implement StudentEnrollment and StudentPlacement with complete history.
+
+StudentEnrollment:
+
+- student_profile_id
+- institution_semester_id
+- status
+- enrolled_on
+- ended_on, nullable
+- source
+- reason where required
+- timestamps
+
+Statuses:
+
+- draft
+- active
+- completed
+- promoted
+- repeating
+- transferred
+- withdrawn
+- suspended
+- graduated
+
+StudentPlacement:
+
+- student_enrollment_id
+- class_group_id
+- starts_on
+- ends_on, nullable
+- reason/source
+- history
+
+Rules:
+
+- Institution and semester derive through relationships.
+- Do not duplicate scope IDs unnecessarily.
+- A student cannot have conflicting active enrolments in different educational institutions for overlapping dates.
+- A student cannot have conflicting active placements in one semester.
+- Placement class, period, institution semester, and enrolment must form one valid chain.
+- Draft preparation is allowed.
+- Closed/archived semester mutation is denied.
+- Historical enrolments and placements remain readable.
+- Corrections/transfers do not overwrite history.
+- All mutations are transactional, authorized, and audited.
+- Enrolment does not depend solely on UI validation.
+
+Implement workflows for:
+
+- Register student
+- Create draft enrolment
+- Activate enrolment
+- Place in class
+- Change placement with history
+- Withdraw
+- Suspend/reactivate
+- Complete
+- Mark repeating
+- Promote proposal
+- Transfer between institutions
+- Graduate
+
+Promotion creates proposed future records and never rewrites prior semesters.
+
+Transfer:
+
+- Closes prior active enrolment appropriately.
+- Creates target draft/active enrolment according to authorization.
+- Preserves both institutions’ history.
+- Requires actor and reason.
+- Is atomic.
+- Does not allow either institution to see unrelated restricted records.
+
+==================================================
+7. STAGED EXCEL PATCH IMPORT

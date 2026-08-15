@@ -1,0 +1,740 @@
+Begin the post-Foundation implementation of the complete GCV DATA system.
+
+Implement the first operational business release:
+
+STUDENT REGISTRY AND ENROLMENT RELEASE
+
+This release must produce a genuinely usable Admin/Secretary workflow, not placeholder contracts.
+
+Functional scope:
+
+1. Master implementation roadmap
+2. Student and guardian profiles
+3. Guardian–student relationships
+4. Academic levels, classes, classrooms, and subjects
+5. Student enrolment and placement
+6. Student transfers and basic promotion proposals
+7. Gaza civil-registry lookup and student autofill
+8. Staged Excel patch importing
+9. Complete synthetic demo seed data
+10. Modern Tailwind + Blade + Livewire management UI
+
+Attendance, assessments/marks, publication, documents, medical, storage, assets, and women’s-center operations remain required later releases. Record them in the master roadmap; do not claim the full system is complete after this release.
+
+Before changing code, read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/FOUNDATION_PLAN.md
+- All existing ADRs
+- Existing modules, migrations, policies, actions, seeders, routes, and tests
+
+Preserve the completed Foundation architecture.
+
+==================================================
+1. MASTER IMPLEMENTATION ROADMAP
+==================================================
+
+Create:
+
+docs/plans/MASTER_IMPLEMENTATION_PLAN.md
+
+It must cover every remaining specification domain:
+
+- Student Registry and Enrolment
+- Attendance
+- Assessments, marks, results, and publication
+- Parent/Student Portal
+- Documents, requests, reports, and exports
+- Student welfare and behavior boundaries
+- Medical Point
+- Storage and inventory
+- Assets and facilities
+- Women’s Center
+- Notifications
+- Full Admin Portal
+- Civil-registry integration
+- Imports and exports
+- Deployment, backup, disaster recovery, and offline synchronization
+
+For every release document:
+
+- Actors
+- Entities
+- Workflows
+- Permissions/scopes
+- Lifecycle states
+- UI
+- Auditing
+- Imports/exports
+- Tests
+- Dependencies
+- Decision gates
+
+Mark Foundation as completed only if its complete test suite passes.
+
+Mark Student Registry and Enrolment as the current implementation release.
+
+==================================================
+2. MODULE OWNERSHIP
+==================================================
+
+Add focused modules if they do not already exist:
+
+- Students
+- AcademicManagement
+- CivilRegistry
+- Imports
+
+Ownership:
+
+Students:
+
+- StudentProfile
+- GuardianProfile
+- GuardianStudentRelationship
+- Student-specific history and restricted social data
+
+AcademicManagement:
+
+- AcademicLevel
+- Classroom
+- ClassGroup/Section
+- Subject
+- InstitutionSubjectOffering
+- StudentEnrollment
+- Placement history
+- Transfer and promotion proposal workflows
+
+CivilRegistry:
+
+- Restricted read-only Gaza civil-record source
+- Import/load command for the registry dataset
+- Lookup and proposed-autofill service
+- No ownership of official Person or Student records
+
+Imports:
+
+- Shared staged import batches
+- Uploaded source-file metadata
+- Row parsing/validation
+- Preview
+- Approval/apply
+- Result reporting
+- Source-row mappings
+
+Reuse existing:
+
+- People
+- Organization
+- AcademicCalendar
+- Accounts
+- Staff
+- Authorization
+- Audit
+
+Do not duplicate Person, identifier, contact, operational-context, permission, or audit abstractions.
+
+==================================================
+3. STUDENT PROFILE
+==================================================
+
+Implement StudentProfile linked one-to-one with Person.
+
+StudentProfile must use:
+
+- Surrogate primary key
+- Stable unique student_code
+- person_id
+- lifecycle status
+- registration date
+- timestamps
+
+Approved lifecycle states:
+
+- draft
+- active
+- inactive
+- withdrawn
+- graduated
+- deceased
+
+Do not use national ID as StudentProfile primary key.
+
+A student may exist without a national ID.
+
+Do not duplicate names, birth date, identifiers, or contacts from Person into StudentProfile.
+
+Create an ADR before migrations for additional student information and classify each field.
+
+Initial student-specific fields may include:
+
+- orphan status
+- displacement status/location
+- family-members count
+- order in family
+- general accessibility/accommodation indicator
+
+Do not put unrestricted medical diagnoses or counselor notes directly on StudentProfile. Those require later protected domain records.
+
+All sensitive fields require explicit field-level permission.
+
+Provide actions for:
+
+- Create draft StudentProfile from an existing Person
+- Create Person and StudentProfile atomically
+- Activate student
+- Change lifecycle status
+- Search students using authorized scope
+- View masked/basic profile
+- View restricted fields when authorized
+- Correct student-specific data with reason/history
+
+No automatic person merging by name.
+
+==================================================
+4. GUARDIAN PROFILES AND RELATIONSHIPS
+==================================================
+
+Implement GuardianProfile linked one-to-one with Person.
+
+GuardianProfile does not automatically create GuardianAccount.
+
+Allow an explicit optional one-to-one link between GuardianProfile and GuardianAccount.
+
+Implement GuardianStudentRelationship with:
+
+- student_profile_id
+- guardian_profile_id
+- relationship_type
+- legal_authority status
+- verification status
+- portal_eligible
+- contact priority
+- emergency contact flag
+- starts_on
+- ends_on
+- restricted notes
+- evidence status/reference
+- history metadata
+
+Relationship types:
+
+- father
+- mother
+- legal_guardian
+- grandparent
+- sibling
+- relative
+- foster_carer
+- representative
+- other
+
+Rules:
+
+- A student may have multiple guardians.
+- A guardian may relate to multiple students.
+- Relationships are historical, not overwritten.
+- Matching national IDs never automatically grants guardian access.
+- Portal eligibility requires an active, verified relationship.
+- Relationship notes/evidence remain restricted.
+- GuardianAccount linkage alone grants no student access.
+- Parent/Student Portal queries must derive access from active verified portal-eligible relationships.
+
+Provide create, verify, activate/deactivate, correct, and history actions.
+
+==================================================
+5. GAZA CIVIL-REGISTRY INTEGRATION
+==================================================
+
+Implement a restricted advisory civil-registry integration.
+
+Expected source fields include:
+
+- national ID
+- full name
+- gender
+- area
+- city
+- street
+- father ID
+- mother ID
+- birth date
+- marital status
+- deceased indicator
+- religion
+- birth country
+- representative ID
+- relationship
+
+Inspect any existing database/table/import files before choosing final names.
+
+Support a configurable source such as `gaza_civil_records` or the actual existing table name. Do not create two competing registry tables.
+
+Requirements:
+
+- Registry records are read-only through the application.
+- Use indexed normalized national-ID lookup.
+- Support approximately 1.5 million records.
+- Never load the complete registry into application memory.
+- Import/load in chunks or stream rows.
+- Do not commit the real registry dump to Git.
+- Do not expose registry search broadly.
+- Record authorized lookup purpose, actor, and outcome without logging the raw ID.
+- Registry lookup is advisory.
+- Registry mismatch produces a review warning.
+- Registry data never silently overwrites an existing Person.
+- `is_dead` or another sensitive registry value must never automatically change a GCV Person lifecycle.
+
+Create:
+
+- CivilRegistryRecord model/read repository
+- CivilRegistryLookup service
+- CivilRegistryImport command
+- CivilRegistryMatch DTO
+- CivilRegistryAutofillProposal
+- Accept/reject-field selection
+- Safe lookup audit integration
+
+Student registration workflow:
+
+1. Secretary enters national ID.
+2. Backend authorizes the lookup.
+3. Identifier is normalized.
+4. Existing GCV Person/Student is checked first.
+5. Registry is checked.
+6. Proposed values are displayed.
+7. Secretary reviews individual fields.
+8. Accepted fields create/update the draft Person.
+9. StudentProfile is created explicitly.
+10. Source and decisions are audited.
+
+Do not automatically create parents/guardians from father_id or mother_id. Present them as possible follow-up lookups.
+
+==================================================
+6. ACADEMIC STRUCTURES
+==================================================
+
+Implement:
+
+AcademicLevel:
+
+- Stable code
+- Arabic/English name
+- Sequence/order
+- Active state
+- Kindergarten and approved school grade levels
+- Institution-type availability
+
+Classroom:
+
+- Physical room/facility
+- Belongs to institution
+- Stable code
+- Arabic/English name
+- Capacity, nullable
+- Active/history state
+
+ClassGroup/Section:
+
+- Belongs to InstitutionSemester
+- Belongs to OperationalPeriod
+- Belongs to AcademicLevel
+- Optional Classroom
+- Stable code within institution semester
+- Arabic/English display name
+- Capacity, nullable
+- Lifecycle state
+
+Subject:
+
+- Stable central subject code
+- Arabic/English name
+- Active state
+
+InstitutionSubjectOffering:
+
+- Institution-semester availability of a Subject
+- Does not imply a teacher assignment
+- Does not grant permissions
+
+Keep physical Classroom and student ClassGroup separate.
+
+Validate every institution/semester/period relationship through existing operational-context resolution.
+
+No fixed assumption about:
+
+- Number of grades
+- Number of sections
+- Number of periods
+- Number of subjects
+
+==================================================
+7. ENROLMENT AND PLACEMENT
+==================================================
+
+Implement StudentEnrollment.
+
+It belongs to:
+
+- StudentProfile
+- InstitutionSemester
+- ClassGroup
+
+Institution, semester, academic level, and period must be derived through relationships rather than duplicated as trusted request data.
+
+Statuses:
+
+- draft
+- active
+- completed
+- promoted
+- repeating
+- transferred
+- withdrawn
+- suspended
+- graduated
+
+Rules:
+
+- A student cannot have conflicting active educational-institution enrolments for overlapping dates.
+- A student cannot have two active placements in the same InstitutionSemester.
+- ClassGroup must belong to the selected InstitutionSemester.
+- InstitutionSemester must be open before activation.
+- Draft placement may be prepared for a future semester.
+- Closed/archived history remains readable.
+- Historical enrolments are never repointed to a new class.
+- Capacity violations require explicit approved override and reason; ordinary users cannot silently exceed capacity.
+- Central read access does not grant enrolment mutation.
+- Secretary mutations require matching institution, semester, period, position, and permission.
+
+Provide:
+
+- Create draft enrolment
+- Change draft placement
+- Activate enrolment
+- Complete enrolment
+- Withdraw/suspend
+- Transfer student
+- Create promotion proposal
+- Review promotion proposal
+- Apply approved proposal atomically
+- List complete enrolment/placement history
+- Resolve current placement
+
+Transfer:
+
+- Closes the prior active enrolment appropriately.
+- Creates a new draft/active target enrolment according to approved workflow.
+- Requires reason and actor.
+- Is atomic.
+- Never overwrites history.
+
+Promotion:
+
+- Produces proposals, never automatic official placement.
+- Supports promoted, repeating, graduated, transferred, and unresolved decisions.
+- Requires review before activation.
+
+==================================================
+8. STAGED EXCEL PATCH IMPORTS
+==================================================
+
+Implement `.xlsx` and `.csv` student imports.
+
+Inspect currently installed packages before adding a spreadsheet dependency. If a new package is needed, verify compatibility with the locked Laravel/PHP versions and document the decision.
+
+Workflow:
+
+1. Upload
+2. Store source metadata securely
+3. Parse in chunks
+4. Map columns
+5. Normalize
+6. Validate
+7. Detect existing records
+8. Show preview
+9. Approve
+10. Apply through domain actions
+11. Produce result/error report
+
+Never write uploaded rows directly into official tables.
+
+Entities:
+
+- ImportBatch
+- ImportFile
+- ImportRow
+- ImportColumnMapping
+- ImportRowResult
+- ImportAppliedRecord
+
+Batch statuses:
+
+- uploaded
+- parsing
+- ready_for_mapping
+- validating
+- ready_for_review
+- applying
+- completed
+- completed_with_errors
+- failed
+- cancelled
+
+Patch behavior:
+
+- Existing unchanged student → skip
+- Existing record with safe missing fields → propose patch
+- Conflicting official value → conflict requiring review
+- New valid student → propose creation
+- Duplicate row in file → reject/flag
+- Invalid reference → reject/flag
+- Ambiguous identity → never auto-merge
+- Unknown class/semester/period → reject/flag
+- Unauthorized institution row → reject without applying
+- One failing row must not corrupt successful recoverable batches
+
+Required row-level result statuses:
+
+- created
+- updated
+- skipped_existing
+- conflict
+- invalid
+- unauthorized
+- failed
+
+Support column aliases in Arabic and English.
+
+Large files must use queues/chunking and bounded memory.
+
+Record:
+
+- Actor
+- Portal
+- Institution/semester scope
+- Original filename
+- File hash
+- Import time
+- Source row number
+- Applied entity references
+- Safe changes
+- Errors
+- Result summary
+
+Never include raw national IDs in ordinary logs or downloadable error URLs.
+
+Provide downloadable Excel/CSV result reports with masked sensitive values.
+
+==================================================
+9. MODERN MANAGEMENT UI
+==================================================
+
+Replace the placeholder/outdated interface with a polished Tailwind + Blade + Livewire application.
+
+Use:
+
+- Existing semantic tokens
+- GCV logo
+- Teal #254151
+- Gold #EEC219
+- Off-white #EAEAE8
+- Dark gray #616153
+- Red #D55342
+- Green #518245
+- League Spartan
+- Montserrat
+- Noto Sans Arabic
+
+No Bootstrap, Vue, React, CDN template, or second design system.
+
+Admin UI:
+
+- Dashboard
+- Institutions
+- Academic calendar
+- Academic levels
+- Classrooms
+- Class groups
+- Subjects/offerings
+- People
+- Students
+- Guardians
+- Relationships
+- Enrolment history
+- Transfers
+- Promotion proposals
+- Civil-registry lookup audit
+- Import batches
+- Staff/accounts/roles/audit Foundation screens
+
+Secretary/Staff UI:
+
+- Scoped dashboard
+- Student search
+- Student list
+- Add student
+- National-ID lookup/autofill review
+- Student profile
+- Guardian relationships
+- Class lists
+- Enrolment/placement
+- Transfer
+- Promotion review where authorized
+- Excel import upload/mapping/preview/results
+
+Guardian UI:
+
+- Authenticated dashboard
+- Multiple-child selector when eligible relationships exist
+- Published basic student identity
+- Current academy and placement
+- No marks/attendance/documents until publication modules are implemented
+- No direct editing of official records
+
+Every list needs search, filters, sort, pagination, empty/loading/error states, and responsive behavior.
+
+Use domain actions from Livewire. Never perform direct model mutation from UI components.
+
+==================================================
+10. COMPLETE DEMO SEEDING
+==================================================
+
+Extend the safe demo seeders to include all Foundation and current-release entities.
+
+Seed synthetic:
+
+- Two academies
+- Current/open and historical semesters
+- Three periods
+- Academic levels
+- Physical classrooms
+- Class groups
+- Subjects and offerings
+- At least 30 students
+- Multiple guardians
+- Sibling relationships
+- Student without national ID
+- Student with multiple guardians
+- Guardian with multiple students
+- Draft/active/withdrawn/transferred enrolments
+- Promotion proposals
+- Synthetic civil-registry matches/mismatches
+- Import batches covering created, updated, skipped, conflict, and invalid outcomes
+- Admin, principal, secretary, period-restricted secretary, teacher, counselor, and guardian accounts
+
+Use only obviously synthetic data and reserved contacts.
+
+Use DEMO_SEED_PASSWORD for account credentials and refuse demo seeding in production.
+
+==================================================
+11. AUTHORIZATION AND AUDIT
+==================================================
+
+Extend the permission catalogue for:
+
+- Student basic/restricted reads
+- Student management
+- Guardian relationship management/verification
+- Civil-registry lookup
+- Academic-structure management
+- Enrolment management
+- Transfer
+- Promotion proposal/review
+- Import upload/review/apply
+- Sensitive export
+
+Enforce:
+
+- Institution scope
+- Institution semester
+- Period
+- Account state
+- Staff assignment
+- Staff position
+- Module activation
+- Record lifecycle
+- Field classification
+
+Audit all important lookup, creation, correction, relationship, enrolment, transfer, promotion, and import actions.
+
+Do not expose inaccessible record existence.
+
+==================================================
+12. TESTS
+==================================================
+
+Test:
+
+- Empty migration
+- Complete seeding
+- Seeder idempotency
+- Student/person identity separation
+- Guardian relationship history
+- Portal eligibility
+- Cross-institution denial
+- Period-restricted secretary denial
+- Civil-registry normalization/indexed lookup
+- Civil registry remains advisory
+- No automatic overwrite
+- No automatic parent creation
+- Class relationship validation
+- Conflicting enrolment prevention under concurrency
+- Transfer rollback
+- Promotion proposals do not auto-activate
+- Import parsing/mapping/preview
+- Skip-existing behavior
+- Conflict behavior
+- Unauthorized import rows
+- Chunked/bounded processing
+- Masked sensitive data
+- Admin/staff/guardian UI authorization
+- Arabic RTL and English LTR
+- Responsive screens
+- Accessibility
+- Audit completeness/redaction
+- Existing Foundation regression suite
+
+==================================================
+13. VERIFICATION
+==================================================
+
+Run every command required by AGENTS.md, including:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- php artisan migrate:fresh
+- Complete reference/demo seeding
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Run the application and inspect through live preview in:
+
+- Arabic desktop
+- English desktop
+- Arabic mobile
+- English mobile
+
+Final report must include:
+
+- Master roadmap
+- Modules/entities/migrations
+- Civil-registry integration
+- Excel import workflow
+- Student/guardian/enrolment behavior
+- Seeded demo accounts and portal URLs
+- Modern UI screens
+- Screenshots or visual-inspection summary
+- Test/assertion counts
+- Build results
+- Remaining releases
+- Explicit confirmation that the complete system is still progressing and this release was not falsely reported as full-system completion
