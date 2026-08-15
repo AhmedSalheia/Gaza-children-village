@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // QR attendance scan endpoint — exempt from CSRF.
+        // External QR scanning devices and offline-fallback forms cannot hold
+        // a session CSRF token. The submitted token hash acts as the
+        // authentication secret, making CSRF protection redundant here.
+        $middleware->validateCsrfTokens(except: ['attend']);
+
         // F20 — run locale detection on every web request (after session starts).
         $middleware->web(append: [SetLocale::class]);
 

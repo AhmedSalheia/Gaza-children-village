@@ -69,6 +69,33 @@
     </li>
     @endif
 
+    {{-- Staff Attendance: secretary daily entry --}}
+    @if($navCan('staff_attendance.enter'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.staff-attendance.index') }}" class="portal-nav__link @active('staff/staff-attendance') @active('staff/staff-attendance/*')">
+            {{ __('ui.staff_attendance', [], null, 'Staff Attendance') }}
+        </a>
+    </li>
+    @endif
+
+    {{-- Staff Attendance: QR scan review (secretary/deputy) --}}
+    @if($navCan('attendance_scan.review'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.staff-attendance.scan-queue') }}" class="portal-nav__link @active('staff/staff-attendance/scan-queue*')">
+            {{ __('ui.scan_queue', [], null, 'Scan Queue') }}
+        </a>
+    </li>
+    @endif
+
+    {{-- Staff Attendance: dashboard (principal/deputy) --}}
+    @if($navCan('staff_attendance.read') and !$navCan('staff_attendance.enter'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.staff-attendance.dashboard') }}" class="portal-nav__link @active('staff/staff-attendance/dashboard*')">
+            {{ __('ui.staff_attendance_dashboard', [], null, 'Staff Attendance') }}
+        </a>
+    </li>
+    @endif
+
     @if($navCan('import.upload'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.imports.index') }}" class="portal-nav__link @active('staff/imports*')">

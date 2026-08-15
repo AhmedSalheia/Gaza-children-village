@@ -43,6 +43,18 @@ trait HasStaffAuth
      */
     private const FULL_SCOPE_POSITIONS = ['principal', 'deputy_principal', 'counselor'];
 
+    /**
+     * Per-component-instance position cache.
+     *
+     * Keyed by staff account primary key. Using a property (not a function-level
+     * static) ensures each Livewire component instance starts with an empty cache
+     * — critical for test isolation where the same account ID may be reused across
+     * test methods after a database rollback.
+     *
+     * @var array<int, object|null>
+     */
+    private array $resolvedPositionCache = [];
+
     // ── Core position resolver ────────────────────────────────────────────
 
     /**
@@ -55,13 +67,12 @@ trait HasStaffAuth
      * All other methods in this trait derive their data exclusively from this record
      * to ensure consistent scope isolation across concurrent positions.
      *
-     * Results are cached in-memory for the lifetime of the Livewire component
-     * request; safe because auth identity cannot change mid-request.
+     * Results are cached in the per-instance $resolvedPositionCache property for
+     * the lifetime of the Livewire component instance (one HTTP round-trip); safe
+     * because auth identity cannot change mid-request.
      */
     private function resolveActivePosition(): ?object
     {
-        static $cache = [];
-
         $account = auth('staff')->user();
 
         if ($account === null || ! $account->staff_profile_id) {
@@ -70,8 +81,8 @@ trait HasStaffAuth
 
         $key = (int) $account->getKey();
 
-        if (! array_key_exists($key, $cache)) {
-            $cache[$key] = DB::table('staff_positions')
+        if (! array_key_exists($key, $this->resolvedPositionCache)) {
+            $this->resolvedPositionCache[$key] = DB::table('staff_positions')
                 ->where('staff_profile_id', $account->staff_profile_id)
                 ->where('started_on', '<=', now()->toDateString())
                 ->where(fn ($q) => $q->whereNull('ended_on')->orWhere('ended_on', '>=', now()->toDateString()))
@@ -80,7 +91,7 @@ trait HasStaffAuth
                 ->first();
         }
 
-        return $cache[$key];
+        return $this->resolvedPositionCache[$key];
     }
 
     // ── Permission ────────────────────────────────────────────────────────

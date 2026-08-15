@@ -7,7 +7,11 @@ use App\Livewire\Staff\Assignments\AssignmentOverview;
 use App\Livewire\Staff\Attendance\AttendanceQueue;
 use App\Livewire\Staff\Attendance\DailyAttendanceSheet;
 use App\Livewire\Staff\Attendance\MyClasses;
+use App\Livewire\Staff\Attendance\QrCardGenerator;
+use App\Livewire\Staff\Attendance\ScanEventQueue;
 use App\Livewire\Staff\Attendance\SheetVerification;
+use App\Livewire\Staff\Attendance\StaffAttendanceDashboard;
+use App\Livewire\Staff\Attendance\StaffAttendanceEntry;
 use App\Livewire\Staff\ClassLists\ClassList;
 use App\Livewire\Staff\Dashboard;
 use App\Livewire\Staff\Enrollments\EnrollmentManagement;
@@ -82,6 +86,15 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         Route::get('/attendance/verify/{sheetId}', SheetVerification::class)
             ->where('sheetId', '[0-9]+')
             ->name('attendance.verify');
+
+        // Staff attendance — secretary entry and QR management
+        Route::get('/staff-attendance', StaffAttendanceEntry::class)->name('staff-attendance.index');
+        Route::get('/staff-attendance/dashboard', StaffAttendanceDashboard::class)->name('staff-attendance.dashboard');
+        Route::get('/staff-attendance/scan-queue', ScanEventQueue::class)->name('staff-attendance.scan-queue');
+        Route::get('/staff-attendance/qr-cards', QrCardGenerator::class)->name('staff-attendance.qr-cards');
+        Route::get('/staff-attendance/scan-form', static fn () => view('staff.attendance.scan-form', [
+            'periods' => \Illuminate\Support\Facades\DB::table('operational_periods')->select('id', 'name')->orderBy('name')->get(),
+        ]))->name('attendance.scan-form');
 
         // Imports (secretary/deputy_principal)
         Route::get('/imports', ImportBatchIndex::class)->name('imports.index');
