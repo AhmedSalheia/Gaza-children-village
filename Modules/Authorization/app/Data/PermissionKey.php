@@ -115,6 +115,11 @@ final class PermissionKey
     public const ROLE_ASSIGN = 'role.assign';
 
     // -----------------------------------------------------------------
+    // Civil Registry
+    // -----------------------------------------------------------------
+    public const CIVIL_REGISTRY_LOOKUP = 'civil_registry.lookup';
+
+    // -----------------------------------------------------------------
     // All keys — used by seeder and architecture test.
     // -----------------------------------------------------------------
 

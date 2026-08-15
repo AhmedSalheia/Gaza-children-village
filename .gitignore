@@ -25,3 +25,9 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Civil-registry dataset files — must never be committed to Git
+*.sql
+*civil_registry*.csv
+*civil_records*.csv
+storage/civil-registry/

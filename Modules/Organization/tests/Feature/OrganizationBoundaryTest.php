@@ -25,8 +25,10 @@ it('does not create import tables in F03', function (): void {
     }
 });
 
-it('does not create civil-registry or student tables in F03', function (): void {
-    $forbidden = ['gaza_civil_records', 'students', 'student_profiles', 'guardian_students'];
+it('does not create student tables in F03', function (): void {
+    // gaza_civil_records is now legitimately created by the CivilRegistry module.
+    // Only student-module tables remain forbidden from Organization migrations.
+    $forbidden = ['students', 'student_profiles', 'guardian_students'];
 
     foreach ($forbidden as $table) {
         expect(Schema::hasTable($table))->toBeFalse("Unexpected table: {$table}");
