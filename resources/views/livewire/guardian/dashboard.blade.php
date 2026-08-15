@@ -10,8 +10,17 @@
         </p>
     </div>
 
-    @if(! $hasChildren)
-        {{-- No eligible relationships --}}
+    @if(! $hasProfile)
+        {{-- Account exists but no guardian profile is linked yet --}}
+        <div class="empty-state" role="status" aria-live="polite">
+            <div class="empty-state__icon" aria-hidden="true">⏳</div>
+            <h2 class="empty-state__title">{{ __('ui.guardian_account_setup_pending', [], null, 'Account setup pending') }}</h2>
+            <p class="empty-state__body">
+                {{ __('ui.guardian_account_setup_pending_body', [], null, 'Your account is not yet fully set up. Please contact the school administration to complete the setup.') }}
+            </p>
+        </div>
+    @elseif(! $hasChildren)
+        {{-- Profile exists but no eligible relationships --}}
         <div class="empty-state" role="status" aria-live="polite">
             <div class="empty-state__icon" aria-hidden="true">👤</div>
             <h2 class="empty-state__title">{{ __('ui.no_children_linked', [], null, 'No children linked to your account') }}</h2>

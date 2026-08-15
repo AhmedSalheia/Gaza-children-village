@@ -58,6 +58,14 @@ final class StudentDetail extends Component
     public function mount(int $studentProfileId): void
     {
         $this->studentProfileId = $studentProfileId;
+
+        if (! $this->hasGuardianProfile()) {
+            session()->flash('error', __('ui.guardian_profile_not_linked_flash', [], null, 'Your account is not yet fully set up. Please contact school administration.'));
+            $this->redirectRoute('guardian.dashboard', navigate: true);
+
+            return;
+        }
+
         $this->assertStudentAccessible($this->studentProfileId);
     }
 
@@ -283,6 +291,20 @@ final class StudentDetail extends Component
 
     public function render(): View
     {
+        // If the profile was unlinked mid-session, redirect gracefully instead
+        // of letting assertStudentAccessible throw a raw 403.
+        if (! $this->hasGuardianProfile()) {
+            session()->flash('error', __('ui.guardian_profile_not_linked_flash', [], null, 'Your account is not yet fully set up. Please contact school administration.'));
+            $this->redirectRoute('guardian.dashboard', navigate: true);
+
+            return view('livewire.guardian.students.detail', [
+                'student'           => null,
+                'ageRange'          => null,
+                'relationship'      => null,
+                'pendingCorrection' => null,
+            ])->layout('layouts.guardian');
+        }
+
         // Re-assert access on every render — a relationship may expire during
         // an active session; this prevents the page from serving stale data.
         $this->assertStudentAccessible($this->studentProfileId);

@@ -65,6 +65,18 @@ trait HasGuardianAuth
         return $this->_guardianProfileIdCache;
     }
 
+    // ── Profile presence ─────────────────────────────────────────────────
+
+    /**
+     * Return true if the authenticated guardian account has a linked profile.
+     *
+     * Use this to short-circuit before operations that require a profile.
+     */
+    protected function hasGuardianProfile(): bool
+    {
+        return $this->resolveGuardianProfileId() !== null;
+    }
+
     // ── Eligibility ───────────────────────────────────────────────────────
 
     /**

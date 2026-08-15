@@ -54,4 +54,9 @@ return [
     'switch_to_arabic' => 'العربية',
     'switch_to_english' => 'English',
     'current_locale' => 'اللغة الحالية',
+
+    // Guardian portal — profile setup states
+    'guardian_account_setup_pending'      => 'الحساب قيد الإعداد',
+    'guardian_account_setup_pending_body' => 'لم يكتمل إعداد حسابك بعد. يرجى التواصل مع إدارة المدرسة لإتمام الإعداد.',
+    'guardian_profile_not_linked_flash'   => 'لم يكتمل إعداد حسابك بعد. يرجى التواصل مع إدارة المدرسة.',
 ];
