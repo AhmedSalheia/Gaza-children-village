@@ -37,7 +37,7 @@ it('prevents modules from depending on portal controllers or ui components', fun
 it('allows cross-module references only through approved public surfaces and directions', function (): void {
     $boundaries = config('module-boundaries');
 
-    expect($boundaries['dependencies'])->toHaveCount(7)
+    expect($boundaries['dependencies'])->toHaveCount(11)
         ->and($boundaries['public_namespaces'])->not->toBeEmpty();
 
     foreach (modulePhpFiles() as $path) {
@@ -76,8 +76,8 @@ it('prevents modules from reaching into another module internal http layer', fun
     }
 });
 
-it('contains no later-release module directories', function (): void {
-    $expected = config('module-boundaries.foundation_modules');
+it('all module directories are registered in boundary config', function (): void {
+    $expected = config('module-boundaries.registered_modules');
     $actual = collect(glob(base_path('Modules/*'), GLOB_ONLYDIR) ?: [])
         ->map(fn (string $path) => basename($path))
         ->values()

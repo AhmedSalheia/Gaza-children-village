@@ -1,9 +1,13 @@
 {
     "Accounts": true,
-    "Organization": true,
+    "AcademicManagement": true,
     "AcademicCalendar": true,
+    "Audit": true,
+    "Authorization": true,
+    "CivilRegistry": true,
+    "Imports": true,
+    "Organization": true,
     "People": true,
     "Staff": true,
-    "Authorization": true,
-    "Audit": true
+    "Students": true
 }

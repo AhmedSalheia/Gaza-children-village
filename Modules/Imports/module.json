@@ -1,0 +1,11 @@
+{
+    "name": "Imports",
+    "alias": "imports",
+    "description": "GCV DATA Imports module — staged Excel/CSV import pipeline with preview and apply workflow.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Imports\\Providers\\ImportsServiceProvider"
+    ],
+    "files": []
+}

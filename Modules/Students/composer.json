@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/students",
+    "description": "GCV DATA Students module — StudentProfile, GuardianProfile, and GuardianStudentRelationship.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Students\\": "app/",
+            "Modules\\Students\\Database\\Factories\\": "database/factories/",
+            "Modules\\Students\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Students\\Tests\\": "tests/"
+        }
+    }
+}

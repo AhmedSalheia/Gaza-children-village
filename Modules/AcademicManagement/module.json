@@ -1,0 +1,11 @@
+{
+    "name": "AcademicManagement",
+    "alias": "academicmanagement",
+    "description": "GCV DATA AcademicManagement module — academic levels, classrooms, class groups, subjects, and student enrolment.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AcademicManagement\\Providers\\AcademicManagementServiceProvider"
+    ],
+    "files": []
+}

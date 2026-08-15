@@ -1,0 +1,11 @@
+{
+    "name": "CivilRegistry",
+    "alias": "civilregistry",
+    "description": "GCV DATA CivilRegistry module — restricted advisory Gaza civil-registry lookup and import.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CivilRegistry\\Providers\\CivilRegistryServiceProvider"
+    ],
+    "files": []
+}

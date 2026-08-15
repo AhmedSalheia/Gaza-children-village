@@ -63,8 +63,8 @@ describe('F09 module boundary and architecture rules', function (): void {
 
     describe('module dependency boundaries', function (): void {
 
-        it('Accounts module is declared in foundation_modules', function (): void {
-            expect(config('module-boundaries.foundation_modules'))->toContain('Accounts');
+        it('Accounts module is declared in registered_modules', function (): void {
+            expect(config('module-boundaries.registered_modules'))->toContain('Accounts');
         });
 
         it('Accounts module may depend on Authorization', function (): void {
