@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Staff\LoginController;
 use App\Livewire\Staff\Assignments\AssignmentOverview;
+use App\Livewire\Staff\Marks\MarkCorrection;
+use App\Livewire\Staff\Marks\MarkEntrySheet;
+use App\Livewire\Staff\Marks\MarksVerificationQueue;
+use App\Livewire\Staff\Marks\MarkWindowExtension;
+use App\Livewire\Staff\Marks\MySubjects;
 use App\Livewire\Staff\Attendance\AttendanceQueue;
 use App\Livewire\Staff\Attendance\DailyAttendanceSheet;
 use App\Livewire\Staff\Attendance\MyClasses;
@@ -95,6 +100,17 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         Route::get('/staff-attendance/scan-form', static fn () => view('staff.attendance.scan-form', [
             'periods' => \Illuminate\Support\Facades\DB::table('operational_periods')->select('id', 'name')->orderBy('name')->get(),
         ]))->name('attendance.scan-form');
+
+        // Marks — teacher entry, secretary verification, principal approval, corrections
+        Route::get('/marks', MySubjects::class)->name('marks.index');
+        Route::get('/marks/sheet/{assignmentId}', MarkEntrySheet::class)
+            ->where('assignmentId', '[0-9]+')
+            ->name('marks.sheet');
+        Route::get('/marks/review', MarksVerificationQueue::class)->name('marks.review');
+        Route::get('/marks/windows', MarkWindowExtension::class)->name('marks.windows');
+        Route::get('/marks/correct/{sheetId}', MarkCorrection::class)
+            ->where('sheetId', '[0-9]+')
+            ->name('marks.correct');
 
         // Imports (secretary/deputy_principal)
         Route::get('/imports', ImportBatchIndex::class)->name('imports.index');

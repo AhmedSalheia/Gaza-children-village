@@ -10,6 +10,10 @@ use App\Livewire\Admin\AcademicStructure\SubjectIndex;
 use App\Livewire\Admin\Assignments\HomeroomAssignmentIndex;
 use App\Livewire\Admin\Assignments\TeachingAssignmentIndex;
 use App\Livewire\Admin\Audit\CivilRegistryAudit;
+use App\Livewire\Admin\Marks\AssessmentDefinitionIndex;
+use App\Livewire\Admin\Marks\GradingScaleIndex;
+use App\Livewire\Admin\Marks\MarkEntryWindowIndex;
+use App\Livewire\Admin\Marks\MarkSheetOverview;
 use App\Livewire\Admin\Calendar\CalendarIndex;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Enrollments\EnrollmentIndex;
@@ -101,6 +105,12 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
 
         // Audit
         Route::get('/audit/civil-registry', CivilRegistryAudit::class)->name('audit.civil-registry');
+
+        // Marks: grading scales, assessment definitions, windows, overview
+        Route::get('/marks/grading-scales', GradingScaleIndex::class)->name('marks.grading-scales');
+        Route::get('/marks/assessments', AssessmentDefinitionIndex::class)->name('marks.assessments');
+        Route::get('/marks/windows', MarkEntryWindowIndex::class)->name('marks.windows');
+        Route::get('/marks/overview', MarkSheetOverview::class)->name('marks.overview');
 
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');

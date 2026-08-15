@@ -88,6 +88,14 @@
     </li>
     @endif
 
+    @if($navCan('grading_scale.manage'))
+    <li class="portal-nav__item">
+        <a href="{{ route('admin.marks.grading-scales') }}" class="portal-nav__link @active('admin/marks*')">
+            {{ __('ui.marks', [], null, 'Marks') }}
+        </a>
+    </li>
+    @endif
+
     @if($navCan('audit.view'))
     <li class="portal-nav__item">
         <a href="{{ route('admin.audit.civil-registry') }}" class="portal-nav__link @active('admin/audit*')">

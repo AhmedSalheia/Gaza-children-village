@@ -96,6 +96,33 @@
     </li>
     @endif
 
+    {{-- Marks: teacher entry --}}
+    @if($navCan('marks.enter') || $navCan('marks.read'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.marks.index') }}" class="portal-nav__link @active('staff/marks') @active('staff/marks/sheet*')">
+            {{ __('ui.marks', [], null, 'Marks') }}
+        </a>
+    </li>
+    @endif
+
+    {{-- Marks: secretary verification queue --}}
+    @if($navCan('marks.verify'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.marks.review') }}" class="portal-nav__link @active('staff/marks/review*')">
+            {{ __('ui.marks_review', [], null, 'Marks Review') }}
+        </a>
+    </li>
+    @endif
+
+    {{-- Marks: principal window extension --}}
+    @if($navCan('mark_window.extend'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.marks.windows') }}" class="portal-nav__link @active('staff/marks/windows*')">
+            {{ __('ui.mark_windows', [], null, 'Mark Windows') }}
+        </a>
+    </li>
+    @endif
+
     @if($navCan('import.upload'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.imports.index') }}" class="portal-nav__link @active('staff/imports*')">

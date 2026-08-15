@@ -69,7 +69,9 @@ it('F08 operational_periods table exists', function (): void {
 // ---------------------------------------------------------------------------
 
 it('no student, attendance, marks, or civil-registry tables exist', function (): void {
-    $forbidden = ['students', 'attendance', 'student_marks', 'civil_registry'];
+    // Note: student_marks is part of the AcademicManagement marks module (Task #50)
+    // and is intentionally present alongside AcademicCalendar tables.
+    $forbidden = ['students', 'attendance', 'civil_registry'];
 
     foreach ($forbidden as $table) {
         expect(Schema::hasTable($table))->toBeFalse("Table '{$table}' must not exist in F08.");

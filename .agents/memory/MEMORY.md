@@ -11,3 +11,4 @@
 - [F16–F23 implementation decisions](f16-f23-implementation.md) — Position overlap/mutex rules, PolicyKernel 9-step chain, audit immutability, locale middleware, font sourcing from @fontsource npm, trans() not __() in services.
 - [Attendance module](attendance-module.md) — Table names, SQLite date cast pitfall, re-verify path, scope guard pattern, Alpine per-row UI, unique constraint.
 - [Staff attendance QR system](staff-attendance-qr.md) — HMAC token lookup, correction-cycle design, index naming conflicts, assertDatabaseCount signature.
+- [Marks module (Task #50)](marks-module.md) — student_marks partial unique index, student_profiles schema fix, AcademicCalendarBoundaryTest guard update.
