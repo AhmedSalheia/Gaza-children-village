@@ -120,6 +120,66 @@ final class PermissionKey
     public const CIVIL_REGISTRY_LOOKUP = 'civil_registry.lookup';
 
     // -----------------------------------------------------------------
+    // Student Registry
+    // -----------------------------------------------------------------
+    public const STUDENT_VIEW = 'student.view';
+
+    public const STUDENT_VIEW_RESTRICTED = 'student.view_restricted';
+
+    public const STUDENT_CREATE = 'student.create';
+
+    public const STUDENT_UPDATE = 'student.update';
+
+    public const STUDENT_MANAGE = 'student.manage';
+
+    // -----------------------------------------------------------------
+    // Guardian relationships
+    // -----------------------------------------------------------------
+    public const GUARDIAN_RELATIONSHIP_VIEW = 'guardian_relationship.view';
+
+    public const GUARDIAN_RELATIONSHIP_MANAGE = 'guardian_relationship.manage';
+
+    public const GUARDIAN_RELATIONSHIP_VERIFY = 'guardian_relationship.verify';
+
+    // -----------------------------------------------------------------
+    // Academic structure management
+    // -----------------------------------------------------------------
+    public const ACADEMIC_LEVEL_MANAGE = 'academic_level.manage';
+
+    public const CLASSROOM_MANAGE = 'classroom.manage';
+
+    public const CLASS_GROUP_MANAGE = 'class_group.manage';
+
+    public const SUBJECT_MANAGE = 'subject.manage';
+
+    public const SUBJECT_OFFERING_MANAGE = 'subject_offering.manage';
+
+    // -----------------------------------------------------------------
+    // Enrolment
+    // -----------------------------------------------------------------
+    public const ENROLLMENT_VIEW = 'enrollment.view';
+
+    public const ENROLLMENT_MANAGE = 'enrollment.manage';
+
+    public const ENROLLMENT_TRANSFER = 'enrollment.transfer';
+
+    public const ENROLLMENT_PROMOTE = 'enrollment.promote';
+
+    // -----------------------------------------------------------------
+    // Import pipeline
+    // -----------------------------------------------------------------
+    public const IMPORT_UPLOAD = 'import.upload';
+
+    public const IMPORT_REVIEW = 'import.review';
+
+    public const IMPORT_APPLY = 'import.apply';
+
+    // -----------------------------------------------------------------
+    // Sensitive data export
+    // -----------------------------------------------------------------
+    public const SENSITIVE_EXPORT = 'data.sensitive_export';
+
+    // -----------------------------------------------------------------
     // All keys — used by seeder and architecture test.
     // -----------------------------------------------------------------
 

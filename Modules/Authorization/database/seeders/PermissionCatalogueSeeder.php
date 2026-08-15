@@ -81,6 +81,42 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::ROLE_VIEW,
                 PermissionKey::ROLE_ASSIGN,
             ],
+            'civil_registry' => [
+                PermissionKey::CIVIL_REGISTRY_LOOKUP,
+            ],
+            'student' => [
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::STUDENT_VIEW_RESTRICTED,
+                PermissionKey::STUDENT_CREATE,
+                PermissionKey::STUDENT_UPDATE,
+                PermissionKey::STUDENT_MANAGE,
+            ],
+            'guardian_relationship' => [
+                PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
+                PermissionKey::GUARDIAN_RELATIONSHIP_MANAGE,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VERIFY,
+            ],
+            'academic_structure' => [
+                PermissionKey::ACADEMIC_LEVEL_MANAGE,
+                PermissionKey::CLASSROOM_MANAGE,
+                PermissionKey::CLASS_GROUP_MANAGE,
+                PermissionKey::SUBJECT_MANAGE,
+                PermissionKey::SUBJECT_OFFERING_MANAGE,
+            ],
+            'enrollment' => [
+                PermissionKey::ENROLLMENT_VIEW,
+                PermissionKey::ENROLLMENT_MANAGE,
+                PermissionKey::ENROLLMENT_TRANSFER,
+                PermissionKey::ENROLLMENT_PROMOTE,
+            ],
+            'import' => [
+                PermissionKey::IMPORT_UPLOAD,
+                PermissionKey::IMPORT_REVIEW,
+                PermissionKey::IMPORT_APPLY,
+            ],
+            'data' => [
+                PermissionKey::SENSITIVE_EXPORT,
+            ],
         ];
 
         foreach ($groups as $group => $keys) {
@@ -137,6 +173,8 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::INSTITUTION_VIEW,
                 PermissionKey::STAFF_PROFILE_VIEW,
                 PermissionKey::PERSON_VIEW,
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::ENROLLMENT_VIEW,
             ],
 
             RoleCode::CALENDAR_MANAGER => [
@@ -175,6 +213,9 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::STAFF_POSITION_VIEW,
                 PermissionKey::PERSON_VIEW,
                 PermissionKey::ACCOUNT_VIEW,
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::ENROLLMENT_VIEW,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
             ],
 
             RoleCode::PRINCIPAL => [
@@ -187,6 +228,32 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::STAFF_POSITION_END,
                 PermissionKey::PERSON_VIEW,
                 PermissionKey::ACCOUNT_VIEW,
+                // Student registry
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::STUDENT_CREATE,
+                PermissionKey::STUDENT_UPDATE,
+                PermissionKey::STUDENT_MANAGE,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
+                PermissionKey::GUARDIAN_RELATIONSHIP_MANAGE,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VERIFY,
+                // Academic structure
+                PermissionKey::ACADEMIC_LEVEL_MANAGE,
+                PermissionKey::CLASSROOM_MANAGE,
+                PermissionKey::CLASS_GROUP_MANAGE,
+                PermissionKey::SUBJECT_MANAGE,
+                PermissionKey::SUBJECT_OFFERING_MANAGE,
+                // Enrolment
+                PermissionKey::ENROLLMENT_VIEW,
+                PermissionKey::ENROLLMENT_MANAGE,
+                PermissionKey::ENROLLMENT_TRANSFER,
+                PermissionKey::ENROLLMENT_PROMOTE,
+                // Import pipeline
+                PermissionKey::IMPORT_UPLOAD,
+                PermissionKey::IMPORT_REVIEW,
+                PermissionKey::IMPORT_APPLY,
+                // Civil Registry & sensitive
+                PermissionKey::CIVIL_REGISTRY_LOOKUP,
+                PermissionKey::SENSITIVE_EXPORT,
             ],
 
             RoleCode::DEPUTY_PRINCIPAL => [
@@ -196,6 +263,20 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::STAFF_PROFILE_VIEW,
                 PermissionKey::STAFF_POSITION_VIEW,
                 PermissionKey::PERSON_VIEW,
+                // Student registry
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::STUDENT_UPDATE,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
+                // Enrolment
+                PermissionKey::ENROLLMENT_VIEW,
+                PermissionKey::ENROLLMENT_MANAGE,
+                PermissionKey::ENROLLMENT_TRANSFER,
+                PermissionKey::ENROLLMENT_PROMOTE,
+                // Import
+                PermissionKey::IMPORT_UPLOAD,
+                PermissionKey::IMPORT_REVIEW,
+                PermissionKey::IMPORT_APPLY,
+                PermissionKey::CIVIL_REGISTRY_LOOKUP,
             ],
 
             RoleCode::SECRETARY => [
@@ -203,8 +284,25 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::INST_SEMESTER_VIEW,
                 PermissionKey::OP_PERIOD_VIEW,
                 PermissionKey::PERSON_VIEW,
+                PermissionKey::PERSON_CREATE,
+                PermissionKey::PERSON_UPDATE,
                 PermissionKey::STAFF_PROFILE_VIEW,
                 PermissionKey::STAFF_POSITION_VIEW,
+                // Student registry
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::STUDENT_CREATE,
+                PermissionKey::STUDENT_UPDATE,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
+                PermissionKey::GUARDIAN_RELATIONSHIP_MANAGE,
+                // Enrolment
+                PermissionKey::ENROLLMENT_VIEW,
+                PermissionKey::ENROLLMENT_MANAGE,
+                // Import pipeline
+                PermissionKey::IMPORT_UPLOAD,
+                PermissionKey::IMPORT_REVIEW,
+                PermissionKey::IMPORT_APPLY,
+                // Civil Registry
+                PermissionKey::CIVIL_REGISTRY_LOOKUP,
             ],
 
             RoleCode::TEACHER => [
@@ -212,6 +310,9 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::INST_SEMESTER_VIEW,
                 PermissionKey::OP_PERIOD_VIEW,
                 PermissionKey::PERSON_VIEW,
+                // Student registry (read-only, restricted)
+                PermissionKey::STUDENT_VIEW_RESTRICTED,
+                PermissionKey::ENROLLMENT_VIEW,
             ],
 
             RoleCode::COUNSELOR => [
@@ -220,6 +321,12 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::OP_PERIOD_VIEW,
                 PermissionKey::PERSON_VIEW,
                 PermissionKey::PERSON_VIEW_SENSITIVE,
+                // Student registry
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::STUDENT_UPDATE,
+                PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
+                PermissionKey::ENROLLMENT_VIEW,
+                PermissionKey::SENSITIVE_EXPORT,
             ],
 
             RoleCode::OPERATIONS_VIEWER => [
@@ -231,6 +338,8 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::ACADEMIC_YEAR_VIEW,
                 PermissionKey::SEMESTER_VIEW,
                 PermissionKey::AUDIT_VIEW,
+                PermissionKey::STUDENT_VIEW,
+                PermissionKey::ENROLLMENT_VIEW,
             ],
 
             RoleCode::STAFF_MANAGER => [
