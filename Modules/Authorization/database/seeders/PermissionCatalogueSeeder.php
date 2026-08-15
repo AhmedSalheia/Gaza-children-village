@@ -117,6 +117,67 @@ final class PermissionCatalogueSeeder extends Seeder
             'data' => [
                 PermissionKey::SENSITIVE_EXPORT,
             ],
+            'teaching_assignment' => [
+                PermissionKey::TEACHING_ASSIGNMENT_READ,
+                PermissionKey::TEACHING_ASSIGNMENT_MANAGE,
+            ],
+            'homeroom_assignment' => [
+                PermissionKey::HOMEROOM_ASSIGNMENT_READ,
+                PermissionKey::HOMEROOM_ASSIGNMENT_MANAGE,
+            ],
+            'student_attendance' => [
+                PermissionKey::STUDENT_ATTENDANCE_READ,
+                PermissionKey::STUDENT_ATTENDANCE_ENTER,
+                PermissionKey::STUDENT_ATTENDANCE_SUBMIT,
+                PermissionKey::STUDENT_ATTENDANCE_RETURN,
+                PermissionKey::STUDENT_ATTENDANCE_VERIFY,
+                PermissionKey::STUDENT_ATTENDANCE_CORRECT,
+                PermissionKey::STUDENT_ATTENDANCE_PUBLISH,
+            ],
+            'staff_attendance' => [
+                PermissionKey::STAFF_ATTENDANCE_READ,
+                PermissionKey::STAFF_ATTENDANCE_ENTER,
+                PermissionKey::STAFF_ATTENDANCE_VERIFY,
+                PermissionKey::STAFF_ATTENDANCE_CORRECT,
+            ],
+            'attendance_scan' => [
+                PermissionKey::ATTENDANCE_SCAN_REVIEW,
+            ],
+            'attendance_report' => [
+                PermissionKey::ATTENDANCE_REPORT_READ,
+                PermissionKey::ATTENDANCE_REPORT_EXPORT,
+            ],
+            'assessment' => [
+                PermissionKey::ASSESSMENT_READ,
+                PermissionKey::ASSESSMENT_MANAGE,
+            ],
+            'grading_scale' => [
+                PermissionKey::GRADING_SCALE_READ,
+                PermissionKey::GRADING_SCALE_MANAGE,
+            ],
+            'mark_window' => [
+                PermissionKey::MARK_WINDOW_READ,
+                PermissionKey::MARK_WINDOW_MANAGE,
+                PermissionKey::MARK_WINDOW_EXTEND,
+            ],
+            'marks' => [
+                PermissionKey::MARKS_READ,
+                PermissionKey::MARKS_ENTER,
+                PermissionKey::MARKS_SUBMIT,
+                PermissionKey::MARKS_RETURN,
+                PermissionKey::MARKS_VERIFY,
+                PermissionKey::MARKS_APPROVE,
+                PermissionKey::MARKS_CORRECT,
+            ],
+            'results' => [
+                PermissionKey::RESULTS_READ,
+                PermissionKey::RESULTS_PUBLISH,
+                PermissionKey::RESULTS_REVOKE,
+            ],
+            'result_report' => [
+                PermissionKey::RESULT_REPORT_READ,
+                PermissionKey::RESULT_REPORT_EXPORT,
+            ],
         ];
 
         foreach ($groups as $group => $keys) {
@@ -254,6 +315,47 @@ final class PermissionCatalogueSeeder extends Seeder
                 // Civil Registry & sensitive
                 PermissionKey::CIVIL_REGISTRY_LOOKUP,
                 PermissionKey::SENSITIVE_EXPORT,
+                // Teaching & homeroom assignments
+                PermissionKey::TEACHING_ASSIGNMENT_READ,
+                PermissionKey::TEACHING_ASSIGNMENT_MANAGE,
+                PermissionKey::HOMEROOM_ASSIGNMENT_READ,
+                PermissionKey::HOMEROOM_ASSIGNMENT_MANAGE,
+                // Student attendance
+                PermissionKey::STUDENT_ATTENDANCE_READ,
+                PermissionKey::STUDENT_ATTENDANCE_RETURN,
+                PermissionKey::STUDENT_ATTENDANCE_VERIFY,
+                PermissionKey::STUDENT_ATTENDANCE_CORRECT,
+                PermissionKey::STUDENT_ATTENDANCE_PUBLISH,
+                // Staff attendance
+                PermissionKey::STAFF_ATTENDANCE_READ,
+                PermissionKey::STAFF_ATTENDANCE_VERIFY,
+                PermissionKey::STAFF_ATTENDANCE_CORRECT,
+                // QR scan review
+                PermissionKey::ATTENDANCE_SCAN_REVIEW,
+                // Attendance reports
+                PermissionKey::ATTENDANCE_REPORT_READ,
+                PermissionKey::ATTENDANCE_REPORT_EXPORT,
+                // Assessments & grading
+                PermissionKey::ASSESSMENT_READ,
+                PermissionKey::ASSESSMENT_MANAGE,
+                PermissionKey::GRADING_SCALE_READ,
+                PermissionKey::GRADING_SCALE_MANAGE,
+                // Mark windows
+                PermissionKey::MARK_WINDOW_READ,
+                PermissionKey::MARK_WINDOW_MANAGE,
+                PermissionKey::MARK_WINDOW_EXTEND,
+                // Marks
+                PermissionKey::MARKS_READ,
+                PermissionKey::MARKS_RETURN,
+                PermissionKey::MARKS_VERIFY,
+                PermissionKey::MARKS_APPROVE,
+                PermissionKey::MARKS_CORRECT,
+                // Results
+                PermissionKey::RESULTS_READ,
+                PermissionKey::RESULTS_PUBLISH,
+                PermissionKey::RESULTS_REVOKE,
+                PermissionKey::RESULT_REPORT_READ,
+                PermissionKey::RESULT_REPORT_EXPORT,
             ],
 
             RoleCode::DEPUTY_PRINCIPAL => [
@@ -277,6 +379,43 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::IMPORT_REVIEW,
                 PermissionKey::IMPORT_APPLY,
                 PermissionKey::CIVIL_REGISTRY_LOOKUP,
+                // Teaching & homeroom assignments
+                PermissionKey::TEACHING_ASSIGNMENT_READ,
+                PermissionKey::TEACHING_ASSIGNMENT_MANAGE,
+                PermissionKey::HOMEROOM_ASSIGNMENT_READ,
+                PermissionKey::HOMEROOM_ASSIGNMENT_MANAGE,
+                // Student attendance
+                PermissionKey::STUDENT_ATTENDANCE_READ,
+                PermissionKey::STUDENT_ATTENDANCE_RETURN,
+                PermissionKey::STUDENT_ATTENDANCE_VERIFY,
+                PermissionKey::STUDENT_ATTENDANCE_CORRECT,
+                // Staff attendance
+                PermissionKey::STAFF_ATTENDANCE_READ,
+                PermissionKey::STAFF_ATTENDANCE_VERIFY,
+                PermissionKey::STAFF_ATTENDANCE_CORRECT,
+                // QR scan review
+                PermissionKey::ATTENDANCE_SCAN_REVIEW,
+                // Attendance reports
+                PermissionKey::ATTENDANCE_REPORT_READ,
+                PermissionKey::ATTENDANCE_REPORT_EXPORT,
+                // Assessments & grading
+                PermissionKey::ASSESSMENT_READ,
+                PermissionKey::ASSESSMENT_MANAGE,
+                PermissionKey::GRADING_SCALE_READ,
+                // Mark windows
+                PermissionKey::MARK_WINDOW_READ,
+                PermissionKey::MARK_WINDOW_MANAGE,
+                PermissionKey::MARK_WINDOW_EXTEND,
+                // Marks
+                PermissionKey::MARKS_READ,
+                PermissionKey::MARKS_RETURN,
+                PermissionKey::MARKS_VERIFY,
+                PermissionKey::MARKS_APPROVE,
+                PermissionKey::MARKS_CORRECT,
+                // Results
+                PermissionKey::RESULTS_READ,
+                PermissionKey::RESULT_REPORT_READ,
+                PermissionKey::RESULT_REPORT_EXPORT,
             ],
 
             RoleCode::SECRETARY => [
@@ -303,6 +442,31 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::IMPORT_APPLY,
                 // Civil Registry
                 PermissionKey::CIVIL_REGISTRY_LOOKUP,
+                // Teaching & homeroom assignments (read-only for secretary)
+                PermissionKey::TEACHING_ASSIGNMENT_READ,
+                PermissionKey::HOMEROOM_ASSIGNMENT_READ,
+                // Student attendance (full workflow for secretary)
+                PermissionKey::STUDENT_ATTENDANCE_READ,
+                PermissionKey::STUDENT_ATTENDANCE_ENTER,
+                PermissionKey::STUDENT_ATTENDANCE_SUBMIT,
+                PermissionKey::STUDENT_ATTENDANCE_RETURN,
+                PermissionKey::STUDENT_ATTENDANCE_VERIFY,
+                PermissionKey::STUDENT_ATTENDANCE_CORRECT,
+                // Staff attendance (secretary enters and verifies)
+                PermissionKey::STAFF_ATTENDANCE_READ,
+                PermissionKey::STAFF_ATTENDANCE_ENTER,
+                PermissionKey::STAFF_ATTENDANCE_VERIFY,
+                PermissionKey::STAFF_ATTENDANCE_CORRECT,
+                // QR scan review
+                PermissionKey::ATTENDANCE_SCAN_REVIEW,
+                // Attendance reports
+                PermissionKey::ATTENDANCE_REPORT_READ,
+                // Marks (secretary returns and verifies)
+                PermissionKey::MARKS_READ,
+                PermissionKey::MARKS_RETURN,
+                PermissionKey::MARKS_VERIFY,
+                // Result report (read-only)
+                PermissionKey::RESULT_REPORT_READ,
             ],
 
             RoleCode::TEACHER => [
@@ -313,6 +477,16 @@ final class PermissionCatalogueSeeder extends Seeder
                 // Student registry (read-only, restricted)
                 PermissionKey::STUDENT_VIEW_RESTRICTED,
                 PermissionKey::ENROLLMENT_VIEW,
+                // Teaching & homeroom assignments (read-only)
+                PermissionKey::TEACHING_ASSIGNMENT_READ,
+                PermissionKey::HOMEROOM_ASSIGNMENT_READ,
+                // Student attendance (teacher enters and submits)
+                PermissionKey::STUDENT_ATTENDANCE_ENTER,
+                PermissionKey::STUDENT_ATTENDANCE_SUBMIT,
+                // Marks (teacher enters and submits)
+                PermissionKey::MARKS_READ,
+                PermissionKey::MARKS_ENTER,
+                PermissionKey::MARKS_SUBMIT,
             ],
 
             RoleCode::COUNSELOR => [
@@ -327,6 +501,12 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
                 PermissionKey::ENROLLMENT_VIEW,
                 PermissionKey::SENSITIVE_EXPORT,
+                // Teaching & homeroom assignments (read-only for counselor)
+                PermissionKey::TEACHING_ASSIGNMENT_READ,
+                PermissionKey::HOMEROOM_ASSIGNMENT_READ,
+                // Student attendance (read-only for counselor)
+                PermissionKey::STUDENT_ATTENDANCE_READ,
+                PermissionKey::ATTENDANCE_REPORT_READ,
             ],
 
             RoleCode::OPERATIONS_VIEWER => [

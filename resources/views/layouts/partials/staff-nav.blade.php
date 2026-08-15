@@ -42,6 +42,15 @@
     </li>
     @endif
 
+    {{-- Assignment overview visible to full-scope positions only (principal/deputy) --}}
+    @if($navCan('teaching_assignment.manage'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.assignments.index') }}" class="portal-nav__link @active('staff/assignments*')">
+            {{ __('ui.assignments', [], null, 'Assignments') }}
+        </a>
+    </li>
+    @endif
+
     @if($navCan('import.upload'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.imports.index') }}" class="portal-nav__link @active('staff/imports*')">

@@ -17,6 +17,11 @@ final class Role extends Model
 {
     protected $fillable = [];
 
+    /** @var array<string, string> */
+    protected $casts = [
+        'is_protected' => 'boolean',
+    ];
+
     /** @return BelongsToMany<Permission, $this> */
     public function permissions(): BelongsToMany
     {

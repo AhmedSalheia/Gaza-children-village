@@ -7,6 +7,8 @@ use App\Livewire\Admin\AcademicStructure\AcademicLevelIndex;
 use App\Livewire\Admin\AcademicStructure\ClassGroupIndex;
 use App\Livewire\Admin\AcademicStructure\ClassroomIndex;
 use App\Livewire\Admin\AcademicStructure\SubjectIndex;
+use App\Livewire\Admin\Assignments\HomeroomAssignmentIndex;
+use App\Livewire\Admin\Assignments\TeachingAssignmentIndex;
 use App\Livewire\Admin\Audit\CivilRegistryAudit;
 use App\Livewire\Admin\Calendar\CalendarIndex;
 use App\Livewire\Admin\Dashboard;
@@ -68,6 +70,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/academic/classrooms', ClassroomIndex::class)->name('academic.classrooms');
         Route::get('/academic/class-groups', ClassGroupIndex::class)->name('academic.class-groups');
         Route::get('/academic/subjects', SubjectIndex::class)->name('academic.subjects');
+
+        // Assignments
+        Route::get('/assignments/teaching', TeachingAssignmentIndex::class)->name('assignments.teaching');
+        Route::get('/assignments/homeroom', HomeroomAssignmentIndex::class)->name('assignments.homeroom');
 
         // People
         Route::get('/people', PeopleIndex::class)->name('people.index');

@@ -180,6 +180,113 @@ final class PermissionKey
     public const SENSITIVE_EXPORT = 'data.sensitive_export';
 
     // -----------------------------------------------------------------
+    // Teaching and homeroom assignments
+    // -----------------------------------------------------------------
+    public const TEACHING_ASSIGNMENT_READ   = 'teaching_assignment.read';
+
+    public const TEACHING_ASSIGNMENT_MANAGE = 'teaching_assignment.manage';
+
+    public const HOMEROOM_ASSIGNMENT_READ   = 'homeroom_assignment.read';
+
+    public const HOMEROOM_ASSIGNMENT_MANAGE = 'homeroom_assignment.manage';
+
+    // -----------------------------------------------------------------
+    // Student attendance
+    // -----------------------------------------------------------------
+    public const STUDENT_ATTENDANCE_READ    = 'student_attendance.read';
+
+    public const STUDENT_ATTENDANCE_ENTER   = 'student_attendance.enter';
+
+    public const STUDENT_ATTENDANCE_SUBMIT  = 'student_attendance.submit';
+
+    public const STUDENT_ATTENDANCE_RETURN  = 'student_attendance.return';
+
+    public const STUDENT_ATTENDANCE_VERIFY  = 'student_attendance.verify';
+
+    public const STUDENT_ATTENDANCE_CORRECT = 'student_attendance.correct';
+
+    public const STUDENT_ATTENDANCE_PUBLISH = 'student_attendance.publish';
+
+    // -----------------------------------------------------------------
+    // Staff attendance
+    // -----------------------------------------------------------------
+    public const STAFF_ATTENDANCE_READ    = 'staff_attendance.read';
+
+    public const STAFF_ATTENDANCE_ENTER   = 'staff_attendance.enter';
+
+    public const STAFF_ATTENDANCE_VERIFY  = 'staff_attendance.verify';
+
+    public const STAFF_ATTENDANCE_CORRECT = 'staff_attendance.correct';
+
+    // -----------------------------------------------------------------
+    // QR attendance scan review
+    // -----------------------------------------------------------------
+    public const ATTENDANCE_SCAN_REVIEW = 'attendance_scan.review';
+
+    // -----------------------------------------------------------------
+    // Attendance reports / exports
+    // -----------------------------------------------------------------
+    public const ATTENDANCE_REPORT_READ   = 'attendance_report.read';
+
+    public const ATTENDANCE_REPORT_EXPORT = 'attendance_report.export';
+
+    // -----------------------------------------------------------------
+    // Assessment definitions
+    // -----------------------------------------------------------------
+    public const ASSESSMENT_READ   = 'assessment.read';
+
+    public const ASSESSMENT_MANAGE = 'assessment.manage';
+
+    // -----------------------------------------------------------------
+    // Grading scales
+    // -----------------------------------------------------------------
+    public const GRADING_SCALE_READ   = 'grading_scale.read';
+
+    public const GRADING_SCALE_MANAGE = 'grading_scale.manage';
+
+    // -----------------------------------------------------------------
+    // Mark-entry windows
+    // -----------------------------------------------------------------
+    public const MARK_WINDOW_READ   = 'mark_window.read';
+
+    public const MARK_WINDOW_MANAGE = 'mark_window.manage';
+
+    public const MARK_WINDOW_EXTEND = 'mark_window.extend';
+
+    // -----------------------------------------------------------------
+    // Marks (mark sheets / student marks)
+    // -----------------------------------------------------------------
+    public const MARKS_READ    = 'marks.read';
+
+    public const MARKS_ENTER   = 'marks.enter';
+
+    public const MARKS_SUBMIT  = 'marks.submit';
+
+    public const MARKS_RETURN  = 'marks.return';
+
+    public const MARKS_VERIFY  = 'marks.verify';
+
+    public const MARKS_APPROVE = 'marks.approve';
+
+    public const MARKS_CORRECT = 'marks.correct';
+
+    // -----------------------------------------------------------------
+    // Results / publication
+    // -----------------------------------------------------------------
+    public const RESULTS_READ   = 'results.read';
+
+    public const RESULTS_PUBLISH = 'results.publish';
+
+    public const RESULTS_REVOKE  = 'results.revoke';
+
+    // -----------------------------------------------------------------
+    // Result reports / exports
+    // -----------------------------------------------------------------
+    public const RESULT_REPORT_READ   = 'result_report.read';
+
+    public const RESULT_REPORT_EXPORT = 'result_report.export';
+
+    // -----------------------------------------------------------------
     // All keys — used by seeder and architecture test.
     // -----------------------------------------------------------------
 

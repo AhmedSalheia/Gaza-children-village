@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Staff\LoginController;
+use App\Livewire\Staff\Assignments\AssignmentOverview;
 use App\Livewire\Staff\ClassLists\ClassList;
 use App\Livewire\Staff\Dashboard;
 use App\Livewire\Staff\Enrollments\EnrollmentManagement;
@@ -59,6 +60,9 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
 
         // Class lists (teacher-accessible read-only)
         Route::get('/class-lists', ClassList::class)->name('class-lists.index');
+
+        // Assignments (principal/deputy read-only overview)
+        Route::get('/assignments', AssignmentOverview::class)->name('assignments.index');
 
         // Enrollments
         Route::get('/enrollments', EnrollmentManagement::class)->name('enrollments.index');

@@ -72,6 +72,22 @@
     </li>
     @endif
 
+    @if($navCan('teaching_assignment.manage'))
+    <li class="portal-nav__item">
+        <a href="{{ route('admin.assignments.teaching') }}" class="portal-nav__link @active('admin/assignments/teaching')">
+            {{ __('ui.teaching_assignments', [], null, 'Teaching') }}
+        </a>
+    </li>
+    @endif
+
+    @if($navCan('homeroom_assignment.manage'))
+    <li class="portal-nav__item">
+        <a href="{{ route('admin.assignments.homeroom') }}" class="portal-nav__link @active('admin/assignments/homeroom')">
+            {{ __('ui.homeroom_assignments', [], null, 'Homeroom') }}
+        </a>
+    </li>
+    @endif
+
     @if($navCan('audit.view'))
     <li class="portal-nav__item">
         <a href="{{ route('admin.audit.civil-registry') }}" class="portal-nav__link @active('admin/audit*')">
