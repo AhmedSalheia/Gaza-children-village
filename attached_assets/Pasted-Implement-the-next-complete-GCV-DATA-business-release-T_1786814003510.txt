@@ -1,0 +1,827 @@
+Implement the next complete GCV DATA business release:
+
+TEACHING, ATTENDANCE, MARKS, RESULTS, AND PUBLICATION
+
+This must be a working vertical release across Admin, Staff, and Guardian portals—not merely models or placeholder pages.
+
+Scope:
+
+1. Teaching and homeroom assignments
+2. Student attendance
+3. Staff attendance
+4. Reviewable QR-assisted staff attendance
+5. Assessments and grading structures
+6. Teacher mark entry
+7. Verification and approval
+8. Versioned result publication
+9. Guardian-visible published attendance/results
+10. Reports and Excel exports for this release
+11. Modern Tailwind/Livewire UI
+12. Complete synthetic demo data
+
+Update `docs/plans/MASTER_IMPLEMENTATION_PLAN.md` to mark this as the current release.
+
+Documents, formal requests, welfare/counseling, Medical Point, Storage, Assets, Women’s Center, notifications, offline synchronization, and final organization-wide reporting are subsequent required releases—not cancelled features.
+
+Before implementation, read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/MASTER_IMPLEMENTATION_PLAN.md
+- All existing ADRs
+- All Foundation code
+- Student Registry and Enrolment release code
+- Existing permissions, audit, publication extension points, seeders, and UI
+
+Preserve all previous behavior and tests.
+
+==================================================
+1. MODULE OWNERSHIP
+==================================================
+
+Use or create bounded modules:
+
+AcademicManagement owns:
+
+- TeachingAssignment
+- HomeroomAssignment
+- AssessmentDefinition
+- GradingScale
+- MarkEntryWindow
+- MarkSheet
+- StudentMark
+- Result calculation
+- Result approval/publication
+
+Attendance owns:
+
+- Attendance status catalogue
+- StudentAttendanceSheet
+- StudentAttendanceRecord
+- StaffAttendanceRecord
+- Attendance corrections
+- QR credentials and scan events
+- Attendance publication snapshots
+
+Publication owns or coordinates:
+
+- Publication policies
+- Versioned published snapshots
+- Guardian-visible projections
+- Publication/revocation history
+
+Reporting owns or coordinates:
+
+- Attendance reports
+- Marks/results reports
+- Authorized Excel exports
+
+Reuse:
+
+- Students
+- People
+- Staff
+- Accounts
+- Organization
+- AcademicCalendar
+- Authorization
+- Audit
+- Imports
+- Existing operational-context resolution
+
+Do not duplicate student, class, subject, staff-position, permission, scope, or audit entities.
+
+==================================================
+2. TEACHING ASSIGNMENTS
+==================================================
+
+Implement TeachingAssignment.
+
+It must link:
+
+- Active teacher StaffPosition
+- StaffProfile
+- InstitutionSemester
+- ClassGroup
+- InstitutionSubjectOffering
+- Effective dates/status
+
+Relationship rules:
+
+- Staff position, assignment, institution semester, class, period, and subject offering must belong to the same institution context.
+- The staff position must be an eligible teacher/trainer position.
+- A teacher role by itself grants no teaching access.
+- A subject assignment grants no access to unrelated classes.
+- A class assignment grants no access to unrelated subjects.
+- Closed/archived semesters reject ordinary assignment mutation.
+- Overlapping duplicate assignments are rejected.
+- Historical assignments remain readable.
+- Staff transfers immediately stop access through the old institution assignment.
+
+Implement HomeroomAssignment separately.
+
+It must link an eligible teacher position to a ClassGroup and effective interval.
+
+Rules:
+
+- Homeroom assignment permits student-attendance entry for that class.
+- It does not grant mark access without a matching TeachingAssignment.
+- A class may have one active lead/homeroom teacher unless an explicit co-lead assignment is approved.
+- Co-lead support must be explicit, not accidental duplicate assignments.
+
+Provide actions for create, end, replace, list, and resolve assignments for a trusted operational context.
+
+==================================================
+3. ATTENDANCE STATUS CATALOGUE
+==================================================
+
+Do not use database enums.
+
+Create stable code-owned status definitions with Arabic/English labels.
+
+Student baseline statuses:
+
+- present
+- absent
+- excused_absence
+- late
+- left_early
+
+Staff baseline statuses:
+
+- present
+- absent
+- excused_absence
+- late
+- leave
+- official_duty
+
+Each status must define behavior such as:
+
+- Whether reason is required
+- Whether arrival time is allowed/required
+- Whether departure time is allowed
+- Whether it counts as present in summaries
+- Whether guardian publication is allowed
+
+Status codes remain stable regardless of translation.
+
+==================================================
+4. STUDENT ATTENDANCE
+==================================================
+
+Implement StudentAttendanceSheet as the workflow parent.
+
+It belongs to:
+
+- InstitutionSemester
+- OperationalPeriod
+- ClassGroup
+- Date
+- Origin/source
+- Creator
+- Workflow status
+
+Sheet statuses:
+
+- draft
+- submitted
+- returned
+- verified
+- reopened
+- superseded
+
+Implement StudentAttendanceRecord for each enrolled student.
+
+Fields/concepts:
+
+- attendance_sheet_id
+- student_enrollment_id
+- status code
+- absence/exception reason
+- arrival time, nullable
+- departure time, nullable
+- safe note, nullable
+- source
+- correction/version metadata
+
+Rules:
+
+- Attendance date must fall within the global and institution semester.
+- ClassGroup must belong to the selected period and institution semester.
+- Only students actively enrolled in that class/date may appear.
+- One official attendance result per enrolment/class/date.
+- A lead/homeroom teacher may create/edit only their assigned class.
+- Teacher submission becomes read-only for the teacher.
+- Secretary may return it with a reason.
+- Secretary verification makes it official.
+- An authorized secretary may enter attendance directly.
+- Direct secretary entry still records creator/verifier identity and source.
+- Verified records cannot be silently edited.
+- Correction requires reason, authorized actor, old/new values, and immutable history.
+- Closed/archived semester attendance is read-only.
+- Attendance query scopes must enforce institution and period restrictions.
+
+Provide actions for:
+
+- Open daily sheet
+- Populate enrolled students
+- Save draft
+- Bulk mark present
+- Update individual record
+- Submit
+- Return
+- Verify
+- Reopen for correction
+- Correct verified attendance
+- Publish/unpublish through versioned publication workflow
+- Query class/day/student history
+
+Bulk “mark all present” must remain reviewable before submission.
+
+==================================================
+5. STAFF ATTENDANCE
+==================================================
+
+Implement StaffAttendanceRecord.
+
+It must reference:
+
+- StaffProfile
+- Valid StaffInstitutionAssignment
+- InstitutionSemester where applicable
+- OperationalPeriod where applicable
+- Date
+- Attendance status
+
+Support:
+
+- Confirmed arrival time
+- Confirmed departure time
+- Scanned arrival time
+- Scanned departure time
+- Absence/leave reason
+- Entry source
+- Verification state
+- Correction history
+
+Rules:
+
+- Include non-login staff and guards.
+- StaffAccount is not required.
+- Staff must belong to the institution on the attendance date.
+- Date must fit the referenced operational context.
+- One record per staff/period/date.
+- Secretary period scope is enforced.
+- Scanned times are never automatically official.
+- Confirmed times remain separate from scanned values.
+- Corrections after verification require reason and audit history.
+- Historical transfer/assignment information must not be overwritten.
+
+Provide daily entry, verification, correction, history, and reporting actions.
+
+==================================================
+6. QR-ASSISTED STAFF ATTENDANCE
+==================================================
+
+Implement reviewable QR attendance as an input method.
+
+QR security:
+
+- Do not encode sequential StaffProfile IDs alone.
+- Use a random, revocable, rotatable credential.
+- Store only a secure token hash.
+- Display token plaintext only when generating the QR.
+- Credentials have active/revoked lifecycle and issue history.
+- Never log raw QR tokens.
+- Rate-limit scan submission.
+- Prevent replay from creating duplicate official attendance.
+
+Create AttendanceScanEvent containing:
+
+- Safe QR credential reference
+- Institution/period context
+- Scan timestamp
+- Scan direction candidate: arrival/departure/unknown
+- Device/request fingerprint where lawful
+- Processing status
+- Matched StaffProfile
+- Reviewer
+- Review outcome
+
+Workflow:
+
+1. QR is scanned.
+2. Token is validated.
+3. Context is validated.
+4. A pending scan event is recorded.
+5. Secretary reviews/matches arrival or departure.
+6. Accepted value becomes a scanned candidate.
+7. Authorized verification confirms the official attendance value.
+
+QR scans never directly create verified attendance.
+
+Provide:
+
+- Branded staff QR-card generation
+- Individual and role-filtered bulk generation
+- PNG/PDF-friendly layout
+- GCV logo and design tokens
+- Manual token input fallback
+- Camera scanner only if it performs acceptably with existing frontend architecture
+
+Do not add heavy OpenCV.js loading to ordinary pages. If camera detection is implemented, lazy-load it only on the scanner page and retain a lightweight fallback.
+
+==================================================
+7. ASSESSMENT AND GRADING STRUCTURES
+==================================================
+
+Implement configurable GradingScale:
+
+- Institution/institution-type scope as approved
+- Arabic/English name
+- Minimum/maximum ranges
+- Grade/result code
+- Pass/fail meaning
+- Sequence
+- Active/history state
+
+Implement AssessmentDefinition:
+
+- InstitutionSemester
+- ClassGroup
+- InstitutionSubjectOffering
+- Name Arabic/English
+- Assessment type
+- Maximum score
+- Weight
+- Assessment date
+- Lifecycle state
+
+Initial assessment types:
+
+- classwork
+- homework
+- quiz
+- project
+- midterm
+- final
+- participation
+- other
+
+Do not assume every institution uses the same assessment structure.
+
+Validation:
+
+- Maximum score must be positive.
+- Weight cannot be negative.
+- Publication requires a complete valid weighting model.
+- Assessment date must fall within the semester.
+- Assessment class/subject/context chain must be valid.
+- Historical definitions used by published results cannot be overwritten.
+
+==================================================
+8. MARK-ENTRY WINDOWS
+==================================================
+
+Implement MarkEntryWindow.
+
+It defines:
+
+- InstitutionSemester
+- Optional ClassGroup/Subject restriction
+- Opens at
+- Closes at
+- Status
+- Authorized extension history
+
+States:
+
+- scheduled
+- open
+- closed
+- extended
+- cancelled
+
+Rules:
+
+- Teachers can enter marks only within an applicable open window.
+- Principal/deputy-authorized extension requires reason and history.
+- Window opening does not grant class/subject access.
+- Assignment, account, position, scope, and record state must still pass.
+- Closed-window corrections require a controlled correction workflow.
+
+==================================================
+9. MARK SHEETS AND STUDENT MARKS
+==================================================
+
+Implement MarkSheet as the workflow aggregate for:
+
+- InstitutionSemester
+- ClassGroup
+- Subject offering
+- Teacher assignment
+- Mark-entry window
+- Assessment set/version
+
+States:
+
+- draft
+- submitted
+- returned
+- verified
+- approved
+- published
+- superseded
+
+Implement StudentMark:
+
+- MarkSheet
+- StudentEnrollment
+- AssessmentDefinition
+- Numeric mark, nullable when approved exception applies
+- Exception status such as absent/exempt
+- Safe teacher comment where permitted
+- Version/correction references
+
+Rules:
+
+- Teacher sees and edits only assigned class/subject combinations.
+- Only actively enrolled students appear.
+- Mark must be within 0 and assessment maximum.
+- Teachers save drafts and submit.
+- Submitted marks become read-only to the teacher.
+- Secretary verifies completeness or returns with reason.
+- Principal/deputy approves verified sheets.
+- Publication requires approval.
+- Verification and approval must be separate auditable actions.
+- A person cannot verify/approve through the wrong role or institution.
+- Published marks are never edited in place.
+- Corrections create a new controlled version.
+- Corrections record old value, new value, reason, actor, and approval.
+- Names, roles, or frontend visibility never replace backend authorization.
+
+Provide bulk spreadsheet-like mark entry with keyboard navigation, but persist through validated Livewire/domain actions.
+
+==================================================
+10. RESULT CALCULATION AND PUBLICATION
+==================================================
+
+Implement deterministic result calculation.
+
+Calculate:
+
+- Assessment normalized score
+- Weighted subject total
+- Grading-scale result
+- Completeness state
+- Pass/fail where configured
+
+Do not calculate from unverified/unapproved marks for publication.
+
+Implement versioned ResultPublication:
+
+- Publication version
+- InstitutionSemester
+- Class/subject or result-set scope
+- Approved source MarkSheet versions
+- Published snapshot rows
+- Publisher
+- Published timestamp
+- Revocation/supersession history
+
+Rules:
+
+- Published snapshots are immutable.
+- Later mark corrections do not change an existing published snapshot.
+- Republishing creates a new version.
+- Old publications remain auditable.
+- Guardians see only the current non-revoked published version.
+- Internal drafts/submissions/returns are invisible to guardians.
+- Publication can be revoked only with permission and reason.
+- Do not expose teacher-only comments to guardians unless explicitly classified as publishable.
+
+==================================================
+11. ATTENDANCE PUBLICATION
+==================================================
+
+Add configurable institution-semester publication policies:
+
+- Student attendance publication enabled/disabled
+- Detail level:
+  - summary only
+  - daily status
+- Publication delay, optional
+- Whether reasons are guardian-visible
+- Whether arrival/departure details are guardian-visible
+
+Defaults must protect privacy:
+
+- Disabled until explicitly enabled
+- Absence reasons hidden
+- Internal notes never published
+- Scanned candidate times never published
+
+Publish only verified official attendance.
+
+Use immutable/versioned guardian-visible projections where required to preserve what was shown.
+
+==================================================
+12. GUARDIAN PORTAL
+==================================================
+
+Upgrade the Guardian Portal to working functionality.
+
+Guardian dashboard:
+
+- List all students reachable through active, verified, portal-eligible relationships
+- Multiple-child selector
+- Student basic profile
+- Current academy
+- Academic year/semester
+- Grade/class placement
+- Published attendance
+- Published marks/results
+- Clear “not yet published” states
+
+Security:
+
+- Guardian cannot access a student by changing an ID in the URL.
+- Expired/deactivated relationship removes access.
+- National-ID similarity grants nothing.
+- Guardian never sees drafts, returned work, internal verification comments, restricted notes, civil-registry data, or other guardians.
+- Guardian cannot modify official records.
+- Every query begins with relationship-derived scope.
+
+==================================================
+13. REPORTS AND EXPORTS
+==================================================
+
+Add authorized reports:
+
+Student attendance:
+
+- Daily class attendance
+- Student attendance history
+- Class summary by date range
+- Institution summary
+- Absence/late totals
+
+Staff attendance:
+
+- Daily staff attendance
+- Staff history
+- Institution report
+- Period report
+- Role/position filter
+- Date-range report
+
+Marks/results:
+
+- Mark-entry completion dashboard
+- Missing marks
+- Submission/verification/approval status
+- Class result sheet
+- Subject result sheet
+- Student result summary
+- Published-result report
+
+Excel exports:
+
+- Use exact authorized institution/semester/period scope.
+- Use background jobs for large exports.
+- Include filters and generation metadata.
+- Expire downloads.
+- Do not export restricted fields without explicit permission.
+- Audit exports.
+- Use Arabic/English headings according to requested locale.
+
+==================================================
+14. MODERN TAILWIND/LIVEWIRE UI
+==================================================
+
+Extend the modern UI with functional screens.
+
+Admin/Data Admin:
+
+- Teaching assignments
+- Homeroom assignments
+- Attendance status configuration
+- Grading scales
+- Assessments
+- Mark-entry windows
+- Publication policies
+- Organization-wide authorized reports
+
+Principal/Deputy:
+
+- Institution attendance dashboard
+- Staff attendance
+- Marks completion dashboard
+- Verify/approve queues
+- Publication actions
+- Teacher/class assignment overview
+- Reports and exports
+
+Secretary:
+
+- Daily student attendance
+- Teacher-submitted attendance queue
+- Attendance verification/correction
+- Daily staff attendance
+- QR scan review
+- Assessment configuration where permitted
+- Marks monitoring/completeness
+- Marks verification/return
+- Reports and exports
+
+Teacher:
+
+- My classes
+- My subjects
+- Homeroom attendance
+- Draft attendance
+- Submitted/returned attendance
+- Spreadsheet-style mark entry
+- Submission status
+- Returned corrections
+- Published status
+
+Guardian:
+
+- Child selector
+- Student placement
+- Published attendance
+- Published results
+
+UI requirements:
+
+- Tailwind + Blade + Livewire
+- Arabic RTL and English LTR
+- Mobile and desktop
+- Search/filter/pagination
+- Loading/empty/error states
+- Keyboard-efficient attendance and marks tables
+- Accessible confirmation dialogs
+- Clear workflow timelines/status badges
+- No outdated generic admin-template appearance
+- No frontend-only authorization
+- Reauthorize every Livewire mutation
+
+==================================================
+15. PERMISSIONS
+==================================================
+
+Extend the permission catalogue with separate keys for:
+
+- teaching_assignment.read/manage
+- homeroom_assignment.read/manage
+- student_attendance.read/enter/submit/return/verify/correct/publish
+- staff_attendance.read/enter/verify/correct
+- attendance_scan.review
+- attendance_report.read/export
+- assessment.read/manage
+- grading_scale.read/manage
+- mark_window.read/manage/extend
+- marks.read/enter/submit/return/verify/approve/correct
+- results.read/publish/revoke
+- result_report.read/export
+
+Do not combine verification, approval, and publication into one broad permission.
+
+No role bypasses scope or lifecycle constraints.
+
+==================================================
+16. AUDIT
+==================================================
+
+Audit:
+
+- Assignment changes
+- Attendance submission/return/verification
+- Verified attendance corrections
+- QR issuance/revocation and scan review
+- Assessment/grading changes
+- Window extension
+- Mark submission/return/verification/approval
+- Mark corrections
+- Publication/revocation
+- Guardian publication access where policy requires
+- Report exports
+
+Never log:
+
+- Raw QR tokens
+- Passwords
+- Session values
+- Unmasked protected identifiers
+- Internal restricted notes in generic payloads
+
+Required audit failure must roll back protected mutations according to existing policy.
+
+==================================================
+17. DEMO DATA
+==================================================
+
+Extend demo seeders with:
+
+- Multiple teachers
+- Teaching assignments
+- Homeroom assignments
+- Completed and incomplete attendance sheets
+- Returned attendance sheet
+- Verified attendance
+- Student absence/late examples
+- Staff attendance including a guard without login
+- Pending QR scan events
+- Reviewed QR scan events
+- Grading scale
+- Multiple assessment types
+- Open and closed mark-entry windows
+- Draft/submitted/returned/verified/approved mark sheets
+- Published versioned results
+- Guardian accounts with one and multiple children
+- Published and unpublished guardian examples
+
+Continue using DEMO_SEED_PASSWORD and synthetic data only.
+
+==================================================
+18. TESTS
+==================================================
+
+Test at minimum:
+
+- Assignment relationship chains
+- Teacher cannot access unrelated class/subject
+- Homeroom assignment permits attendance but not marks
+- Secretary period restrictions
+- Attendance date/semester validation
+- Only enrolled students appear
+- Teacher submit/secretary verify workflow
+- Verified correction history
+- Staff attendance without StaffAccount
+- QR token hashing/revocation/replay resistance
+- QR scan remains unofficial until review
+- Mark-entry window enforcement
+- Score range validation
+- Teacher assignment enforcement
+- Verification and approval separation
+- Published snapshot immutability
+- Correction creates new version
+- Guardian sees only published data
+- Relationship removal revokes guardian access
+- Cross-institution denial
+- Report/export scope
+- Sensitive export denial
+- Arabic/English UI
+- RTL/LTR tables
+- Keyboard accessibility
+- Full previous regression suite
+
+==================================================
+19. VERIFICATION
+==================================================
+
+Run all commands required by AGENTS.md:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- php artisan migrate:fresh
+- Complete reference/demo seeding
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Inspect the running application in:
+
+- Admin portal
+- Principal/deputy staff portal
+- Secretary portal
+- Teacher portal
+- Guardian portal
+- Arabic desktop/mobile
+- English desktop/mobile
+
+Final report must include:
+
+- Modules/migrations/entities
+- Assignment rules
+- Attendance workflows
+- QR review workflow
+- Marks workflow
+- Publication/versioning
+- Guardian-visible features
+- Reports/exports
+- Demo accounts and URLs
+- Test/assertion counts
+- Build results
+- Visual inspection summary
+- Remaining master-plan releases
+- Explicit confirmation that later required releases remain scheduled and were not falsely reported as complete
