@@ -1,0 +1,11 @@
+{
+    "name": "Attendance",
+    "alias": "attendance",
+    "description": "GCV DATA Attendance module — student daily attendance sheets, workflow (draft→submitted→verified→corrected), and staff portal UI for teachers and secretaries.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Attendance\\Providers\\AttendanceServiceProvider"
+    ],
+    "files": []
+}

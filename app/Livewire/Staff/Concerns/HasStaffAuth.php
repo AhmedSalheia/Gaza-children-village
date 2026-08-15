@@ -296,6 +296,53 @@ trait HasStaffAuth
         }
     }
 
+    /**
+     * Assert that the given attendance sheet is accessible to this staff member.
+     *
+     * Checks:
+     *  1. The sheet exists and belongs to the trusted institution semester.
+     *  2. For period-restricted positions (secretary, teacher): the sheet's class
+     *     group must fall within the explicitly granted operational periods.
+     *
+     * Returns the raw sheet row (with class_group_id and operational_period_id)
+     * so callers can perform additional checks (e.g. homeroom assignment for teachers)
+     * without a second DB round-trip.
+     *
+     * Aborts 404 when the sheet is not found or is outside the institution/semester.
+     * Aborts 403 when it is outside the allowed period.
+     */
+    protected function assertSheetInScope(int $sheetId): object
+    {
+        $scope = $this->staffScope();
+
+        if ($scope['institution_semester_id'] === null) {
+            abort(403, 'No active institutional scope for your account.');
+        }
+
+        $sheet = DB::table('student_attendance_sheets as sas')
+            ->join('class_groups as cg', 'cg.id', '=', 'sas.class_group_id')
+            ->where('sas.id', $sheetId)
+            ->where('sas.institution_semester_id', $scope['institution_semester_id'])
+            ->select('sas.id', 'sas.class_group_id', 'sas.institution_semester_id', 'cg.operational_period_id')
+            ->first();
+
+        if (! $sheet) {
+            // Sheet does not exist or belongs to a different institution/semester.
+            // Surface as 404 to prevent enumeration.
+            abort(404);
+        }
+
+        if (! $this->isFullScopePosition()) {
+            $allowed = $this->allowedPeriodIds();
+
+            if (empty($allowed) || ! in_array((int) $sheet->operational_period_id, $allowed, true)) {
+                abort(403, 'Attendance sheet is not in your assigned operational period.');
+            }
+        }
+
+        return $sheet;
+    }
+
     // ── Actor identity helpers ────────────────────────────────────────────
 
     /**

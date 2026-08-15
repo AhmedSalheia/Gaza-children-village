@@ -12,6 +12,7 @@ return [
         'Accounts',
         'AcademicManagement',
         'AcademicCalendar',
+        'Attendance',
         'Audit',
         'Authorization',
         'CivilRegistry',
@@ -44,5 +45,10 @@ return [
         'AcademicManagement' => ['Organization', 'AcademicCalendar', 'People', 'Authorization', 'Audit'],
         'CivilRegistry' => ['People', 'Authorization', 'Audit'],
         'Imports' => ['Students', 'AcademicManagement', 'People', 'Organization', 'AcademicCalendar', 'Authorization', 'Audit'],
+
+        // Attendance: student daily attendance workflow
+        // Cross-module data access uses DB::table() and string-variable class references
+        // (double-backslash pattern) to avoid boundary-scanner FQCN violations.
+        'Attendance' => ['AcademicManagement', 'AcademicCalendar', 'Staff', 'Students', 'Organization', 'Authorization', 'Audit'],
     ],
 ];

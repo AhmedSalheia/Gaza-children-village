@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Staff\LoginController;
 use App\Livewire\Staff\Assignments\AssignmentOverview;
+use App\Livewire\Staff\Attendance\AttendanceQueue;
+use App\Livewire\Staff\Attendance\DailyAttendanceSheet;
+use App\Livewire\Staff\Attendance\MyClasses;
+use App\Livewire\Staff\Attendance\SheetVerification;
 use App\Livewire\Staff\ClassLists\ClassList;
 use App\Livewire\Staff\Dashboard;
 use App\Livewire\Staff\Enrollments\EnrollmentManagement;
@@ -70,6 +74,14 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
             ->where('studentProfileId', '[0-9]+')
             ->name('enrollments.transfer');
         Route::get('/promotions', PromotionReview::class)->name('promotions.index');
+
+        // Attendance — teacher daily entry and secretary review
+        Route::get('/attendance', MyClasses::class)->name('attendance.index');
+        Route::get('/attendance/sheet', DailyAttendanceSheet::class)->name('attendance.sheet');
+        Route::get('/attendance/queue', AttendanceQueue::class)->name('attendance.queue');
+        Route::get('/attendance/verify/{sheetId}', SheetVerification::class)
+            ->where('sheetId', '[0-9]+')
+            ->name('attendance.verify');
 
         // Imports (secretary/deputy_principal)
         Route::get('/imports', ImportBatchIndex::class)->name('imports.index');

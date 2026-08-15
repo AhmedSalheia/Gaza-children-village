@@ -51,6 +51,24 @@
     </li>
     @endif
 
+    {{-- Attendance: teacher daily entry --}}
+    @if($navCan('student_attendance.enter'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.attendance.index') }}" class="portal-nav__link @active('staff/attendance') @active('staff/attendance/sheet*')">
+            {{ __('ui.attendance', [], null, 'Attendance') }}
+        </a>
+    </li>
+    @endif
+
+    {{-- Attendance: secretary review queue --}}
+    @if($navCan('student_attendance.return'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.attendance.queue') }}" class="portal-nav__link @active('staff/attendance/queue*') @active('staff/attendance/verify*')">
+            {{ __('ui.attendance_queue', [], null, 'Attendance Queue') }}
+        </a>
+    </li>
+    @endif
+
     @if($navCan('import.upload'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.imports.index') }}" class="portal-nav__link @active('staff/imports*')">
