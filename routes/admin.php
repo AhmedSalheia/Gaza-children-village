@@ -14,6 +14,8 @@ use App\Livewire\Admin\Marks\AssessmentDefinitionIndex;
 use App\Livewire\Admin\Marks\GradingScaleIndex;
 use App\Livewire\Admin\Marks\MarkEntryWindowIndex;
 use App\Livewire\Admin\Marks\MarkSheetOverview;
+use App\Livewire\Admin\Publications\AttendancePublicationPolicyConfig;
+use App\Livewire\Admin\Publications\ResultPublicationManager;
 use App\Livewire\Admin\Calendar\CalendarIndex;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Enrollments\EnrollmentIndex;
@@ -111,6 +113,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/marks/assessments', AssessmentDefinitionIndex::class)->name('marks.assessments');
         Route::get('/marks/windows', MarkEntryWindowIndex::class)->name('marks.windows');
         Route::get('/marks/overview', MarkSheetOverview::class)->name('marks.overview');
+
+        // Publications: result publication manager, attendance publication policy
+        Route::get('/publications/results', ResultPublicationManager::class)->name('publications.results');
+        Route::get('/publications/attendance', AttendancePublicationPolicyConfig::class)->name('publications.attendance');
 
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');
