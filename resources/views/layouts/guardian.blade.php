@@ -17,7 +17,7 @@
 
 <header class="portal-header" role="banner">
     <div class="portal-header__inner">
-        <a href="{{ url('/guardian') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.guardian_portal') }}">
+        <a href="{{ route('guardian.dashboard') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.guardian_portal') }}">
             <img
                 src="{{ asset('brand/gcv-logo-dark.png') }}"
                 alt="GCV DATA"

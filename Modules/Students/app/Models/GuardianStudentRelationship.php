@@ -83,4 +83,9 @@ final class GuardianStudentRelationship extends Model
             && $this->portal_eligible === true
             && $this->isActive();
     }
+
+    protected static function newFactory(): GuardianStudentRelationshipFactory
+    {
+        return GuardianStudentRelationshipFactory::new();
+    }
 }

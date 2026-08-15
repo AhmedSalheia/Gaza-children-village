@@ -34,7 +34,8 @@ Route::prefix('guardian')->name('guardian.')->group(function (): void {
     // ── Protected routes ─────────────────────────────────────────────────
 
     Route::middleware(['auth:guardian', 'portal.version:guardian'])->group(function (): void {
-        Route::get('/dashboard', fn () => view('portals.guardian.dashboard'))->name('dashboard');
+        Route::get('/dashboard', \App\Livewire\Guardian\Dashboard::class)->name('dashboard');
+        Route::get('/students/{studentProfileId}', \App\Livewire\Guardian\Students\StudentDetail::class)->name('students.detail');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────

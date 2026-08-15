@@ -67,4 +67,9 @@ final class GuardianProfile extends Model
     {
         return $this->lifecycle_status === GuardianLifecycleStatus::Active;
     }
+
+    protected static function newFactory(): GuardianProfileFactory
+    {
+        return GuardianProfileFactory::new();
+    }
 }

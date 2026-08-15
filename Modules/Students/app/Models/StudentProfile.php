@@ -93,4 +93,9 @@ final class StudentProfile extends Model
     {
         return $this->lifecycle_status === StudentLifecycleStatus::Active;
     }
+
+    protected static function newFactory(): StudentProfileFactory
+    {
+        return StudentProfileFactory::new();
+    }
 }
