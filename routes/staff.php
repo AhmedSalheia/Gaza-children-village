@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Staff\LoginController;
+use App\Http\Controllers\Staff\ReportDownloadController;
+use App\Livewire\Staff\Reports\AttendanceReport as StaffAttendanceReport;
+use App\Livewire\Staff\Reports\ResultReport as StaffResultReport;
 use App\Livewire\Staff\Assignments\AssignmentOverview;
 use App\Livewire\Staff\Marks\MarkCorrection;
 use App\Livewire\Staff\Marks\MarkEntrySheet;
@@ -117,6 +120,13 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         Route::get('/imports/{batchId}', ImportBatchDetail::class)
             ->where('batchId', '[0-9]+')
             ->name('imports.detail');
+
+        // Reports — attendance and marks/results (scoped to staff position)
+        Route::get('/reports/attendance', StaffAttendanceReport::class)->name('reports.attendance');
+        Route::get('/reports/results', StaffResultReport::class)->name('reports.results');
+
+        // Report file download (path encrypted by Livewire export actions)
+        Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\ReportDownloadController;
 use App\Livewire\Admin\AcademicStructure\AcademicLevelIndex;
 use App\Livewire\Admin\AcademicStructure\ClassGroupIndex;
 use App\Livewire\Admin\AcademicStructure\ClassroomIndex;
@@ -25,6 +26,8 @@ use App\Livewire\Admin\Imports\ImportBatchDetail;
 use App\Livewire\Admin\Imports\ImportBatchIndex;
 use App\Livewire\Admin\Institutions\InstitutionIndex;
 use App\Livewire\Admin\People\PeopleIndex;
+use App\Livewire\Admin\Reports\AttendanceReport as AdminAttendanceReport;
+use App\Livewire\Admin\Reports\MarksReport as AdminMarksReport;
 use App\Livewire\Admin\Stubs\ComingSoonPage;
 use App\Livewire\Admin\Students\AddStudent;
 use App\Livewire\Admin\Students\GuardianDetail;
@@ -117,6 +120,13 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         // Publications: result publication manager, attendance publication policy
         Route::get('/publications/results', ResultPublicationManager::class)->name('publications.results');
         Route::get('/publications/attendance', AttendancePublicationPolicyConfig::class)->name('publications.attendance');
+
+        // Reports: attendance and marks/results
+        Route::get('/reports/attendance', AdminAttendanceReport::class)->name('reports.attendance');
+        Route::get('/reports/marks', AdminMarksReport::class)->name('reports.marks');
+
+        // Report file download (path encrypted by Livewire export actions)
+        Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');
 
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');

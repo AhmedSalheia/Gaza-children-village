@@ -74,6 +74,17 @@ class DatabaseSeeder extends Seeder
         // ── Demo staff and accounts (production-guarded) ─────────────
         $this->call([
             DemoStaffSeeder::class,
+        ]);
+
+        // ── Demo operational data (marks, attendance, publications) ───
+        $this->call([
+            DemoMarkSeeder::class,
+            DemoAttendanceSeeder::class,
+            DemoPublicationSeeder::class,
+        ]);
+
+        // ── Demo accounts must come last (requires staff + guardians) ─
+        $this->call([
             DemoAccountSeeder::class,
         ]);
     }
