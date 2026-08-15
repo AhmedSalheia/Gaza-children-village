@@ -150,7 +150,7 @@ describe('language files', function (): void {
         ];
 
         foreach ($positionValues as $val) {
-            expect($ar['positions'])->toHaveKey($val, "Missing AR position: {$val}");
+            expect($ar['positions'])->toHaveKey($val);
         }
     });
 
