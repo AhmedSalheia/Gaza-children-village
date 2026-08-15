@@ -72,6 +72,130 @@
                 <dt style="color:var(--text-secondary);font-size:var(--text-sm);font-weight:500">{{ __('ui.emergency_contact', [], null, 'Emergency Contact') }}</dt>
                 <dd style="font-size:var(--text-sm)">{{ $relationship->is_emergency_contact ? __('ui.yes', [], null, 'Yes') : __('ui.no', [], null, 'No') }}</dd>
             </dl>
+
+            {{-- ── Correction-request area ─────────────────────────────── --}}
+            <div style="margin-block-start:var(--space-4);padding-block-start:var(--space-4);border-block-start:1px solid var(--card-border)">
+
+                @if($correctionSuccessMessage)
+                    <div class="alert alert--success" role="status" style="font-size:var(--text-sm);margin-block-end:var(--space-3)">
+                        ✓ {{ $correctionSuccessMessage }}
+                    </div>
+                @endif
+
+                @if($pendingCorrection)
+                    {{-- Pending indicator --}}
+                    <div style="display:flex;align-items:flex-start;gap:var(--space-2);background:var(--color-warning-50,#fffbeb);border:1px solid var(--color-warning-300,#fcd34d);border-radius:var(--radius-md,6px);padding:var(--space-3)">
+                        <span aria-hidden="true" style="font-size:var(--text-base);flex-shrink:0">⏳</span>
+                        <div style="font-size:var(--text-sm)">
+                            <div style="font-weight:600;color:var(--color-warning-800,#92400e)">
+                                {{ __('ui.correction_pending', [], null, 'Correction request pending review') }}
+                            </div>
+                            <div style="color:var(--color-warning-700,#b45309);margin-block-start:var(--space-1)">
+                                {{ __('ui.correction_pending_detail', [], null, 'Your request has been sent to staff and will be reviewed shortly.') }}
+                            </div>
+                            @if($pendingCorrection->requested_contact_priority !== null)
+                            <div style="color:var(--color-warning-700,#b45309);margin-block-start:var(--space-1)">
+                                {{ __('ui.contact_priority', [], null, 'Contact Priority') }}: {{ $pendingCorrection->requested_contact_priority }}
+                            </div>
+                            @endif
+                            @if($pendingCorrection->requested_is_emergency_contact !== null)
+                            <div style="color:var(--color-warning-700,#b45309)">
+                                {{ __('ui.emergency_contact', [], null, 'Emergency Contact') }}: {{ $pendingCorrection->requested_is_emergency_contact ? __('ui.yes', [], null, 'Yes') : __('ui.no', [], null, 'No') }}
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                @elseif($correctionFormOpen)
+                    {{-- Correction form --}}
+                    <form wire:submit="submitCorrectionRequest" novalidate>
+                        <div style="font-size:var(--text-sm);font-weight:600;margin-block-end:var(--space-3);color:var(--text-primary)">
+                            {{ __('ui.request_correction', [], null, 'Request a Correction') }}
+                        </div>
+
+                        @error('correctionPriority')
+                        <div class="field-error" role="alert" style="margin-block-end:var(--space-2)">{{ $message }}</div>
+                        @enderror
+
+                        <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+
+                            {{-- Contact priority --}}
+                            <label style="display:flex;flex-direction:column;gap:var(--space-1)">
+                                <span style="font-size:var(--text-sm);color:var(--text-secondary)">
+                                    {{ __('ui.contact_priority', [], null, 'Contact Priority') }}
+                                    <span style="font-weight:400;color:var(--text-tertiary)">({{ __('ui.optional', [], null, 'optional') }})</span>
+                                </span>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    class="input"
+                                    wire:model="correctionPriority"
+                                    placeholder="{{ __('ui.correction_priority_placeholder', [], null, 'e.g. 1') }}"
+                                    style="max-width:120px"
+                                >
+                            </label>
+
+                            {{-- Emergency contact --}}
+                            <fieldset style="border:none;padding:0;margin:0">
+                                <legend style="font-size:var(--text-sm);color:var(--text-secondary);margin-block-end:var(--space-2)">
+                                    {{ __('ui.emergency_contact', [], null, 'Emergency Contact') }}
+                                    <span style="font-weight:400;color:var(--text-tertiary)">({{ __('ui.optional', [], null, 'optional') }})</span>
+                                </legend>
+                                <div style="display:flex;gap:var(--space-4)">
+                                    <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);cursor:pointer">
+                                        <input type="radio" wire:model="correctionIsEmergency" value="1">
+                                        {{ __('ui.yes', [], null, 'Yes') }}
+                                    </label>
+                                    <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);cursor:pointer">
+                                        <input type="radio" wire:model="correctionIsEmergency" value="0">
+                                        {{ __('ui.no', [], null, 'No') }}
+                                    </label>
+                                    <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);cursor:pointer">
+                                        <input type="radio" wire:model="correctionIsEmergency" value="">
+                                        {{ __('ui.no_change', [], null, 'No change') }}
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            {{-- Note --}}
+                            <label style="display:flex;flex-direction:column;gap:var(--space-1)">
+                                <span style="font-size:var(--text-sm);color:var(--text-secondary)">
+                                    {{ __('ui.correction_note_label', [], null, 'Note for staff') }}
+                                    <span style="font-weight:400;color:var(--text-tertiary)">({{ __('ui.optional', [], null, 'optional') }})</span>
+                                </span>
+                                <textarea
+                                    class="input"
+                                    rows="2"
+                                    wire:model="correctionNote"
+                                    placeholder="{{ __('ui.correction_note_placeholder', [], null, 'Briefly explain the correction needed…') }}"
+                                    style="resize:vertical"
+                                ></textarea>
+                            </label>
+
+                        </div>
+
+                        <div style="display:flex;gap:var(--space-2);margin-block-start:var(--space-4)">
+                            <button type="submit" class="btn btn--primary btn--sm" wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="submitCorrectionRequest">{{ __('ui.submit_correction', [], null, 'Submit Request') }}</span>
+                                <span wire:loading wire:target="submitCorrectionRequest">{{ __('ui.submitting', [], null, 'Submitting…') }}</span>
+                            </button>
+                            <button type="button" class="btn btn--outline btn--sm" wire:click="closeCorrectionForm">
+                                {{ __('ui.cancel', [], null, 'Cancel') }}
+                            </button>
+                        </div>
+                    </form>
+
+                @else
+                    {{-- Trigger button --}}
+                    <button type="button" class="btn btn--outline btn--sm" wire:click="openCorrectionForm">
+                        {{ __('ui.flag_correction', [], null, 'Flag a correction') }}
+                    </button>
+                    <span style="font-size:var(--text-xs);color:var(--text-secondary);margin-inline-start:var(--space-2)">
+                        {{ __('ui.correction_hint', [], null, 'Contact priority or emergency-contact status wrong?') }}
+                    </span>
+                @endif
+
+            </div>
         </div>
         @endif
 
@@ -158,6 +282,7 @@
 
 <style>
 .card{background:var(--surface-card);border:1px solid var(--card-border);border-radius:var(--card-radius);padding:var(--card-padding);box-shadow:var(--card-shadow)}
+.alert--success{background:var(--color-success-50,#f0fdf4);border:1px solid var(--color-success-300,#86efac);border-radius:var(--radius-md,6px);padding:var(--space-3);color:var(--color-success-800,#166534)}
 @media(max-width:640px){
     div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
 }
