@@ -7,6 +7,7 @@ namespace Tests\Feature\Guardian;
 use App\Livewire\Guardian\Dashboard;
 use App\Livewire\Guardian\Students\StudentDetail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Modules\Accounts\Models\GuardianAccount;
 use Tests\TestCase;
@@ -189,6 +190,104 @@ class GuardianPortalTest extends TestCase
             ->test(StudentDetail::class, [
                 'studentProfileId' => $data['studentId'],
             ])
+            ->assertForbidden();
+    }
+
+    // ── Mid-session relationship changes ──────────────────────────────────
+
+    /**
+     * Dashboard: student visible on first render, then relationship is ended
+     * mid-session → next render shows empty state instead of the child card.
+     */
+    public function test_dashboard_shows_empty_state_after_relationship_ended_mid_session(): void
+    {
+        $data = $this->makeGuardianWithStudent();
+
+        $component = Livewire::actingAs($data['account'], 'guardian')
+            ->test(Dashboard::class)
+            ->assertOk()
+            ->assertSee((string) $data['studentId']);
+
+        // Simulate an admin ending the relationship while the session is live.
+        DB::table('guardian_student_relationships')
+            ->where('guardian_profile_id', $data['profileId'])
+            ->update(['ends_on' => now()->subDay()->toDateString()]);
+
+        // Re-render must serve empty state, not stale child data.
+        $component->refresh()
+            ->assertOk()
+            ->assertSee('ui.no_children_linked');
+    }
+
+    /**
+     * StudentDetail: accessible on first render, then relationship is ended
+     * mid-session → next render aborts with 403.
+     */
+    public function test_student_detail_returns_403_after_relationship_ended_mid_session(): void
+    {
+        $data = $this->makeGuardianWithStudent();
+
+        $component = Livewire::actingAs($data['account'], 'guardian')
+            ->test(StudentDetail::class, [
+                'studentProfileId' => $data['studentId'],
+            ])
+            ->assertOk();
+
+        // Simulate an admin ending the relationship while the session is live.
+        DB::table('guardian_student_relationships')
+            ->where('guardian_profile_id', $data['profileId'])
+            ->update(['ends_on' => now()->subDay()->toDateString()]);
+
+        // Re-render must return 403, not stale student data.
+        $component->refresh()
+            ->assertForbidden();
+    }
+
+    /**
+     * Dashboard: student visible on first render, then portal_eligible revoked
+     * mid-session → next render shows empty state.
+     */
+    public function test_dashboard_shows_empty_state_after_portal_eligible_revoked_mid_session(): void
+    {
+        $data = $this->makeGuardianWithStudent();
+
+        $component = Livewire::actingAs($data['account'], 'guardian')
+            ->test(Dashboard::class)
+            ->assertOk()
+            ->assertSee((string) $data['studentId']);
+
+        // Simulate an admin revoking portal_eligible while the session is live.
+        DB::table('guardian_student_relationships')
+            ->where('guardian_profile_id', $data['profileId'])
+            ->update(['portal_eligible' => false]);
+
+        // Re-render must serve empty state, not stale child data.
+        $component->refresh()
+            ->assertOk()
+            ->assertSee('ui.no_children_linked');
+    }
+
+    /**
+     * StudentDetail: accessible on first render, then portal_eligible revoked
+     * mid-session → next render aborts with 403.
+     */
+    public function test_student_detail_returns_403_after_portal_eligible_revoked_mid_session(): void
+    {
+        $data = $this->makeGuardianWithStudent();
+
+        $component = Livewire::actingAs($data['account'], 'guardian')
+            ->test(StudentDetail::class, [
+                'studentProfileId' => $data['studentId'],
+            ])
+            ->assertOk();
+
+        // Simulate an admin revoking portal_eligible while the session is live.
+        DB::table('guardian_student_relationships')
+            ->where('guardian_profile_id', $data['profileId'])
+            ->update(['portal_eligible' => false]);
+
+        // Re-render must return 403, not stale student data.
+        $component->refresh()
             ->assertForbidden();
     }
 }
