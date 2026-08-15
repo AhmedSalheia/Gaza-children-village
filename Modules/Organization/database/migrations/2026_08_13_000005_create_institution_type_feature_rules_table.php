@@ -42,7 +42,7 @@ return new class extends Migration
                 ->restrictOnDelete()
                 ->restrictOnUpdate();
             $table->string('rule');
-            $table->unique(['institution_type_id', 'feature_module_id']);
+            $table->unique(['institution_type_id', 'feature_module_id'],'type_feature_module_unique');
             $table->timestamps();
         });
     }

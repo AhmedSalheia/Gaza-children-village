@@ -21,7 +21,7 @@ return new class extends Migration
         foreach (['administrative_accounts', 'staff_accounts', 'guardian_accounts'] as $table) {
             Schema::table($table, function (Blueprint $t) use ($table): void {
                 if (! Schema::hasColumn($table, 'locale_preference')) {
-                    $t->string('locale_preference', 10)->nullable()->after('email');
+                    $t->string('locale_preference', 10)->nullable()->after('password');
                 }
             });
         }

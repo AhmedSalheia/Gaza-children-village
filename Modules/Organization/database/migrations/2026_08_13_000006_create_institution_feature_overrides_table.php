@@ -45,7 +45,7 @@ return new class extends Migration
                 ->restrictOnDelete();
             $table->boolean('is_enabled');
             $table->string('reason')->nullable()->comment('Temporarily nullable; required once Audit/actor integration lands (post-F17).');
-            $table->unique(['institution_id', 'feature_module_id']);
+            $table->unique(['institution_id', 'feature_module_id'],'institution_id_feature_module_id_unique');
             $table->timestamps();
         });
     }

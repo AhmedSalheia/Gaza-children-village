@@ -54,7 +54,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Composite index for active-challenge lookups
-            $table->index(['portal', 'account_id', 'account_type', 'purpose']);
+            $table->index(['portal', 'account_id', 'account_type', 'purpose'],'account_verification_challenges_index');
         });
     }
 
