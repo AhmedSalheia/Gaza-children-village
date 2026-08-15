@@ -20,7 +20,7 @@
 {{-- F23: Shared portal header --}}
 <header class="portal-header" role="banner">
     <div class="portal-header__inner">
-        <a href="{{ url('/admin') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.admin_portal') }}">
+        <a href="{{ route('admin.dashboard') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.admin_portal') }}">
             <img
                 src="{{ asset('brand/gcv-logo-dark.png') }}"
                 alt="GCV DATA"
@@ -32,7 +32,26 @@
 
         <nav class="portal-header__nav" role="navigation" aria-label="{{ __('auth.admin_portal') }}">
             @auth('admin')
-                @include('layouts.partials.admin-nav')
+                @php
+                    /**
+                     * Compute the authenticated admin's permission set once per layout render.
+                     * Used by admin-nav to conditionally show navigation links.
+                     * Key format: 'student.view' => true (only permitted keys are present).
+                     */
+                    $adminId = auth('admin')->id();
+                    $navPermissions = $adminId
+                        ? \Illuminate\Support\Facades\DB::table('administrative_account_roles as ar')
+                            ->join('role_permissions as rp', 'rp.role_id', '=', 'ar.role_id')
+                            ->join('permissions as p', 'p.id', '=', 'rp.permission_id')
+                            ->where('ar.administrative_account_id', $adminId)
+                            ->whereNull('ar.revoked_at')
+                            ->pluck('p.key')
+                            ->flip()
+                            ->toArray()
+                        : [];
+                    $navCan = fn (string $key): bool => array_key_exists($key, $navPermissions);
+                @endphp
+                @include('layouts.partials.admin-nav', ['navCan' => $navCan])
             @endauth
         </nav>
 
