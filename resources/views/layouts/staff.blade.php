@@ -17,7 +17,7 @@
 
 <header class="portal-header" role="banner">
     <div class="portal-header__inner">
-        <a href="{{ url('/staff') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.staff_portal') }}">
+        <a href="{{ route('staff.dashboard') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.staff_portal') }}">
             <img
                 src="{{ asset('brand/gcv-logo-dark.png') }}"
                 alt="GCV DATA"
@@ -29,7 +29,28 @@
 
         <nav class="portal-header__nav" role="navigation" aria-label="{{ __('auth.staff_portal') }}">
             @auth('staff')
-                @include('layouts.partials.staff-nav')
+                @php
+                    /**
+                     * Compute the authenticated staff member's permission set for nav rendering.
+                     * Permission chain: staff_accounts → staff_profiles → staff_positions (active)
+                     * → position_role_grants → role_permissions → permissions
+                     */
+                    $staffAccount = auth('staff')->user();
+                    $navPermissions = ($staffAccount && $staffAccount->staff_profile_id)
+                        ? \Illuminate\Support\Facades\DB::table('staff_positions as pos')
+                            ->join('position_role_grants as prg', 'prg.position_definition', '=', 'pos.position_definition')
+                            ->join('role_permissions as rp', 'rp.role_id', '=', 'prg.role_id')
+                            ->join('permissions as p', 'p.id', '=', 'rp.permission_id')
+                            ->where('pos.staff_profile_id', $staffAccount->staff_profile_id)
+                            ->where('pos.started_on', '<=', now()->toDateString())
+                            ->where(fn ($q) => $q->whereNull('pos.ended_on')->orWhere('pos.ended_on', '>=', now()->toDateString()))
+                            ->pluck('p.key')
+                            ->flip()
+                            ->toArray()
+                        : [];
+                    $navCan = fn (string $key): bool => array_key_exists($key, $navPermissions);
+                @endphp
+                @include('layouts.partials.staff-nav', ['navCan' => $navCan])
             @endauth
         </nav>
 

@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Staff\LoginController;
+use App\Livewire\Staff\ClassLists\ClassList;
+use App\Livewire\Staff\Dashboard;
+use App\Livewire\Staff\Enrollments\EnrollmentManagement;
+use App\Livewire\Staff\Enrollments\PromotionReview;
+use App\Livewire\Staff\Enrollments\TransferStudent;
+use App\Livewire\Staff\Imports\ImportBatchDetail;
+use App\Livewire\Staff\Imports\ImportBatchIndex;
+use App\Livewire\Staff\Students\AddStudent;
+use App\Livewire\Staff\Students\GuardianRelationships;
+use App\Livewire\Staff\Students\StudentDetail;
+use App\Livewire\Staff\Students\StudentList;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,8 +28,7 @@ use Illuminate\Support\Facades\Route;
 |
 | Staff authentication grants a staff account actor identity only.
 | Institutional operational access additionally requires eligible active
-| positions, F02 trusted operational context, and Authorization policies
-| (deferred to F13 and later).
+| positions, trusted operational context, and Authorization policies.
 |
 */
 
@@ -33,7 +43,35 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
     // ── Protected routes ─────────────────────────────────────────────────
 
     Route::middleware(['auth:staff', 'portal.version:staff'])->group(function (): void {
-        Route::get('/dashboard', fn () => view('portals.staff.dashboard'))->name('dashboard');
+
+        // Dashboard — landing page for all authenticated staff
+        Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+        // Students
+        Route::get('/students', StudentList::class)->name('students.index');
+        Route::get('/students/add', AddStudent::class)->name('students.add');
+        Route::get('/students/{studentProfileId}', StudentDetail::class)
+            ->where('studentProfileId', '[0-9]+')
+            ->name('students.detail');
+        Route::get('/students/{studentProfileId}/relationships', GuardianRelationships::class)
+            ->where('studentProfileId', '[0-9]+')
+            ->name('students.relationships');
+
+        // Class lists (teacher-accessible read-only)
+        Route::get('/class-lists', ClassList::class)->name('class-lists.index');
+
+        // Enrollments
+        Route::get('/enrollments', EnrollmentManagement::class)->name('enrollments.index');
+        Route::get('/enrollments/transfer/{studentProfileId}', TransferStudent::class)
+            ->where('studentProfileId', '[0-9]+')
+            ->name('enrollments.transfer');
+        Route::get('/promotions', PromotionReview::class)->name('promotions.index');
+
+        // Imports (secretary/deputy_principal)
+        Route::get('/imports', ImportBatchIndex::class)->name('imports.index');
+        Route::get('/imports/{batchId}', ImportBatchDetail::class)
+            ->where('batchId', '[0-9]+')
+            ->name('imports.detail');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────
