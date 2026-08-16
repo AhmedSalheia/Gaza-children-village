@@ -135,6 +135,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         // Correction requests — central admin inbox
         Route::get('/corrections', \App\Livewire\Admin\Corrections\CorrectionInbox::class)->name('corrections.index');
 
+        // Document templates — management, versioning, preview, activation
+        Route::get('/documents/templates', \App\Livewire\Admin\Documents\TemplateList::class)->name('documents.templates');
+        Route::get('/documents/templates/{templateId}', \App\Livewire\Admin\Documents\TemplateVersionDetail::class)->name('documents.template-versions');
+
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');
         Route::get('/accounts', ComingSoonPage::class)->name('accounts.index');

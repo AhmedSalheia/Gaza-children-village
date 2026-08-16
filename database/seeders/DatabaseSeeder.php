@@ -8,12 +8,14 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Modules\AcademicManagement\Database\Seeders\AcademicLevelReferenceSeeder;
 use Modules\Authorization\Database\Seeders\PermissionCatalogueSeeder;
+use Modules\Documents\Database\Seeders\DocumentTemplateFamilySeeder;
+use Modules\Documents\Database\Seeders\DocumentTypeSeeder;
 use Modules\Organization\Database\Seeders\FeatureModuleReferenceSeeder;
-use Modules\Workflow\Database\Seeders\WorkflowDefinitionSeeder;
 use Modules\Organization\Database\Seeders\InstitutionReferenceSeeder;
 use Modules\Organization\Database\Seeders\InstitutionTypeFeatureRuleReferenceSeeder;
 use Modules\Organization\Database\Seeders\InstitutionTypeReferenceSeeder;
 use Modules\Organization\Database\Seeders\OrganizationReferenceSeeder;
+use Modules\Workflow\Database\Seeders\WorkflowDefinitionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -56,6 +58,8 @@ class DatabaseSeeder extends Seeder
             AcademicLevelReferenceSeeder::class,
             DemoSubjectReferenceSeeder::class,
             WorkflowDefinitionSeeder::class,
+            DocumentTypeSeeder::class,          // document type catalogue (7 types)
+            DocumentTemplateFamilySeeder::class, // org-wide template family records
         ]);
 
         // ── Demo structural data ─────────────────────────────────────

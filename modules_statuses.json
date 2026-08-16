@@ -7,6 +7,7 @@
     "Audit": true,
     "Authorization": true,
     "CivilRegistry": true,
+    "Documents": true,
     "Imports": true,
     "Notifications": true,
     "Organization": true,

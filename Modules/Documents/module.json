@@ -1,0 +1,11 @@
+{
+    "name": "Documents",
+    "alias": "documents",
+    "description": "GCV DATA Documents module — document type catalogue, template versioning, safe placeholder resolution, PDF generation engine (mPDF), and race-safe document numbering.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Documents\\Providers\\DocumentsServiceProvider"
+    ],
+    "files": []
+}

@@ -17,6 +17,7 @@ return [
         'Audit',
         'Authorization',
         'CivilRegistry',
+        'Documents',
         'Imports',
         'Notifications',
         'Organization',
@@ -74,5 +75,13 @@ return [
         // Students (profiles/relationships), AcademicManagement, People (person data),
         // Organization (institution scope), Authorization (permission keys), Audit.
         'Requests' => ['Workflow', 'Attachments', 'Notifications', 'Students', 'AcademicManagement', 'People', 'Organization', 'Authorization', 'Audit'],
+
+        // Documents: document type catalogue, template versioning, PDF generation,
+        // and sequential document numbering. Depends on Workflow (approval flow for
+        // documents requiring countersign), Attachments (issued document file storage),
+        // Notifications (issuance notifications), AcademicManagement (enrollment data),
+        // Students (student profiles), Organization (institution scope),
+        // Authorization (permission keys), Audit (template activation events).
+        'Documents' => ['Workflow', 'Attachments', 'Notifications', 'AcademicManagement', 'Students', 'Organization', 'Authorization', 'Audit'],
     ],
 ];
