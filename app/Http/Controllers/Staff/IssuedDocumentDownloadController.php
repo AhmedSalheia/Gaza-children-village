@@ -78,10 +78,10 @@ final class IssuedDocumentDownloadController extends Controller
         $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $document->document_number).'.pdf';
 
         return response($content, 200, [
-            'Content-Type'           => 'application/pdf',
-            'Content-Disposition'    => 'attachment; filename="'.$filename.'"',
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             'X-Content-Type-Options' => 'nosniff',
-            'Cache-Control'          => 'private, no-cache, no-store, must-revalidate',
+            'Cache-Control' => 'private, no-cache, no-store, must-revalidate',
         ]);
     }
 }

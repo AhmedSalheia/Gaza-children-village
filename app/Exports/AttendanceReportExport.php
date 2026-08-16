@@ -22,21 +22,21 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * Filters applied at construction time; this class is a pure data transfer
  * object — no side effects, no DB writes.
  *
- * @param array<int>|null $allowedPeriodIds  When set, restricts results to
- *   sheets whose operational_period_id is in this list. Used by staff
- *   portal to enforce the authenticated user's period grants server-side,
- *   preventing forged classGroupId values from leaking out-of-scope data.
+ * @param  array<int>|null  $allowedPeriodIds  When set, restricts results to
+ *                                             sheets whose operational_period_id is in this list. Used by staff
+ *                                             portal to enforce the authenticated user's period grants server-side,
+ *                                             preventing forged classGroupId values from leaking out-of-scope data.
  */
-final class AttendanceReportExport implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithStyles
+final class AttendanceReportExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStyles, WithTitle
 {
     public function __construct(
-        private readonly int     $institutionSemesterId,
-        private readonly ?int    $classGroupId,
+        private readonly int $institutionSemesterId,
+        private readonly ?int $classGroupId,
         private readonly ?string $dateFrom,
         private readonly ?string $dateTo,
-        private readonly string  $locale = 'ar',
+        private readonly string $locale = 'ar',
         /** @var array<int>|null */
-        private readonly ?array  $allowedPeriodIds = null,
+        private readonly ?array $allowedPeriodIds = null,
     ) {}
 
     public function title(): string
@@ -84,7 +84,7 @@ final class AttendanceReportExport implements FromCollection, WithHeadings, With
             $query->where('sas.attendance_date', '<=', $this->dateTo);
         }
 
-        $nameField   = $this->locale === 'ar' ? 'sp.full_name_ar' : 'sp.full_name_en';
+        $nameField = $this->locale === 'ar' ? 'sp.full_name_ar' : 'sp.full_name_en';
         $cgNameField = 'cg.name_ar';
 
         return $query->select(
@@ -120,17 +120,17 @@ final class AttendanceReportExport implements FromCollection, WithHeadings, With
         if ($this->locale === 'ar') {
             return match ($code) {
                 'present' => 'حاضر',
-                'absent'  => 'غائب',
-                'late'    => 'متأخر',
-                default   => $code ?? '',
+                'absent' => 'غائب',
+                'late' => 'متأخر',
+                default => $code ?? '',
             };
         }
 
         return match ($code) {
             'present' => 'Present',
-            'absent'  => 'Absent',
-            'late'    => 'Late',
-            default   => $code ?? '',
+            'absent' => 'Absent',
+            'late' => 'Late',
+            default => $code ?? '',
         };
     }
 
@@ -138,11 +138,11 @@ final class AttendanceReportExport implements FromCollection, WithHeadings, With
     {
         if ($this->locale === 'ar') {
             return match ($status) {
-                'draft'     => 'مسودة',
+                'draft' => 'مسودة',
                 'submitted' => 'مُقدَّم',
-                'returned'  => 'مُعاد',
-                'verified'  => 'مُتحقَّق',
-                default     => $status ?? '',
+                'returned' => 'مُعاد',
+                'verified' => 'مُتحقَّق',
+                default => $status ?? '',
             };
         }
 

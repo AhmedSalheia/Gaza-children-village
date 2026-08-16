@@ -56,7 +56,7 @@ return [
     'current_locale' => 'Current language',
 
     // Guardian portal — profile setup states
-    'guardian_account_setup_pending'      => 'Account setup pending',
+    'guardian_account_setup_pending' => 'Account setup pending',
     'guardian_account_setup_pending_body' => 'Your account is not yet fully set up. Please contact the school administration to complete the setup.',
-    'guardian_profile_not_linked_flash'   => 'Your account is not yet fully set up. Please contact school administration.',
+    'guardian_profile_not_linked_flash' => 'Your account is not yet fully set up. Please contact school administration.',
 ];

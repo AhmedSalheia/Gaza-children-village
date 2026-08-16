@@ -36,10 +36,10 @@ final class ReturnMarkSheet
             throw new MarksException('A return reason is required.');
         }
 
-        $sheet->status                         = MarkSheetStatus::Returned->value;
-        $sheet->returned_by_staff_profile_id   = $staffProfileId;
-        $sheet->returned_at                    = now();
-        $sheet->return_reason                  = $reason;
+        $sheet->status = MarkSheetStatus::Returned->value;
+        $sheet->returned_by_staff_profile_id = $staffProfileId;
+        $sheet->returned_at = now();
+        $sheet->return_reason = $reason;
         $sheet->save();
 
         return $sheet;

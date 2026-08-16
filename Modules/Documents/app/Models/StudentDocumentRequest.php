@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\Documents\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -23,19 +22,31 @@ final class StudentDocumentRequest extends Model
 {
     // ── Workflow states ───────────────────────────────────────────────────
 
-    public const STATUS_DRAFT                 = 'draft';
-    public const STATUS_SUBMITTED             = 'submitted';
-    public const STATUS_PENDING_COMPLETENESS  = 'pending_completeness';
-    public const STATUS_COMPLETENESS_FAILED   = 'completeness_failed';
-    public const STATUS_COMPLETENESS_PASSED   = 'completeness_passed';
-    public const STATUS_AWAITING_APPROVAL     = 'awaiting_approval';
-    public const STATUS_APPROVED              = 'approved';
-    public const STATUS_GENERATING            = 'generating';
-    public const STATUS_ISSUED                = 'issued';
-    public const STATUS_GENERATION_FAILED     = 'generation_failed';
+    public const STATUS_DRAFT = 'draft';
+
+    public const STATUS_SUBMITTED = 'submitted';
+
+    public const STATUS_PENDING_COMPLETENESS = 'pending_completeness';
+
+    public const STATUS_COMPLETENESS_FAILED = 'completeness_failed';
+
+    public const STATUS_COMPLETENESS_PASSED = 'completeness_passed';
+
+    public const STATUS_AWAITING_APPROVAL = 'awaiting_approval';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_GENERATING = 'generating';
+
+    public const STATUS_ISSUED = 'issued';
+
+    public const STATUS_GENERATION_FAILED = 'generation_failed';
+
     public const STATUS_PENDING_CLARIFICATION = 'pending_clarification';
-    public const STATUS_REJECTED              = 'rejected';
-    public const STATUS_CANCELLED             = 'cancelled';
+
+    public const STATUS_REJECTED = 'rejected';
+
+    public const STATUS_CANCELLED = 'cancelled';
 
     /**
      * Terminal statuses: no further transitions allowed.
@@ -54,19 +65,21 @@ final class StudentDocumentRequest extends Model
 
     /** Actor types */
     public const ACTOR_GUARDIAN = 'guardian';
-    public const ACTOR_STAFF    = 'staff';
-    public const ACTOR_ADMIN    = 'admin';
+
+    public const ACTOR_STAFF = 'staff';
+
+    public const ACTOR_ADMIN = 'admin';
 
     /** @var list<string> */
     protected $guarded = ['id'];
 
     /** @var array<string, string> */
     protected $casts = [
-        'submitted_at'  => 'datetime',
-        'approved_at'   => 'datetime',
-        'completed_at'  => 'datetime',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'submitted_at' => 'datetime',
+        'approved_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // ── Relationships ─────────────────────────────────────────────────────

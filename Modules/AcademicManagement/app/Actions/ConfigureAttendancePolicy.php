@@ -27,10 +27,10 @@ final class ConfigureAttendancePolicy
             'institution_semester_id' => $institutionSemesterId,
         ]);
 
-        $policy->enabled                = $enabled;
-        $policy->detail_level           = $detailLevel;
-        $policy->publish_delay_days     = max(0, $publishDelayDays);
-        $policy->show_reason            = $showReason;
+        $policy->enabled = $enabled;
+        $policy->detail_level = $detailLevel;
+        $policy->publish_delay_days = max(0, $publishDelayDays);
+        $policy->show_reason = $showReason;
         $policy->show_arrival_departure = $showArrivalDeparture;
         $policy->save();
 

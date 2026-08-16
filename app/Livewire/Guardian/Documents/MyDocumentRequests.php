@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Guardian\Documents;
 
 use App\Livewire\Guardian\Concerns\HasGuardianAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -30,14 +31,14 @@ final class MyDocumentRequests extends Component
     public function render(): View
     {
         $guardianAccountId = (int) auth('guardian')->id();
-        $requests          = $this->loadRequests($guardianAccountId);
+        $requests = $this->loadRequests($guardianAccountId);
 
         return view('livewire.guardian.documents.my-document-requests', [
             'requests' => $requests,
         ])->layout('layouts.guardian');
     }
 
-    private function loadRequests(int $guardianAccountId): \Illuminate\Support\Collection
+    private function loadRequests(int $guardianAccountId): Collection
     {
         return DB::table('student_document_requests as dr')
             ->join('student_profiles as sp', 'sp.id', '=', 'dr.student_profile_id')

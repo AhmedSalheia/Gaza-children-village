@@ -39,9 +39,9 @@ final class ApproveMarkSheet
             );
         }
 
-        $sheet->status                        = MarkSheetStatus::Approved->value;
-        $sheet->approved_by_staff_profile_id  = $staffProfileId;
-        $sheet->approved_at                   = now();
+        $sheet->status = MarkSheetStatus::Approved->value;
+        $sheet->approved_by_staff_profile_id = $staffProfileId;
+        $sheet->approved_at = now();
         $sheet->save();
 
         return $sheet;

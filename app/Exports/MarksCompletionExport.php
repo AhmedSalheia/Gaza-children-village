@@ -19,15 +19,15 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * Each row is one non-superseded mark sheet, showing class group, subject,
  * assigned teacher, status, and version.
  *
- * @param array<int>|null $allowedPeriodIds  When set, restricts results to
- *   class groups whose operational_period_id is in this list. Used by the
- *   staff portal to enforce period grants server-side.
+ * @param  array<int>|null  $allowedPeriodIds  When set, restricts results to
+ *                                             class groups whose operational_period_id is in this list. Used by the
+ *                                             staff portal to enforce period grants server-side.
  */
-final class MarksCompletionExport implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithStyles
+final class MarksCompletionExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStyles, WithTitle
 {
     public function __construct(
-        private readonly int    $institutionSemesterId,
-        private readonly ?int   $classGroupId,
+        private readonly int $institutionSemesterId,
+        private readonly ?int $classGroupId,
         private readonly string $locale = 'ar',
         /** @var array<int>|null */
         private readonly ?array $allowedPeriodIds = null,
@@ -49,9 +49,9 @@ final class MarksCompletionExport implements FromCollection, WithHeadings, WithT
 
     public function collection(): Collection
     {
-        $cgNameField      = $this->locale === 'ar' ? 'cg.name_ar' : 'cg.name_ar';
+        $cgNameField = $this->locale === 'ar' ? 'cg.name_ar' : 'cg.name_ar';
         $subjectNameField = $this->locale === 'ar' ? 's.name_ar' : 's.name_en';
-        $staffNameField   = $this->locale === 'ar' ? 'p.full_name_ar' : 'p.full_name_en';
+        $staffNameField = $this->locale === 'ar' ? 'p.full_name_ar' : 'p.full_name_en';
 
         $query = DB::table('mark_sheets as ms')
             ->join('class_groups as cg', 'cg.id', '=', 'ms.class_group_id')
@@ -93,7 +93,7 @@ final class MarksCompletionExport implements FromCollection, WithHeadings, WithT
             $this->translateStatus($row->status),
             $row->version,
             $row->submitted_at ? substr($row->submitted_at, 0, 10) : '',
-            $row->approved_at  ? substr($row->approved_at, 0, 10) : '',
+            $row->approved_at ? substr($row->approved_at, 0, 10) : '',
         ]);
     }
 
@@ -108,12 +108,12 @@ final class MarksCompletionExport implements FromCollection, WithHeadings, WithT
     {
         if ($this->locale === 'ar') {
             return match ($status) {
-                'draft'     => 'مسودة',
+                'draft' => 'مسودة',
                 'submitted' => 'مُقدَّم',
-                'returned'  => 'مُعاد',
-                'verified'  => 'مُتحقَّق',
-                'approved'  => 'مُعتمَد',
-                default     => $status,
+                'returned' => 'مُعاد',
+                'verified' => 'مُتحقَّق',
+                'approved' => 'مُعتمَد',
+                default => $status,
             };
         }
 

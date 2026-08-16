@@ -2,7 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Guardian\IssuedDocumentDownloadController;
 use App\Http\Controllers\Guardian\LoginController;
+use App\Livewire\Guardian\Corrections\CorrectionDetail;
+use App\Livewire\Guardian\Corrections\MyCorrections;
+use App\Livewire\Guardian\Corrections\NewCorrectionRequest;
+use App\Livewire\Guardian\Dashboard;
+use App\Livewire\Guardian\Documents\DocumentRequestDetail;
+use App\Livewire\Guardian\Documents\MyDocumentRequests;
+use App\Livewire\Guardian\Documents\NewDocumentRequest;
+use App\Livewire\Guardian\Students\StudentDetail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,23 +43,23 @@ Route::prefix('guardian')->name('guardian.')->group(function (): void {
     // ── Protected routes ─────────────────────────────────────────────────
 
     Route::middleware(['auth:guardian', 'portal.version:guardian'])->group(function (): void {
-        Route::get('/dashboard', \App\Livewire\Guardian\Dashboard::class)->name('dashboard');
-        Route::get('/students/{studentProfileId}', \App\Livewire\Guardian\Students\StudentDetail::class)->name('students.detail');
+        Route::get('/dashboard', Dashboard::class)->name('dashboard');
+        Route::get('/students/{studentProfileId}', StudentDetail::class)->name('students.detail');
 
         // Correction requests
-        Route::get('/corrections', \App\Livewire\Guardian\Corrections\MyCorrections::class)->name('corrections.index');
-        Route::get('/corrections/new', \App\Livewire\Guardian\Corrections\NewCorrectionRequest::class)->name('corrections.create');
-        Route::get('/corrections/{requestId}', \App\Livewire\Guardian\Corrections\CorrectionDetail::class)
+        Route::get('/corrections', MyCorrections::class)->name('corrections.index');
+        Route::get('/corrections/new', NewCorrectionRequest::class)->name('corrections.create');
+        Route::get('/corrections/{requestId}', CorrectionDetail::class)
             ->where('requestId', '[0-9]+')
             ->name('corrections.detail');
 
         // Document requests
-        Route::get('/documents', \App\Livewire\Guardian\Documents\MyDocumentRequests::class)->name('documents.index');
-        Route::get('/documents/new', \App\Livewire\Guardian\Documents\NewDocumentRequest::class)->name('documents.new');
-        Route::get('/documents/{requestId}', \App\Livewire\Guardian\Documents\DocumentRequestDetail::class)
+        Route::get('/documents', MyDocumentRequests::class)->name('documents.index');
+        Route::get('/documents/new', NewDocumentRequest::class)->name('documents.new');
+        Route::get('/documents/{requestId}', DocumentRequestDetail::class)
             ->where('requestId', '[0-9]+')
             ->name('documents.detail');
-        Route::get('/documents/download/{documentId}', \App\Http\Controllers\Guardian\IssuedDocumentDownloadController::class)
+        Route::get('/documents/download/{documentId}', IssuedDocumentDownloadController::class)
             ->where('documentId', '[0-9]+')
             ->name('documents.download');
     });

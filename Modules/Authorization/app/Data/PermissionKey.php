@@ -182,26 +182,26 @@ final class PermissionKey
     // -----------------------------------------------------------------
     // Teaching and homeroom assignments
     // -----------------------------------------------------------------
-    public const TEACHING_ASSIGNMENT_READ   = 'teaching_assignment.read';
+    public const TEACHING_ASSIGNMENT_READ = 'teaching_assignment.read';
 
     public const TEACHING_ASSIGNMENT_MANAGE = 'teaching_assignment.manage';
 
-    public const HOMEROOM_ASSIGNMENT_READ   = 'homeroom_assignment.read';
+    public const HOMEROOM_ASSIGNMENT_READ = 'homeroom_assignment.read';
 
     public const HOMEROOM_ASSIGNMENT_MANAGE = 'homeroom_assignment.manage';
 
     // -----------------------------------------------------------------
     // Student attendance
     // -----------------------------------------------------------------
-    public const STUDENT_ATTENDANCE_READ    = 'student_attendance.read';
+    public const STUDENT_ATTENDANCE_READ = 'student_attendance.read';
 
-    public const STUDENT_ATTENDANCE_ENTER   = 'student_attendance.enter';
+    public const STUDENT_ATTENDANCE_ENTER = 'student_attendance.enter';
 
-    public const STUDENT_ATTENDANCE_SUBMIT  = 'student_attendance.submit';
+    public const STUDENT_ATTENDANCE_SUBMIT = 'student_attendance.submit';
 
-    public const STUDENT_ATTENDANCE_RETURN  = 'student_attendance.return';
+    public const STUDENT_ATTENDANCE_RETURN = 'student_attendance.return';
 
-    public const STUDENT_ATTENDANCE_VERIFY  = 'student_attendance.verify';
+    public const STUDENT_ATTENDANCE_VERIFY = 'student_attendance.verify';
 
     public const STUDENT_ATTENDANCE_CORRECT = 'student_attendance.correct';
 
@@ -210,11 +210,11 @@ final class PermissionKey
     // -----------------------------------------------------------------
     // Staff attendance
     // -----------------------------------------------------------------
-    public const STAFF_ATTENDANCE_READ    = 'staff_attendance.read';
+    public const STAFF_ATTENDANCE_READ = 'staff_attendance.read';
 
-    public const STAFF_ATTENDANCE_ENTER   = 'staff_attendance.enter';
+    public const STAFF_ATTENDANCE_ENTER = 'staff_attendance.enter';
 
-    public const STAFF_ATTENDANCE_VERIFY  = 'staff_attendance.verify';
+    public const STAFF_ATTENDANCE_VERIFY = 'staff_attendance.verify';
 
     public const STAFF_ATTENDANCE_CORRECT = 'staff_attendance.correct';
 
@@ -226,28 +226,28 @@ final class PermissionKey
     // -----------------------------------------------------------------
     // Attendance reports / exports
     // -----------------------------------------------------------------
-    public const ATTENDANCE_REPORT_READ   = 'attendance_report.read';
+    public const ATTENDANCE_REPORT_READ = 'attendance_report.read';
 
     public const ATTENDANCE_REPORT_EXPORT = 'attendance_report.export';
 
     // -----------------------------------------------------------------
     // Assessment definitions
     // -----------------------------------------------------------------
-    public const ASSESSMENT_READ   = 'assessment.read';
+    public const ASSESSMENT_READ = 'assessment.read';
 
     public const ASSESSMENT_MANAGE = 'assessment.manage';
 
     // -----------------------------------------------------------------
     // Grading scales
     // -----------------------------------------------------------------
-    public const GRADING_SCALE_READ   = 'grading_scale.read';
+    public const GRADING_SCALE_READ = 'grading_scale.read';
 
     public const GRADING_SCALE_MANAGE = 'grading_scale.manage';
 
     // -----------------------------------------------------------------
     // Mark-entry windows
     // -----------------------------------------------------------------
-    public const MARK_WINDOW_READ   = 'mark_window.read';
+    public const MARK_WINDOW_READ = 'mark_window.read';
 
     public const MARK_WINDOW_MANAGE = 'mark_window.manage';
 
@@ -256,15 +256,15 @@ final class PermissionKey
     // -----------------------------------------------------------------
     // Marks (mark sheets / student marks)
     // -----------------------------------------------------------------
-    public const MARKS_READ    = 'marks.read';
+    public const MARKS_READ = 'marks.read';
 
-    public const MARKS_ENTER   = 'marks.enter';
+    public const MARKS_ENTER = 'marks.enter';
 
-    public const MARKS_SUBMIT  = 'marks.submit';
+    public const MARKS_SUBMIT = 'marks.submit';
 
-    public const MARKS_RETURN  = 'marks.return';
+    public const MARKS_RETURN = 'marks.return';
 
-    public const MARKS_VERIFY  = 'marks.verify';
+    public const MARKS_VERIFY = 'marks.verify';
 
     public const MARKS_APPROVE = 'marks.approve';
 
@@ -273,23 +273,23 @@ final class PermissionKey
     // -----------------------------------------------------------------
     // Results / publication
     // -----------------------------------------------------------------
-    public const RESULTS_READ   = 'results.read';
+    public const RESULTS_READ = 'results.read';
 
     public const RESULTS_PUBLISH = 'results.publish';
 
-    public const RESULTS_REVOKE  = 'results.revoke';
+    public const RESULTS_REVOKE = 'results.revoke';
 
     // -----------------------------------------------------------------
     // Result reports / exports
     // -----------------------------------------------------------------
-    public const RESULT_REPORT_READ   = 'result_report.read';
+    public const RESULT_REPORT_READ = 'result_report.read';
 
     public const RESULT_REPORT_EXPORT = 'result_report.export';
 
     // -----------------------------------------------------------------
     // Workflow engine
     // -----------------------------------------------------------------
-    public const WORKFLOW_READ   = 'workflow.read';
+    public const WORKFLOW_READ = 'workflow.read';
 
     public const WORKFLOW_MANAGE = 'workflow.manage';
 
@@ -298,42 +298,42 @@ final class PermissionKey
     // -----------------------------------------------------------------
     public const ATTACHMENT_UPLOAD = 'attachment.upload';
 
-    public const ATTACHMENT_READ   = 'attachment.read';
+    public const ATTACHMENT_READ = 'attachment.read';
 
     // -----------------------------------------------------------------
     // Guardian correction requests
     // -----------------------------------------------------------------
     public const CORRECTION_REQUEST = 'correction.request';
 
-    public const CORRECTION_REVIEW  = 'correction.review';
+    public const CORRECTION_REVIEW = 'correction.review';
 
     public const CORRECTION_APPROVE = 'correction.approve';
 
-    public const CORRECTION_APPLY   = 'correction.apply';
+    public const CORRECTION_APPLY = 'correction.apply';
 
     // -----------------------------------------------------------------
     // Document requests and issuance
     // -----------------------------------------------------------------
     public const DOCUMENT_REQUEST = 'document.request';
 
-    public const DOCUMENT_REVIEW  = 'document.review';
+    public const DOCUMENT_REVIEW = 'document.review';
 
     public const DOCUMENT_APPROVE = 'document.approve';
 
-    public const DOCUMENT_ISSUE   = 'document.issue';
+    public const DOCUMENT_ISSUE = 'document.issue';
 
     public const DOCUMENT_DOWNLOAD = 'document.download';
 
-    public const DOCUMENT_CANCEL   = 'document.cancel';
+    public const DOCUMENT_CANCEL = 'document.cancel';
 
-    public const DOCUMENT_REISSUE  = 'document.reissue';
+    public const DOCUMENT_REISSUE = 'document.reissue';
 
     // -----------------------------------------------------------------
     // Document templates
     // -----------------------------------------------------------------
-    public const TEMPLATE_READ     = 'template.read';
+    public const TEMPLATE_READ = 'template.read';
 
-    public const TEMPLATE_MANAGE   = 'template.manage';
+    public const TEMPLATE_MANAGE = 'template.manage';
 
     public const TEMPLATE_ACTIVATE = 'template.activate';
 
@@ -342,11 +342,11 @@ final class PermissionKey
     // -----------------------------------------------------------------
     public const FORMAL_REQUEST_PREPARE = 'formal_request.prepare';
 
-    public const FORMAL_REQUEST_REVIEW  = 'formal_request.review';
+    public const FORMAL_REQUEST_REVIEW = 'formal_request.review';
 
-    public const FORMAL_REQUEST_SIGN    = 'formal_request.sign';
+    public const FORMAL_REQUEST_SIGN = 'formal_request.sign';
 
-    public const FORMAL_REQUEST_SUBMIT  = 'formal_request.submit';
+    public const FORMAL_REQUEST_SUBMIT = 'formal_request.submit';
 
     public const FORMAL_REQUEST_RESPOND = 'formal_request.respond';
 
@@ -360,18 +360,18 @@ final class PermissionKey
     // -----------------------------------------------------------------
     // In-app notifications
     // -----------------------------------------------------------------
-    public const NOTIFICATION_READ   = 'notification.read';
+    public const NOTIFICATION_READ = 'notification.read';
 
     public const NOTIFICATION_MANAGE = 'notification.manage';
 
     // -----------------------------------------------------------------
     // Reports and exports
     // -----------------------------------------------------------------
-    public const REPORT_READ              = 'report.read';
+    public const REPORT_READ = 'report.read';
 
     public const REPORT_ORGANIZATION_READ = 'report.organization_read';
 
-    public const EXPORT_CREATE   = 'export.create';
+    public const EXPORT_CREATE = 'export.create';
 
     public const EXPORT_DOWNLOAD = 'export.download';
 

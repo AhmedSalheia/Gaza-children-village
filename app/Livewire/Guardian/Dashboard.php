@@ -87,14 +87,14 @@ final class Dashboard extends Component
 
     public function render(): View
     {
-        $hasProfile  = $this->hasGuardianProfile();
-        $children    = $hasProfile ? $this->eligibleChildren() : collect();
-        $placements  = $hasProfile ? $this->placementSummaries() : [];
+        $hasProfile = $this->hasGuardianProfile();
+        $children = $hasProfile ? $this->eligibleChildren() : collect();
+        $placements = $hasProfile ? $this->placementSummaries() : [];
 
         return view('livewire.guardian.dashboard', [
-            'hasProfile'  => $hasProfile,
-            'children'    => $children,
-            'placements'  => $placements,
+            'hasProfile' => $hasProfile,
+            'children' => $children,
+            'placements' => $placements,
             'hasChildren' => $children->isNotEmpty(),
         ])->layout('layouts.guardian');
     }

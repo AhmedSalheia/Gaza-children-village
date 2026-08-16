@@ -99,10 +99,10 @@ final class MySubjects extends Component
     public function render(): View
     {
         return view('livewire.staff.marks.my-subjects', [
-            'assignments'  => $this->assignments(),
-            'openWindows'  => $this->openWindows(),
-            'canVerify'    => $this->staffCan(PermissionKey::MARKS_VERIFY),
-            'canApprove'   => $this->staffCan(PermissionKey::MARKS_APPROVE),
+            'assignments' => $this->assignments(),
+            'openWindows' => $this->openWindows(),
+            'canVerify' => $this->staffCan(PermissionKey::MARKS_VERIFY),
+            'canApprove' => $this->staffCan(PermissionKey::MARKS_APPROVE),
         ])->layout('layouts.staff');
     }
 }

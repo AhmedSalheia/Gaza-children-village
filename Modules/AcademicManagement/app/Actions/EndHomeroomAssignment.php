@@ -44,7 +44,7 @@ final class EndHomeroomAssignment
             // Semester mutability guard — mirrors the Create action's rule.
             $this->guardSemesterMutable((int) $locked->institution_semester_id);
 
-            $startsOn   = $locked->starts_on->format('Y-m-d');
+            $startsOn = $locked->starts_on->format('Y-m-d');
             $endsOnDate = $endsOn->format('Y-m-d');
 
             if ($endsOnDate < $startsOn) {
@@ -54,9 +54,9 @@ final class EndHomeroomAssignment
                 );
             }
 
-            $locked->ends_on     = $endsOnDate;
+            $locked->ends_on = $endsOnDate;
             $locked->ends_reason = $reason;
-            $locked->status      = AssignmentStatus::Ended->value;
+            $locked->status = AssignmentStatus::Ended->value;
             $locked->save();
 
             return $locked;

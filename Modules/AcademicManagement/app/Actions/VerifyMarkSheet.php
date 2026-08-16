@@ -30,9 +30,9 @@ final class VerifyMarkSheet
             );
         }
 
-        $sheet->status                        = MarkSheetStatus::Verified->value;
-        $sheet->verified_by_staff_profile_id  = $staffProfileId;
-        $sheet->verified_at                   = now();
+        $sheet->status = MarkSheetStatus::Verified->value;
+        $sheet->verified_by_staff_profile_id = $staffProfileId;
+        $sheet->verified_at = now();
         $sheet->save();
 
         return $sheet;

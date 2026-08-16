@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -34,7 +35,7 @@ final class MyClasses extends Component
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_ENTER);
     }
 
-    public function classes(): \Illuminate\Support\Collection
+    public function classes(): Collection
     {
         $scope = $this->staffScope();
 
@@ -44,8 +45,8 @@ final class MyClasses extends Component
 
         // Period restriction: resolve allowed period IDs before querying.
         // Full-scope positions skip this filter entirely.
-        $periodFilter    = null; // null means "no filter" (full-scope)
-        $isFullScope     = $this->isFullScopePosition();
+        $periodFilter = null; // null means "no filter" (full-scope)
+        $isFullScope = $this->isFullScopePosition();
 
         if (! $isFullScope) {
             $allowed = $this->allowedPeriodIds();
@@ -59,7 +60,7 @@ final class MyClasses extends Component
         }
 
         $profileId = $this->staffProfileId();
-        $today     = now()->toDateString();
+        $today = now()->toDateString();
 
         $query = DB::table('homeroom_assignments as ha')
             ->join('class_groups as cg', 'cg.id', '=', 'ha.class_group_id')
@@ -101,12 +102,12 @@ final class MyClasses extends Component
 
             return (object) [
                 'class_group_id' => $row->class_group_id,
-                'class_name'     => $row->class_name,
-                'level_name'     => $row->level_name,
-                'is_co_lead'     => (bool) $row->is_co_lead,
-                'sheet_id'       => $sheet?->id,
-                'sheet_status'   => $sheet?->status,
-                'today'          => $today,
+                'class_name' => $row->class_name,
+                'level_name' => $row->level_name,
+                'is_co_lead' => (bool) $row->is_co_lead,
+                'sheet_id' => $sheet?->id,
+                'sheet_status' => $sheet?->status,
+                'today' => $today,
             ];
         });
     }

@@ -39,7 +39,7 @@ final class CorrectMark
     ): StudentMark {
         if (! in_array($sheet->status->value, [MarkSheetStatus::Approved->value, MarkSheetStatus::Published->value], true)) {
             throw new MarksException(
-                "Corrections can only be applied to approved or published sheets ".
+                'Corrections can only be applied to approved or published sheets '.
                 "(current status: '{$sheet->status->value}')."
             );
         }
@@ -98,16 +98,16 @@ final class CorrectMark
             }
 
             $correction = new StudentMark;
-            $correction->mark_sheet_id                 = $sheet->id;
-            $correction->enrollment_id                 = (int) $original->enrollment_id;
-            $correction->assessment_definition_id      = (int) $original->assessment_definition_id;
-            $correction->score                         = $newScore;
-            $correction->exception_status              = $newExceptionStatus;
-            $correction->teacher_note                  = $original->teacher_note;
-            $correction->correction_of_id              = $original->id;
+            $correction->mark_sheet_id = $sheet->id;
+            $correction->enrollment_id = (int) $original->enrollment_id;
+            $correction->assessment_definition_id = (int) $original->assessment_definition_id;
+            $correction->score = $newScore;
+            $correction->exception_status = $newExceptionStatus;
+            $correction->teacher_note = $original->teacher_note;
+            $correction->correction_of_id = $original->id;
             $correction->corrected_by_staff_profile_id = $actorStaffProfileId;
-            $correction->corrected_at                  = now();
-            $correction->correction_reason             = $reason;
+            $correction->corrected_at = now();
+            $correction->correction_reason = $reason;
             $correction->save();
 
             return $correction;

@@ -120,4 +120,13 @@
         </a>
     </li>
     @endif
+
+    {{-- Formal requests: management inbox (respond permission required) --}}
+    @if($navCan('formal_request.respond'))
+    <li class="portal-nav__item">
+        <a href="{{ route('admin.formal-requests.index') }}" class="portal-nav__link @active('admin/formal-requests*')">
+            {{ __('ui.formal_requests', [], null, 'Formal Requests') }}
+        </a>
+    </li>
+    @endif
 </ul>

@@ -73,15 +73,15 @@ final class CreateAssessmentDefinition
 
         $definition = new AssessmentDefinition;
         $definition->institution_semester_id = $institutionSemesterId;
-        $definition->class_group_id          = $classGroupId;
-        $definition->subject_offering_id     = $subjectOfferingId;
-        $definition->name_ar                 = $nameAr;
-        $definition->name_en                 = $nameEn;
-        $definition->assessment_type         = $assessmentType->value;
-        $definition->max_score               = $maxScore;
-        $definition->weight                  = $weight;
-        $definition->assessment_date         = $assessmentDate;
-        $definition->status                  = 'active';
+        $definition->class_group_id = $classGroupId;
+        $definition->subject_offering_id = $subjectOfferingId;
+        $definition->name_ar = $nameAr;
+        $definition->name_en = $nameEn;
+        $definition->assessment_type = $assessmentType->value;
+        $definition->max_score = $maxScore;
+        $definition->weight = $weight;
+        $definition->assessment_date = $assessmentDate;
+        $definition->status = 'active';
         $definition->save();
 
         return $definition;

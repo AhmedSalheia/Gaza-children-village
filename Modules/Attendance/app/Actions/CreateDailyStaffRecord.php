@@ -114,37 +114,37 @@ final class CreateDailyStaffRecord
             }
 
             if ($existing) {
-                $existing->status_code             = $statusCode;
-                $existing->reason                  = empty(trim((string) $reason)) ? null : $reason;
-                $existing->confirmed_arrived_at    = StaffAttendanceStatus::allowsArrivalTime($statusCode)
+                $existing->status_code = $statusCode;
+                $existing->reason = empty(trim((string) $reason)) ? null : $reason;
+                $existing->confirmed_arrived_at = StaffAttendanceStatus::allowsArrivalTime($statusCode)
                     ? $confirmedArrivedAt
                     : null;
-                $existing->confirmed_departed_at   = StaffAttendanceStatus::allowsDepartureTime($statusCode)
+                $existing->confirmed_departed_at = StaffAttendanceStatus::allowsDepartureTime($statusCode)
                     ? $confirmedDepartedAt
                     : null;
-                $existing->source                  = $source;
+                $existing->source = $source;
                 $existing->save();
 
                 return $existing;
             }
 
-            $record = new StaffAttendanceRecord();
-            $record->staff_profile_id          = $staffProfileId;
-            $record->institution_semester_id   = $semesterId;
-            $record->operational_period_id     = $operationalPeriodId;
-            $record->record_date               = $date;
-            $record->status_code               = $statusCode;
-            $record->reason                    = empty(trim((string) $reason)) ? null : $reason;
-            $record->confirmed_arrived_at      = StaffAttendanceStatus::allowsArrivalTime($statusCode)
+            $record = new StaffAttendanceRecord;
+            $record->staff_profile_id = $staffProfileId;
+            $record->institution_semester_id = $semesterId;
+            $record->operational_period_id = $operationalPeriodId;
+            $record->record_date = $date;
+            $record->status_code = $statusCode;
+            $record->reason = empty(trim((string) $reason)) ? null : $reason;
+            $record->confirmed_arrived_at = StaffAttendanceStatus::allowsArrivalTime($statusCode)
                 ? $confirmedArrivedAt
                 : null;
-            $record->confirmed_departed_at     = StaffAttendanceStatus::allowsDepartureTime($statusCode)
+            $record->confirmed_departed_at = StaffAttendanceStatus::allowsDepartureTime($statusCode)
                 ? $confirmedDepartedAt
                 : null;
-            $record->is_verified               = false;
-            $record->correction_cycle          = 0;
-            $record->source                    = $source;
-            $record->creator_staff_profile_id  = $creatorStaffProfileId;
+            $record->is_verified = false;
+            $record->correction_cycle = 0;
+            $record->source = $source;
+            $record->creator_staff_profile_id = $creatorStaffProfileId;
             $record->save();
 
             return $record;

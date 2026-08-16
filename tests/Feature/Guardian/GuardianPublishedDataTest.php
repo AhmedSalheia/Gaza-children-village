@@ -11,7 +11,6 @@ use Modules\AcademicManagement\Actions\RevokeAttendanceSnapshot;
 use Modules\AcademicManagement\Actions\RevokeResultPublication;
 use Modules\AcademicManagement\Models\AttendancePublicationSnapshot;
 use Modules\AcademicManagement\Models\ResultPublication;
-use Modules\AcademicManagement\Models\ResultPublicationRow;
 
 uses(RefreshDatabase::class);
 
@@ -84,13 +83,13 @@ function guardianEnrollment(array $base, string $tag): array
         'created_at' => now(), 'updated_at' => now(),
     ]);
     $enrollmentId = (int) DB::table('student_enrollments')->insertGetId([
-        'student_profile_id'      => $spId,
+        'student_profile_id' => $spId,
         'institution_semester_id' => $base['instSemId'],
-        'class_group_id'          => $base['classGroupId'],
-        'enrollment_status'       => 'active',
-        'enrolled_on'             => today()->subDay()->toDateString(),
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'class_group_id' => $base['classGroupId'],
+        'enrollment_status' => 'active',
+        'enrolled_on' => today()->subDay()->toDateString(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     return ['enrollmentId' => $enrollmentId, 'studentProfileId' => $spId];
@@ -103,9 +102,9 @@ function guardianEnrollment(array $base, string $tag): array
  */
 function publishedResultCtx(string $tag = ''): array
 {
-    $tag  = $tag ?: uniqid();
+    $tag = $tag ?: uniqid();
     $base = guardianBaseCtx($tag);
-    $stu  = guardianEnrollment($base, $tag);
+    $stu = guardianEnrollment($base, $tag);
 
     $subjectId = (int) DB::table('subjects')->insertGetId([
         'code' => 'GSUBJ-'.$tag, 'name_ar' => 'علوم', 'name_en' => 'Science',
@@ -131,45 +130,45 @@ function publishedResultCtx(string $tag = ''): array
         'status' => 'active', 'created_at' => now(), 'updated_at' => now(),
     ]);
     $assignId = (int) DB::table('teaching_assignments')->insertGetId([
-        'staff_profile_id'        => 1,
+        'staff_profile_id' => 1,
         'institution_semester_id' => $base['instSemId'],
-        'staff_position_id'       => 1,
-        'class_group_id'          => $base['classGroupId'],
-        'subject_offering_id'     => $offId,
-        'starts_on'               => today()->subDay()->toDateString(),
-        'status'                  => 'active',
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'staff_position_id' => 1,
+        'class_group_id' => $base['classGroupId'],
+        'subject_offering_id' => $offId,
+        'starts_on' => today()->subDay()->toDateString(),
+        'status' => 'active',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
     $sheetId = (int) DB::table('mark_sheets')->insertGetId([
-        'institution_semester_id'    => $base['instSemId'],
-        'class_group_id'             => $base['classGroupId'],
-        'subject_offering_id'        => $offId,
-        'teaching_assignment_id'     => $assignId,
-        'grading_scale_id'           => $scaleId,
-        'status'                     => 'approved',
-        'approved_at'                => now(),
+        'institution_semester_id' => $base['instSemId'],
+        'class_group_id' => $base['classGroupId'],
+        'subject_offering_id' => $offId,
+        'teaching_assignment_id' => $assignId,
+        'grading_scale_id' => $scaleId,
+        'status' => 'approved',
+        'approved_at' => now(),
         'approved_by_staff_profile_id' => 1,
-        'created_at'                 => now(),
-        'updated_at'                 => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
     DB::table('student_marks')->insert([
-        'mark_sheet_id'            => $sheetId,
-        'enrollment_id'            => $stu['enrollmentId'],
+        'mark_sheet_id' => $sheetId,
+        'enrollment_id' => $stu['enrollmentId'],
         'assessment_definition_id' => $defId,
-        'score'                    => 90,
-        'created_at'               => now(),
-        'updated_at'               => now(),
+        'score' => 90,
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     $pub = app(PublishResults::class)($base['instSemId'], $base['classGroupId'], 1);
 
     return [
-        'enrollmentId'    => $stu['enrollmentId'],
+        'enrollmentId' => $stu['enrollmentId'],
         'studentProfileId' => $stu['studentProfileId'],
-        'instSemId'       => $base['instSemId'],
-        'classGroupId'    => $base['classGroupId'],
-        'publication'     => $pub,
+        'instSemId' => $base['instSemId'],
+        'classGroupId' => $base['classGroupId'],
+        'publication' => $pub,
     ];
 }
 
@@ -180,9 +179,9 @@ function publishedResultCtx(string $tag = ''): array
  */
 function publishedAttendanceCtx(string $tag = ''): array
 {
-    $tag  = $tag ?: uniqid();
+    $tag = $tag ?: uniqid();
     $base = guardianBaseCtx($tag);
-    $stu  = guardianEnrollment($base, $tag);
+    $stu = guardianEnrollment($base, $tag);
 
     app(ConfigureAttendancePolicy::class)(
         institutionSemesterId: $base['instSemId'],
@@ -194,36 +193,36 @@ function publishedAttendanceCtx(string $tag = ''): array
     );
 
     $sheetId = (int) DB::table('student_attendance_sheets')->insertGetId([
-        'institution_semester_id'      => $base['instSemId'],
-        'operational_period_id'        => 0,
-        'class_group_id'               => $base['classGroupId'],
-        'attendance_date'              => today()->subDay()->toDateString(),
-        'status'                       => 'verified',
-        'creator_staff_profile_id'     => 1,
-        'verified_at'                  => now(),
+        'institution_semester_id' => $base['instSemId'],
+        'operational_period_id' => 0,
+        'class_group_id' => $base['classGroupId'],
+        'attendance_date' => today()->subDay()->toDateString(),
+        'status' => 'verified',
+        'creator_staff_profile_id' => 1,
+        'verified_at' => now(),
         'verified_by_staff_profile_id' => 1,
-        'created_at'                   => now(),
-        'updated_at'                   => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
     DB::table('student_attendance_records')->insert([
-        'sheet_id'           => $sheetId,
-        'enrollment_id'      => $stu['enrollmentId'],
+        'sheet_id' => $sheetId,
+        'enrollment_id' => $stu['enrollmentId'],
         'student_profile_id' => $stu['studentProfileId'],
-        'status_code'        => 'absent',
-        'reason'             => 'مرض',
-        'source'             => 'teacher_entry',
-        'created_at'         => now(),
-        'updated_at'         => now(),
+        'status_code' => 'absent',
+        'reason' => 'مرض',
+        'source' => 'teacher_entry',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     $snap = app(PublishAttendanceSnapshot::class)($base['instSemId'], $base['classGroupId'], 1);
 
     return [
-        'enrollmentId'    => $stu['enrollmentId'],
+        'enrollmentId' => $stu['enrollmentId'],
         'studentProfileId' => $stu['studentProfileId'],
-        'instSemId'       => $base['instSemId'],
-        'classGroupId'    => $base['classGroupId'],
-        'snapshot'        => $snap,
+        'instSemId' => $base['instSemId'],
+        'classGroupId' => $base['classGroupId'],
+        'snapshot' => $snap,
     ];
 }
 
@@ -284,9 +283,9 @@ test('Guardian sees only the current (non-superseded) publication', function ():
 });
 
 test('Draft mark sheets never appear in result_publications', function (): void {
-    $tag  = uniqid();
+    $tag = uniqid();
     $base = guardianBaseCtx($tag);
-    $stu  = guardianEnrollment($base, $tag);
+    $stu = guardianEnrollment($base, $tag);
 
     $draftSubjId = (int) DB::table('subjects')->insertGetId([
         'code' => 'DSUBJ-'.$tag, 'name_ar' => 'جغرافيا', 'name_en' => 'Geography',
@@ -320,7 +319,7 @@ test('Draft mark sheets never appear in result_publications', function (): void 
 // ─────────────────────────────────────────────────────────────────────────────
 
 test('Guardian can find published attendance snapshot rows for their student', function (): void {
-    $ctx  = publishedAttendanceCtx();
+    $ctx = publishedAttendanceCtx();
     $snap = $ctx['snapshot'];
 
     expect($snap->status)->toBe('published');
@@ -334,7 +333,7 @@ test('Guardian can find published attendance snapshot rows for their student', f
 });
 
 test('Guardian query scope returns no rows for a revoked attendance snapshot', function (): void {
-    $ctx  = publishedAttendanceCtx();
+    $ctx = publishedAttendanceCtx();
     $snap = $ctx['snapshot'];
 
     app(RevokeAttendanceSnapshot::class)($snap, 'Wrong data', 1);

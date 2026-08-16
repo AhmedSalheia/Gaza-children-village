@@ -54,8 +54,8 @@ return [
          */
         'attachments' => [
             'driver' => 'local',
-            'root'   => storage_path('app/attachments'),
-            'throw'  => true,
+            'root' => storage_path('app/attachments'),
+            'throw' => true,
         ],
 
         's3' => [

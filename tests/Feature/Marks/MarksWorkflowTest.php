@@ -22,11 +22,9 @@ use Modules\AcademicManagement\Enums\MarkSheetStatus;
 use Modules\AcademicManagement\Enums\MarkWindowStatus;
 use Modules\AcademicManagement\Exceptions\MarksException;
 use Modules\AcademicManagement\Models\AssessmentDefinition;
-use Modules\AcademicManagement\Models\ClassGroup;
 use Modules\AcademicManagement\Models\GradingScale;
 use Modules\AcademicManagement\Models\MarkEntryWindow;
 use Modules\AcademicManagement\Models\MarkSheet;
-use Modules\AcademicManagement\Models\StudentEnrollment;
 use Modules\AcademicManagement\Models\StudentMark;
 use Modules\AcademicManagement\Models\TeachingAssignment;
 use Tests\TestCase;
@@ -35,7 +33,8 @@ final class MarksWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
-    private int $orgId  = 0;
+    private int $orgId = 0;
+
     private int $typeId = 0;
 
     protected function setUp(): void
@@ -248,7 +247,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $this->assertInstanceOf(MarkSheet::class, $sheet);
         $this->assertSame(MarkSheetStatus::Draft, $sheet->status);
@@ -264,8 +263,8 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet1     = app(OpenMarkSheet::class)($assignment);
-        $sheet2     = app(OpenMarkSheet::class)($assignment);
+        $sheet1 = app(OpenMarkSheet::class)($assignment);
+        $sheet2 = app(OpenMarkSheet::class)($assignment);
 
         $this->assertSame($sheet1->id, $sheet2->id, 'Second call should return existing sheet');
     }
@@ -275,7 +274,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $mark = app(SaveDraftMarks::class)(
             sheet: $sheet,
@@ -294,7 +293,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $this->expectException(MarksException::class);
         $this->expectExceptionMessageMatches('/out of range/');
@@ -313,7 +312,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $this->expectException(MarksException::class);
         $this->expectExceptionMessageMatches('/not both/');
@@ -332,7 +331,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         // Save a mark
         app(SaveDraftMarks::class)(
@@ -360,7 +359,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $sheet = app(SubmitMarkSheet::class)($sheet, staffProfileId: 10);
         $sheet = app(ReturnMarkSheet::class)($sheet, reason: 'Missing marks for 3 students', staffProfileId: 20);
@@ -375,7 +374,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $sheet = app(SubmitMarkSheet::class)($sheet, staffProfileId: 10);
         $sheet = app(ReturnMarkSheet::class)($sheet, reason: 'Needs correction', staffProfileId: 20);
@@ -395,7 +394,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $sheet = app(SubmitMarkSheet::class)($sheet, staffProfileId: 10);
 
@@ -413,7 +412,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $this->expectException(MarksException::class);
         $this->expectExceptionMessageMatches('/cannot be verified/');
@@ -426,7 +425,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $sheet = app(SubmitMarkSheet::class)($sheet, staffProfileId: 10);
 
@@ -441,7 +440,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $sheet = app(SubmitMarkSheet::class)($sheet, staffProfileId: 10);
 
@@ -467,12 +466,12 @@ final class MarksWorkflowTest extends TestCase
         $window->save();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment, markEntryWindowId: $window->id);
+        $sheet = app(OpenMarkSheet::class)($assignment, markEntryWindowId: $window->id);
 
         $this->assertSame(MarkSheetStatus::Draft, $sheet->status);
 
         // Now close the window — subsequent saves should fail
-        $window->status   = 'closed';
+        $window->status = 'closed';
         $window->closes_at = now()->subMinute();
         $window->save();
 
@@ -495,7 +494,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         // Save, submit, verify, approve
         app(SaveDraftMarks::class)(
@@ -536,7 +535,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         app(SaveDraftMarks::class)(
             sheet: $sheet, enrollmentId: $enrollmentId, assessmentDefinitionId: $definitionId,
@@ -566,7 +565,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $mark = StudentMark::where('mark_sheet_id', $sheet->id)->first();
 
@@ -604,7 +603,7 @@ final class MarksWorkflowTest extends TestCase
         $window->status = 'open';
         $window->save();
 
-        $sheet  = app(OpenMarkSheet::class)($assignment, $window->id);
+        $sheet = app(OpenMarkSheet::class)($assignment, $window->id);
 
         // Close the window
         $window->status = 'closed';
@@ -628,19 +627,19 @@ final class MarksWorkflowTest extends TestCase
 
         // Create a class group belonging to a DIFFERENT semester
         $otherSemId = $this->makeSemester($instId);
-        $levelId    = DB::table('academic_levels')->insertGetId([
+        $levelId = DB::table('academic_levels')->insertGetId([
             'code' => 'LVLX-'.uniqid(), 'name_ar' => 'صف', 'name_en' => 'Grade',
             'is_active' => true, 'created_at' => now(), 'updated_at' => now(),
         ]);
         $otherCgId = DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $otherSemId,
-            'operational_period_id'   => 0,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-DIFF-'.uniqid(),
-            'name_ar'                 => 'الصف',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => 0,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-DIFF-'.uniqid(),
+            'name_ar' => 'الصف',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->expectException(MarksException::class);
@@ -659,19 +658,19 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId] = $this->makeFullContext();
 
         $otherSemId = $this->makeSemester($instId);
-        $levelId    = DB::table('academic_levels')->insertGetId([
+        $levelId = DB::table('academic_levels')->insertGetId([
             'code' => 'LVLY-'.uniqid(), 'name_ar' => 'صف', 'name_en' => 'Grade',
             'is_active' => true, 'created_at' => now(), 'updated_at' => now(),
         ]);
         $otherCgId = DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $otherSemId,
-            'operational_period_id'   => 0,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-DIFF2-'.uniqid(),
-            'name_ar'                 => 'الصف',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => 0,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-DIFF2-'.uniqid(),
+            'name_ar' => 'الصف',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->expectException(MarksException::class);
@@ -683,7 +682,7 @@ final class MarksWorkflowTest extends TestCase
             subjectOfferingId: null,
             nameAr: 'اختبار',
             nameEn: null,
-            assessmentType: \Modules\AcademicManagement\Enums\AssessmentType::Quiz,
+            assessmentType: AssessmentType::Quiz,
             maxScore: 100.0,
         );
     }
@@ -701,28 +700,28 @@ final class MarksWorkflowTest extends TestCase
         ]);
         $otherClassGroupId = DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $semId,
-            'operational_period_id'   => 0,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-OTHER-'.uniqid(),
-            'name_ar'                 => 'الصف الثاني',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => 0,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-OTHER-'.uniqid(),
+            'name_ar' => 'الصف الثاني',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Enroll a student in the OTHER class group
         $otherEnrollmentId = DB::table('student_enrollments')->insertGetId([
-            'student_profile_id'      => $this->makeStudentProfile(),
+            'student_profile_id' => $this->makeStudentProfile(),
             'institution_semester_id' => $semId,
-            'class_group_id'          => $otherClassGroupId,
-            'enrollment_status'       => 'active',
-            'enrolled_on'             => now()->subDay()->toDateString(),
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'class_group_id' => $otherClassGroupId,
+            'enrollment_status' => 'active',
+            'enrolled_on' => now()->subDay()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $this->expectException(MarksException::class);
         $this->expectExceptionMessageMatches('/not an active enrollment in this mark sheet/');
@@ -747,25 +746,25 @@ final class MarksWorkflowTest extends TestCase
         ]);
         $otherOfferingId = DB::table('institution_subject_offerings')->insertGetId([
             'institution_semester_id' => $semId,
-            'subject_id'              => $otherSubjectId,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'subject_id' => $otherSubjectId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         $otherDefinitionId = DB::table('assessment_definitions')->insertGetId([
             'institution_semester_id' => $semId,
-            'class_group_id'          => $classGroupId,
-            'subject_offering_id'     => $otherOfferingId,   // ← different subject
-            'name_ar'                 => 'اختبار علوم',
-            'assessment_type'         => 'quiz',
-            'max_score'               => 50.0,
-            'weight'                  => 20.0,
-            'status'                  => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'class_group_id' => $classGroupId,
+            'subject_offering_id' => $otherOfferingId,   // ← different subject
+            'name_ar' => 'اختبار علوم',
+            'assessment_type' => 'quiz',
+            'max_score' => 50.0,
+            'weight' => 20.0,
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $this->expectException(MarksException::class);
         $this->expectExceptionMessageMatches('/not applicable to this mark sheet/');
@@ -785,7 +784,7 @@ final class MarksWorkflowTest extends TestCase
 
         // Create a second semester in the same institution with its own open window
         $otherSemId = $this->makeSemester($instId);
-        $window     = app(CreateMarkEntryWindow::class)(
+        $window = app(CreateMarkEntryWindow::class)(
             institutionSemesterId: $otherSemId,   // ← different semester
             opensAt: now()->subHour(),
             closesAt: now()->addDays(7),
@@ -812,13 +811,13 @@ final class MarksWorkflowTest extends TestCase
         ]);
         $otherClassGroupId = DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $semId,
-            'operational_period_id'   => 0,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-X-'.uniqid(),
-            'name_ar'                 => 'الصف الثالث',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => 0,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-X-'.uniqid(),
+            'name_ar' => 'الصف الثالث',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Window scoped to the OTHER class group
@@ -834,7 +833,7 @@ final class MarksWorkflowTest extends TestCase
         $assignment = TeachingAssignment::find($assignmentId);
 
         $this->expectException(MarksException::class);
-        $this->expectExceptionMessageMatches("/class group/");
+        $this->expectExceptionMessageMatches('/class group/');
 
         app(OpenMarkSheet::class)($assignment, markEntryWindowId: $window->id);
     }
@@ -888,7 +887,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         app(SaveDraftMarks::class)(
             sheet: $sheet, enrollmentId: $enrollmentId, assessmentDefinitionId: $definitionId,
@@ -911,7 +910,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         app(SaveDraftMarks::class)(
             sheet: $sheet, enrollmentId: $enrollmentId, assessmentDefinitionId: $definitionId,
@@ -932,7 +931,7 @@ final class MarksWorkflowTest extends TestCase
         [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId] = $this->makeFullContext();
 
         $assignment = TeachingAssignment::find($assignmentId);
-        $sheet      = app(OpenMarkSheet::class)($assignment);
+        $sheet = app(OpenMarkSheet::class)($assignment);
 
         $mark = app(SaveDraftMarks::class)(
             sheet: $sheet, enrollmentId: $enrollmentId, assessmentDefinitionId: $definitionId,
@@ -948,13 +947,13 @@ final class MarksWorkflowTest extends TestCase
     private function makeInstitution(): int
     {
         return (int) DB::table('institutions')->insertGetId([
-            'organization_id'     => $this->orgId,
+            'organization_id' => $this->orgId,
             'institution_type_id' => $this->typeId,
-            'code'                => 'INST-'.uniqid(),
-            'name_en'             => 'Test School',
-            'is_active'           => true,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'code' => 'INST-'.uniqid(),
+            'name_en' => 'Test School',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -963,8 +962,8 @@ final class MarksWorkflowTest extends TestCase
      */
     private function makeContext(): array
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeSemester($instId);
 
         $levelId = (int) DB::table('academic_levels')->insertGetId([
             'code' => 'LVL-'.uniqid(), 'name_ar' => 'صف', 'name_en' => 'Grade',
@@ -973,13 +972,13 @@ final class MarksWorkflowTest extends TestCase
 
         $classGroupId = (int) DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $semId,
-            'operational_period_id'   => 0,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-'.uniqid(),
-            'name_ar'                 => 'الصف العاشر',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => 0,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-'.uniqid(),
+            'name_ar' => 'الصف العاشر',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $subjectId = (int) DB::table('subjects')->insertGetId([
@@ -989,9 +988,9 @@ final class MarksWorkflowTest extends TestCase
 
         $offeringId = (int) DB::table('institution_subject_offerings')->insertGetId([
             'institution_semester_id' => $semId,
-            'subject_id'              => $subjectId,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'subject_id' => $subjectId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return [$instId, $semId, $classGroupId, $offeringId];
@@ -1008,50 +1007,50 @@ final class MarksWorkflowTest extends TestCase
 
         // Teaching assignment (no real StaffPosition needed — use stub)
         $assignmentId = (int) DB::table('teaching_assignments')->insertGetId([
-            'staff_profile_id'       => 1,
+            'staff_profile_id' => 1,
             'institution_semester_id' => $semId,
-            'staff_position_id'      => 1,
-            'class_group_id'         => $classGroupId,
-            'subject_offering_id'    => $offeringId,
-            'starts_on'              => now()->subDay()->toDateString(),
-            'status'                 => 'active',
-            'created_at'             => now(),
-            'updated_at'             => now(),
+            'staff_position_id' => 1,
+            'class_group_id' => $classGroupId,
+            'subject_offering_id' => $offeringId,
+            'starts_on' => now()->subDay()->toDateString(),
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // One active student enrollment
         $studentProfileId = (int) DB::table('student_profiles')->insertGetId([
-            'person_id'        => $this->makePerson(),
-            'student_code'     => 'STU-'.uniqid(),
+            'person_id' => $this->makePerson(),
+            'student_code' => 'STU-'.uniqid(),
             'lifecycle_status' => 'active',
-            'registered_on'    => now()->toDateString(),
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'registered_on' => now()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $enrollmentId = (int) DB::table('student_enrollments')->insertGetId([
-            'student_profile_id'      => $studentProfileId,
+            'student_profile_id' => $studentProfileId,
             'institution_semester_id' => $semId,
-            'class_group_id'          => $classGroupId,
-            'enrollment_status'       => 'active',
-            'enrolled_on'             => now()->subDay()->toDateString(),
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'class_group_id' => $classGroupId,
+            'enrollment_status' => 'active',
+            'enrolled_on' => now()->subDay()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // One active assessment definition
         $definitionId = (int) DB::table('assessment_definitions')->insertGetId([
             'institution_semester_id' => $semId,
-            'class_group_id'          => $classGroupId,
-            'subject_offering_id'     => $offeringId,
-            'name_ar'                 => 'اختبار',
-            'name_en'                 => 'Test',
-            'assessment_type'         => 'quiz',
-            'max_score'               => 50.0,
-            'weight'                  => 20.0,
-            'status'                  => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'class_group_id' => $classGroupId,
+            'subject_offering_id' => $offeringId,
+            'name_ar' => 'اختبار',
+            'name_en' => 'Test',
+            'assessment_type' => 'quiz',
+            'max_score' => 50.0,
+            'weight' => 20.0,
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return [$instId, $semId, $classGroupId, $offeringId, $assignmentId, $enrollmentId, $definitionId];
@@ -1061,34 +1060,34 @@ final class MarksWorkflowTest extends TestCase
     {
         $yearId = (int) DB::table('academic_years')->insertGetId([
             'organization_id' => $this->orgId,
-            'code'            => 'AY-'.uniqid(),
-            'name_en'         => 'Year',
-            'starts_on'       => '2025-09-01',
-            'ends_on'         => '2026-06-30',
-            'status'          => 'open',
-            'created_at'      => now(),
-            'updated_at'      => now(),
+            'code' => 'AY-'.uniqid(),
+            'name_en' => 'Year',
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-06-30',
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $semId = (int) DB::table('semesters')->insertGetId([
-            'code'             => 'SEM-'.uniqid(),
-            'name_en'          => 'First',
-            'name_ar'          => 'الأول',
-            'sequence'         => 1,
-            'status'           => 'open',
+            'code' => 'SEM-'.uniqid(),
+            'name_en' => 'First',
+            'name_ar' => 'الأول',
+            'sequence' => 1,
+            'status' => 'open',
             'academic_year_id' => $yearId,
-            'starts_on'        => '2025-09-01',
-            'ends_on'          => '2026-01-31',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-01-31',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('institution_semesters')->insertGetId([
             'institution_id' => $institutionId,
-            'semester_id'    => $semId,
-            'status'         => 'open',
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'semester_id' => $semId,
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -1096,20 +1095,20 @@ final class MarksWorkflowTest extends TestCase
     {
         return (int) DB::table('people')->insertGetId([
             'full_name_ar' => 'طالب '.uniqid(),
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
     private function makeStudentProfile(): int
     {
         return (int) DB::table('student_profiles')->insertGetId([
-            'person_id'        => $this->makePerson(),
-            'student_code'     => 'STU-'.uniqid(),
+            'person_id' => $this->makePerson(),
+            'student_code' => 'STU-'.uniqid(),
             'lifecycle_status' => 'active',
-            'registered_on'    => now()->toDateString(),
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'registered_on' => now()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

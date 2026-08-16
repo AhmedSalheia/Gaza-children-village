@@ -21,11 +21,15 @@ final class MarkWindowExtension extends Component
 {
     use HasStaffAuth;
 
-    public int    $extendingId   = 0;
-    public string $newClosesAt   = '';
-    public string $extendReason  = '';
-    public string $flashMessage  = '';
-    public string $flashType     = '';
+    public int $extendingId = 0;
+
+    public string $newClosesAt = '';
+
+    public string $extendReason = '';
+
+    public string $flashMessage = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -57,8 +61,8 @@ final class MarkWindowExtension extends Component
     public function startExtend(int $windowId): void
     {
         $this->requirePermission(PermissionKey::MARK_WINDOW_EXTEND);
-        $this->extendingId  = $windowId;
-        $this->newClosesAt  = '';
+        $this->extendingId = $windowId;
+        $this->newClosesAt = '';
         $this->extendReason = '';
     }
 
@@ -67,11 +71,11 @@ final class MarkWindowExtension extends Component
         $this->requirePermission(PermissionKey::MARK_WINDOW_EXTEND);
 
         $this->validate([
-            'newClosesAt'  => ['required', 'date'],
+            'newClosesAt' => ['required', 'date'],
             'extendReason' => ['required', 'string', 'min:5'],
         ]);
 
-        $scope  = $this->staffScope();
+        $scope = $this->staffScope();
         $window = MarkEntryWindow::where('id', $this->extendingId)
             ->where('institution_semester_id', $scope['institution_semester_id'])
             ->first();
@@ -87,8 +91,8 @@ final class MarkWindowExtension extends Component
                 reason: $this->extendReason,
                 actorRef: $this->staffActorReference(),
             );
-            $this->extendingId  = 0;
-            $this->newClosesAt  = '';
+            $this->extendingId = 0;
+            $this->newClosesAt = '';
             $this->extendReason = '';
             $this->flash('Window extended.', 'success');
         } catch (MarksException $e) {
@@ -98,8 +102,8 @@ final class MarkWindowExtension extends Component
 
     public function cancelExtend(): void
     {
-        $this->extendingId  = 0;
-        $this->newClosesAt  = '';
+        $this->extendingId = 0;
+        $this->newClosesAt = '';
         $this->extendReason = '';
     }
 
@@ -113,6 +117,6 @@ final class MarkWindowExtension extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

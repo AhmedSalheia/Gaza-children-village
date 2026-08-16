@@ -107,33 +107,33 @@ final class CorrectVerifiedAttendance
 
             // Append to immutable history: captures the PREVIOUS value before overwriting.
             DB::table('student_attendance_correction_history')->insert([
-                'attendance_record_id'          => $record->id,
-                'sheet_id'                      => $locked->id,
-                'enrollment_id'                 => $enrollmentId,
-                'correction_cycle'              => $record->correction_cycle,
-                'previous_status_code'          => $record->status_code,
-                'previous_reason'               => $record->reason,
+                'attendance_record_id' => $record->id,
+                'sheet_id' => $locked->id,
+                'enrollment_id' => $enrollmentId,
+                'correction_cycle' => $record->correction_cycle,
+                'previous_status_code' => $record->status_code,
+                'previous_reason' => $record->reason,
                 'corrected_by_staff_profile_id' => $actorStaffProfileId,
-                'corrected_at'                  => $now,
+                'corrected_at' => $now,
             ]);
 
             // Write new values to the record.
             // previous_status_code / previous_reason on the record reflect the
             // most recent correction only (quick display); full history is in
             // student_attendance_correction_history.
-            $record->previous_status_code          = $record->status_code;
-            $record->previous_reason               = $record->reason;
-            $record->status_code                   = $newStatusCode;
-            $record->reason                        = empty(trim((string) $reason)) ? null : $reason;
-            $record->arrived_at                    = StudentAttendanceStatus::allowsArrivalTime($newStatusCode)
+            $record->previous_status_code = $record->status_code;
+            $record->previous_reason = $record->reason;
+            $record->status_code = $newStatusCode;
+            $record->reason = empty(trim((string) $reason)) ? null : $reason;
+            $record->arrived_at = StudentAttendanceStatus::allowsArrivalTime($newStatusCode)
                 ? ($arrivedAt !== '' ? $arrivedAt : null)
                 : null;
-            $record->departed_at                   = StudentAttendanceStatus::allowsDepartureTime($newStatusCode)
+            $record->departed_at = StudentAttendanceStatus::allowsDepartureTime($newStatusCode)
                 ? ($departedAt !== '' ? $departedAt : null)
                 : null;
-            $record->source                        = 'correction';
+            $record->source = 'correction';
             $record->corrected_by_staff_profile_id = $actorStaffProfileId;
-            $record->corrected_at                  = $now;
+            $record->corrected_at = $now;
             $record->save();
 
             return $record;

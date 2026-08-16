@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -15,7 +16,6 @@ use Modules\Attendance\Actions\SubmitSheet;
 use Modules\Attendance\Actions\UpdateRecord;
 use Modules\Attendance\Actions\VerifySheet;
 use Modules\Attendance\Data\StudentAttendanceStatus;
-use Modules\Attendance\Enums\SheetStatus;
 use Modules\Attendance\Exceptions\AttendanceException;
 use Modules\Attendance\Models\AttendanceSheet;
 use Modules\Authorization\Data\PermissionKey;
@@ -41,15 +41,20 @@ final class DailyAttendanceSheet extends Component
     use HasStaffAuth;
 
     // ── Route params ──────────────────────────────────────────────────────
-    public ?int    $sheetId      = null;
-    public ?int    $classGroupId = null;
-    public ?string $date         = null;
+    public ?int $sheetId = null;
+
+    public ?int $classGroupId = null;
+
+    public ?string $date = null;
 
     // ── UI state ─────────────────────────────────────────────────────────
-    public string  $flashMessage = '';
-    public string  $flashType    = 'success';
-    public string  $returnReason = '';
-    public bool    $showReturn   = false;
+    public string $flashMessage = '';
+
+    public string $flashType = 'success';
+
+    public string $returnReason = '';
+
+    public bool $showReturn = false;
 
     private ?AttendanceSheet $sheetCache = null;
 
@@ -57,14 +62,14 @@ final class DailyAttendanceSheet extends Component
     {
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_ENTER);
 
-        $this->sheetId      = $sheetId;
+        $this->sheetId = $sheetId;
         $this->classGroupId = $classGroupId;
-        $this->date         = $date ?? now()->toDateString();
+        $this->date = $date ?? now()->toDateString();
 
         if ($this->sheetId !== null) {
             // Scope-check the given sheet before showing anything.
-            $sheetRow            = $this->assertSheetInScope($this->sheetId);
-            $this->classGroupId  = (int) $sheetRow->class_group_id;
+            $sheetRow = $this->assertSheetInScope($this->sheetId);
+            $this->classGroupId = (int) $sheetRow->class_group_id;
             $this->assertHomeroomIfTeacher($this->classGroupId);
         } elseif ($this->classGroupId !== null) {
             // Scope-check the target class group, then open or load its sheet.
@@ -91,7 +96,7 @@ final class DailyAttendanceSheet extends Component
         }
 
         try {
-            $sheet         = app(OpenDailySheet::class)(
+            $sheet = app(OpenDailySheet::class)(
                 classGroupId: $this->classGroupId,
                 date: new \DateTimeImmutable($this->date),
                 creatorStaffProfileId: $this->staffProfileId(),
@@ -119,7 +124,7 @@ final class DailyAttendanceSheet extends Component
         }
 
         $profileId = $this->staffProfileId();
-        $scope     = $this->staffScope();
+        $scope = $this->staffScope();
 
         $hasHomeroom = DB::table('homeroom_assignments')
             ->where('staff_profile_id', $profileId)
@@ -144,7 +149,7 @@ final class DailyAttendanceSheet extends Component
         return $this->sheetCache ??= AttendanceSheet::find($this->sheetId);
     }
 
-    public function records(): \Illuminate\Support\Collection
+    public function records(): Collection
     {
         $sheet = $this->sheet();
 
@@ -238,7 +243,7 @@ final class DailyAttendanceSheet extends Component
         }
 
         try {
-            $count            = app(BulkMarkPresent::class)($sheet);
+            $count = app(BulkMarkPresent::class)($sheet);
             $this->sheetCache = null;
             $this->flash("Marked {$count} students as present.", 'success');
         } catch (AttendanceException $e) {
@@ -273,7 +278,7 @@ final class DailyAttendanceSheet extends Component
     public function startReturn(): void
     {
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_RETURN);
-        $this->showReturn   = true;
+        $this->showReturn = true;
         $this->returnReason = '';
     }
 
@@ -331,9 +336,9 @@ final class DailyAttendanceSheet extends Component
     public function render(): View
     {
         return view('livewire.staff.attendance.daily-sheet', [
-            'sheet'     => $this->sheet(),
-            'records'   => $this->records(),
-            'statuses'  => StudentAttendanceStatus::catalogue(),
+            'sheet' => $this->sheet(),
+            'records' => $this->records(),
+            'statuses' => StudentAttendanceStatus::catalogue(),
             'canManage' => $this->staffCan(PermissionKey::STUDENT_ATTENDANCE_VERIFY),
         ]);
     }
@@ -341,6 +346,6 @@ final class DailyAttendanceSheet extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

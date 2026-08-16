@@ -84,11 +84,11 @@ final class PublishResults
 
             // 5. Create publication header
             $pub = new ResultPublication;
-            $pub->institution_semester_id    = $institutionSemesterId;
-            $pub->class_group_id             = $classGroupId;
-            $pub->version                    = $lastVersion + 1;
-            $pub->status                     = 'published';
-            $pub->published_at               = now();
+            $pub->institution_semester_id = $institutionSemesterId;
+            $pub->class_group_id = $classGroupId;
+            $pub->version = $lastVersion + 1;
+            $pub->status = 'published';
+            $pub->published_at = now();
             $pub->publisher_staff_profile_id = $publisherStaffProfileId;
             $pub->save();
 
@@ -102,21 +102,21 @@ final class PublishResults
                 ->update(['superseded_by_id' => $pub->id]);
 
             // 7. Write immutable result rows in chunks
-            $now  = now()->toDateTimeString();
+            $now = now()->toDateTimeString();
             $rows = $calculated->map(fn ($item) => [
                 'result_publication_id' => $pub->id,
-                'student_profile_id'    => $item->student_profile_id,
-                'enrollment_id'         => $item->enrollment_id,
-                'subject_offering_id'   => $item->subject_offering_id,
-                'raw_total_score'       => $item->raw_total_score,
-                'raw_max_possible'      => $item->raw_max_possible,
-                'normalized_score'      => $item->normalized_score,
-                'grade_code'            => $item->grade_code,
-                'grade_name_ar'         => $item->grade_name_ar,
-                'is_passing'            => $item->is_passing,
-                'completeness_status'   => $item->completeness_status,
-                'created_at'            => $now,
-                'updated_at'            => $now,
+                'student_profile_id' => $item->student_profile_id,
+                'enrollment_id' => $item->enrollment_id,
+                'subject_offering_id' => $item->subject_offering_id,
+                'raw_total_score' => $item->raw_total_score,
+                'raw_max_possible' => $item->raw_max_possible,
+                'normalized_score' => $item->normalized_score,
+                'grade_code' => $item->grade_code,
+                'grade_name_ar' => $item->grade_name_ar,
+                'is_passing' => $item->is_passing,
+                'completeness_status' => $item->completeness_status,
+                'created_at' => $now,
+                'updated_at' => $now,
             ])->all();
 
             foreach (array_chunk($rows, 200) as $chunk) {

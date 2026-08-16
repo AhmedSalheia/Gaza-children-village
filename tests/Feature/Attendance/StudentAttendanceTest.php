@@ -37,7 +37,8 @@ class StudentAttendanceTest extends TestCase
 
     // ── Shared fixtures ───────────────────────────────────────────────────
 
-    private int $orgId  = 0;
+    private int $orgId = 0;
+
     private int $typeId = 0;
 
     protected function setUp(): void
@@ -45,17 +46,17 @@ class StudentAttendanceTest extends TestCase
         parent::setUp();
 
         $this->orgId = (int) DB::table('organizations')->insertGetId([
-            'code'       => 'ORG-ATT',
-            'name_en'    => 'Attendance Test Org',
-            'is_active'  => true,
+            'code' => 'ORG-ATT',
+            'name_en' => 'Attendance Test Org',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         $this->typeId = (int) DB::table('institution_types')->insertGetId([
-            'code'       => 'TYPE-ATT',
-            'name_en'    => 'School',
-            'is_active'  => true,
+            'code' => 'TYPE-ATT',
+            'name_en' => 'School',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -66,13 +67,13 @@ class StudentAttendanceTest extends TestCase
     private function makeInstitution(): int
     {
         return (int) DB::table('institutions')->insertGetId([
-            'organization_id'     => $this->orgId,
+            'organization_id' => $this->orgId,
             'institution_type_id' => $this->typeId,
-            'code'                => 'INST-'.uniqid(),
-            'name_en'             => 'Test Institution',
-            'is_active'           => true,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'code' => 'INST-'.uniqid(),
+            'name_en' => 'Test Institution',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -80,34 +81,34 @@ class StudentAttendanceTest extends TestCase
     {
         $yearId = (int) DB::table('academic_years')->insertGetId([
             'organization_id' => $this->orgId,
-            'code'            => 'AY-'.uniqid(),
-            'name_en'         => 'Test Year',
-            'starts_on'       => '2025-09-01',
-            'ends_on'         => '2026-06-30',
-            'status'          => 'open',
-            'created_at'      => now(),
-            'updated_at'      => now(),
+            'code' => 'AY-'.uniqid(),
+            'name_en' => 'Test Year',
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-06-30',
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $semId = (int) DB::table('semesters')->insertGetId([
-            'code'             => 'SEM-'.uniqid(),
-            'name_en'          => 'First Semester',
-            'name_ar'          => 'First Semester',
-            'sequence'         => 1,
-            'status'           => 'open',
+            'code' => 'SEM-'.uniqid(),
+            'name_en' => 'First Semester',
+            'name_ar' => 'First Semester',
+            'sequence' => 1,
+            'status' => 'open',
             'academic_year_id' => $yearId,
-            'starts_on'        => '2025-09-01',
-            'ends_on'          => '2026-01-31',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-01-31',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('institution_semesters')->insertGetId([
             'institution_id' => $institutionId,
-            'semester_id'    => $semId,
-            'status'         => $status,
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'semester_id' => $semId,
+            'status' => $status,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -118,24 +119,24 @@ class StudentAttendanceTest extends TestCase
         }
 
         $levelId = (int) DB::table('academic_levels')->insertGetId([
-            'code'       => 'LVL-'.uniqid(),
-            'name_en'    => 'Level',
-            'name_ar'    => 'Level',
-            'sequence'   => 1,
-            'is_active'  => true,
+            'code' => 'LVL-'.uniqid(),
+            'name_en' => 'Level',
+            'name_ar' => 'Level',
+            'sequence' => 1,
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         return (int) DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $instSemId,
-            'operational_period_id'   => $opId,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-'.uniqid(),
-            'name_ar'                 => 'Class Group',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => $opId,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-'.uniqid(),
+            'name_ar' => 'Class Group',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -143,14 +144,14 @@ class StudentAttendanceTest extends TestCase
     {
         return (int) DB::table('operational_periods')->insertGetId([
             'institution_semester_id' => $instSemId,
-            'code'                    => 'OP-'.uniqid(),
-            'name_en'                 => 'Morning',
-            'sequence'                => 1,
-            'starts_at'               => '08:00:00',
-            'ends_at'                 => '13:00:00',
-            'is_active'               => true,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'code' => 'OP-'.uniqid(),
+            'name_en' => 'Morning',
+            'sequence' => 1,
+            'starts_at' => '08:00:00',
+            'ends_at' => '13:00:00',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -158,27 +159,27 @@ class StudentAttendanceTest extends TestCase
     {
         $personId = (int) DB::table('people')->insertGetId([
             'full_name_ar' => 'Student '.uniqid(),
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $profileId = (int) DB::table('student_profiles')->insertGetId([
-            'person_id'        => $personId,
-            'student_code'     => 'SC-'.uniqid(),
+            'person_id' => $personId,
+            'student_code' => 'SC-'.uniqid(),
             'lifecycle_status' => 'active',
-            'registered_on'    => now()->toDateString(),
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'registered_on' => now()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $enrollmentId = (int) DB::table('student_enrollments')->insertGetId([
-            'student_profile_id'     => $profileId,
+            'student_profile_id' => $profileId,
             'institution_semester_id' => $instSemId,
-            'class_group_id'         => $classGroupId,
-            'enrollment_status'      => 'active',
-            'enrolled_on'            => now()->toDateString(),
-            'created_at'             => now(),
-            'updated_at'             => now(),
+            'class_group_id' => $classGroupId,
+            'enrollment_status' => 'active',
+            'enrolled_on' => now()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return ['enrollmentId' => $enrollmentId, 'profileId' => $profileId];
@@ -188,16 +189,16 @@ class StudentAttendanceTest extends TestCase
     {
         $personId = (int) DB::table('people')->insertGetId([
             'full_name_ar' => 'Staff '.uniqid(),
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('staff_profiles')->insertGetId([
-            'person_id'         => $personId,
-            'staff_code'        => 'SP-'.uniqid(),
+            'person_id' => $personId,
+            'staff_code' => 'SP-'.uniqid(),
             'employment_status' => 'active',
-            'created_at'        => now(),
-            'updated_at'        => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -225,12 +226,12 @@ class StudentAttendanceTest extends TestCase
 
     public function test_opens_daily_sheet_and_populates_enrolled_students(): void
     {
-        $instId   = $this->makeInstitution();
-        $semId    = $this->makeInstitutionSemester($instId);
-        $classId  = $this->makeClassGroup($semId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
+        $classId = $this->makeClassGroup($semId);
         $student1 = $this->makeEnrollment($classId, $semId);
         $student2 = $this->makeEnrollment($classId, $semId);
-        $staffId  = $this->makeStaffProfile();
+        $staffId = $this->makeStaffProfile();
 
         $sheet = app(OpenDailySheet::class)(
             classGroupId: $classId,
@@ -252,8 +253,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_duplicate_sheet_for_same_class_and_date(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $staffId = $this->makeStaffProfile();
 
@@ -275,8 +276,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_allows_different_dates_for_same_class(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $staffId = $this->makeStaffProfile();
 
@@ -297,8 +298,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_open_sheet_in_closed_semester(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId, 'closed');
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId, 'closed');
         $classId = $this->makeClassGroup($semId);
         $staffId = $this->makeStaffProfile();
 
@@ -314,8 +315,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_only_active_enrollees_are_populated(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
 
         // One active, one inactive enrollment
@@ -337,11 +338,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_update_record_sets_status(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         app(UpdateRecord::class)(
             sheet: $sheet,
@@ -358,11 +359,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_update_record_rejects_invalid_status_code(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         $this->expectException(AttendanceException::class);
         $this->expectExceptionMessageMatches('/not a valid/');
@@ -376,11 +377,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_excused_absence_requires_reason(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         $this->expectException(AttendanceException::class);
         $this->expectExceptionMessageMatches('/requires a reason/');
@@ -395,11 +396,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_excused_absence_accepted_with_reason(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         $record = app(UpdateRecord::class)(
             sheet: $sheet,
@@ -414,11 +415,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_update_record_rejected_on_submitted_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         $this->fillAllRecords($sheet);
 
@@ -439,8 +440,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_bulk_mark_present_fills_unfilled_records(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $this->makeEnrollment($classId, $semId);
@@ -459,12 +460,12 @@ class StudentAttendanceTest extends TestCase
 
     public function test_bulk_mark_skips_already_filled_records(): void
     {
-        $instId   = $this->makeInstitution();
-        $semId    = $this->makeInstitutionSemester($instId);
-        $classId  = $this->makeClassGroup($semId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
+        $classId = $this->makeClassGroup($semId);
         $student1 = $this->makeEnrollment($classId, $semId);
         $student2 = $this->makeEnrollment($classId, $semId);
-        $sheet    = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         // Pre-fill one as absent
         app(UpdateRecord::class)($sheet, $student1['enrollmentId'], StudentAttendanceStatus::ABSENT);
@@ -487,11 +488,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_submits_sheet_when_all_records_filled(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         app(BulkMarkPresent::class)($sheet);
 
@@ -504,11 +505,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_submit_with_unfilled_records(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         // Do NOT fill records
 
@@ -520,11 +521,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_double_submit(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
 
         app(BulkMarkPresent::class)($sheet);
         $staffId = $this->makeStaffProfile();
@@ -543,8 +544,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_returns_submitted_sheet_with_reason(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);
@@ -560,8 +561,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_return_without_reason(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);
@@ -580,11 +581,11 @@ class StudentAttendanceTest extends TestCase
         // Reopened sheets must go through CorrectVerifiedAttendance + re-verify,
         // NOT through the return-to-teacher path. Returning a reopened sheet
         // would bypass the correction audit trail.
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -601,8 +602,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_returned_sheet_can_be_resubmitted(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);
@@ -623,8 +624,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_verifies_submitted_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);
@@ -642,8 +643,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_verify_on_non_submitted_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);  // Still draft
@@ -660,8 +661,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_reopens_verified_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);
@@ -678,8 +679,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_reopen_on_non_verified_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);  // Still draft
@@ -692,8 +693,8 @@ class StudentAttendanceTest extends TestCase
 
     public function test_rejects_reopen_in_closed_semester(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId, 'open');
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId, 'open');
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
         $sheet = $this->openSheet($classId, $semId);
@@ -718,11 +719,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_correction_persists_arrival_time_for_late_status(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -748,11 +749,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_corrects_record_on_reopened_sheet_and_preserves_history(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -782,11 +783,11 @@ class StudentAttendanceTest extends TestCase
     {
         // One correction per reopen cycle is permitted. A second correction in
         // the same cycle is rejected; the secretary must re-verify then reopen.
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -821,11 +822,11 @@ class StudentAttendanceTest extends TestCase
     {
         // Regression: correct → re-verify → reopen → correct must work, and
         // both history entries (cycle 1 and cycle 2) must remain in the history table.
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -861,7 +862,7 @@ class StudentAttendanceTest extends TestCase
         );
 
         // Verify the record has the current (cycle-2) status
-        $record = \Modules\Attendance\Models\AttendanceRecord::where('sheet_id', $sheet->id)
+        $record = AttendanceRecord::where('sheet_id', $sheet->id)
             ->where('enrollment_id', $student['enrollmentId'])
             ->first();
 
@@ -870,7 +871,7 @@ class StudentAttendanceTest extends TestCase
         $this->assertEquals(2, $record->correction_cycle);
 
         // Verify BOTH history entries are preserved in the append-only table
-        $history = \Illuminate\Support\Facades\DB::table('student_attendance_correction_history')
+        $history = DB::table('student_attendance_correction_history')
             ->where('enrollment_id', $student['enrollmentId'])
             ->orderBy('correction_cycle')
             ->get();
@@ -889,11 +890,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_correction_requires_reason_for_excused_absence(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -916,11 +917,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_correction_rejected_on_non_reopened_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(BulkMarkPresent::class)($sheet);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -947,11 +948,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_reopened_sheet_can_be_re_verified(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $student = $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId);
+        $sheet = $this->openSheet($classId, $semId);
         app(UpdateRecord::class)($sheet, $student['enrollmentId'], StudentAttendanceStatus::PRESENT);
         app(SubmitSheet::class)($sheet, $this->makeStaffProfile());
         $sheet->refresh();
@@ -980,11 +981,11 @@ class StudentAttendanceTest extends TestCase
 
     public function test_verify_sheet_rejects_draft_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeInstitutionSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeInstitutionSemester($instId);
         $classId = $this->makeClassGroup($semId);
         $this->makeEnrollment($classId, $semId);
-        $sheet   = $this->openSheet($classId, $semId); // draft
+        $sheet = $this->openSheet($classId, $semId); // draft
 
         $this->expectException(AttendanceException::class);
         $this->expectExceptionMessageMatches('/cannot be verified/');

@@ -34,12 +34,17 @@ final class MarkCorrection extends Component
 
     public ?int $sheetId = null;
 
-    public int    $selectedMarkId    = 0;
-    public string $correctedScore    = '';
-    public string $correctedExcept   = '';
-    public string $correctionReason  = '';
-    public string $flashMessage      = '';
-    public string $flashType         = '';
+    public int $selectedMarkId = 0;
+
+    public string $correctedScore = '';
+
+    public string $correctedExcept = '';
+
+    public string $correctionReason = '';
+
+    public string $flashMessage = '';
+
+    public string $flashType = '';
 
     public function mount(int $sheetId): void
     {
@@ -124,8 +129,8 @@ final class MarkCorrection extends Component
     public function selectMark(int $markId): void
     {
         $this->requirePermission(PermissionKey::MARKS_CORRECT);
-        $this->selectedMarkId  = $markId;
-        $this->correctedScore  = '';
+        $this->selectedMarkId = $markId;
+        $this->correctedScore = '';
         $this->correctedExcept = '';
         $this->correctionReason = '';
     }
@@ -136,8 +141,8 @@ final class MarkCorrection extends Component
 
         $this->validate([
             'correctionReason' => ['required', 'string', 'min:5'],
-            'correctedScore'   => ['nullable', 'numeric', 'min:0'],
-            'correctedExcept'  => ['nullable', 'string', 'in:absent,exempt,medical'],
+            'correctedScore' => ['nullable', 'numeric', 'min:0'],
+            'correctedExcept' => ['nullable', 'string', 'in:absent,exempt,medical'],
         ]);
 
         // Require exactly one of score or exception
@@ -165,7 +170,7 @@ final class MarkCorrection extends Component
             return;
         }
 
-        $score     = $this->correctedScore !== '' ? (float) $this->correctedScore : null;
+        $score = $this->correctedScore !== '' ? (float) $this->correctedScore : null;
         $exception = $this->correctedExcept !== '' ? $this->correctedExcept : null;
 
         $staffProfileId = $this->staffProfileId();
@@ -183,8 +188,8 @@ final class MarkCorrection extends Component
                 reason: $this->correctionReason,
                 actorStaffProfileId: $staffProfileId,
             );
-            $this->selectedMarkId  = 0;
-            $this->correctedScore  = '';
+            $this->selectedMarkId = 0;
+            $this->correctedScore = '';
             $this->correctedExcept = '';
             $this->correctionReason = '';
             $this->flash('Correction submitted.', 'success');
@@ -195,8 +200,8 @@ final class MarkCorrection extends Component
 
     public function cancelCorrection(): void
     {
-        $this->selectedMarkId  = 0;
-        $this->correctedScore  = '';
+        $this->selectedMarkId = 0;
+        $this->correctedScore = '';
         $this->correctedExcept = '';
         $this->correctionReason = '';
     }
@@ -204,8 +209,8 @@ final class MarkCorrection extends Component
     public function render(): View
     {
         return view('livewire.staff.marks.mark-correction', [
-            'sheet'       => $this->sheet(),
-            'marks'       => $this->marks(),
+            'sheet' => $this->sheet(),
+            'marks' => $this->marks(),
             'corrections' => $this->corrections(),
         ])->layout('layouts.staff');
     }
@@ -259,6 +264,6 @@ final class MarkCorrection extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

@@ -26,18 +26,27 @@ final class AssessmentDefinitionIndex extends Component
     #[Url]
     public int $semesterId = 0;
 
-    public bool   $showForm          = false;
-    public string $nameAr            = '';
-    public string $nameEn            = '';
-    public string $assessmentType    = '';
-    public float  $maxScore          = 100.0;
-    public float  $weight            = 0.0;
-    public string $assessmentDate    = '';
-    public int    $classGroupId      = 0;
-    public int    $subjectOfferingId = 0;
+    public bool $showForm = false;
+
+    public string $nameAr = '';
+
+    public string $nameEn = '';
+
+    public string $assessmentType = '';
+
+    public float $maxScore = 100.0;
+
+    public float $weight = 0.0;
+
+    public string $assessmentDate = '';
+
+    public int $classGroupId = 0;
+
+    public int $subjectOfferingId = 0;
 
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -115,11 +124,11 @@ final class AssessmentDefinitionIndex extends Component
         $this->requirePermission(PermissionKey::ASSESSMENT_MANAGE);
 
         $this->validate([
-            'semesterId'     => ['required', 'integer', 'min:1'],
-            'nameAr'         => ['required', 'string', 'max:200'],
+            'semesterId' => ['required', 'integer', 'min:1'],
+            'nameAr' => ['required', 'string', 'max:200'],
             'assessmentType' => ['required', 'string'],
-            'maxScore'       => ['required', 'numeric', 'min:0.01'],
-            'weight'         => ['nullable', 'numeric', 'min:0'],
+            'maxScore' => ['required', 'numeric', 'min:0.01'],
+            'weight' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         try {
@@ -165,23 +174,23 @@ final class AssessmentDefinitionIndex extends Component
     {
         $this->reset(['nameAr', 'nameEn', 'assessmentType', 'assessmentDate', 'classGroupId', 'subjectOfferingId', 'showForm']);
         $this->maxScore = 100.0;
-        $this->weight   = 0.0;
+        $this->weight = 0.0;
     }
 
     public function render(): View
     {
         return view('livewire.admin.marks.assessment-definitions', [
-            'openSemesters'    => $this->openSemesters(),
-            'definitions'      => $this->definitions(),
-            'classGroups'      => $this->classGroups(),
+            'openSemesters' => $this->openSemesters(),
+            'definitions' => $this->definitions(),
+            'classGroups' => $this->classGroups(),
             'subjectOfferings' => $this->subjectOfferings(),
-            'assessmentTypes'  => $this->assessmentTypes(),
+            'assessmentTypes' => $this->assessmentTypes(),
         ])->layout('layouts.admin');
     }
 
     private function flash(string $type, string $message): void
     {
-        $this->flashType    = $type;
+        $this->flashType = $type;
         $this->flashMessage = $message;
     }
 }

@@ -2,16 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Staff\IssuedDocumentDownloadController;
 use App\Http\Controllers\Staff\LoginController;
 use App\Http\Controllers\Staff\ReportDownloadController;
-use App\Livewire\Staff\Reports\AttendanceReport as StaffAttendanceReport;
-use App\Livewire\Staff\Reports\ResultReport as StaffResultReport;
+use App\Http\Controllers\Staff\SecureAttachmentDownloadController;
 use App\Livewire\Staff\Assignments\AssignmentOverview;
-use App\Livewire\Staff\Marks\MarkCorrection;
-use App\Livewire\Staff\Marks\MarkEntrySheet;
-use App\Livewire\Staff\Marks\MarksVerificationQueue;
-use App\Livewire\Staff\Marks\MarkWindowExtension;
-use App\Livewire\Staff\Marks\MySubjects;
 use App\Livewire\Staff\Attendance\AttendanceQueue;
 use App\Livewire\Staff\Attendance\DailyAttendanceSheet;
 use App\Livewire\Staff\Attendance\MyClasses;
@@ -21,16 +16,31 @@ use App\Livewire\Staff\Attendance\SheetVerification;
 use App\Livewire\Staff\Attendance\StaffAttendanceDashboard;
 use App\Livewire\Staff\Attendance\StaffAttendanceEntry;
 use App\Livewire\Staff\ClassLists\ClassList;
+use App\Livewire\Staff\Corrections\CorrectionInbox;
+use App\Livewire\Staff\Corrections\CorrectionReview;
 use App\Livewire\Staff\Dashboard;
+use App\Livewire\Staff\Documents\DocumentReview;
+use App\Livewire\Staff\Documents\DocumentReviewQueue;
 use App\Livewire\Staff\Enrollments\EnrollmentManagement;
 use App\Livewire\Staff\Enrollments\PromotionReview;
 use App\Livewire\Staff\Enrollments\TransferStudent;
+use App\Livewire\Staff\FormalRequests\FormalRequestDetail;
+use App\Livewire\Staff\FormalRequests\FormalRequestList;
+use App\Livewire\Staff\FormalRequests\NewFormalRequest;
 use App\Livewire\Staff\Imports\ImportBatchDetail;
 use App\Livewire\Staff\Imports\ImportBatchIndex;
+use App\Livewire\Staff\Marks\MarkCorrection;
+use App\Livewire\Staff\Marks\MarkEntrySheet;
+use App\Livewire\Staff\Marks\MarksVerificationQueue;
+use App\Livewire\Staff\Marks\MarkWindowExtension;
+use App\Livewire\Staff\Marks\MySubjects;
+use App\Livewire\Staff\Reports\AttendanceReport as StaffAttendanceReport;
+use App\Livewire\Staff\Reports\ResultReport as StaffResultReport;
 use App\Livewire\Staff\Students\AddStudent;
 use App\Livewire\Staff\Students\GuardianRelationships;
 use App\Livewire\Staff\Students\StudentDetail;
 use App\Livewire\Staff\Students\StudentList;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -101,7 +111,7 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         Route::get('/staff-attendance/scan-queue', ScanEventQueue::class)->name('staff-attendance.scan-queue');
         Route::get('/staff-attendance/qr-cards', QrCardGenerator::class)->name('staff-attendance.qr-cards');
         Route::get('/staff-attendance/scan-form', static fn () => view('staff.attendance.scan-form', [
-            'periods' => \Illuminate\Support\Facades\DB::table('operational_periods')->select('id', 'name')->orderBy('name')->get(),
+            'periods' => DB::table('operational_periods')->select('id', 'name')->orderBy('name')->get(),
         ]))->name('attendance.scan-form');
 
         // Marks — teacher entry, secretary verification, principal approval, corrections
@@ -129,21 +139,28 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');
 
         // Correction request review (secretary / principal)
-        Route::get('/corrections', \App\Livewire\Staff\Corrections\CorrectionInbox::class)->name('corrections.index');
-        Route::get('/corrections/{requestId}', \App\Livewire\Staff\Corrections\CorrectionReview::class)
+        Route::get('/corrections', CorrectionInbox::class)->name('corrections.index');
+        Route::get('/corrections/{requestId}', CorrectionReview::class)
             ->where('requestId', '[0-9]+')
             ->name('corrections.review');
 
         // Secure attachment download — authorization gated, no public URL
-        Route::get('/attachments/{attachment}', \App\Http\Controllers\Staff\SecureAttachmentDownloadController::class)
+        Route::get('/attachments/{attachment}', SecureAttachmentDownloadController::class)
             ->name('attachments.download');
 
+        // Formal institution requests (secretary prepare, principal/deputy review+sign)
+        Route::get('/formal-requests', FormalRequestList::class)->name('formal-requests.index');
+        Route::get('/formal-requests/new', NewFormalRequest::class)->name('formal-requests.new');
+        Route::get('/formal-requests/{requestId}', FormalRequestDetail::class)
+            ->where('requestId', '[0-9]+')
+            ->name('formal-requests.detail');
+
         // Document request review (secretary)
-        Route::get('/documents', \App\Livewire\Staff\Documents\DocumentReviewQueue::class)->name('documents.queue');
-        Route::get('/documents/{requestId}', \App\Livewire\Staff\Documents\DocumentReview::class)
+        Route::get('/documents', DocumentReviewQueue::class)->name('documents.queue');
+        Route::get('/documents/{requestId}', DocumentReview::class)
             ->where('requestId', '[0-9]+')
             ->name('documents.review');
-        Route::get('/documents/download/{documentId}', \App\Http\Controllers\Staff\IssuedDocumentDownloadController::class)
+        Route::get('/documents/download/{documentId}', IssuedDocumentDownloadController::class)
             ->where('documentId', '[0-9]+')
             ->name('documents.download');
     });

@@ -6,6 +6,7 @@ namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -32,12 +33,13 @@ final class StaffAttendanceDashboard extends Component
     use HasStaffAuth;
 
     public string $selectedDate = '';
+
     public int $selectedPeriodId = 0;
 
     public function mount(): void
     {
         $this->requirePermission('staff_attendance.read');
-        $this->selectedDate     = now()->toDateString();
+        $this->selectedDate = now()->toDateString();
         $this->selectedPeriodId = $this->defaultPeriodId();
     }
 
@@ -76,7 +78,7 @@ final class StaffAttendanceDashboard extends Component
             $total = DB::table('staff_profiles as sp')
                 ->join('staff_institution_assignments as sia', function ($j): void {
                     $j->on('sia.staff_profile_id', '=', 'sp.id')
-                      ->whereNull('sia.ended_on');
+                        ->whereNull('sia.ended_on');
                 })
                 ->where('sia.institution_id', $institutionId)
                 ->count(DB::raw('DISTINCT sp.id'));
@@ -94,19 +96,18 @@ final class StaffAttendanceDashboard extends Component
                 ->count();
 
             return (object) [
-                'period_id'   => $period->id,
+                'period_id' => $period->id,
                 'period_name' => $period->name,
-                'total'       => $total,
-                'filled'      => $filled,
-                'present'     => $present,
-                'absent'      => $filled - $present,
-                'unrecorded'  => max(0, $total - $filled),
+                'total' => $total,
+                'filled' => $filled,
+                'present' => $present,
+                'absent' => $filled - $present,
+                'unrecorded' => max(0, $total - $filled),
             ];
         })->all();
     }
 
-    /** @return \Illuminate\Support\Collection */
-    public function attendanceRows(): \Illuminate\Support\Collection
+    public function attendanceRows(): Collection
     {
         if ($this->selectedPeriodId === 0) {
             return collect();
@@ -165,8 +166,8 @@ final class StaffAttendanceDashboard extends Component
     public function render(): View
     {
         return view('livewire.staff.attendance.staff-dashboard', [
-            'summaries'       => $this->periodSummaries(),
-            'attendanceRows'  => $this->attendanceRows(),
+            'summaries' => $this->periodSummaries(),
+            'attendanceRows' => $this->attendanceRows(),
         ]);
     }
 

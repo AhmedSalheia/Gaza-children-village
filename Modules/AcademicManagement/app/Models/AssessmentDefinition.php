@@ -37,8 +37,8 @@ final class AssessmentDefinition extends Model
     /** @var array<string, string> */
     protected $casts = [
         'assessment_type' => AssessmentType::class,
-        'max_score'       => 'float',
-        'weight'          => 'float',
+        'max_score' => 'float',
+        'weight' => 'float',
         'assessment_date' => 'date',
     ];
 

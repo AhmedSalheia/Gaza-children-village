@@ -6,6 +6,7 @@ namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Modules\Attendance\Actions\CorrectVerifiedStaffRecord;
@@ -36,6 +37,7 @@ final class StaffAttendanceEntry extends Component
     use HasStaffAuth;
 
     public string $selectedDate = '';
+
     public int $selectedPeriodId = 0;
 
     /** @var array<int, string> Editable row state: staffProfileId → statusCode */
@@ -53,18 +55,23 @@ final class StaffAttendanceEntry extends Component
     // ── Correction form state ─────────────────────────────────────────────────
 
     public ?int $correctingRecordId = null;
+
     public string $correctStatus = '';
+
     public string $correctReason = '';
+
     public string $correctArrivedAt = '';
+
     public string $correctDepartedAt = '';
 
     public string $flashMessage = '';
+
     public string $flashType = '';
 
     public function mount(): void
     {
         $this->requirePermission('staff_attendance.enter');
-        $this->selectedDate     = now()->toDateString();
+        $this->selectedDate = now()->toDateString();
         $this->selectedPeriodId = $this->defaultPeriodId();
     }
 
@@ -95,21 +102,21 @@ final class StaffAttendanceEntry extends Component
 
         try {
             app(CreateDailyStaffRecord::class)(
-                staffProfileId:          $staffProfileId,
-                operationalPeriodId:     $this->selectedPeriodId,
-                date:                    $this->selectedDate,
-                statusCode:              $statusCode,
-                reason:                  $this->rowReason[$staffProfileId] ?? null,
-                creatorStaffProfileId:   $this->resolveStaffProfileId(),
-                confirmedArrivedAt:      $this->rowArrivedAt[$staffProfileId] ?? null,
-                confirmedDepartedAt:     $this->rowDepartedAt[$staffProfileId] ?? null,
+                staffProfileId: $staffProfileId,
+                operationalPeriodId: $this->selectedPeriodId,
+                date: $this->selectedDate,
+                statusCode: $statusCode,
+                reason: $this->rowReason[$staffProfileId] ?? null,
+                creatorStaffProfileId: $this->resolveStaffProfileId(),
+                confirmedArrivedAt: $this->rowArrivedAt[$staffProfileId] ?? null,
+                confirmedDepartedAt: $this->rowDepartedAt[$staffProfileId] ?? null,
             );
 
             $this->flashMessage = 'Saved.';
-            $this->flashType    = 'success';
+            $this->flashType = 'success';
         } catch (StaffAttendanceException $e) {
             $this->flashMessage = $e->getMessage();
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
         }
     }
 
@@ -121,7 +128,7 @@ final class StaffAttendanceEntry extends Component
 
         if (! $record) {
             $this->flashMessage = 'Record not found.';
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
 
             return;
         }
@@ -131,10 +138,10 @@ final class StaffAttendanceEntry extends Component
         try {
             app(VerifyStaffRecord::class)($record, $this->resolveStaffProfileId());
             $this->flashMessage = 'Record verified.';
-            $this->flashType    = 'success';
+            $this->flashType = 'success';
         } catch (StaffAttendanceException $e) {
             $this->flashMessage = $e->getMessage();
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
         }
     }
 
@@ -148,7 +155,7 @@ final class StaffAttendanceEntry extends Component
 
         if (! $record || ! $record->is_verified) {
             $this->flashMessage = 'Only verified records can be corrected.';
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
 
             return;
         }
@@ -156,10 +163,10 @@ final class StaffAttendanceEntry extends Component
         $this->assertPeriodAllowed((int) $record->operational_period_id);
 
         $this->correctingRecordId = $recordId;
-        $this->correctStatus      = (string) $record->status_code;
-        $this->correctReason      = (string) ($record->reason ?? '');
-        $this->correctArrivedAt   = (string) ($record->confirmed_arrived_at ?? '');
-        $this->correctDepartedAt  = (string) ($record->confirmed_departed_at ?? '');
+        $this->correctStatus = (string) $record->status_code;
+        $this->correctReason = (string) ($record->reason ?? '');
+        $this->correctArrivedAt = (string) ($record->confirmed_arrived_at ?? '');
+        $this->correctDepartedAt = (string) ($record->confirmed_departed_at ?? '');
     }
 
     public function submitCorrection(): void
@@ -182,36 +189,35 @@ final class StaffAttendanceEntry extends Component
 
         try {
             app(CorrectVerifiedStaffRecord::class)(
-                record:              $record,
-                newStatusCode:       $this->correctStatus,
-                reason:              $this->correctReason ?: null,
+                record: $record,
+                newStatusCode: $this->correctStatus,
+                reason: $this->correctReason ?: null,
                 actorStaffProfileId: $this->resolveStaffProfileId(),
-                confirmedArrivedAt:  $this->correctArrivedAt ?: null,
+                confirmedArrivedAt: $this->correctArrivedAt ?: null,
                 confirmedDepartedAt: $this->correctDepartedAt ?: null,
             );
 
             $this->flashMessage = 'Correction saved.';
-            $this->flashType    = 'success';
+            $this->flashType = 'success';
             $this->cancelCorrection();
         } catch (StaffAttendanceException $e) {
             $this->flashMessage = $e->getMessage();
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
         }
     }
 
     public function cancelCorrection(): void
     {
         $this->correctingRecordId = null;
-        $this->correctStatus      = '';
-        $this->correctReason      = '';
-        $this->correctArrivedAt   = '';
-        $this->correctDepartedAt  = '';
+        $this->correctStatus = '';
+        $this->correctReason = '';
+        $this->correctArrivedAt = '';
+        $this->correctDepartedAt = '';
     }
 
     // ── Data queries ──────────────────────────────────────────────────────────
 
-    /** @return \Illuminate\Support\Collection */
-    public function staffRows(): \Illuminate\Support\Collection
+    public function staffRows(): Collection
     {
         if ($this->selectedPeriodId === 0 || $this->selectedDate === '') {
             return collect();
@@ -241,7 +247,7 @@ final class StaffAttendanceEntry extends Component
             ->join('people as p', 'p.id', '=', 'sp.person_id')
             ->join('staff_institution_assignments as sia', function ($j): void {
                 $j->on('sia.staff_profile_id', '=', 'sp.id')
-                  ->whereNull('sia.ended_on');
+                    ->whereNull('sia.ended_on');
             })
             ->where('sia.institution_id', $institutionId)
             ->select('sp.id as staff_profile_id', 'p.full_name_ar as name')
@@ -253,16 +259,16 @@ final class StaffAttendanceEntry extends Component
             $record = $records->get($member->staff_profile_id);
 
             return (object) [
-                'staff_profile_id'    => $member->staff_profile_id,
-                'name'                => $member->name,
-                'record_id'           => $record?->id,
-                'status_code'         => $record?->status_code,
-                'reason'              => $record?->reason,
-                'confirmed_arrived'   => $record?->confirmed_arrived_at,
-                'confirmed_departed'  => $record?->confirmed_departed_at,
-                'scanned_arrived'     => $record?->scanned_arrived_at,
-                'scanned_departed'    => $record?->scanned_departed_at,
-                'is_verified'         => (bool) ($record?->is_verified ?? false),
+                'staff_profile_id' => $member->staff_profile_id,
+                'name' => $member->name,
+                'record_id' => $record?->id,
+                'status_code' => $record?->status_code,
+                'reason' => $record?->reason,
+                'confirmed_arrived' => $record?->confirmed_arrived_at,
+                'confirmed_departed' => $record?->confirmed_departed_at,
+                'scanned_arrived' => $record?->scanned_arrived_at,
+                'scanned_departed' => $record?->scanned_departed_at,
+                'is_verified' => (bool) ($record?->is_verified ?? false),
             ];
         });
     }
@@ -297,8 +303,8 @@ final class StaffAttendanceEntry extends Component
     {
         return view('livewire.staff.attendance.staff-entry', [
             'staffRows' => $this->staffRows(),
-            'periods'   => $this->availablePeriods(),
-            'statuses'  => StaffAttendanceStatus::catalogue(),
+            'periods' => $this->availablePeriods(),
+            'statuses' => StaffAttendanceStatus::catalogue(),
         ]);
     }
 
@@ -306,9 +312,9 @@ final class StaffAttendanceEntry extends Component
 
     private function clearRowState(): void
     {
-        $this->rowStatus     = [];
-        $this->rowReason     = [];
-        $this->rowArrivedAt  = [];
+        $this->rowStatus = [];
+        $this->rowReason = [];
+        $this->rowArrivedAt = [];
         $this->rowDepartedAt = [];
     }
 

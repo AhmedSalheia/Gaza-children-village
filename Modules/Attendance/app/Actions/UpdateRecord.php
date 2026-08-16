@@ -69,10 +69,10 @@ final class UpdateRecord
         }
 
         $record->status_code = $statusCode;
-        $record->reason      = empty(trim((string) $reason)) ? null : $reason;
+        $record->reason = empty(trim((string) $reason)) ? null : $reason;
 
         // Only store time fields when the status allows them
-        $record->arrived_at  = StudentAttendanceStatus::allowsArrivalTime($statusCode)
+        $record->arrived_at = StudentAttendanceStatus::allowsArrivalTime($statusCode)
             ? $arrivedAt
             : null;
         $record->departed_at = StudentAttendanceStatus::allowsDepartureTime($statusCode)

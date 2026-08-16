@@ -110,55 +110,55 @@ function resultCtx(string $tag = ''): array
     ]);
 
     $enrollmentId = (int) DB::table('student_enrollments')->insertGetId([
-        'student_profile_id'      => $studentProfileId,
+        'student_profile_id' => $studentProfileId,
         'institution_semester_id' => $instSemId,
-        'class_group_id'          => $classGroupId,
-        'enrollment_status'       => 'active',
-        'enrolled_on'             => today()->subDay()->toDateString(),
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'class_group_id' => $classGroupId,
+        'enrollment_status' => 'active',
+        'enrolled_on' => today()->subDay()->toDateString(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     // Assessment definition
     $defId = (int) DB::table('assessment_definitions')->insertGetId([
         'institution_semester_id' => $instSemId,
-        'class_group_id'          => $classGroupId,
-        'subject_offering_id'     => $subjectOffId,
-        'name_ar'                 => 'امتحان نهائي',
-        'name_en'                 => 'Final Exam',
-        'assessment_type'         => 'written_exam',
-        'max_score'               => 100.0,
-        'weight'                  => 100.0,
-        'status'                  => 'active',
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'class_group_id' => $classGroupId,
+        'subject_offering_id' => $subjectOffId,
+        'name_ar' => 'امتحان نهائي',
+        'name_en' => 'Final Exam',
+        'assessment_type' => 'written_exam',
+        'max_score' => 100.0,
+        'weight' => 100.0,
+        'status' => 'active',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     // Teaching assignment (staff_profile_id / staff_position_id are cross-module plain ints)
     $assignmentId = (int) DB::table('teaching_assignments')->insertGetId([
-        'staff_profile_id'        => 1,
+        'staff_profile_id' => 1,
         'institution_semester_id' => $instSemId,
-        'staff_position_id'       => 1,
-        'class_group_id'          => $classGroupId,
-        'subject_offering_id'     => $subjectOffId,
-        'starts_on'               => today()->subDay()->toDateString(),
-        'status'                  => 'active',
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'staff_position_id' => 1,
+        'class_group_id' => $classGroupId,
+        'subject_offering_id' => $subjectOffId,
+        'starts_on' => today()->subDay()->toDateString(),
+        'status' => 'active',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     // Approved mark sheet
     $sheetId = (int) DB::table('mark_sheets')->insertGetId([
-        'institution_semester_id'    => $instSemId,
-        'class_group_id'             => $classGroupId,
-        'subject_offering_id'        => $subjectOffId,
-        'teaching_assignment_id'     => $assignmentId,
-        'grading_scale_id'           => $scaleId,
-        'status'                     => 'approved',
-        'approved_at'                => now(),
+        'institution_semester_id' => $instSemId,
+        'class_group_id' => $classGroupId,
+        'subject_offering_id' => $subjectOffId,
+        'teaching_assignment_id' => $assignmentId,
+        'grading_scale_id' => $scaleId,
+        'status' => 'approved',
+        'approved_at' => now(),
         'approved_by_staff_profile_id' => 1,
-        'created_at'                 => now(),
-        'updated_at'                 => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     return compact(
@@ -170,16 +170,16 @@ function resultCtx(string $tag = ''): array
 /**
  * Insert a student mark for the given context and return its ID.
  */
-function insertMark(array $ctx, float $score = null, string $exception = null): int
+function insertMark(array $ctx, ?float $score = null, ?string $exception = null): int
 {
     return (int) DB::table('student_marks')->insertGetId([
-        'mark_sheet_id'              => $ctx['sheetId'],
-        'enrollment_id'              => $ctx['enrollmentId'],
-        'assessment_definition_id'   => $ctx['defId'],
-        'score'                      => $score,
-        'exception_status'           => $exception,
-        'created_at'                 => now(),
-        'updated_at'                 => now(),
+        'mark_sheet_id' => $ctx['sheetId'],
+        'enrollment_id' => $ctx['enrollmentId'],
+        'assessment_definition_id' => $ctx['defId'],
+        'score' => $score,
+        'exception_status' => $exception,
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 }
 
@@ -234,13 +234,13 @@ test('CalculateResults marks incomplete when mark has neither score nor exceptio
 
     // Insert a mark with no score and no exception
     DB::table('student_marks')->insert([
-        'mark_sheet_id'            => $ctx['sheetId'],
-        'enrollment_id'            => $ctx['enrollmentId'],
+        'mark_sheet_id' => $ctx['sheetId'],
+        'enrollment_id' => $ctx['enrollmentId'],
         'assessment_definition_id' => $ctx['defId'],
-        'score'                    => null,
-        'exception_status'         => null,
-        'created_at'               => now(),
-        'updated_at'               => now(),
+        'score' => null,
+        'exception_status' => null,
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     $rows = app(CalculateResults::class)($ctx['instSemId'], $ctx['classGroupId']);
@@ -363,13 +363,13 @@ test('PublishResults throws when outstanding unapproved sheets remain', function
     ]);
     DB::table('mark_sheets')->insert([
         'institution_semester_id' => $ctx['instSemId'],
-        'class_group_id'          => $ctx['classGroupId'],
-        'subject_offering_id'     => $extraOffId,
-        'teaching_assignment_id'  => $extraAssignId,
-        'grading_scale_id'        => null,
-        'status'                  => 'draft',
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'class_group_id' => $ctx['classGroupId'],
+        'subject_offering_id' => $extraOffId,
+        'teaching_assignment_id' => $extraAssignId,
+        'grading_scale_id' => null,
+        'status' => 'draft',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     expect(fn () => app(PublishResults::class)(
@@ -472,7 +472,7 @@ test('RevokeResultPublication transitions status to revoked with reason and time
     $ctx = resultCtx();
     insertMark($ctx, score: 50);
 
-    $pub     = app(PublishResults::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
+    $pub = app(PublishResults::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
     $revoked = app(RevokeResultPublication::class)($pub, 'Data error in calculation', 2);
 
     expect($revoked->status)->toBe('revoked')

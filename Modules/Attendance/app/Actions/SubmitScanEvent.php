@@ -106,25 +106,25 @@ final class SubmitScanEvent
 
             if ($existing) {
                 return [
-                    'event'        => AttendanceScanEvent::find($existing->id),
+                    'event' => AttendanceScanEvent::find($existing->id),
                     'is_duplicate' => true,
                 ];
             }
 
-            $event = new AttendanceScanEvent();
-            $event->qr_credential_id          = $credential->id;
-            $event->staff_profile_id           = $credential->staff_profile_id;
-            $event->institution_semester_id    = $period->institution_semester_id;
-            $event->operational_period_id      = $period->id;
-            $event->scanned_at                 = now();
-            $event->scan_date                  = $scanDate;
-            $event->direction                  = $direction;
-            $event->device_fingerprint         = $deviceFingerprint;
-            $event->processing_status          = 'pending';
+            $event = new AttendanceScanEvent;
+            $event->qr_credential_id = $credential->id;
+            $event->staff_profile_id = $credential->staff_profile_id;
+            $event->institution_semester_id = $period->institution_semester_id;
+            $event->operational_period_id = $period->id;
+            $event->scanned_at = now();
+            $event->scan_date = $scanDate;
+            $event->direction = $direction;
+            $event->device_fingerprint = $deviceFingerprint;
+            $event->processing_status = 'pending';
             $event->save();
 
             return [
-                'event'        => $event,
+                'event' => $event,
                 'is_duplicate' => false,
             ];
         });

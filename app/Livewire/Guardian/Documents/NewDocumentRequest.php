@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Guardian\Documents;
 
 use App\Livewire\Guardian\Concerns\HasGuardianAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -26,14 +27,19 @@ final class NewDocumentRequest extends Component
 {
     use HasGuardianAuth;
 
-    public int    $step             = 1;
-    public ?int   $studentProfileId = null;
-    public string $documentTypeCode = '';
-    public string $locale           = 'ar';
-    public string $purposeNotes     = '';
+    public int $step = 1;
 
-    public bool   $submitted        = false;
-    public ?int   $createdRequestId = null;
+    public ?int $studentProfileId = null;
+
+    public string $documentTypeCode = '';
+
+    public string $locale = 'ar';
+
+    public string $purposeNotes = '';
+
+    public bool $submitted = false;
+
+    public ?int $createdRequestId = null;
 
     /** @var string[] */
     public array $errors = [];
@@ -47,7 +53,7 @@ final class NewDocumentRequest extends Component
         if ($studentProfileId !== null) {
             $this->assertStudentAccessible($studentProfileId);
             $this->studentProfileId = $studentProfileId;
-            $this->step             = 2;
+            $this->step = 2;
         }
     }
 
@@ -55,7 +61,7 @@ final class NewDocumentRequest extends Component
     {
         $this->assertStudentAccessible($studentProfileId);
         $this->studentProfileId = $studentProfileId;
-        $this->step             = 2;
+        $this->step = 2;
     }
 
     public function proceedToReview(): void
@@ -109,19 +115,19 @@ final class NewDocumentRequest extends Component
 
         try {
             $request = app(DocumentRequestService::class)->createAndSubmit([
-                'enrollment_id'          => (int) $enrollment->enrollment_id,
-                'student_profile_id'     => (int) $this->studentProfileId,
-                'institution_id'         => (int) $enrollment->institution_id,
+                'enrollment_id' => (int) $enrollment->enrollment_id,
+                'student_profile_id' => (int) $this->studentProfileId,
+                'institution_id' => (int) $enrollment->institution_id,
                 'institution_semester_id' => (int) $enrollment->institution_semester_id,
-                'actor_type'             => StudentDocumentRequest::ACTOR_GUARDIAN,
-                'actor_account_id'       => (int) auth('guardian')->id(),
-                'portal'                 => 'guardian',
-                'document_type_code'     => $this->documentTypeCode,
-                'locale'                 => $this->locale,
-                'purpose_notes'          => $this->purposeNotes !== '' ? $this->purposeNotes : null,
+                'actor_type' => StudentDocumentRequest::ACTOR_GUARDIAN,
+                'actor_account_id' => (int) auth('guardian')->id(),
+                'portal' => 'guardian',
+                'document_type_code' => $this->documentTypeCode,
+                'locale' => $this->locale,
+                'purpose_notes' => $this->purposeNotes !== '' ? $this->purposeNotes : null,
             ]);
 
-            $this->submitted       = true;
+            $this->submitted = true;
             $this->createdRequestId = $request->id;
         } catch (\RuntimeException $e) {
             $this->errors[] = $e->getMessage();
@@ -131,7 +137,7 @@ final class NewDocumentRequest extends Component
     public function render(): View
     {
         $registry = app(DocumentTypeRegistry::class);
-        $types    = $registry->all();
+        $types = $registry->all();
 
         $students = $this->step === 1
             ? $this->loadEligibleStudents()
@@ -142,13 +148,13 @@ final class NewDocumentRequest extends Component
             : null;
 
         return view('livewire.guardian.documents.new-document-request', [
-            'students'        => $students,
-            'documentTypes'   => $types,
+            'students' => $students,
+            'documentTypes' => $types,
             'selectedStudent' => $selectedStudent,
         ])->layout('layouts.guardian');
     }
 
-    private function loadEligibleStudents(): \Illuminate\Support\Collection
+    private function loadEligibleStudents(): Collection
     {
         $ids = $this->eligibleStudentIds();
 

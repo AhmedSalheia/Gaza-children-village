@@ -49,7 +49,7 @@ describe('Document verification rate limiting', function (): void {
 
         // Now the endpoint should return rate_limited view
         $unknownCode = str_repeat('a', 64);
-        $response    = $this->get('/verify/'.$unknownCode);
+        $response = $this->get('/verify/'.$unknownCode);
 
         $response->assertStatus(200);
         $response->assertSeeText('rate_limit');

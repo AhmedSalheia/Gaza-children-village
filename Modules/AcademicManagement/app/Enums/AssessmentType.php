@@ -6,40 +6,40 @@ namespace Modules\AcademicManagement\Enums;
 
 enum AssessmentType: string
 {
-    case Classwork     = 'classwork';
-    case Homework      = 'homework';
-    case Quiz          = 'quiz';
-    case Project       = 'project';
-    case Midterm       = 'midterm';
-    case Final         = 'final';
+    case Classwork = 'classwork';
+    case Homework = 'homework';
+    case Quiz = 'quiz';
+    case Project = 'project';
+    case Midterm = 'midterm';
+    case Final = 'final';
     case Participation = 'participation';
-    case Other         = 'other';
+    case Other = 'other';
 
     public function labelAr(): string
     {
         return match ($this) {
-            self::Classwork     => 'عمل صفي',
-            self::Homework      => 'واجب منزلي',
-            self::Quiz          => 'اختبار قصير',
-            self::Project       => 'مشروع',
-            self::Midterm       => 'اختبار منتصف الفصل',
-            self::Final         => 'اختبار نهائي',
+            self::Classwork => 'عمل صفي',
+            self::Homework => 'واجب منزلي',
+            self::Quiz => 'اختبار قصير',
+            self::Project => 'مشروع',
+            self::Midterm => 'اختبار منتصف الفصل',
+            self::Final => 'اختبار نهائي',
             self::Participation => 'مشاركة',
-            self::Other         => 'أخرى',
+            self::Other => 'أخرى',
         };
     }
 
     public function labelEn(): string
     {
         return match ($this) {
-            self::Classwork     => 'Classwork',
-            self::Homework      => 'Homework',
-            self::Quiz          => 'Quiz',
-            self::Project       => 'Project',
-            self::Midterm       => 'Midterm',
-            self::Final         => 'Final',
+            self::Classwork => 'Classwork',
+            self::Homework => 'Homework',
+            self::Quiz => 'Quiz',
+            self::Project => 'Project',
+            self::Midterm => 'Midterm',
+            self::Final => 'Final',
             self::Participation => 'Participation',
-            self::Other         => 'Other',
+            self::Other => 'Other',
         };
     }
 

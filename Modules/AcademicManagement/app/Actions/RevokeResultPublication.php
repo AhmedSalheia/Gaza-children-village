@@ -37,9 +37,9 @@ final class RevokeResultPublication
             throw new MarksException('A revoke reason is required.');
         }
 
-        $publication->status                     = 'revoked';
-        $publication->revoked_at                 = now();
-        $publication->revoke_reason              = $revokeReason;
+        $publication->status = 'revoked';
+        $publication->revoked_at = now();
+        $publication->revoke_reason = $revokeReason;
         $publication->revoked_by_staff_profile_id = $revokedByStaffProfileId;
         $publication->save();
 

@@ -34,6 +34,7 @@ final class DocumentRequestService
      * the requester gate.
      *
      * @param  array<string, mixed>  $data
+     *
      * @throws \DomainException if the actor's portal role is not in allowed_requesters
      */
     public function createAndSubmit(array $data): StudentDocumentRequest
@@ -63,20 +64,20 @@ final class DocumentRequestService
 
         $request = new StudentDocumentRequest;
 
-        $request->enrollment_id              = (int) $data['enrollment_id'];
-        $request->student_profile_id         = (int) $data['student_profile_id'];
-        $request->institution_id             = (int) $data['institution_id'];
-        $request->institution_semester_id    = isset($data['institution_semester_id'])
+        $request->enrollment_id = (int) $data['enrollment_id'];
+        $request->student_profile_id = (int) $data['student_profile_id'];
+        $request->institution_id = (int) $data['institution_id'];
+        $request->institution_semester_id = isset($data['institution_semester_id'])
             ? (int) $data['institution_semester_id']
             : null;
-        $request->requested_by_actor_type    = (string) $data['actor_type'];
-        $request->requested_by_account_id    = (int) $data['actor_account_id'];
-        $request->portal                     = (string) $data['portal'];
-        $request->document_type_code         = (string) $data['document_type_code'];
-        $request->locale                     = (string) ($data['locale'] ?? 'ar');
-        $request->purpose_notes              = isset($data['purpose_notes']) ? (string) $data['purpose_notes'] : null;
-        $request->status                     = StudentDocumentRequest::STATUS_SUBMITTED;
-        $request->submitted_at               = now();
+        $request->requested_by_actor_type = (string) $data['actor_type'];
+        $request->requested_by_account_id = (int) $data['actor_account_id'];
+        $request->portal = (string) $data['portal'];
+        $request->document_type_code = (string) $data['document_type_code'];
+        $request->locale = (string) ($data['locale'] ?? 'ar');
+        $request->purpose_notes = isset($data['purpose_notes']) ? (string) $data['purpose_notes'] : null;
+        $request->status = StudentDocumentRequest::STATUS_SUBMITTED;
+        $request->submitted_at = now();
 
         $request->save();
 
@@ -142,8 +143,8 @@ final class DocumentRequestService
             ],
             StudentDocumentRequest::STATUS_PENDING_CLARIFICATION,
             [
-                'clarification_reason'     => $reason,
-                'reviewed_by_account_id'   => $reviewerAccountId,
+                'clarification_reason' => $reason,
+                'reviewed_by_account_id' => $reviewerAccountId,
             ],
         );
     }
@@ -158,8 +159,8 @@ final class DocumentRequestService
             [StudentDocumentRequest::STATUS_PENDING_CLARIFICATION],
             StudentDocumentRequest::STATUS_SUBMITTED,
             [
-                'purpose_notes'  => $notes,
-                'submitted_at'   => now(),
+                'purpose_notes' => $notes,
+                'submitted_at' => now(),
             ],
         );
     }
@@ -176,7 +177,7 @@ final class DocumentRequestService
                 StudentDocumentRequest::STATUS_APPROVED,
                 [
                     'approved_by_account_id' => $approverAccountId,
-                    'approved_at'            => now(),
+                    'approved_at' => now(),
                 ],
             );
 
@@ -198,9 +199,9 @@ final class DocumentRequestService
             ],
             StudentDocumentRequest::STATUS_REJECTED,
             [
-                'rejection_reason'         => $reason,
-                'approved_by_account_id'   => $approverAccountId,
-                'completed_at'             => now(),
+                'rejection_reason' => $reason,
+                'approved_by_account_id' => $approverAccountId,
+                'completed_at' => now(),
             ],
         );
     }
@@ -219,10 +220,10 @@ final class DocumentRequestService
         DB::table('student_document_requests')
             ->where('id', $request->id)
             ->update([
-                'status'        => StudentDocumentRequest::STATUS_CANCELLED,
+                'status' => StudentDocumentRequest::STATUS_CANCELLED,
                 'rejection_reason' => $reason,
-                'completed_at'  => now(),
-                'updated_at'    => now(),
+                'completed_at' => now(),
+                'updated_at' => now(),
             ]);
 
         $request->status = StudentDocumentRequest::STATUS_CANCELLED;
@@ -250,7 +251,7 @@ final class DocumentRequestService
         DB::table('student_document_requests')
             ->where('id', $request->id)
             ->update(array_merge($extra, [
-                'status'     => $toStatus,
+                'status' => $toStatus,
                 'updated_at' => now(),
             ]));
 

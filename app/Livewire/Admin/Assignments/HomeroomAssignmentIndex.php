@@ -40,32 +40,42 @@ final class HomeroomAssignmentIndex extends Component
     public bool $showHistory = false;
 
     // Create form
-    public bool   $showForm         = false;
-    public int    $formPositionId   = 0;
-    public int    $formClassGroupId = 0;
-    public bool   $formIsCoLead     = false;
-    public string $formStartsOn     = '';
+    public bool $showForm = false;
+
+    public int $formPositionId = 0;
+
+    public int $formClassGroupId = 0;
+
+    public bool $formIsCoLead = false;
+
+    public string $formStartsOn = '';
 
     // End form
-    public ?int   $endingId  = null;
+    public ?int $endingId = null;
+
     public string $endReason = '';
-    public string $endDate   = '';
+
+    public string $endDate = '';
 
     // Replace form
-    public ?int   $replacingId       = null;
-    public int    $replacePositionId = 0;
-    public string $replaceDate       = '';
-    public string $replaceReason     = '';
+    public ?int $replacingId = null;
+
+    public int $replacePositionId = 0;
+
+    public string $replaceDate = '';
+
+    public string $replaceReason = '';
 
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
         $this->requirePermission(PermissionKey::HOMEROOM_ASSIGNMENT_READ);
         $this->formStartsOn = now()->toDateString();
-        $this->endDate      = now()->toDateString();
-        $this->replaceDate  = now()->toDateString();
+        $this->endDate = now()->toDateString();
+        $this->replaceDate = now()->toDateString();
     }
 
     public function openSemesters(): Collection
@@ -166,10 +176,10 @@ final class HomeroomAssignmentIndex extends Component
         $this->requirePermission(PermissionKey::HOMEROOM_ASSIGNMENT_MANAGE);
 
         $this->validate([
-            'instSemId'        => ['required', 'integer', 'min:1'],
-            'formPositionId'   => ['required', 'integer', 'min:1'],
+            'instSemId' => ['required', 'integer', 'min:1'],
+            'formPositionId' => ['required', 'integer', 'min:1'],
             'formClassGroupId' => ['required', 'integer', 'min:1'],
-            'formStartsOn'     => ['required', 'date'],
+            'formStartsOn' => ['required', 'date'],
         ]);
 
         try {
@@ -192,9 +202,9 @@ final class HomeroomAssignmentIndex extends Component
     public function startEnd(int $id): void
     {
         $this->reset(['replacingId', 'replacePositionId', 'replaceReason']);
-        $this->endingId  = $id;
+        $this->endingId = $id;
         $this->endReason = '';
-        $this->endDate   = now()->toDateString();
+        $this->endDate = now()->toDateString();
     }
 
     public function confirmEnd(): void
@@ -203,7 +213,7 @@ final class HomeroomAssignmentIndex extends Component
 
         $this->validate([
             'endReason' => ['required', 'string', 'min:5'],
-            'endDate'   => ['required', 'date'],
+            'endDate' => ['required', 'date'],
         ]);
 
         try {
@@ -238,10 +248,10 @@ final class HomeroomAssignmentIndex extends Component
     public function startReplace(int $id): void
     {
         $this->reset(['endingId', 'endReason', 'endDate']);
-        $this->replacingId       = $id;
+        $this->replacingId = $id;
         $this->replacePositionId = 0;
-        $this->replaceDate       = now()->toDateString();
-        $this->replaceReason     = '';
+        $this->replaceDate = now()->toDateString();
+        $this->replaceReason = '';
     }
 
     public function confirmReplace(): void
@@ -250,8 +260,8 @@ final class HomeroomAssignmentIndex extends Component
 
         $this->validate([
             'replacePositionId' => ['required', 'integer', 'min:1'],
-            'replaceDate'       => ['required', 'date'],
-            'replaceReason'     => ['required', 'string', 'min:5'],
+            'replaceDate' => ['required', 'date'],
+            'replaceReason' => ['required', 'string', 'min:5'],
         ]);
 
         try {
@@ -279,18 +289,18 @@ final class HomeroomAssignmentIndex extends Component
 
     private function flash(string $type, string $message): void
     {
-        $this->flashType    = $type;
+        $this->flashType = $type;
         $this->flashMessage = $message;
     }
 
     public function render(): View
     {
         return view('livewire.admin.assignments.homeroom-index', [
-            'openSemesters'    => $this->openSemesters(),
-            'classGroups'      => $this->classGroups(),
+            'openSemesters' => $this->openSemesters(),
+            'classGroups' => $this->classGroups(),
             'eligiblePositions' => $this->eligiblePositions(),
-            'assignments'      => $this->assignments(),
-            'canManage'        => $this->adminCan(PermissionKey::HOMEROOM_ASSIGNMENT_MANAGE),
+            'assignments' => $this->assignments(),
+            'canManage' => $this->adminCan(PermissionKey::HOMEROOM_ASSIGNMENT_MANAGE),
         ])->layout('layouts.admin');
     }
 }

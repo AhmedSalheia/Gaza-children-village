@@ -17,17 +17,17 @@ describe('Generation failure leaves recoverable state', function (): void {
 
     test('generation_failed request has no issued document', function (): void {
         $request = new StudentDocumentRequest;
-        $request->enrollment_id            = 1;
-        $request->student_profile_id       = 1;
-        $request->institution_id           = 1;
-        $request->requested_by_actor_type  = 'guardian';
-        $request->requested_by_account_id  = 1;
-        $request->portal                   = 'guardian';
-        $request->document_type_code       = 'proof_of_enrolment';
-        $request->locale                   = 'ar';
-        $request->status                   = StudentDocumentRequest::STATUS_GENERATION_FAILED;
-        $request->approved_by_account_id   = 1;
-        $request->submitted_at             = now();
+        $request->enrollment_id = 1;
+        $request->student_profile_id = 1;
+        $request->institution_id = 1;
+        $request->requested_by_actor_type = 'guardian';
+        $request->requested_by_account_id = 1;
+        $request->portal = 'guardian';
+        $request->document_type_code = 'proof_of_enrolment';
+        $request->locale = 'ar';
+        $request->status = StudentDocumentRequest::STATUS_GENERATION_FAILED;
+        $request->approved_by_account_id = 1;
+        $request->submitted_at = now();
         $request->save();
 
         // No issued document should exist
@@ -44,16 +44,16 @@ describe('Generation failure leaves recoverable state', function (): void {
         // The job can be re-dispatched because it's not a terminal state
 
         $request = new StudentDocumentRequest;
-        $request->enrollment_id            = 1;
-        $request->student_profile_id       = 1;
-        $request->institution_id           = 1;
-        $request->requested_by_actor_type  = 'guardian';
-        $request->requested_by_account_id  = 1;
-        $request->portal                   = 'guardian';
-        $request->document_type_code       = 'proof_of_enrolment';
-        $request->locale                   = 'ar';
-        $request->status                   = StudentDocumentRequest::STATUS_GENERATION_FAILED;
-        $request->submitted_at             = now();
+        $request->enrollment_id = 1;
+        $request->student_profile_id = 1;
+        $request->institution_id = 1;
+        $request->requested_by_actor_type = 'guardian';
+        $request->requested_by_account_id = 1;
+        $request->portal = 'guardian';
+        $request->document_type_code = 'proof_of_enrolment';
+        $request->locale = 'ar';
+        $request->status = StudentDocumentRequest::STATUS_GENERATION_FAILED;
+        $request->submitted_at = now();
         $request->save();
 
         // Verify it's not terminal — can still be acted upon
@@ -64,18 +64,18 @@ describe('Generation failure leaves recoverable state', function (): void {
     });
 
     test('generation_failed request can be cancelled', function (): void {
-        $svc     = app(DocumentRequestService::class);
+        $svc = app(DocumentRequestService::class);
         $request = new StudentDocumentRequest;
-        $request->enrollment_id            = 1;
-        $request->student_profile_id       = 1;
-        $request->institution_id           = 1;
-        $request->requested_by_actor_type  = 'guardian';
-        $request->requested_by_account_id  = 1;
-        $request->portal                   = 'guardian';
-        $request->document_type_code       = 'proof_of_enrolment';
-        $request->locale                   = 'ar';
-        $request->status                   = StudentDocumentRequest::STATUS_GENERATION_FAILED;
-        $request->submitted_at             = now();
+        $request->enrollment_id = 1;
+        $request->student_profile_id = 1;
+        $request->institution_id = 1;
+        $request->requested_by_actor_type = 'guardian';
+        $request->requested_by_account_id = 1;
+        $request->portal = 'guardian';
+        $request->document_type_code = 'proof_of_enrolment';
+        $request->locale = 'ar';
+        $request->status = StudentDocumentRequest::STATUS_GENERATION_FAILED;
+        $request->submitted_at = now();
         $request->save();
 
         $svc->cancel($request, 'تم إلغاء الطلب بعد الفشل');

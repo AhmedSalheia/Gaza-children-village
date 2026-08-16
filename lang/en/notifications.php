@@ -35,6 +35,7 @@ return [
     // -------------------------------------------------------------------------
     'formal_request.submitted' => 'A formal request from :institution_name is awaiting review.',
     'formal_request.responded' => 'A response has been received for the request from :institution_name.',
+    'formal_request.returned' => 'Your formal request has been returned for revision.',
 
     // -------------------------------------------------------------------------
     // Mark sheets

@@ -21,16 +21,20 @@ final class GradingScaleIndex extends Component
 {
     use HasAdminAuth;
 
-    public bool   $showForm      = false;
-    public int    $institutionId = 0;
-    public string $code          = '';
-    public string $nameAr        = '';
+    public bool $showForm = false;
+
+    public int $institutionId = 0;
+
+    public string $code = '';
+
+    public string $nameAr = '';
 
     /** @var array<int, array<string, mixed>> */
     public array $gradeRows = [];
 
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -61,13 +65,13 @@ final class GradingScaleIndex extends Component
     public function addGradeRow(): void
     {
         $this->gradeRows[] = [
-            'code'       => '',
-            'name_ar'    => '',
-            'name_en'    => '',
-            'min_score'  => '',
-            'max_score'  => '',
+            'code' => '',
+            'name_ar' => '',
+            'name_en' => '',
+            'min_score' => '',
+            'max_score' => '',
             'is_passing' => true,
-            'sequence'   => count($this->gradeRows) + 1,
+            'sequence' => count($this->gradeRows) + 1,
         ];
     }
 
@@ -82,25 +86,25 @@ final class GradingScaleIndex extends Component
         $this->requirePermission(PermissionKey::GRADING_SCALE_MANAGE);
 
         $this->validate([
-            'institutionId'    => ['required', 'integer', 'min:1'],
-            'code'             => ['required', 'string', 'max:50'],
-            'nameAr'           => ['required', 'string', 'max:200'],
-            'gradeRows'        => ['required', 'array', 'min:1'],
-            'gradeRows.*.code'      => ['required', 'string'],
-            'gradeRows.*.name_ar'   => ['required', 'string'],
+            'institutionId' => ['required', 'integer', 'min:1'],
+            'code' => ['required', 'string', 'max:50'],
+            'nameAr' => ['required', 'string', 'max:200'],
+            'gradeRows' => ['required', 'array', 'min:1'],
+            'gradeRows.*.code' => ['required', 'string'],
+            'gradeRows.*.name_ar' => ['required', 'string'],
             'gradeRows.*.min_score' => ['required', 'numeric'],
             'gradeRows.*.max_score' => ['required', 'numeric'],
-            'gradeRows.*.sequence'  => ['required', 'integer', 'min:1'],
+            'gradeRows.*.sequence' => ['required', 'integer', 'min:1'],
         ]);
 
         $grades = array_map(static fn ($r) => [
-            'code'       => $r['code'],
-            'name_ar'    => $r['name_ar'],
-            'name_en'    => $r['name_en'] ?: null,
-            'min_score'  => (float) $r['min_score'],
-            'max_score'  => (float) $r['max_score'],
+            'code' => $r['code'],
+            'name_ar' => $r['name_ar'],
+            'name_en' => $r['name_en'] ?: null,
+            'min_score' => (float) $r['min_score'],
+            'max_score' => (float) $r['max_score'],
             'is_passing' => (bool) ($r['is_passing'] ?? false),
-            'sequence'   => (int) $r['sequence'],
+            'sequence' => (int) $r['sequence'],
         ], $this->gradeRows);
 
         try {
@@ -138,7 +142,7 @@ final class GradingScaleIndex extends Component
     {
         return view('livewire.admin.marks.grading-scales', [
             'institutions' => $this->institutions(),
-            'scales'       => $this->scales(),
+            'scales' => $this->scales(),
         ])->layout('layouts.admin');
     }
 
@@ -152,7 +156,7 @@ final class GradingScaleIndex extends Component
 
     private function flash(string $type, string $message): void
     {
-        $this->flashType    = $type;
+        $this->flashType = $type;
         $this->flashMessage = $message;
     }
 }

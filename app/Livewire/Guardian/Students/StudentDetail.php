@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Guardian\Students;
 
 use App\Livewire\Guardian\Concerns\HasGuardianAuth;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -39,10 +40,14 @@ final class StudentDetail extends Component
 
     // ── Correction-request form fields ────────────────────────────────────
 
-    public ?int   $correctionPriority    = null;
-    public ?bool  $correctionIsEmergency = null;
-    public string $correctionNote        = '';
-    public bool   $correctionFormOpen    = false;
+    public ?int $correctionPriority = null;
+
+    public ?bool $correctionIsEmergency = null;
+
+    public string $correctionNote = '';
+
+    public bool $correctionFormOpen = false;
+
     public ?string $correctionSuccessMessage = null;
 
     public function mount(int $studentProfileId): void
@@ -79,7 +84,7 @@ final class StudentDetail extends Component
             return null;
         }
 
-        $age   = now()->diffInYears(new \DateTime($student->birth_date));
+        $age = now()->diffInYears(new \DateTime($student->birth_date));
         $lower = (int) (floor($age / 3) * 3);
         $upper = $lower + 2;
 
@@ -239,17 +244,17 @@ final class StudentDetail extends Component
             ->get($cols);
 
         $summary = (object) [
-            'total'   => $rows->count(),
+            'total' => $rows->count(),
             'present' => $rows->where('status_code', 'present')->count(),
-            'absent'  => $rows->where('status_code', 'absent')->count(),
-            'late'    => $rows->where('status_code', 'late')->count(),
-            'other'   => $rows->whereNotIn('status_code', ['present', 'absent', 'late', null])->count(),
+            'absent' => $rows->where('status_code', 'absent')->count(),
+            'late' => $rows->where('status_code', 'late')->count(),
+            'other' => $rows->whereNotIn('status_code', ['present', 'absent', 'late', null])->count(),
         ];
 
         return (object) [
             'snapshot' => $snapshot,
-            'rows'     => $snapshot->detail_level === 'daily_status' ? $rows : collect(),
-            'summary'  => $summary,
+            'rows' => $snapshot->detail_level === 'daily_status' ? $rows : collect(),
+            'summary' => $summary,
         ];
     }
 
@@ -258,7 +263,7 @@ final class StudentDetail extends Component
     public function openCorrectionForm(): void
     {
         $this->assertStudentAccessible($this->studentProfileId);
-        $this->correctionFormOpen       = true;
+        $this->correctionFormOpen = true;
         $this->correctionSuccessMessage = null;
     }
 
@@ -278,7 +283,7 @@ final class StudentDetail extends Component
             return;
         }
 
-        $hasPriority  = $this->correctionPriority !== null;
+        $hasPriority = $this->correctionPriority !== null;
         $hasEmergency = $this->correctionIsEmergency !== null;
 
         if (! $hasPriority && ! $hasEmergency) {
@@ -313,21 +318,21 @@ final class StudentDetail extends Component
         try {
             DB::table('guardian_correction_requests')->insert([
                 'guardian_student_relationship_id' => $rel->id,
-                'requested_contact_priority'       => $this->correctionPriority,
-                'requested_is_emergency_contact'   => $this->correctionIsEmergency,
-                'note'                             => $this->correctionNote !== '' ? $this->correctionNote : null,
-                'status'                           => 'pending',
-                'pending_lock'                     => 1,
-                'created_at'                       => now(),
-                'updated_at'                       => now(),
+                'requested_contact_priority' => $this->correctionPriority,
+                'requested_is_emergency_contact' => $this->correctionIsEmergency,
+                'note' => $this->correctionNote !== '' ? $this->correctionNote : null,
+                'status' => 'pending',
+                'pending_lock' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
+        } catch (UniqueConstraintViolationException) {
             $this->correctionFormOpen = false;
 
             return;
         }
 
-        $this->correctionFormOpen       = false;
+        $this->correctionFormOpen = false;
         $this->correctionSuccessMessage = __('ui.correction_submitted', [], null, 'Your correction request has been submitted. Staff will review it shortly.');
         $this->resetCorrectionForm();
     }
@@ -341,11 +346,11 @@ final class StudentDetail extends Component
             $this->redirectRoute('guardian.dashboard', navigate: true);
 
             return view('livewire.guardian.students.detail', [
-                'student'           => null,
-                'ageRange'          => null,
-                'relationship'      => null,
+                'student' => null,
+                'ageRange' => null,
+                'relationship' => null,
                 'pendingCorrection' => null,
-                'publishedResults'  => collect(),
+                'publishedResults' => collect(),
                 'publishedAttendance' => (object) ['snapshot' => null, 'rows' => collect(), 'summary' => null],
             ])->layout('layouts.guardian');
         }
@@ -353,11 +358,11 @@ final class StudentDetail extends Component
         $this->assertStudentAccessible($this->studentProfileId);
 
         return view('livewire.guardian.students.detail', [
-            'student'             => $this->student(),
-            'ageRange'            => $this->ageRange(),
-            'relationship'        => $this->relationship(),
-            'pendingCorrection'   => $this->pendingCorrection(),
-            'publishedResults'    => $this->publishedResults(),
+            'student' => $this->student(),
+            'ageRange' => $this->ageRange(),
+            'relationship' => $this->relationship(),
+            'pendingCorrection' => $this->pendingCorrection(),
+            'publishedResults' => $this->publishedResults(),
             'publishedAttendance' => $this->publishedAttendance(),
         ])->layout('layouts.guardian');
     }
@@ -380,9 +385,9 @@ final class StudentDetail extends Component
 
     private function resetCorrectionForm(): void
     {
-        $this->correctionPriority    = null;
+        $this->correctionPriority = null;
         $this->correctionIsEmergency = null;
-        $this->correctionNote        = '';
+        $this->correctionNote = '';
         $this->resetErrorBag();
     }
 }

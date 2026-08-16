@@ -40,8 +40,8 @@ final class VerifySheet
                 );
             }
 
-            $locked->status                       = SheetStatus::Verified->value;
-            $locked->verified_at                  = now();
+            $locked->status = SheetStatus::Verified->value;
+            $locked->verified_at = now();
             $locked->verified_by_staff_profile_id = $actorStaffProfileId;
             $locked->save();
 

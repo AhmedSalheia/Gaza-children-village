@@ -132,14 +132,14 @@ final class SaveDraftMarks
 
         if ($mark === null) {
             $mark = new StudentMark;
-            $mark->mark_sheet_id            = $sheet->id;
-            $mark->enrollment_id            = $enrollmentId;
+            $mark->mark_sheet_id = $sheet->id;
+            $mark->enrollment_id = $enrollmentId;
             $mark->assessment_definition_id = $assessmentDefinitionId;
         }
 
-        $mark->score            = $score;
+        $mark->score = $score;
         $mark->exception_status = $exceptionStatus;
-        $mark->teacher_note     = $teacherNote !== '' ? $teacherNote : null;
+        $mark->teacher_note = $teacherNote !== '' ? $teacherNote : null;
         $mark->save();
 
         return $mark;

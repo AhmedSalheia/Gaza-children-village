@@ -43,12 +43,16 @@ final class MarkEntrySheet extends Component
     use HasStaffAuth;
 
     public ?int $assignmentId = null;
-    public ?int $windowId     = null;
+
+    public ?int $windowId = null;
 
     public string $returnReason = '';
-    public bool   $showReturn   = false;
+
+    public bool $showReturn = false;
+
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     /** Tracks whether a sheet was successfully opened on this visit (UI feedback only). */
     public bool $sheetOpened = false;
@@ -271,7 +275,7 @@ final class MarkEntrySheet extends Component
     public function startReturn(): void
     {
         $this->requirePermission(PermissionKey::MARKS_RETURN);
-        $this->showReturn   = true;
+        $this->showReturn = true;
         $this->returnReason = '';
     }
 
@@ -337,7 +341,7 @@ final class MarkEntrySheet extends Component
 
         // Validate scale belongs to same institution (if provided)
         if ($scaleId !== null) {
-            $scope   = $this->staffScope();
+            $scope = $this->staffScope();
             $belongs = DB::table('grading_scales')
                 ->where('id', $scaleId)
                 ->where('institution_id', $scope['institution_id'])
@@ -373,14 +377,14 @@ final class MarkEntrySheet extends Component
     public function render(): View
     {
         return view('livewire.staff.marks.mark-entry-sheet', [
-            'sheet'         => $this->resolveSheet(),
-            'assessments'   => $this->assessments(),
-            'marks'         => $this->marks(),
+            'sheet' => $this->resolveSheet(),
+            'assessments' => $this->assessments(),
+            'marks' => $this->marks(),
             'gradingScales' => $this->gradingScales(),
-            'canEnter'      => $this->staffCan(PermissionKey::MARKS_ENTER),
-            'canVerify'     => $this->staffCan(PermissionKey::MARKS_VERIFY),
-            'canReturn'     => $this->staffCan(PermissionKey::MARKS_RETURN),
-            'canCorrect'    => $this->staffCan(PermissionKey::MARKS_CORRECT),
+            'canEnter' => $this->staffCan(PermissionKey::MARKS_ENTER),
+            'canVerify' => $this->staffCan(PermissionKey::MARKS_VERIFY),
+            'canReturn' => $this->staffCan(PermissionKey::MARKS_RETURN),
+            'canCorrect' => $this->staffCan(PermissionKey::MARKS_CORRECT),
         ])->layout('layouts.staff');
     }
 
@@ -477,14 +481,14 @@ final class MarkEntrySheet extends Component
                         ->whereNull('subject_offering_id');
                 });
             })
-            ->orderByRaw("
+            ->orderByRaw('
                 CASE
                     WHEN class_group_id IS NOT NULL AND subject_offering_id IS NOT NULL THEN 1
                     WHEN subject_offering_id IS NOT NULL THEN 2
                     WHEN class_group_id IS NOT NULL THEN 3
                     ELSE 4
                 END
-            ")
+            ')
             ->first(['id']);
 
         return $row ? (int) $row->id : null;
@@ -493,6 +497,6 @@ final class MarkEntrySheet extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

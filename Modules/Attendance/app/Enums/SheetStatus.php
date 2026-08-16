@@ -24,18 +24,18 @@ namespace Modules\Attendance\Enums;
  */
 enum SheetStatus: string
 {
-    case Draft     = 'draft';
+    case Draft = 'draft';
     case Submitted = 'submitted';
-    case Returned  = 'returned';
-    case Verified  = 'verified';
-    case Reopened  = 'reopened';
+    case Returned = 'returned';
+    case Verified = 'verified';
+    case Reopened = 'reopened';
 
     /** Whether the sheet is editable by the teacher (can update records). */
     public function isEditable(): bool
     {
         return match ($this) {
             self::Draft, self::Returned => true,
-            default                      => false,
+            default => false,
         };
     }
 
@@ -44,7 +44,7 @@ enum SheetStatus: string
     {
         return match ($this) {
             self::Verified => true,
-            default         => false,
+            default => false,
         };
     }
 
@@ -64,7 +64,7 @@ enum SheetStatus: string
     {
         return match ($this) {
             self::Submitted, self::Reopened => true,
-            default                          => false,
+            default => false,
         };
     }
 }

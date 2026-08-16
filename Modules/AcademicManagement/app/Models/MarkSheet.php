@@ -52,12 +52,12 @@ final class MarkSheet extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'status'       => MarkSheetStatus::class,
+        'status' => MarkSheetStatus::class,
         'submitted_at' => 'datetime',
-        'verified_at'  => 'datetime',
-        'approved_at'  => 'datetime',
-        'returned_at'  => 'datetime',
-        'version'      => 'integer',
+        'verified_at' => 'datetime',
+        'approved_at' => 'datetime',
+        'returned_at' => 'datetime',
+        'version' => 'integer',
     ];
 
     /** @return BelongsTo<ClassGroup, $this> */

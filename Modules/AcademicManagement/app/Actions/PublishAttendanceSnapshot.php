@@ -46,8 +46,8 @@ final class PublishAttendanceSnapshot
 
             // 2. Compute effective date range with delay applied
             $cutoffDate = now()->subDays($policy->publish_delay_days)->toDateString();
-            $fromDate   = $periodFrom?->format('Y-m-d');
-            $toDate     = $periodTo ? min($periodTo->format('Y-m-d'), $cutoffDate) : $cutoffDate;
+            $fromDate = $periodFrom?->format('Y-m-d');
+            $toDate = $periodTo ? min($periodTo->format('Y-m-d'), $cutoffDate) : $cutoffDate;
 
             // 3. Load verified attendance sheets for this class group
             $sheetQuery = DB::table('student_attendance_sheets')
@@ -87,16 +87,16 @@ final class PublishAttendanceSnapshot
 
             // 6. Create snapshot header
             $snapshot = new AttendancePublicationSnapshot;
-            $snapshot->institution_semester_id    = $institutionSemesterId;
-            $snapshot->class_group_id             = $classGroupId;
-            $snapshot->period_from                = $fromDate;
-            $snapshot->period_to                  = $toDate;
-            $snapshot->version                    = $lastVersion + 1;
-            $snapshot->detail_level               = $policy->detail_level;
-            $snapshot->show_reason                = $policy->show_reason;
-            $snapshot->show_arrival_departure     = $policy->show_arrival_departure;
-            $snapshot->status                     = 'published';
-            $snapshot->published_at               = now();
+            $snapshot->institution_semester_id = $institutionSemesterId;
+            $snapshot->class_group_id = $classGroupId;
+            $snapshot->period_from = $fromDate;
+            $snapshot->period_to = $toDate;
+            $snapshot->version = $lastVersion + 1;
+            $snapshot->detail_level = $policy->detail_level;
+            $snapshot->show_reason = $policy->show_reason;
+            $snapshot->show_arrival_departure = $policy->show_arrival_departure;
+            $snapshot->status = 'published';
+            $snapshot->published_at = now();
             $snapshot->publisher_staff_profile_id = $publisherStaffProfileId;
             $snapshot->save();
 
@@ -113,7 +113,7 @@ final class PublishAttendanceSnapshot
             $sheetDateMap = $sheets->keyBy('id');
 
             // 9. Write snapshot rows (apply policy privacy rules)
-            $now  = now()->toDateTimeString();
+            $now = now()->toDateTimeString();
             $rows = [];
             foreach ($records as $record) {
                 $attendanceDate = $sheetDateMap[$record->sheet_id]?->attendance_date;
@@ -123,15 +123,15 @@ final class PublishAttendanceSnapshot
                 }
 
                 $rows[] = [
-                    'snapshot_id'        => $snapshot->id,
+                    'snapshot_id' => $snapshot->id,
                     'student_profile_id' => (int) $record->student_profile_id,
-                    'enrollment_id'      => (int) $record->enrollment_id,
-                    'attendance_date'    => $attendanceDate,
-                    'status_code'        => $record->status_code,
-                    'reason'             => $policy->show_reason ? $record->reason : null,
-                    'arrived_at'         => $policy->show_arrival_departure ? $record->arrived_at : null,
-                    'created_at'         => $now,
-                    'updated_at'         => $now,
+                    'enrollment_id' => (int) $record->enrollment_id,
+                    'attendance_date' => $attendanceDate,
+                    'status_code' => $record->status_code,
+                    'reason' => $policy->show_reason ? $record->reason : null,
+                    'arrived_at' => $policy->show_arrival_departure ? $record->arrived_at : null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
 

@@ -118,14 +118,14 @@ final class CreateTeachingAssignment
                 }
 
                 $assignment = new TeachingAssignment;
-                $assignment->staff_profile_id       = (int) $position->staff_profile_id;
+                $assignment->staff_profile_id = (int) $position->staff_profile_id;
                 $assignment->institution_semester_id = (int) $classGroup->institution_semester_id;
-                $assignment->staff_position_id      = $staffPositionId;
-                $assignment->class_group_id         = $classGroupId;
-                $assignment->subject_offering_id    = $subjectOfferingId;
-                $assignment->starts_on              = $startsOn->format('Y-m-d');
-                $assignment->ends_on                = null;
-                $assignment->status                 = AssignmentStatus::Active->value;
+                $assignment->staff_position_id = $staffPositionId;
+                $assignment->class_group_id = $classGroupId;
+                $assignment->subject_offering_id = $subjectOfferingId;
+                $assignment->starts_on = $startsOn->format('Y-m-d');
+                $assignment->ends_on = null;
+                $assignment->status = AssignmentStatus::Active->value;
                 $assignment->save();
 
                 return $assignment;
@@ -141,7 +141,7 @@ final class CreateTeachingAssignment
     private function loadPosition(int $positionId): object
     {
         $posClass = 'Modules\\Staff\\Models\\StaffPosition';
-        $pos      = $posClass::find($positionId);
+        $pos = $posClass::find($positionId);
 
         if ($pos === null) {
             throw new \InvalidArgumentException("StaffPosition #{$positionId} not found.");
@@ -153,7 +153,7 @@ final class CreateTeachingAssignment
     private function loadSemester(int $semesterId): object
     {
         $semClass = 'Modules\\AcademicCalendar\\Models\\InstitutionSemester';
-        $sem      = $semClass::find($semesterId);
+        $sem = $semClass::find($semesterId);
 
         if ($sem === null) {
             throw new \InvalidArgumentException("InstitutionSemester #{$semesterId} not found.");

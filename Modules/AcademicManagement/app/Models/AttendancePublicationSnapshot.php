@@ -40,13 +40,13 @@ final class AttendancePublicationSnapshot extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'published_at'          => 'datetime',
-        'revoked_at'            => 'datetime',
-        'period_from'           => 'date',
-        'period_to'             => 'date',
-        'show_reason'           => 'boolean',
+        'published_at' => 'datetime',
+        'revoked_at' => 'datetime',
+        'period_from' => 'date',
+        'period_to' => 'date',
+        'show_reason' => 'boolean',
         'show_arrival_departure' => 'boolean',
-        'version'               => 'integer',
+        'version' => 'integer',
     ];
 
     /** @return HasMany<AttendanceSnapshotRow, $this> */

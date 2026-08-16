@@ -22,11 +22,15 @@ final class StudentAttendanceStatus
 {
     // ── Status codes ────────────────────────────────────────────────────────
 
-    public const PRESENT         = 'present';
-    public const ABSENT          = 'absent';
+    public const PRESENT = 'present';
+
+    public const ABSENT = 'absent';
+
     public const EXCUSED_ABSENCE = 'excused_absence';
-    public const LATE            = 'late';
-    public const LEFT_EARLY      = 'left_early';
+
+    public const LATE = 'late';
+
+    public const LEFT_EARLY = 'left_early';
 
     // ── Metadata catalogue ──────────────────────────────────────────────────
 
@@ -47,49 +51,49 @@ final class StudentAttendanceStatus
     {
         return [
             self::PRESENT => [
-                'label_ar'              => 'حاضر',
-                'label_en'              => 'Present',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'حاضر',
+                'label_en' => 'Present',
+                'requires_reason' => false,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => true,
-                'guardian_publishable'  => true,
+                'counts_as_present' => true,
+                'guardian_publishable' => true,
             ],
             self::ABSENT => [
-                'label_ar'              => 'غائب',
-                'label_en'              => 'Absent',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'غائب',
+                'label_en' => 'Absent',
+                'requires_reason' => false,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => false,
-                'guardian_publishable'  => true,
+                'counts_as_present' => false,
+                'guardian_publishable' => true,
             ],
             self::EXCUSED_ABSENCE => [
-                'label_ar'              => 'غياب بعذر',
-                'label_en'              => 'Excused Absence',
-                'requires_reason'       => true,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'غياب بعذر',
+                'label_en' => 'Excused Absence',
+                'requires_reason' => true,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => false,
-                'guardian_publishable'  => true,
+                'counts_as_present' => false,
+                'guardian_publishable' => true,
             ],
             self::LATE => [
-                'label_ar'              => 'متأخر',
-                'label_en'              => 'Late',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => true,
+                'label_ar' => 'متأخر',
+                'label_en' => 'Late',
+                'requires_reason' => false,
+                'allows_arrival_time' => true,
                 'allows_departure_time' => false,
-                'counts_as_present'     => true,
-                'guardian_publishable'  => true,
+                'counts_as_present' => true,
+                'guardian_publishable' => true,
             ],
             self::LEFT_EARLY => [
-                'label_ar'              => 'خرج مبكراً',
-                'label_en'              => 'Left Early',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'خرج مبكراً',
+                'label_en' => 'Left Early',
+                'requires_reason' => false,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => true,
-                'counts_as_present'     => true,
-                'guardian_publishable'  => true,
+                'counts_as_present' => true,
+                'guardian_publishable' => true,
             ],
         ];
     }

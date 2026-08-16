@@ -7,9 +7,11 @@ namespace App\Livewire\Staff\Reports;
 use App\Exports\MarksCompletionExport;
 use App\Exports\ResultReportExport;
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,9 +30,11 @@ class ResultReport extends Component
 {
     use HasStaffAuth;
 
-    public string $reportType   = 'completion';
-    public int    $classGroupId = 0;
-    public bool   $canExport    = false;
+    public string $reportType = 'completion';
+
+    public int $classGroupId = 0;
+
+    public bool $canExport = false;
 
     public function mount(): void
     {
@@ -39,7 +43,7 @@ class ResultReport extends Component
     }
 
     #[Computed]
-    public function classGroups(): \Illuminate\Support\Collection
+    public function classGroups(): Collection
     {
         $scope = $this->staffScope();
 
@@ -65,7 +69,7 @@ class ResultReport extends Component
     }
 
     #[Computed]
-    public function completionRows(): \Illuminate\Support\Collection
+    public function completionRows(): Collection
     {
         if ($this->reportType !== 'completion') {
             return collect();
@@ -151,17 +155,17 @@ class ResultReport extends Component
         $total = array_sum($map);
 
         return (object) [
-            'total'     => $total,
-            'draft'     => (int) ($map['draft'] ?? 0),
+            'total' => $total,
+            'draft' => (int) ($map['draft'] ?? 0),
             'submitted' => (int) ($map['submitted'] ?? 0),
-            'verified'  => (int) ($map['verified'] ?? 0),
-            'returned'  => (int) ($map['returned'] ?? 0),
-            'approved'  => (int) ($map['approved'] ?? 0),
+            'verified' => (int) ($map['verified'] ?? 0),
+            'returned' => (int) ($map['returned'] ?? 0),
+            'approved' => (int) ($map['approved'] ?? 0),
         ];
     }
 
     #[Computed]
-    public function resultRows(): \Illuminate\Support\Collection
+    public function resultRows(): Collection
     {
         if ($this->reportType !== 'results') {
             return collect();
@@ -231,26 +235,26 @@ class ResultReport extends Component
             return;
         }
 
-        $export   = new MarksCompletionExport(
+        $export = new MarksCompletionExport(
             institutionSemesterId: $scope['institution_semester_id'],
             classGroupId: $this->classGroupId > 0 ? $this->classGroupId : null,
             allowedPeriodIds: $allowedPeriodIds,
         );
-        $rows     = $export->collection();
+        $rows = $export->collection();
         $filename = 'marks-completion-'.now()->format('Y-m-d').'.xlsx';
-        $path     = 'reports/'.Str::uuid().'/'.$filename;
+        $path = 'reports/'.Str::uuid().'/'.$filename;
 
         Storage::disk('local')->makeDirectory(dirname($path));
         Excel::store($export, $path, 'local');
 
         $exportId = $this->auditExport('marks_completion', [
             'institution_semester_id' => $scope['institution_semester_id'],
-            'class_group_id'          => $this->classGroupId,
+            'class_group_id' => $this->classGroupId,
         ], $rows->count(), $path);
 
         $this->dispatch('start-download', url: route('staff.reports.download', [
             'export' => encrypt($exportId),
-            'name'   => $filename,
+            'name' => $filename,
         ]));
     }
 
@@ -272,45 +276,45 @@ class ResultReport extends Component
             return;
         }
 
-        $export   = new ResultReportExport(
+        $export = new ResultReportExport(
             institutionSemesterId: $scope['institution_semester_id'],
             classGroupId: $this->classGroupId > 0 ? $this->classGroupId : null,
             allowedPeriodIds: $allowedPeriodIds,
         );
-        $rows     = $export->collection();
+        $rows = $export->collection();
         $filename = 'results-report-'.now()->format('Y-m-d').'.xlsx';
-        $path     = 'reports/'.Str::uuid().'/'.$filename;
+        $path = 'reports/'.Str::uuid().'/'.$filename;
 
         Storage::disk('local')->makeDirectory(dirname($path));
         Excel::store($export, $path, 'local');
 
         $exportId = $this->auditExport('result_report', [
             'institution_semester_id' => $scope['institution_semester_id'],
-            'class_group_id'          => $this->classGroupId,
+            'class_group_id' => $this->classGroupId,
         ], $rows->count(), $path);
 
         $this->dispatch('start-download', url: route('staff.reports.download', [
             'export' => encrypt($exportId),
-            'name'   => $filename,
+            'name' => $filename,
         ]));
     }
 
     private function auditExport(string $type, array $scope, int $rowCount, string $filePath): int
     {
         return (int) DB::table('report_exports')->insertGetId([
-            'export_type'      => $type,
-            'actor_type'       => 'staff',
+            'export_type' => $type,
+            'actor_type' => 'staff',
             'actor_account_id' => (int) auth('staff')->id(),
-            'scope'            => json_encode($scope),
-            'locale'           => 'ar',
-            'row_count'        => $rowCount,
-            'file_path'        => $filePath,
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'scope' => json_encode($scope),
+            'locale' => 'ar',
+            'row_count' => $rowCount,
+            'file_path' => $filePath,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.staff.reports.result-report')
             ->layout('layouts.staff');

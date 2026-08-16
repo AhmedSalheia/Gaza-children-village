@@ -32,10 +32,10 @@ final class AttendancePublicationPolicy extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'enabled'               => 'boolean',
-        'show_reason'           => 'boolean',
+        'enabled' => 'boolean',
+        'show_reason' => 'boolean',
         'show_arrival_departure' => 'boolean',
-        'publish_delay_days'    => 'integer',
+        'publish_delay_days' => 'integer',
     ];
 
     public function isEnabled(): bool

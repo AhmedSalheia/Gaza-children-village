@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\Requests\Providers;
 
+use Modules\Requests\Resolvers\FormalRequestContentResolver;
 use Modules\Requests\Services\CorrectionApplicationService;
 use Modules\Requests\Services\CorrectionRequestService;
+use Modules\Requests\Services\InstitutionFormalRequestNumberService;
+use Modules\Requests\Services\InstitutionFormalRequestService;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
 /**
@@ -30,6 +33,9 @@ final class RequestsServiceProvider extends ModuleServiceProvider
 
         $this->app->singleton(CorrectionRequestService::class);
         $this->app->singleton(CorrectionApplicationService::class);
+        $this->app->singleton(InstitutionFormalRequestNumberService::class);
+        $this->app->singleton(FormalRequestContentResolver::class);
+        $this->app->singleton(InstitutionFormalRequestService::class);
     }
 
     public function boot(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -32,7 +33,7 @@ final class AttendanceQueue extends Component
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_RETURN);
     }
 
-    public function pendingSheets(): \Illuminate\Support\Collection
+    public function pendingSheets(): Collection
     {
         $scope = $this->staffScope();
 
@@ -52,7 +53,7 @@ final class AttendanceQueue extends Component
                 'sas.status',
                 'cg.name_ar as class_name',
                 'al.name_ar as level_name',
-                DB::raw("(SELECT COUNT(*) FROM student_attendance_records WHERE sheet_id = sas.id) as total_students"),
+                DB::raw('(SELECT COUNT(*) FROM student_attendance_records WHERE sheet_id = sas.id) as total_students'),
             )
             ->orderBy('sas.attendance_date')
             ->orderBy('cg.name_ar');

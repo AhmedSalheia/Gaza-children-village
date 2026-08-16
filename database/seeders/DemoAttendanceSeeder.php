@@ -50,8 +50,8 @@ final class DemoAttendanceSeeder extends Seeder
             ->value('id');
 
         // Class groups
-        $cgG1aId  = (int) DB::table('class_groups')->where('code', 'CG-G1-A')->where('institution_semester_id', $instSemId)->value('id');
-        $cgG2aId  = (int) DB::table('class_groups')->where('code', 'CG-G2-A')->where('institution_semester_id', $instSemId)->value('id');
+        $cgG1aId = (int) DB::table('class_groups')->where('code', 'CG-G1-A')->where('institution_semester_id', $instSemId)->value('id');
+        $cgG2aId = (int) DB::table('class_groups')->where('code', 'CG-G2-A')->where('institution_semester_id', $instSemId)->value('id');
         $cgKg1aId = (int) DB::table('class_groups')->where('code', 'CG-KG1-A')->where('institution_semester_id', $instSemId)->value('id');
 
         // Staff
@@ -92,22 +92,22 @@ final class DemoAttendanceSeeder extends Seeder
 
                 // Assign lifecycle status based on date recency
                 $status = match (true) {
-                    $i === 0       => 'draft',       // most recent — still draft
-                    $i === 1       => 'submitted',   // submitted awaiting verification
-                    $i === 2       => 'returned',    // returned for correction
-                    $i <= 7        => 'verified',    // verified
-                    default        => 'verified',
+                    $i === 0 => 'draft',       // most recent — still draft
+                    $i === 1 => 'submitted',   // submitted awaiting verification
+                    $i === 2 => 'returned',    // returned for correction
+                    $i <= 7 => 'verified',    // verified
+                    default => 'verified',
                 };
 
                 $sheetRow = [
-                    'institution_semester_id'      => $instSemId,
-                    'operational_period_id'        => $opMornId,
-                    'class_group_id'               => $cgId,
-                    'attendance_date'              => $date,
-                    'status'                       => $status,
-                    'creator_staff_profile_id'     => $staffCreatorId,
-                    'created_at'                   => now()->subDays(10 - $i),
-                    'updated_at'                   => now()->subDays(9 - $i),
+                    'institution_semester_id' => $instSemId,
+                    'operational_period_id' => $opMornId,
+                    'class_group_id' => $cgId,
+                    'attendance_date' => $date,
+                    'status' => $status,
+                    'creator_staff_profile_id' => $staffCreatorId,
+                    'created_at' => now()->subDays(10 - $i),
+                    'updated_at' => now()->subDays(9 - $i),
                 ];
 
                 if (in_array($status, ['submitted', 'returned', 'verified'], true)) {
@@ -131,19 +131,19 @@ final class DemoAttendanceSeeder extends Seeder
                     $statusCode = match (true) {
                         $i >= 3 && $idx === 1 && ($i % 3 === 0) => 'absent',
                         $i >= 5 && $idx === 0 && ($i % 4 === 0) => 'late',
-                        default                                   => 'present',
+                        default => 'present',
                     };
 
                     DB::table('student_attendance_records')->insert([
-                        'sheet_id'          => $sheetId,
-                        'enrollment_id'     => $enr->enrollment_id,
+                        'sheet_id' => $sheetId,
+                        'enrollment_id' => $enr->enrollment_id,
                         'student_profile_id' => $enr->student_profile_id,
-                        'status_code'       => $statusCode,
-                        'reason'            => $statusCode === 'absent' ? 'مرض - تقرير طبي' : null,
-                        'arrived_at'        => $statusCode === 'late' ? '08:15:00' : null,
-                        'source'            => 'teacher_entry',
-                        'created_at'        => now()->subDays(10 - $i),
-                        'updated_at'        => now()->subDays(10 - $i),
+                        'status_code' => $statusCode,
+                        'reason' => $statusCode === 'absent' ? 'مرض - تقرير طبي' : null,
+                        'arrived_at' => $statusCode === 'late' ? '08:15:00' : null,
+                        'source' => 'teacher_entry',
+                        'created_at' => now()->subDays(10 - $i),
+                        'updated_at' => now()->subDays(10 - $i),
                     ]);
                 }
             }
@@ -172,29 +172,29 @@ final class DemoAttendanceSeeder extends Seeder
                 $statusCode = match (true) {
                     $i >= 4 && $code === 'STAFF-003' && ($i % 4 === 0) => 'absent',
                     $i >= 5 && $code === 'STAFF-005' && ($i % 5 === 0) => 'late',
-                    default                                               => 'present',
+                    default => 'present',
                 };
 
                 $isVerified = $i >= 2;
 
                 DB::table('staff_attendance_records')->insert([
-                    'staff_profile_id'             => $spId,
-                    'institution_semester_id'      => $instSemId,
-                    'operational_period_id'        => $opMornId,
-                    'record_date'                  => $date,
-                    'status_code'                  => $statusCode,
-                    'reason'                       => $statusCode === 'absent' ? 'إجازة مرضية' : null,
-                    'confirmed_arrived_at'         => in_array($statusCode, ['present', 'late']) ? '07:30:00' : null,
-                    'confirmed_departed_at'        => in_array($statusCode, ['present', 'late']) ? '12:00:00' : null,
-                    'scanned_arrived_at'           => null,
-                    'scanned_departed_at'          => null,
-                    'is_verified'                  => $isVerified,
-                    'verified_at'                  => $isVerified ? now()->subDays(10 - $i)->addHours(13) : null,
+                    'staff_profile_id' => $spId,
+                    'institution_semester_id' => $instSemId,
+                    'operational_period_id' => $opMornId,
+                    'record_date' => $date,
+                    'status_code' => $statusCode,
+                    'reason' => $statusCode === 'absent' ? 'إجازة مرضية' : null,
+                    'confirmed_arrived_at' => in_array($statusCode, ['present', 'late']) ? '07:30:00' : null,
+                    'confirmed_departed_at' => in_array($statusCode, ['present', 'late']) ? '12:00:00' : null,
+                    'scanned_arrived_at' => null,
+                    'scanned_departed_at' => null,
+                    'is_verified' => $isVerified,
+                    'verified_at' => $isVerified ? now()->subDays(10 - $i)->addHours(13) : null,
                     'verified_by_staff_profile_id' => $isVerified ? $staffVerifierId : null,
-                    'source'                       => 'manual_entry',
-                    'creator_staff_profile_id'     => $staffVerifierId,
-                    'created_at'                   => now()->subDays(10 - $i),
-                    'updated_at'                   => now()->subDays(10 - $i),
+                    'source' => 'manual_entry',
+                    'creator_staff_profile_id' => $staffVerifierId,
+                    'created_at' => now()->subDays(10 - $i),
+                    'updated_at' => now()->subDays(10 - $i),
                 ]);
             }
         }
@@ -204,13 +204,13 @@ final class DemoAttendanceSeeder extends Seeder
             $tokenHash = hash('sha256', 'demo-qr-token-staff004-'.now()->format('Y'));
 
             $credentialId = (int) DB::table('staff_qr_credentials')->insertGetId([
-                'staff_profile_id'         => $staffCreatorId,
-                'token_hash'               => $tokenHash,
-                'is_active'                => true,
-                'issued_at'                => now()->subMonths(2),
+                'staff_profile_id' => $staffCreatorId,
+                'token_hash' => $tokenHash,
+                'is_active' => true,
+                'issued_at' => now()->subMonths(2),
                 'issued_by_staff_profile_id' => $staffVerifierId,
-                'created_at'               => now()->subMonths(2),
-                'updated_at'               => now()->subMonths(2),
+                'created_at' => now()->subMonths(2),
+                'updated_at' => now()->subMonths(2),
             ]);
 
             // Seed some scan events
@@ -222,18 +222,18 @@ final class DemoAttendanceSeeder extends Seeder
                 $reviewed = $i >= 1;
 
                 DB::table('attendance_scan_events')->insert([
-                    'qr_credential_id'             => $credentialId,
-                    'staff_profile_id'             => $staffCreatorId,
-                    'institution_semester_id'      => $instSemId,
-                    'operational_period_id'        => $opMornId,
-                    'scanned_at'                   => now()->subDays(10 - $i)->setTime(7, 28, 0),
-                    'scan_date'                    => $date,
-                    'direction'                    => 'arrival',
-                    'processing_status'            => $reviewed ? 'reviewed' : 'pending',
+                    'qr_credential_id' => $credentialId,
+                    'staff_profile_id' => $staffCreatorId,
+                    'institution_semester_id' => $instSemId,
+                    'operational_period_id' => $opMornId,
+                    'scanned_at' => now()->subDays(10 - $i)->setTime(7, 28, 0),
+                    'scan_date' => $date,
+                    'direction' => 'arrival',
+                    'processing_status' => $reviewed ? 'reviewed' : 'pending',
                     'reviewed_by_staff_profile_id' => $reviewed ? $staffVerifierId : null,
-                    'reviewed_at'                  => $reviewed ? now()->subDays(10 - $i)->addHours(5) : null,
-                    'created_at'                   => now()->subDays(10 - $i),
-                    'updated_at'                   => now()->subDays(10 - $i),
+                    'reviewed_at' => $reviewed ? now()->subDays(10 - $i)->addHours(5) : null,
+                    'created_at' => now()->subDays(10 - $i),
+                    'updated_at' => now()->subDays(10 - $i),
                 ]);
             }
         }
@@ -246,7 +246,7 @@ final class DemoAttendanceSeeder extends Seeder
      */
     private function recentWeekdays(int $n): array
     {
-        $dates  = [];
+        $dates = [];
         $cursor = now()->subDay();
 
         while (count($dates) < $n) {

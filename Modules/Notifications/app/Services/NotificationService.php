@@ -43,6 +43,7 @@ final class NotificationService
         NotificationType::DOCUMENT_REQUEST_ISSUED => ['student_name', 'document_type', 'request_id'],
         NotificationType::FORMAL_REQUEST_SUBMITTED => ['institution_name', 'request_id', 'subject'],
         NotificationType::FORMAL_REQUEST_RESPONDED => ['institution_name', 'request_id', 'subject'],
+        NotificationType::FORMAL_REQUEST_RETURNED => ['request_id', 'subject'],
         NotificationType::MARK_SHEET_RETURNED => ['subject_name', 'class_name', 'sheet_id', 'reason'],
         NotificationType::MARK_SHEET_VERIFIED => ['subject_name', 'class_name', 'sheet_id'],
         NotificationType::ATTENDANCE_SHEET_RETURNED => ['class_name', 'date', 'sheet_id', 'reason'],

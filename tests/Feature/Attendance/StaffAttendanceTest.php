@@ -40,7 +40,8 @@ final class StaffAttendanceTest extends TestCase
 
     // ── Shared org + institution_type (created once per test) ─────────────────
 
-    private int $orgId  = 0;
+    private int $orgId = 0;
+
     private int $typeId = 0;
 
     protected function setUp(): void
@@ -48,17 +49,17 @@ final class StaffAttendanceTest extends TestCase
         parent::setUp();
 
         $this->orgId = (int) DB::table('organizations')->insertGetId([
-            'code'       => 'ORG-STAFF',
-            'name_en'    => 'Staff Attendance Test Org',
-            'is_active'  => true,
+            'code' => 'ORG-STAFF',
+            'name_en' => 'Staff Attendance Test Org',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         $this->typeId = (int) DB::table('institution_types')->insertGetId([
-            'code'       => 'TYPE-STAFF',
-            'name_en'    => 'School',
-            'is_active'  => true,
+            'code' => 'TYPE-STAFF',
+            'name_en' => 'School',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -69,13 +70,13 @@ final class StaffAttendanceTest extends TestCase
     private function makeInstitution(): int
     {
         return (int) DB::table('institutions')->insertGetId([
-            'organization_id'     => $this->orgId,
+            'organization_id' => $this->orgId,
             'institution_type_id' => $this->typeId,
-            'code'                => 'INST-'.uniqid(),
-            'name_en'             => 'Test Institution',
-            'is_active'           => true,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'code' => 'INST-'.uniqid(),
+            'name_en' => 'Test Institution',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -83,34 +84,34 @@ final class StaffAttendanceTest extends TestCase
     {
         $yearId = (int) DB::table('academic_years')->insertGetId([
             'organization_id' => $this->orgId,
-            'code'            => 'AY-'.uniqid(),
-            'name_en'         => 'Test Year',
-            'starts_on'       => '2025-09-01',
-            'ends_on'         => '2026-06-30',
-            'status'          => 'open',
-            'created_at'      => now(),
-            'updated_at'      => now(),
+            'code' => 'AY-'.uniqid(),
+            'name_en' => 'Test Year',
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-06-30',
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $semId = (int) DB::table('semesters')->insertGetId([
-            'code'             => 'SEM-'.uniqid(),
-            'name_en'          => 'First Semester',
-            'name_ar'          => 'First Semester',
-            'sequence'         => 1,
-            'status'           => 'open',
+            'code' => 'SEM-'.uniqid(),
+            'name_en' => 'First Semester',
+            'name_ar' => 'First Semester',
+            'sequence' => 1,
+            'status' => 'open',
             'academic_year_id' => $yearId,
-            'starts_on'        => '2025-09-01',
-            'ends_on'          => '2026-01-31',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-01-31',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('institution_semesters')->insertGetId([
             'institution_id' => $institutionId,
-            'semester_id'    => $semId,
-            'status'         => $status,
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'semester_id' => $semId,
+            'status' => $status,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -118,15 +119,15 @@ final class StaffAttendanceTest extends TestCase
     {
         return (int) DB::table('operational_periods')->insertGetId([
             'institution_semester_id' => $semesterId,
-            'code'                    => 'OP-'.uniqid(),
-            'name_en'                 => 'Morning',
-            'name_ar'                 => 'Morning',
-            'sequence'                => 1,
-            'starts_at'               => '08:00:00',
-            'ends_at'                 => '13:00:00',
-            'is_active'               => true,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'code' => 'OP-'.uniqid(),
+            'name_en' => 'Morning',
+            'name_ar' => 'Morning',
+            'sequence' => 1,
+            'starts_at' => '08:00:00',
+            'ends_at' => '13:00:00',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -141,25 +142,25 @@ final class StaffAttendanceTest extends TestCase
     {
         $personId = (int) DB::table('people')->insertGetId([
             'full_name_ar' => 'موظف '.uniqid(),
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $profileId = (int) DB::table('staff_profiles')->insertGetId([
-            'person_id'         => $personId,
-            'staff_code'        => 'SP-'.uniqid(),
+            'person_id' => $personId,
+            'staff_code' => 'SP-'.uniqid(),
             'employment_status' => 'active',
-            'created_at'        => now(),
-            'updated_at'        => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         if ($institutionId !== null) {
             DB::table('staff_institution_assignments')->insert([
                 'staff_profile_id' => $profileId,
-                'institution_id'   => $institutionId,
-                'started_on'       => '2025-09-01',
-                'created_at'       => now(),
-                'updated_at'       => now(),
+                'institution_id' => $institutionId,
+                'started_on' => '2025-09-01',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
@@ -169,8 +170,8 @@ final class StaffAttendanceTest extends TestCase
     /** Build institution → semester → period; return ids keyed by name. */
     private function makeScope(string $semesterStatus = 'open'): array
     {
-        $instId   = $this->makeInstitution();
-        $semId    = $this->makeSemester($instId, $semesterStatus);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeSemester($instId, $semesterStatus);
         $periodId = $this->makePeriod($semId);
 
         return ['instId' => $instId, 'semId' => $semId, 'periodId' => $periodId];
@@ -183,11 +184,11 @@ final class StaffAttendanceTest extends TestCase
         }
 
         return app(CreateDailyStaffRecord::class)(
-            staffProfileId:        $staffProfileId,
-            operationalPeriodId:   $periodId,
-            date:                  $date,
-            statusCode:            StaffAttendanceStatus::PRESENT,
-            reason:                null,
+            staffProfileId: $staffProfileId,
+            operationalPeriodId: $periodId,
+            date: $date,
+            statusCode: StaffAttendanceStatus::PRESENT,
+            reason: null,
             creatorStaffProfileId: $staffProfileId,
         );
     }
@@ -198,11 +199,11 @@ final class StaffAttendanceTest extends TestCase
     {
         $catalogue = StaffAttendanceStatus::catalogue();
 
-        $this->assertArrayHasKey(StaffAttendanceStatus::PRESENT,       $catalogue);
-        $this->assertArrayHasKey(StaffAttendanceStatus::ABSENT,        $catalogue);
-        $this->assertArrayHasKey(StaffAttendanceStatus::EXCUSED,       $catalogue);
-        $this->assertArrayHasKey(StaffAttendanceStatus::LATE,          $catalogue);
-        $this->assertArrayHasKey(StaffAttendanceStatus::LEAVE,         $catalogue);
+        $this->assertArrayHasKey(StaffAttendanceStatus::PRESENT, $catalogue);
+        $this->assertArrayHasKey(StaffAttendanceStatus::ABSENT, $catalogue);
+        $this->assertArrayHasKey(StaffAttendanceStatus::EXCUSED, $catalogue);
+        $this->assertArrayHasKey(StaffAttendanceStatus::LATE, $catalogue);
+        $this->assertArrayHasKey(StaffAttendanceStatus::LEAVE, $catalogue);
         $this->assertArrayHasKey(StaffAttendanceStatus::OFFICIAL_DUTY, $catalogue);
 
         $this->assertCount(6, $catalogue);
@@ -231,7 +232,7 @@ final class StaffAttendanceTest extends TestCase
     {
         // Guards and non-login staff have StaffProfiles and institutional
         // assignments but no StaffAccount. Attendance must work for them.
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         // No staff_accounts row created — this is the "no-login" guard scenario
@@ -246,17 +247,17 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_duplicate_record_for_same_period_and_date_updates_existing(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $first = $this->makeRecord($staffId, $scope['periodId']);
 
         $second = app(CreateDailyStaffRecord::class)(
-            staffProfileId:        $staffId,
-            operationalPeriodId:   $scope['periodId'],
-            date:                  now()->toDateString(),
-            statusCode:            StaffAttendanceStatus::ABSENT,
-            reason:                null,
+            staffProfileId: $staffId,
+            operationalPeriodId: $scope['periodId'],
+            date: now()->toDateString(),
+            statusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             creatorStaffProfileId: $staffId,
         );
 
@@ -268,7 +269,7 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_cannot_create_record_for_closed_semester(): void
     {
-        $scope   = $this->makeScope('closed');
+        $scope = $this->makeScope('closed');
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $this->expectException(StaffAttendanceException::class);
@@ -279,33 +280,33 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_reason_required_when_status_demands_it(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $this->expectException(StaffAttendanceException::class);
         $this->expectExceptionMessageMatches('/requires a reason/');
 
         app(CreateDailyStaffRecord::class)(
-            staffProfileId:        $staffId,
-            operationalPeriodId:   $scope['periodId'],
-            date:                  now()->toDateString(),
-            statusCode:            StaffAttendanceStatus::LEAVE,
-            reason:                null,
+            staffProfileId: $staffId,
+            operationalPeriodId: $scope['periodId'],
+            date: now()->toDateString(),
+            statusCode: StaffAttendanceStatus::LEAVE,
+            reason: null,
             creatorStaffProfileId: $staffId,
         );
     }
 
     public function test_reason_accepted_for_status_that_requires_it(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $record = app(CreateDailyStaffRecord::class)(
-            staffProfileId:        $staffId,
-            operationalPeriodId:   $scope['periodId'],
-            date:                  now()->toDateString(),
-            statusCode:            StaffAttendanceStatus::LEAVE,
-            reason:                'Annual leave',
+            staffProfileId: $staffId,
+            operationalPeriodId: $scope['periodId'],
+            date: now()->toDateString(),
+            statusCode: StaffAttendanceStatus::LEAVE,
+            reason: 'Annual leave',
             creatorStaffProfileId: $staffId,
         );
 
@@ -315,8 +316,8 @@ final class StaffAttendanceTest extends TestCase
     public function test_cross_institution_record_creation_is_blocked(): void
     {
         // Staff from institution A cannot have records created for institution B's period.
-        $scopeA  = $this->makeScope();
-        $scopeB  = $this->makeScope();
+        $scopeA = $this->makeScope();
+        $scopeB = $this->makeScope();
 
         // Staff is only assigned to institution A
         $staffId = $this->makeStaffProfile($scopeA['instId']);
@@ -332,9 +333,9 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_record_can_be_verified(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         $verified = app(VerifyStaffRecord::class)($record, $staffId);
 
@@ -347,18 +348,18 @@ final class StaffAttendanceTest extends TestCase
     {
         // Re-verification is intentional: it advances correction_cycle so the
         // secretary can make a second correction in a new window.
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         app(VerifyStaffRecord::class)($record, $staffId);
         $record->refresh();
 
         // Correct (cycle 0)
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::ABSENT,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
         $record->refresh();
@@ -373,9 +374,9 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_cannot_update_verified_record_via_create_action(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         app(VerifyStaffRecord::class)($record, $staffId);
 
@@ -383,11 +384,11 @@ final class StaffAttendanceTest extends TestCase
         $this->expectExceptionMessageMatches('/already verified/');
 
         app(CreateDailyStaffRecord::class)(
-            staffProfileId:        $staffId,
-            operationalPeriodId:   $scope['periodId'],
-            date:                  now()->toDateString(),
-            statusCode:            StaffAttendanceStatus::ABSENT,
-            reason:                null,
+            staffProfileId: $staffId,
+            operationalPeriodId: $scope['periodId'],
+            date: now()->toDateString(),
+            statusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             creatorStaffProfileId: $staffId,
         );
     }
@@ -396,17 +397,17 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_verified_record_can_be_corrected(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         app(VerifyStaffRecord::class)($record, $staffId);
         $record->refresh();
 
         $corrected = app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::ABSENT,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
 
@@ -418,17 +419,17 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_correction_appends_to_history_table(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         app(VerifyStaffRecord::class)($record, $staffId);
         $record->refresh();
 
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::ABSENT,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
 
@@ -443,17 +444,17 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_second_correction_in_same_cycle_is_rejected(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         app(VerifyStaffRecord::class)($record, $staffId);
         $record->refresh();
 
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::ABSENT,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
         $record->refresh();
@@ -462,27 +463,27 @@ final class StaffAttendanceTest extends TestCase
         $this->expectExceptionMessageMatches('/already been corrected/');
 
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::LATE,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::LATE,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
     }
 
     public function test_two_full_correction_cycles_preserve_all_history(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']); // present
+        $record = $this->makeRecord($staffId, $scope['periodId']); // present
 
         // Cycle 1 verify + correct: present → absent
         app(VerifyStaffRecord::class)($record, $staffId);
         $record->refresh();
 
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::ABSENT,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
         $record->refresh();
@@ -493,11 +494,11 @@ final class StaffAttendanceTest extends TestCase
 
         // Cycle 1 correct: absent → late
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::LATE,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::LATE,
+            reason: null,
             actorStaffProfileId: $staffId,
-            confirmedArrivedAt:  '08:05:00',
+            confirmedArrivedAt: '08:05:00',
         );
         $record->refresh();
 
@@ -519,17 +520,17 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_cannot_correct_unverified_record(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
-        $record  = $this->makeRecord($staffId, $scope['periodId']);
+        $record = $this->makeRecord($staffId, $scope['periodId']);
 
         $this->expectException(StaffAttendanceException::class);
         $this->expectExceptionMessageMatches('/not verified/');
 
         app(CorrectVerifiedStaffRecord::class)(
-            record:              $record,
-            newStatusCode:       StaffAttendanceStatus::ABSENT,
-            reason:              null,
+            record: $record,
+            newStatusCode: StaffAttendanceStatus::ABSENT,
+            reason: null,
             actorStaffProfileId: $staffId,
         );
     }
@@ -541,8 +542,8 @@ final class StaffAttendanceTest extends TestCase
         // Credential-only test — no institution assignment required
         $staffId = $this->makeStaffProfile();
 
-        $result     = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token      = $result['plaintext_token'];
+        $result = app(GenerateQrCredential::class)($staffId, $staffId);
+        $token = $result['plaintext_token'];
         $credential = $result['credential'];
 
         $this->assertInstanceOf(StaffQrCredential::class, $credential);
@@ -557,7 +558,7 @@ final class StaffAttendanceTest extends TestCase
     {
         $staffId = $this->makeStaffProfile();
 
-        $first  = app(GenerateQrCredential::class)($staffId, $staffId);
+        $first = app(GenerateQrCredential::class)($staffId, $staffId);
         $second = app(GenerateQrCredential::class)($staffId, $staffId);
 
         $firstDb = StaffQrCredential::find($first['credential']->id);
@@ -569,8 +570,8 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_revoke_action_deactivates_credential(): void
     {
-        $staffId    = $this->makeStaffProfile();
-        $result     = app(GenerateQrCredential::class)($staffId, $staffId);
+        $staffId = $this->makeStaffProfile();
+        $result = app(GenerateQrCredential::class)($staffId, $staffId);
         $credential = $result['credential'];
 
         app(RevokeQrCredential::class)($credential, $staffId);
@@ -582,15 +583,15 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_revoking_credential_rejects_pending_scan_events(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
-        $result     = app(GenerateQrCredential::class)($staffId, $staffId);
+        $result = app(GenerateQrCredential::class)($staffId, $staffId);
         $credential = $result['credential'];
-        $token      = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
         app(SubmitScanEvent::class)(
-            plaintextToken:      $token,
+            plaintextToken: $token,
             operationalPeriodId: $scope['periodId'],
         );
 
@@ -605,16 +606,16 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_valid_scan_creates_pending_event(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
         $scan = app(SubmitScanEvent::class)(
-            plaintextToken:      $token,
+            plaintextToken: $token,
             operationalPeriodId: $scope['periodId'],
-            direction:           'arrival',
+            direction: 'arrival',
         );
 
         $this->assertInstanceOf(AttendanceScanEvent::class, $scan['event']);
@@ -630,7 +631,7 @@ final class StaffAttendanceTest extends TestCase
         $this->expectExceptionMessageMatches('/Invalid or revoked/');
 
         app(SubmitScanEvent::class)(
-            plaintextToken:      'not-a-real-token-abcdefghijklmnopq',
+            plaintextToken: 'not-a-real-token-abcdefghijklmnopq',
             operationalPeriodId: $scope['periodId'],
         );
     }
@@ -638,32 +639,32 @@ final class StaffAttendanceTest extends TestCase
     public function test_cross_institution_scan_submission_is_blocked(): void
     {
         // Staff from institution A cannot scan into institution B's period.
-        $scopeA  = $this->makeScope();
-        $scopeB  = $this->makeScope();
+        $scopeA = $this->makeScope();
+        $scopeB = $this->makeScope();
         $staffId = $this->makeStaffProfile($scopeA['instId']); // only assigned to A
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
         $this->expectException(StaffAttendanceException::class);
         $this->expectExceptionMessageMatches('/not valid for this institution/');
 
         // Attempt to submit scan for institution B's period → must fail
         app(SubmitScanEvent::class)(
-            plaintextToken:      $token,
+            plaintextToken: $token,
             operationalPeriodId: $scopeB['periodId'],
         );
     }
 
     public function test_scan_replay_returns_existing_event(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
-        $first  = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
+        $first = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
         $second = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
 
         $this->assertTrue($second['is_duplicate'],
@@ -676,13 +677,13 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_different_direction_on_same_day_creates_new_event(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
-        $arrival   = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
+        $arrival = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
         $departure = app(SubmitScanEvent::class)($token, $scope['periodId'], 'departure');
 
         $this->assertFalse($departure['is_duplicate'],
@@ -693,12 +694,12 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_revoked_credential_cannot_create_scan_events(): void
     {
-        $scope   = $this->makeScope();
+        $scope = $this->makeScope();
         $staffId = $this->makeStaffProfile($scope['instId']);
 
-        $result     = app(GenerateQrCredential::class)($staffId, $staffId);
+        $result = app(GenerateQrCredential::class)($staffId, $staffId);
         $credential = $result['credential'];
-        $token      = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
         app(RevokeQrCredential::class)($credential, $staffId);
 
@@ -712,19 +713,19 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_accepted_scan_writes_scanned_time_to_attendance_record(): void
     {
-        $scope    = $this->makeScope();
-        $staffId  = $this->makeStaffProfile($scope['instId']);
+        $scope = $this->makeScope();
+        $staffId = $this->makeStaffProfile($scope['instId']);
         $reviewer = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
-        $scan  = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
+        $scan = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
         $event = $scan['event'];
 
         app(ReviewScanEvent::class)(
-            event:                  $event,
-            outcome:                'accepted',
+            event: $event,
+            outcome: 'accepted',
             reviewerStaffProfileId: $reviewer,
         );
 
@@ -743,30 +744,30 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_accepted_scan_does_not_override_existing_confirmed_time(): void
     {
-        $scope    = $this->makeScope();
-        $staffId  = $this->makeStaffProfile($scope['instId']);
+        $scope = $this->makeScope();
+        $staffId = $this->makeStaffProfile($scope['instId']);
         $reviewer = $this->makeStaffProfile($scope['instId']);
 
         // Secretary manually enters a confirmed record first
         app(CreateDailyStaffRecord::class)(
-            staffProfileId:        $staffId,
-            operationalPeriodId:   $scope['periodId'],
-            date:                  now()->toDateString(),
-            statusCode:            StaffAttendanceStatus::LATE,
-            reason:                null,
+            staffProfileId: $staffId,
+            operationalPeriodId: $scope['periodId'],
+            date: now()->toDateString(),
+            statusCode: StaffAttendanceStatus::LATE,
+            reason: null,
             creatorStaffProfileId: $staffId,
-            confirmedArrivedAt:    '08:05:00',
+            confirmedArrivedAt: '08:05:00',
         );
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
-        $scan  = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
+        $scan = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
         $event = $scan['event'];
 
         app(ReviewScanEvent::class)(
-            event:                  $event,
-            outcome:                'accepted',
+            event: $event,
+            outcome: 'accepted',
             reviewerStaffProfileId: $reviewer,
         );
 
@@ -781,21 +782,21 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_rejecting_scan_changes_status_to_rejected(): void
     {
-        $scope    = $this->makeScope();
-        $staffId  = $this->makeStaffProfile($scope['instId']);
+        $scope = $this->makeScope();
+        $staffId = $this->makeStaffProfile($scope['instId']);
         $reviewer = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
-        $scan  = app(SubmitScanEvent::class)($token, $scope['periodId']);
+        $scan = app(SubmitScanEvent::class)($token, $scope['periodId']);
         $event = $scan['event'];
 
         $reviewed = app(ReviewScanEvent::class)(
-            event:                  $event,
-            outcome:                'rejected',
+            event: $event,
+            outcome: 'rejected',
             reviewerStaffProfileId: $reviewer,
-            rejectionReason:        'Scan outside permitted hours.',
+            rejectionReason: 'Scan outside permitted hours.',
         );
 
         $this->assertEquals('rejected', $reviewed->processing_status);
@@ -807,19 +808,19 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_rescan_after_accepted_review_returns_existing_event_without_crash(): void
     {
-        $scope    = $this->makeScope();
-        $staffId  = $this->makeStaffProfile($scope['instId']);
+        $scope = $this->makeScope();
+        $staffId = $this->makeStaffProfile($scope['instId']);
         $reviewer = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
         // Submit and accept the initial scan
         $scan1 = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
 
         app(ReviewScanEvent::class)(
-            event:                  $scan1['event'],
-            outcome:                'accepted',
+            event: $scan1['event'],
+            outcome: 'accepted',
             reviewerStaffProfileId: $reviewer,
         );
 
@@ -841,21 +842,21 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_rescan_after_rejected_review_returns_existing_event_without_crash(): void
     {
-        $scope    = $this->makeScope();
-        $staffId  = $this->makeStaffProfile($scope['instId']);
+        $scope = $this->makeScope();
+        $staffId = $this->makeStaffProfile($scope['instId']);
         $reviewer = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
+        $token = $result['plaintext_token'];
 
         // Submit and reject the initial scan
         $scan1 = app(SubmitScanEvent::class)($token, $scope['periodId'], 'arrival');
 
         app(ReviewScanEvent::class)(
-            event:                  $scan1['event'],
-            outcome:                'rejected',
+            event: $scan1['event'],
+            outcome: 'rejected',
             reviewerStaffProfileId: $reviewer,
-            rejectionReason:        'Invalid scan.',
+            rejectionReason: 'Invalid scan.',
         );
 
         // Rescan in the same direction after rejection — must not crash
@@ -875,14 +876,14 @@ final class StaffAttendanceTest extends TestCase
 
     public function test_cannot_review_already_reviewed_event(): void
     {
-        $scope    = $this->makeScope();
-        $staffId  = $this->makeStaffProfile($scope['instId']);
+        $scope = $this->makeScope();
+        $staffId = $this->makeStaffProfile($scope['instId']);
         $reviewer = $this->makeStaffProfile($scope['instId']);
 
         $result = app(GenerateQrCredential::class)($staffId, $staffId);
-        $token  = $result['plaintext_token'];
-        $scan   = app(SubmitScanEvent::class)($token, $scope['periodId']);
-        $event  = $scan['event'];
+        $token = $result['plaintext_token'];
+        $scan = app(SubmitScanEvent::class)($token, $scope['periodId']);
+        $event = $scan['event'];
 
         app(ReviewScanEvent::class)($event, 'rejected', $reviewer, 'Test.');
         $event->refresh();

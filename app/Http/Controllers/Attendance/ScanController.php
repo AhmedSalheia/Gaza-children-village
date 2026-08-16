@@ -27,23 +27,23 @@ final class ScanController extends Controller
     public function store(Request $request, SubmitScanEvent $action): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
-            'token'               => ['required', 'string', 'min:20', 'max:128'],
-            'operational_period'  => ['required', 'integer', 'min:1'],
-            'direction'           => ['sometimes', 'string', 'in:arrival,departure,unknown'],
-            'device_fingerprint'  => ['sometimes', 'nullable', 'string', 'max:128'],
+            'token' => ['required', 'string', 'min:20', 'max:128'],
+            'operational_period' => ['required', 'integer', 'min:1'],
+            'direction' => ['sometimes', 'string', 'in:arrival,departure,unknown'],
+            'device_fingerprint' => ['sometimes', 'nullable', 'string', 'max:128'],
         ]);
 
         try {
             $result = $action(
-                plaintextToken:      $validated['token'],
+                plaintextToken: $validated['token'],
                 operationalPeriodId: (int) $validated['operational_period'],
-                direction:           $validated['direction'] ?? 'unknown',
-                deviceFingerprint:   $validated['device_fingerprint'] ?? null,
+                direction: $validated['direction'] ?? 'unknown',
+                deviceFingerprint: $validated['device_fingerprint'] ?? null,
             );
         } catch (StaffAttendanceException $e) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => $e->getMessage(),
                 ], 422);
             }
@@ -59,10 +59,10 @@ final class ScanController extends Controller
 
         if ($request->expectsJson()) {
             return response()->json([
-                'status'       => 'ok',
-                'event_id'     => $result['event']->id,
+                'status' => 'ok',
+                'event_id' => $result['event']->id,
                 'is_duplicate' => $result['is_duplicate'],
-                'message'      => $successMessage,
+                'message' => $successMessage,
             ], 201);
         }
 

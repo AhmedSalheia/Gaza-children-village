@@ -6,9 +6,11 @@ namespace App\Livewire\Admin\Reports;
 
 use App\Exports\MarksCompletionExport;
 use App\Exports\ResultReportExport;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -24,10 +26,13 @@ use Maatwebsite\Excel\Facades\Excel;
  */
 class MarksReport extends Component
 {
-    public string $reportType   = 'completion';
-    public int    $semesterId   = 0;
-    public int    $classGroupId = 0;
-    public bool   $canExport    = false;
+    public string $reportType = 'completion';
+
+    public int $semesterId = 0;
+
+    public int $classGroupId = 0;
+
+    public bool $canExport = false;
 
     public function mount(): void
     {
@@ -47,7 +52,7 @@ class MarksReport extends Component
     }
 
     #[Computed]
-    public function semesters(): \Illuminate\Support\Collection
+    public function semesters(): Collection
     {
         return DB::table('institution_semesters as is_')
             ->join('institutions as i', 'i.id', '=', 'is_.institution_id')
@@ -58,7 +63,7 @@ class MarksReport extends Component
     }
 
     #[Computed]
-    public function classGroups(): \Illuminate\Support\Collection
+    public function classGroups(): Collection
     {
         if ($this->semesterId === 0) {
             return collect();
@@ -71,7 +76,7 @@ class MarksReport extends Component
     }
 
     #[Computed]
-    public function completionRows(): \Illuminate\Support\Collection
+    public function completionRows(): Collection
     {
         if ($this->semesterId === 0 || $this->reportType !== 'completion') {
             return collect();
@@ -130,17 +135,17 @@ class MarksReport extends Component
         $total = array_sum($map);
 
         return (object) [
-            'total'     => $total,
-            'draft'     => (int) ($map['draft'] ?? 0),
+            'total' => $total,
+            'draft' => (int) ($map['draft'] ?? 0),
             'submitted' => (int) ($map['submitted'] ?? 0),
-            'verified'  => (int) ($map['verified'] ?? 0),
-            'returned'  => (int) ($map['returned'] ?? 0),
-            'approved'  => (int) ($map['approved'] ?? 0),
+            'verified' => (int) ($map['verified'] ?? 0),
+            'returned' => (int) ($map['returned'] ?? 0),
+            'approved' => (int) ($map['approved'] ?? 0),
         ];
     }
 
     #[Computed]
-    public function resultRows(): \Illuminate\Support\Collection
+    public function resultRows(): Collection
     {
         if ($this->semesterId === 0 || $this->reportType !== 'results') {
             return collect();
@@ -182,22 +187,22 @@ class MarksReport extends Component
             return;
         }
 
-        $export  = new MarksCompletionExport($this->semesterId, $this->classGroupId > 0 ? $this->classGroupId : null);
-        $rows    = $export->collection();
+        $export = new MarksCompletionExport($this->semesterId, $this->classGroupId > 0 ? $this->classGroupId : null);
+        $rows = $export->collection();
         $filename = 'marks-completion-'.now()->format('Y-m-d').'.xlsx';
-        $path     = 'reports/'.Str::uuid().'/'.$filename;
+        $path = 'reports/'.Str::uuid().'/'.$filename;
 
         Storage::disk('local')->makeDirectory(dirname($path));
         Excel::store($export, $path, 'local');
 
         $exportId = $this->auditExport('marks_completion', [
             'institution_semester_id' => $this->semesterId,
-            'class_group_id'          => $this->classGroupId,
+            'class_group_id' => $this->classGroupId,
         ], $rows->count(), $path);
 
         $this->dispatch('start-download', url: route('admin.reports.download', [
             'export' => encrypt($exportId),
-            'name'   => $filename,
+            'name' => $filename,
         ]));
     }
 
@@ -207,22 +212,22 @@ class MarksReport extends Component
             return;
         }
 
-        $export   = new ResultReportExport($this->semesterId, $this->classGroupId > 0 ? $this->classGroupId : null);
-        $rows     = $export->collection();
+        $export = new ResultReportExport($this->semesterId, $this->classGroupId > 0 ? $this->classGroupId : null);
+        $rows = $export->collection();
         $filename = 'results-report-'.now()->format('Y-m-d').'.xlsx';
-        $path     = 'reports/'.Str::uuid().'/'.$filename;
+        $path = 'reports/'.Str::uuid().'/'.$filename;
 
         Storage::disk('local')->makeDirectory(dirname($path));
         Excel::store($export, $path, 'local');
 
         $exportId = $this->auditExport('result_report', [
             'institution_semester_id' => $this->semesterId,
-            'class_group_id'          => $this->classGroupId,
+            'class_group_id' => $this->classGroupId,
         ], $rows->count(), $path);
 
         $this->dispatch('start-download', url: route('admin.reports.download', [
             'export' => encrypt($exportId),
-            'name'   => $filename,
+            'name' => $filename,
         ]));
     }
 
@@ -233,15 +238,15 @@ class MarksReport extends Component
     private function auditExport(string $type, array $scope, int $rowCount, string $filePath): int
     {
         return (int) DB::table('report_exports')->insertGetId([
-            'export_type'      => $type,
-            'actor_type'       => 'admin',
+            'export_type' => $type,
+            'actor_type' => 'admin',
             'actor_account_id' => (int) auth('admin')->id(),
-            'scope'            => json_encode($scope),
-            'locale'           => 'ar',
-            'row_count'        => $rowCount,
-            'file_path'        => $filePath,
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'scope' => json_encode($scope),
+            'locale' => 'ar',
+            'row_count' => $rowCount,
+            'file_path' => $filePath,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -262,7 +267,7 @@ class MarksReport extends Component
             ->exists();
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.admin.reports.marks-report')
             ->layout('layouts.admin');

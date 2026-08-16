@@ -45,9 +45,9 @@ final class GenerateQrCredential
                 ->where('staff_profile_id', $staffProfileId)
                 ->where('is_active', true)
                 ->update([
-                    'is_active'                    => false,
-                    'revoked_at'                   => now(),
-                    'revoked_by_staff_profile_id'  => $issuedByStaffProfileId,
+                    'is_active' => false,
+                    'revoked_at' => now(),
+                    'revoked_by_staff_profile_id' => $issuedByStaffProfileId,
                 ]);
 
             // Generate plaintext token (32 random bytes → base64url, 43 chars)
@@ -56,16 +56,16 @@ final class GenerateQrCredential
             // Compute HMAC — deterministic, O(1) lookup on scan
             $tokenHash = hash_hmac('sha256', $plaintextToken, config('app.key'));
 
-            $credential = new StaffQrCredential();
-            $credential->staff_profile_id            = $staffProfileId;
-            $credential->token_hash                  = $tokenHash;
-            $credential->is_active                   = true;
-            $credential->issued_at                   = now();
-            $credential->issued_by_staff_profile_id  = $issuedByStaffProfileId;
+            $credential = new StaffQrCredential;
+            $credential->staff_profile_id = $staffProfileId;
+            $credential->token_hash = $tokenHash;
+            $credential->is_active = true;
+            $credential->issued_at = now();
+            $credential->issued_by_staff_profile_id = $issuedByStaffProfileId;
             $credential->save();
 
             return [
-                'credential'      => $credential,
+                'credential' => $credential,
                 'plaintext_token' => $plaintextToken,
             ];
         });

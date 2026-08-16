@@ -59,6 +59,9 @@ final class NotificationType
     /** Response received for a formal institution request. */
     public const FORMAL_REQUEST_RESPONDED = 'formal_request.responded';
 
+    /** Principal/deputy returned a formal request to the preparer for revision. */
+    public const FORMAL_REQUEST_RETURNED = 'formal_request.returned';
+
     // -----------------------------------------------------------------
     // Mark sheets
     // -----------------------------------------------------------------

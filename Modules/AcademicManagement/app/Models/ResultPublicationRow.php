@@ -39,10 +39,10 @@ final class ResultPublicationRow extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'raw_total_score'  => 'float',
+        'raw_total_score' => 'float',
         'raw_max_possible' => 'float',
         'normalized_score' => 'float',
-        'is_passing'       => 'boolean',
+        'is_passing' => 'boolean',
     ];
 
     /** @return BelongsTo<ResultPublication, $this> */

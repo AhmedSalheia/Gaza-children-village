@@ -92,40 +92,40 @@ function attendanceCtx(
         'created_at' => now(), 'updated_at' => now(),
     ]);
     $enrollmentId = (int) DB::table('student_enrollments')->insertGetId([
-        'student_profile_id'      => $spId,
+        'student_profile_id' => $spId,
         'institution_semester_id' => $instSemId,
-        'class_group_id'          => $classGroupId,
-        'enrollment_status'       => 'active',
-        'enrolled_on'             => today()->subDay()->toDateString(),
-        'created_at'              => now(),
-        'updated_at'              => now(),
+        'class_group_id' => $classGroupId,
+        'enrollment_status' => 'active',
+        'enrolled_on' => today()->subDay()->toDateString(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     // Verified attendance sheet (operational_period_id is NOT NULL — use 0 as stub)
     $sheetId = (int) DB::table('student_attendance_sheets')->insertGetId([
-        'institution_semester_id'      => $instSemId,
-        'operational_period_id'        => 0,
-        'class_group_id'               => $classGroupId,
-        'attendance_date'              => today()->subDay()->toDateString(),
-        'status'                       => 'verified',
-        'creator_staff_profile_id'     => 1,
-        'verified_at'                  => now(),
+        'institution_semester_id' => $instSemId,
+        'operational_period_id' => 0,
+        'class_group_id' => $classGroupId,
+        'attendance_date' => today()->subDay()->toDateString(),
+        'status' => 'verified',
+        'creator_staff_profile_id' => 1,
+        'verified_at' => now(),
         'verified_by_staff_profile_id' => 1,
-        'created_at'                   => now(),
-        'updated_at'                   => now(),
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     // Attendance record
     DB::table('student_attendance_records')->insert([
-        'sheet_id'           => $sheetId,
-        'enrollment_id'      => $enrollmentId,
+        'sheet_id' => $sheetId,
+        'enrollment_id' => $enrollmentId,
         'student_profile_id' => $spId,
-        'status_code'        => 'present',
-        'reason'             => 'مبرر',
-        'arrived_at'         => '08:00:00',
-        'source'             => 'teacher_entry',
-        'created_at'         => now(),
-        'updated_at'         => now(),
+        'status_code' => 'present',
+        'reason' => 'مبرر',
+        'arrived_at' => '08:00:00',
+        'source' => 'teacher_entry',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     return compact('instSemId', 'classGroupId', 'enrollmentId', 'spId', 'sheetId');
@@ -205,33 +205,33 @@ test('PublishAttendanceSnapshot creates snapshot and row for each attendance rec
 });
 
 test('PublishAttendanceSnapshot hides reason when policy forbids it', function (): void {
-    $ctx  = attendanceCtx(showReason: false);
+    $ctx = attendanceCtx(showReason: false);
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
-    $row  = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
+    $row = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
 
     expect($row->reason)->toBeNull();
 });
 
 test('PublishAttendanceSnapshot includes reason when policy allows it', function (): void {
-    $ctx  = attendanceCtx(showReason: true);
+    $ctx = attendanceCtx(showReason: true);
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
-    $row  = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
+    $row = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
 
     expect($row->reason)->toBe('مبرر');
 });
 
 test('PublishAttendanceSnapshot hides arrived_at when policy forbids it', function (): void {
-    $ctx  = attendanceCtx(showArrival: false);
+    $ctx = attendanceCtx(showArrival: false);
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
-    $row  = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
+    $row = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
 
     expect($row->arrived_at)->toBeNull();
 });
 
 test('PublishAttendanceSnapshot includes arrived_at when policy allows it', function (): void {
-    $ctx  = attendanceCtx(showArrival: true);
+    $ctx = attendanceCtx(showArrival: true);
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
-    $row  = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
+    $row = AttendanceSnapshotRow::where('snapshot_id', $snap->id)->first();
 
     expect($row->arrived_at)->not->toBeNull();
 });
@@ -255,7 +255,7 @@ test('PublishAttendanceSnapshot supersedes previous published snapshot', functio
 // ─────────────────────────────────────────────────────────────────────────────
 
 test('RevokeAttendanceSnapshot transitions status to revoked', function (): void {
-    $ctx  = attendanceCtx();
+    $ctx = attendanceCtx();
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
 
     $revoked = app(RevokeAttendanceSnapshot::class)($snap, 'Correction needed', 2);
@@ -265,7 +265,7 @@ test('RevokeAttendanceSnapshot transitions status to revoked', function (): void
 });
 
 test('RevokeAttendanceSnapshot throws when already revoked', function (): void {
-    $ctx  = attendanceCtx();
+    $ctx = attendanceCtx();
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
 
     app(RevokeAttendanceSnapshot::class)($snap, 'First revoke', 1);
@@ -275,7 +275,7 @@ test('RevokeAttendanceSnapshot throws when already revoked', function (): void {
 });
 
 test('RevokeAttendanceSnapshot throws without a non-empty reason', function (): void {
-    $ctx  = attendanceCtx();
+    $ctx = attendanceCtx();
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
 
     expect(fn () => app(RevokeAttendanceSnapshot::class)($snap, '', 1))
@@ -283,7 +283,7 @@ test('RevokeAttendanceSnapshot throws without a non-empty reason', function (): 
 });
 
 test('AttendanceSnapshotRows remain after revocation — immutable audit trail', function (): void {
-    $ctx  = attendanceCtx();
+    $ctx = attendanceCtx();
     $snap = app(PublishAttendanceSnapshot::class)($ctx['instSemId'], $ctx['classGroupId'], 1);
 
     app(RevokeAttendanceSnapshot::class)($snap, 'Audit trail test', 2);

@@ -24,8 +24,8 @@ final class StaffQrCredential extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'is_active'  => 'boolean',
-        'issued_at'  => 'datetime',
+        'is_active' => 'boolean',
+        'issued_at' => 'datetime',
         'revoked_at' => 'datetime',
     ];
 

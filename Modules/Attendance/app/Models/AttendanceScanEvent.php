@@ -22,8 +22,8 @@ final class AttendanceScanEvent extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'scanned_at'  => 'datetime',
-        'scan_date'   => 'date:Y-m-d',
+        'scanned_at' => 'datetime',
+        'scan_date' => 'date:Y-m-d',
         'reviewed_at' => 'datetime',
     ];
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -43,19 +44,26 @@ final class SheetVerification extends Component
     public int $sheetId;
 
     public string $flashMessage = '';
-    public string $flashType    = 'success';
+
+    public string $flashType = 'success';
 
     // Return form
-    public bool   $showReturn   = false;
+    public bool $showReturn = false;
+
     public string $returnReason = '';
 
     // Correction form
-    public bool    $showCorrect         = false;
-    public int     $correctEnrollmentId = 0;
-    public string  $correctStatusCode   = '';
-    public string  $correctReason       = '';
-    public string  $correctArrivedAt    = '';
-    public string  $correctDepartedAt   = '';
+    public bool $showCorrect = false;
+
+    public int $correctEnrollmentId = 0;
+
+    public string $correctStatusCode = '';
+
+    public string $correctReason = '';
+
+    public string $correctArrivedAt = '';
+
+    public string $correctDepartedAt = '';
 
     private ?AttendanceSheet $sheetCache = null;
 
@@ -76,7 +84,7 @@ final class SheetVerification extends Component
         return $this->sheetCache ??= AttendanceSheet::find($this->sheetId);
     }
 
-    public function records(): \Illuminate\Support\Collection
+    public function records(): Collection
     {
         return DB::table('student_attendance_records as sar')
             ->join('student_enrollments as se', 'se.id', '=', 'sar.enrollment_id')
@@ -105,7 +113,7 @@ final class SheetVerification extends Component
      * The UI reads from this table rather than the mutable previous_status_code
      * column so all correction cycles are visible.
      *
-     * @return array<int, \Illuminate\Support\Collection>
+     * @return array<int, Collection>
      */
     public function correctionHistory(): array
     {
@@ -128,7 +136,7 @@ final class SheetVerification extends Component
     public function startReturn(): void
     {
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_RETURN);
-        $this->showReturn   = true;
+        $this->showReturn = true;
         $this->returnReason = '';
     }
 
@@ -178,12 +186,12 @@ final class SheetVerification extends Component
     public function startCorrect(int $enrollmentId, string $currentStatus): void
     {
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_CORRECT);
-        $this->showCorrect         = true;
+        $this->showCorrect = true;
         $this->correctEnrollmentId = $enrollmentId;
-        $this->correctStatusCode   = $currentStatus;
-        $this->correctReason       = '';
-        $this->correctArrivedAt    = '';
-        $this->correctDepartedAt   = '';
+        $this->correctStatusCode = $currentStatus;
+        $this->correctReason = '';
+        $this->correctArrivedAt = '';
+        $this->correctDepartedAt = '';
     }
 
     public function confirmCorrect(): void
@@ -201,7 +209,7 @@ final class SheetVerification extends Component
                 arrivedAt: $this->correctArrivedAt !== '' ? $this->correctArrivedAt : null,
                 departedAt: $this->correctDepartedAt !== '' ? $this->correctDepartedAt : null,
             );
-            $this->sheetCache  = null;
+            $this->sheetCache = null;
             $this->showCorrect = false;
             $this->flash('Record corrected. Previous value preserved in history.', 'success');
         } catch (AttendanceException $e) {
@@ -212,9 +220,9 @@ final class SheetVerification extends Component
     public function render(): View
     {
         return view('livewire.staff.attendance.verification', [
-            'sheet'             => $this->sheet(),
-            'records'           => $this->records(),
-            'statuses'          => StudentAttendanceStatus::catalogue(),
+            'sheet' => $this->sheet(),
+            'records' => $this->records(),
+            'statuses' => StudentAttendanceStatus::catalogue(),
             'correctionHistory' => $this->correctionHistory(),
         ]);
     }
@@ -222,6 +230,6 @@ final class SheetVerification extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

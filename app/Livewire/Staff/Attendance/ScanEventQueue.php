@@ -6,6 +6,7 @@ namespace App\Livewire\Staff\Attendance;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Modules\Attendance\Actions\ReviewScanEvent;
@@ -36,14 +37,19 @@ final class ScanEventQueue extends Component
     use HasStaffAuth;
 
     public string $filterDate = '';
+
     public string $filterStatus = 'pending';
 
     public ?int $reviewingEventId = null;
+
     public string $reviewOutcome = '';
+
     public string $rejectionReason = '';
+
     public string $confirmedDirection = '';
 
     public string $flashMessage = '';
+
     public string $flashType = '';
 
     private const VALID_DIRECTIONS = ['arrival', 'departure', 'unknown'];
@@ -68,10 +74,10 @@ final class ScanEventQueue extends Component
         // even when the event is only shown in a modal (not mutated yet).
         $this->assertEventBelongsToScope($event);
 
-        $this->reviewingEventId    = $eventId;
-        $this->reviewOutcome       = '';
-        $this->rejectionReason     = '';
-        $this->confirmedDirection  = '';
+        $this->reviewingEventId = $eventId;
+        $this->reviewOutcome = '';
+        $this->rejectionReason = '';
+        $this->confirmedDirection = '';
     }
 
     public function submitReview(): void
@@ -85,8 +91,8 @@ final class ScanEventQueue extends Component
         $event = AttendanceScanEvent::find($this->reviewingEventId);
 
         if (! $event) {
-            $this->flashMessage     = 'Scan event not found.';
-            $this->flashType        = 'error';
+            $this->flashMessage = 'Scan event not found.';
+            $this->flashType = 'error';
             $this->reviewingEventId = null;
 
             return;
@@ -97,7 +103,7 @@ final class ScanEventQueue extends Component
 
         if ($this->reviewOutcome === 'rejected' && empty(trim($this->rejectionReason))) {
             $this->flashMessage = 'Please provide a rejection reason.';
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
 
             return;
         }
@@ -105,7 +111,7 @@ final class ScanEventQueue extends Component
         // Server-side validation of the direction override
         if ($this->confirmedDirection !== '' && ! in_array($this->confirmedDirection, self::VALID_DIRECTIONS, true)) {
             $this->flashMessage = 'Invalid direction value.';
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
 
             return;
         }
@@ -124,20 +130,20 @@ final class ScanEventQueue extends Component
                 }
 
                 app(ReviewScanEvent::class)(
-                    event:                  $event,
-                    outcome:                $this->reviewOutcome,
+                    event: $event,
+                    outcome: $this->reviewOutcome,
                     reviewerStaffProfileId: $actorId,
-                    rejectionReason:        $this->rejectionReason ?: null,
+                    rejectionReason: $this->rejectionReason ?: null,
                 );
             });
 
             $this->flashMessage = $this->reviewOutcome === 'accepted'
                 ? 'Scan event accepted. Scanned time applied to attendance record.'
                 : 'Scan event rejected.';
-            $this->flashType    = 'success';
+            $this->flashType = 'success';
         } catch (StaffAttendanceException $e) {
             $this->flashMessage = $e->getMessage();
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
         } finally {
             $this->reviewingEventId = null;
         }
@@ -148,8 +154,7 @@ final class ScanEventQueue extends Component
         $this->reviewingEventId = null;
     }
 
-    /** @return \Illuminate\Support\Collection */
-    public function events(): \Illuminate\Support\Collection
+    public function events(): Collection
     {
         $scope = $this->staffScope();
 
@@ -203,7 +208,7 @@ final class ScanEventQueue extends Component
     public function render(): View
     {
         return view('livewire.staff.attendance.scan-queue', [
-            'events'         => $this->events(),
+            'events' => $this->events(),
             // Load the reviewing event only if it still passes the scope check.
             // This prevents metadata disclosure if reviewingEventId was tampered
             // between the startReview call and the subsequent render cycle.

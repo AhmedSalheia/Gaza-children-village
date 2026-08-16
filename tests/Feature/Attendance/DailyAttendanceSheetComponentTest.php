@@ -31,8 +31,10 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
     // ── Shared fixtures ───────────────────────────────────────────────────────
 
-    private int   $orgId    = 0;
-    private int   $typeId   = 0;
+    private int $orgId = 0;
+
+    private int $typeId = 0;
+
     private array $periodSeq = [];
 
     protected function setUp(): void
@@ -40,17 +42,17 @@ final class DailyAttendanceSheetComponentTest extends TestCase
         parent::setUp();
 
         $this->orgId = (int) DB::table('organizations')->insertGetId([
-            'code'       => 'ORG-HRM',
-            'name_en'    => 'Homeroom Test Org',
-            'is_active'  => true,
+            'code' => 'ORG-HRM',
+            'name_en' => 'Homeroom Test Org',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         $this->typeId = (int) DB::table('institution_types')->insertGetId([
-            'code'       => 'TYPE-HRM',
-            'name_en'    => 'School',
-            'is_active'  => true,
+            'code' => 'TYPE-HRM',
+            'name_en' => 'School',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -62,9 +64,9 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
     public function test_teacher_with_homeroom_assignment_can_mount_and_open_sheet(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeSemester($instId);
-        $period  = $this->makePeriod($semId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeSemester($instId);
+        $period = $this->makePeriod($semId);
         $levelId = $this->makeAcademicLevel();
         $classId = $this->makeClassGroup($semId, $period, $levelId);
 
@@ -77,7 +79,7 @@ final class DailyAttendanceSheetComponentTest extends TestCase
         $component = Livewire::actingAs($account, 'staff')
             ->test(DailyAttendanceSheet::class, [
                 'classGroupId' => $classId,
-                'date'         => '2026-01-15',
+                'date' => '2026-01-15',
             ]);
 
         // Must render without 403 and the sheet should be opened (sheetId set).
@@ -92,9 +94,9 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
     public function test_teacher_without_homeroom_assignment_receives_403_on_mount(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeSemester($instId);
-        $period  = $this->makePeriod($semId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeSemester($instId);
+        $period = $this->makePeriod($semId);
         $levelId = $this->makeAcademicLevel();
         $classId = $this->makeClassGroup($semId, $period, $levelId);
 
@@ -104,7 +106,7 @@ final class DailyAttendanceSheetComponentTest extends TestCase
         Livewire::actingAs($account, 'staff')
             ->test(DailyAttendanceSheet::class, [
                 'classGroupId' => $classId,
-                'date'         => '2026-01-15',
+                'date' => '2026-01-15',
             ])
             ->assertForbidden();
     }
@@ -113,22 +115,22 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
     public function test_principal_with_verify_permission_can_mount_without_homeroom(): void
     {
-        $instId  = $this->makeInstitution();
-        $semId   = $this->makeSemester($instId);
+        $instId = $this->makeInstitution();
+        $semId = $this->makeSemester($instId);
         $levelId = $this->makeAcademicLevel();
 
         // Principals are full-scope — no period grant or homeroom assignment needed.
         $account = $this->makePrincipalAccount($instId, $semId);
 
         // Create a class group in ANY period (principal sees all periods).
-        $period  = $this->makePeriod($semId);
+        $period = $this->makePeriod($semId);
         $classId = $this->makeClassGroup($semId, $period, $levelId);
 
         // Principal has no homeroom assignment for this class — must still succeed.
         $component = Livewire::actingAs($account, 'staff')
             ->test(DailyAttendanceSheet::class, [
                 'classGroupId' => $classId,
-                'date'         => '2026-01-16',
+                'date' => '2026-01-16',
             ]);
 
         $component->assertOk();
@@ -150,30 +152,30 @@ final class DailyAttendanceSheetComponentTest extends TestCase
     private function seedPermissions(): void
     {
         $enterPermId = (int) DB::table('permissions')->insertGetId([
-            'key'         => 'student_attendance.enter',
+            'key' => 'student_attendance.enter',
             'description' => 'Enter student attendance',
-            'group'       => 'student_attendance',
-            'is_system'   => false,
-            'created_at'  => now(),
-            'updated_at'  => now(),
+            'group' => 'student_attendance',
+            'is_system' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $verifyPermId = (int) DB::table('permissions')->insertGetId([
-            'key'         => 'student_attendance.verify',
+            'key' => 'student_attendance.verify',
             'description' => 'Verify student attendance',
-            'group'       => 'student_attendance',
-            'is_system'   => false,
-            'created_at'  => now(),
-            'updated_at'  => now(),
+            'group' => 'student_attendance',
+            'is_system' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Teacher role: enter only (no verify → homeroom guard is enforced)
         $teacherRoleId = (int) DB::table('roles')->insertGetId([
-            'code'         => 'TEACHER_HRM_ROLE',
-            'label'        => 'Teacher',
+            'code' => 'TEACHER_HRM_ROLE',
+            'label' => 'Teacher',
             'is_protected' => false,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         DB::table('role_permissions')->insert([
@@ -182,19 +184,19 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
         DB::table('position_role_grants')->insert([
             'position_definition' => 'teacher',
-            'role_id'             => $teacherRoleId,
-            'granted_by'          => 0,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'role_id' => $teacherRoleId,
+            'granted_by' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Principal role: enter + verify (homeroom guard is skipped)
         $principalRoleId = (int) DB::table('roles')->insertGetId([
-            'code'         => 'PRINCIPAL_HRM_ROLE',
-            'label'        => 'Principal',
+            'code' => 'PRINCIPAL_HRM_ROLE',
+            'label' => 'Principal',
             'is_protected' => false,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         DB::table('role_permissions')->insert([
@@ -204,23 +206,23 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
         DB::table('position_role_grants')->insert([
             'position_definition' => 'principal',
-            'role_id'             => $principalRoleId,
-            'granted_by'          => 0,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'role_id' => $principalRoleId,
+            'granted_by' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
     private function makeInstitution(): int
     {
         return (int) DB::table('institutions')->insertGetId([
-            'organization_id'     => $this->orgId,
+            'organization_id' => $this->orgId,
             'institution_type_id' => $this->typeId,
-            'code'                => 'INST-HRM-'.uniqid(),
-            'name_en'             => 'Homeroom Test Institution',
-            'is_active'           => true,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'code' => 'INST-HRM-'.uniqid(),
+            'name_en' => 'Homeroom Test Institution',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -228,34 +230,34 @@ final class DailyAttendanceSheetComponentTest extends TestCase
     {
         $yearId = (int) DB::table('academic_years')->insertGetId([
             'organization_id' => $this->orgId,
-            'code'            => 'AY-HRM-'.uniqid(),
-            'name_en'         => 'Test Year',
-            'starts_on'       => '2025-09-01',
-            'ends_on'         => '2026-06-30',
-            'status'          => 'open',
-            'created_at'      => now(),
-            'updated_at'      => now(),
+            'code' => 'AY-HRM-'.uniqid(),
+            'name_en' => 'Test Year',
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-06-30',
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $semId = (int) DB::table('semesters')->insertGetId([
-            'code'             => 'SEM-HRM-'.uniqid(),
-            'name_en'          => 'First Semester',
-            'name_ar'          => 'الفصل الأول',
-            'sequence'         => 1,
-            'status'           => 'open',
+            'code' => 'SEM-HRM-'.uniqid(),
+            'name_en' => 'First Semester',
+            'name_ar' => 'الفصل الأول',
+            'sequence' => 1,
+            'status' => 'open',
             'academic_year_id' => $yearId,
-            'starts_on'        => '2025-09-01',
-            'ends_on'          => '2026-06-30',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-06-30',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('institution_semesters')->insertGetId([
             'institution_id' => $institutionId,
-            'semester_id'    => $semId,
-            'status'         => 'open',
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'semester_id' => $semId,
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -266,26 +268,26 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
         return (int) DB::table('operational_periods')->insertGetId([
             'institution_semester_id' => $semesterId,
-            'code'                    => 'OP-HRM-'.uniqid(),
-            'name_en'                 => 'Morning',
-            'name_ar'                 => 'الصباح',
-            'sequence'                => $seq,
-            'starts_at'               => '08:00:00',
-            'ends_at'                 => '13:00:00',
-            'is_active'               => true,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'code' => 'OP-HRM-'.uniqid(),
+            'name_en' => 'Morning',
+            'name_ar' => 'الصباح',
+            'sequence' => $seq,
+            'starts_at' => '08:00:00',
+            'ends_at' => '13:00:00',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
     private function makeAcademicLevel(): int
     {
         return (int) DB::table('academic_levels')->insertGetId([
-            'code'       => 'LVL-HRM-'.uniqid(),
-            'name_en'    => 'Grade 1',
-            'name_ar'    => 'الصف الأول',
-            'sequence'   => 1,
-            'is_active'  => true,
+            'code' => 'LVL-HRM-'.uniqid(),
+            'name_en' => 'Grade 1',
+            'name_ar' => 'الصف الأول',
+            'sequence' => 1,
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -295,14 +297,14 @@ final class DailyAttendanceSheetComponentTest extends TestCase
     {
         return (int) DB::table('class_groups')->insertGetId([
             'institution_semester_id' => $semesterId,
-            'operational_period_id'   => $periodId,
-            'academic_level_id'       => $levelId,
-            'code'                    => 'CG-HRM-'.uniqid(),
-            'name_en'                 => 'Class A',
-            'name_ar'                 => 'الفصل أ',
-            'lifecycle_status'        => 'active',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => $periodId,
+            'academic_level_id' => $levelId,
+            'code' => 'CG-HRM-'.uniqid(),
+            'name_en' => 'Class A',
+            'name_ar' => 'الفصل أ',
+            'lifecycle_status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -313,17 +315,17 @@ final class DailyAttendanceSheetComponentTest extends TestCase
     {
         $personId = (int) DB::table('people')->insertGetId([
             'full_name_ar' => $label,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('staff_profiles')->insertGetId([
-            'person_id'         => $personId,
-            'staff_code'        => 'STF-HRM-'.uniqid(),
+            'person_id' => $personId,
+            'staff_code' => 'STF-HRM-'.uniqid(),
             'employment_status' => 'active',
-            'hired_on'          => '2024-01-01',
-            'created_at'        => now(),
-            'updated_at'        => now(),
+            'hired_on' => '2024-01-01',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -339,7 +341,7 @@ final class DailyAttendanceSheetComponentTest extends TestCase
      */
     private function makeTeacherAccount(int $institutionId, int $semesterId, int $periodId): StaffAccount
     {
-        $account   = StaffAccount::factory()->active()->create();
+        $account = StaffAccount::factory()->active()->create();
         $profileId = $this->makeProfileId('Teacher');
 
         DB::table('staff_accounts')
@@ -349,31 +351,31 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
         $assignmentId = (int) DB::table('staff_institution_assignments')->insertGetId([
             'staff_profile_id' => $profileId,
-            'institution_id'   => $institutionId,
-            'started_on'       => '2024-01-01',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'institution_id' => $institutionId,
+            'started_on' => '2024-01-01',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $positionId = (int) DB::table('staff_positions')->insertGetId([
-            'staff_profile_id'                => $profileId,
+            'staff_profile_id' => $profileId,
             'staff_institution_assignment_id' => $assignmentId,
-            'institution_id'                  => $institutionId,
-            'institution_semester_id'         => $semesterId,
-            'position_definition'             => 'teacher',
-            'started_on'                      => '2024-01-01',
-            'ended_on'                        => null,
-            'created_by'                      => 0,
-            'created_at'                      => now(),
-            'updated_at'                      => now(),
+            'institution_id' => $institutionId,
+            'institution_semester_id' => $semesterId,
+            'position_definition' => 'teacher',
+            'started_on' => '2024-01-01',
+            'ended_on' => null,
+            'created_by' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Period grant — required for period-restricted positions.
         DB::table('staff_position_periods')->insert([
-            'staff_position_id'     => $positionId,
+            'staff_position_id' => $positionId,
             'operational_period_id' => $periodId,
-            'created_at'            => now(),
-            'updated_at'            => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return $account;
@@ -387,7 +389,7 @@ final class DailyAttendanceSheetComponentTest extends TestCase
      */
     private function makePrincipalAccount(int $institutionId, int $semesterId): StaffAccount
     {
-        $account   = StaffAccount::factory()->active()->create();
+        $account = StaffAccount::factory()->active()->create();
         $profileId = $this->makeProfileId('Principal');
 
         DB::table('staff_accounts')
@@ -397,23 +399,23 @@ final class DailyAttendanceSheetComponentTest extends TestCase
 
         $assignmentId = (int) DB::table('staff_institution_assignments')->insertGetId([
             'staff_profile_id' => $profileId,
-            'institution_id'   => $institutionId,
-            'started_on'       => '2024-01-01',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'institution_id' => $institutionId,
+            'started_on' => '2024-01-01',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         DB::table('staff_positions')->insertGetId([
-            'staff_profile_id'                => $profileId,
+            'staff_profile_id' => $profileId,
             'staff_institution_assignment_id' => $assignmentId,
-            'institution_id'                  => $institutionId,
-            'institution_semester_id'         => $semesterId,
-            'position_definition'             => 'principal',
-            'started_on'                      => '2024-01-01',
-            'ended_on'                        => null,
-            'created_by'                      => 0,
-            'created_at'                      => now(),
-            'updated_at'                      => now(),
+            'institution_id' => $institutionId,
+            'institution_semester_id' => $semesterId,
+            'position_definition' => 'principal',
+            'started_on' => '2024-01-01',
+            'ended_on' => null,
+            'created_by' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // No period grant needed — principals are full-scope.
@@ -431,16 +433,16 @@ final class DailyAttendanceSheetComponentTest extends TestCase
         int $positionId,
     ): void {
         DB::table('homeroom_assignments')->insert([
-            'staff_profile_id'       => $profileId,
+            'staff_profile_id' => $profileId,
             'institution_semester_id' => $semesterId,
-            'staff_position_id'      => $positionId,
-            'class_group_id'         => $classGroupId,
-            'is_co_lead'             => false,
-            'starts_on'              => '2024-01-01',
-            'ends_on'                => null,
-            'status'                 => 'active',
-            'created_at'             => now(),
-            'updated_at'             => now(),
+            'staff_position_id' => $positionId,
+            'class_group_id' => $classGroupId,
+            'is_co_lead' => false,
+            'starts_on' => '2024-01-01',
+            'ends_on' => null,
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 

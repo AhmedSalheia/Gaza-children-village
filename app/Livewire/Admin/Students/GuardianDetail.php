@@ -124,11 +124,11 @@ final class GuardianDetail extends Component
                 ->where('id', $requestId)
                 ->where('status', 'pending')
                 ->update([
-                    'status'               => 'approved',
-                    'pending_lock'         => null,
+                    'status' => 'approved',
+                    'pending_lock' => null,
                     'resolved_by_admin_id' => $this->adminId(),
-                    'resolved_at'          => now(),
-                    'updated_at'           => now(),
+                    'resolved_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
             if ($claimed === 0) {
@@ -152,11 +152,11 @@ final class GuardianDetail extends Component
                 DB::table('guardian_correction_requests')
                     ->where('id', $requestId)
                     ->update([
-                        'status'               => 'pending',
-                        'pending_lock'         => 1,
+                        'status' => 'pending',
+                        'pending_lock' => 1,
                         'resolved_by_admin_id' => null,
-                        'resolved_at'          => null,
-                        'updated_at'           => now(),
+                        'resolved_at' => null,
+                        'updated_at' => now(),
                     ]);
 
                 return;
@@ -195,11 +195,11 @@ final class GuardianDetail extends Component
                 ->where('id', $requestId)
                 ->where('status', 'pending')
                 ->update([
-                    'status'               => 'rejected',
-                    'pending_lock'         => null,
+                    'status' => 'rejected',
+                    'pending_lock' => null,
                     'resolved_by_admin_id' => $this->adminId(),
-                    'resolved_at'          => now(),
-                    'updated_at'           => now(),
+                    'resolved_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
             if ($claimed === 0) {
@@ -220,11 +220,11 @@ final class GuardianDetail extends Component
                 DB::table('guardian_correction_requests')
                     ->where('id', $requestId)
                     ->update([
-                        'status'               => 'pending',
-                        'pending_lock'         => 1,
+                        'status' => 'pending',
+                        'pending_lock' => 1,
                         'resolved_by_admin_id' => null,
-                        'resolved_at'          => null,
-                        'updated_at'           => now(),
+                        'resolved_at' => null,
+                        'updated_at' => now(),
                     ]);
             }
         });
@@ -233,9 +233,9 @@ final class GuardianDetail extends Component
     public function render(): View
     {
         return view('livewire.admin.students.guardian-detail', [
-            'relationships'             => $this->relationships(),
+            'relationships' => $this->relationships(),
             'pendingCorrectionRequests' => $this->pendingCorrectionRequests(),
-            'canManage'                 => $this->adminCan('guardian_relationship.manage'),
+            'canManage' => $this->adminCan('guardian_relationship.manage'),
         ])->layout('layouts.admin');
     }
 }

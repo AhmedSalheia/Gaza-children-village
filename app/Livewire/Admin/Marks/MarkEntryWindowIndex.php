@@ -25,16 +25,23 @@ final class MarkEntryWindowIndex extends Component
     #[Url]
     public int $semesterId = 0;
 
-    public bool   $showForm          = false;
-    public string $nameAr            = '';
-    public string $nameEn            = '';
-    public int    $classGroupId      = 0;
-    public int    $subjectOfferingId = 0;
-    public string $opensAt           = '';
-    public string $closesAt          = '';
+    public bool $showForm = false;
+
+    public string $nameAr = '';
+
+    public string $nameEn = '';
+
+    public int $classGroupId = 0;
+
+    public int $subjectOfferingId = 0;
+
+    public string $opensAt = '';
+
+    public string $closesAt = '';
 
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -102,8 +109,8 @@ final class MarkEntryWindowIndex extends Component
 
         $this->validate([
             'semesterId' => ['required', 'integer', 'min:1'],
-            'opensAt'    => ['required', 'date'],
-            'closesAt'   => ['required', 'date', 'after:opensAt'],
+            'opensAt' => ['required', 'date'],
+            'closesAt' => ['required', 'date', 'after:opensAt'],
         ]);
 
         try {
@@ -176,16 +183,16 @@ final class MarkEntryWindowIndex extends Component
     public function render(): View
     {
         return view('livewire.admin.marks.mark-entry-windows', [
-            'openSemesters'    => $this->openSemesters(),
-            'windows'          => $this->windows(),
-            'classGroups'      => $this->classGroups(),
+            'openSemesters' => $this->openSemesters(),
+            'windows' => $this->windows(),
+            'classGroups' => $this->classGroups(),
             'subjectOfferings' => $this->subjectOfferings(),
         ])->layout('layouts.admin');
     }
 
     private function flash(string $type, string $message): void
     {
-        $this->flashType    = $type;
+        $this->flashType = $type;
         $this->flashMessage = $message;
     }
 }

@@ -51,7 +51,7 @@ final class ReplaceTeachingAssignment
             // Semester mutability guard — mirrors the Create action's rule.
             $this->guardSemesterMutable((int) $locked->institution_semester_id);
 
-            $startsOn       = $locked->starts_on->format('Y-m-d');
+            $startsOn = $locked->starts_on->format('Y-m-d');
             $replacedOnDate = $replacedOn->format('Y-m-d');
 
             if ($replacedOnDate < $startsOn) {
@@ -61,9 +61,9 @@ final class ReplaceTeachingAssignment
                 );
             }
 
-            $locked->ends_on     = $replacedOnDate;
+            $locked->ends_on = $replacedOnDate;
             $locked->ends_reason = $reason;
-            $locked->status      = AssignmentStatus::Superseded->value;
+            $locked->status = AssignmentStatus::Superseded->value;
             $locked->save();
 
             return ($this->createAction)(

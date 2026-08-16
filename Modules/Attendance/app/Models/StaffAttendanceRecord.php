@@ -31,9 +31,9 @@ final class StaffAttendanceRecord extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'record_date'  => 'date:Y-m-d',
-        'is_verified'  => 'boolean',
-        'verified_at'  => 'datetime',
+        'record_date' => 'date:Y-m-d',
+        'is_verified' => 'boolean',
+        'verified_at' => 'datetime',
         'correction_cycle' => 'integer',
     ];
 

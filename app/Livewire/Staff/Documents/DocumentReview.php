@@ -52,7 +52,7 @@ final class DocumentReview extends Component
         $this->errors = [];
 
         $request = $this->loadScopedRequest();
-        $svc     = app(DocumentRequestService::class);
+        $svc = app(DocumentRequestService::class);
 
         if (! in_array($request->status, [
             StudentDocumentRequest::STATUS_SUBMITTED,
@@ -67,7 +67,7 @@ final class DocumentReview extends Component
             $svc->startCompletenessCheck($request, $this->staffAccountId());
             $request->refresh();
 
-            $checker                    = app(DocumentCompletionChecker::class);
+            $checker = app(DocumentCompletionChecker::class);
             $this->completenessFailures = $checker->check(
                 $request->document_type_code,
                 $request->enrollment_id,
@@ -123,7 +123,7 @@ final class DocumentReview extends Component
             );
 
             $this->clarificationReason = '';
-            $this->flashMessage        = 'تم إرسال طلب التوضيح إلى ولي الأمر.';
+            $this->flashMessage = 'تم إرسال طلب التوضيح إلى ولي الأمر.';
         } catch (\RuntimeException $e) {
             $this->errors[] = $e->getMessage();
         }
@@ -131,14 +131,14 @@ final class DocumentReview extends Component
 
     public function render(): View
     {
-        $request     = $this->loadScopedRequest();
+        $request = $this->loadScopedRequest();
         $studentName = DB::table('student_profiles as sp')
             ->join('people as p', 'p.id', '=', 'sp.person_id')
             ->where('sp.id', (int) $request->student_profile_id)
             ->value('p.full_name_ar');
 
         return view('livewire.staff.documents.document-review', [
-            'request'     => $request,
+            'request' => $request,
             'studentName' => $studentName,
         ])->layout('layouts.staff');
     }

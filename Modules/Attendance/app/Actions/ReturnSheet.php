@@ -48,7 +48,7 @@ final class ReturnSheet
                 );
             }
 
-            $locked->status        = SheetStatus::Returned->value;
+            $locked->status = SheetStatus::Returned->value;
             $locked->return_reason = $reason;
             $locked->save();
 

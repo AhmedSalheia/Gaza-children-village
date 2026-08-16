@@ -44,10 +44,10 @@ final class PopulateEnrolledStudents
 
             if (! $exists) {
                 $record = new AttendanceRecord;
-                $record->sheet_id          = $sheet->id;
-                $record->enrollment_id     = (int) $enrollee->enrollment_id;
+                $record->sheet_id = $sheet->id;
+                $record->enrollment_id = (int) $enrollee->enrollment_id;
                 $record->student_profile_id = (int) $enrollee->student_profile_id;
-                $record->source            = $source;
+                $record->source = $source;
                 $record->save();
                 $count++;
             }

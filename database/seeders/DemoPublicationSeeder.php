@@ -49,7 +49,7 @@ final class DemoPublicationSeeder extends Seeder
 
         $principalId = (int) DB::table('staff_profiles')->where('staff_code', 'STAFF-001')->value('id');
 
-        $cgG1aId  = (int) DB::table('class_groups')->where('code', 'CG-G1-A')->where('institution_semester_id', $instSemId)->value('id');
+        $cgG1aId = (int) DB::table('class_groups')->where('code', 'CG-G1-A')->where('institution_semester_id', $instSemId)->value('id');
         $cgKg1aId = (int) DB::table('class_groups')->where('code', 'CG-KG1-A')->where('institution_semester_id', $instSemId)->value('id');
 
         // ── 1. Publish results for CG-G1-A ───────────────────────────────

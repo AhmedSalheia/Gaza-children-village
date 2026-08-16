@@ -27,14 +27,17 @@ final class ResultPublicationManager extends Component
 {
     use HasAdminAuth;
 
-    public int    $semesterId    = 0;
-    public int    $classGroupId  = 0;
+    public int $semesterId = 0;
 
-    public int    $revokingId    = 0;
-    public string $revokeReason  = '';
+    public int $classGroupId = 0;
 
-    public string $flashMessage  = '';
-    public string $flashType     = '';
+    public int $revokingId = 0;
+
+    public string $revokeReason = '';
+
+    public string $flashMessage = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -86,7 +89,7 @@ final class ResultPublicationManager extends Component
             return null;
         }
 
-        $total    = DB::table('mark_sheets')
+        $total = DB::table('mark_sheets')
             ->where('institution_semester_id', $this->semesterId)
             ->where('class_group_id', $this->classGroupId)
             ->whereNotIn('status', ['superseded'])
@@ -99,10 +102,10 @@ final class ResultPublicationManager extends Component
             ->count();
 
         return (object) [
-            'total'       => $total,
-            'approved'    => $approved,
+            'total' => $total,
+            'approved' => $approved,
             'outstanding' => $total - $approved,
-            'ready'       => $total > 0 && $approved === $total,
+            'ready' => $total > 0 && $approved === $total,
         ];
     }
 
@@ -133,7 +136,7 @@ final class ResultPublicationManager extends Component
     public function startRevoke(int $publicationId): void
     {
         $this->requirePermission(PermissionKey::RESULTS_REVOKE);
-        $this->revokingId   = $publicationId;
+        $this->revokingId = $publicationId;
         $this->revokeReason = '';
     }
 
@@ -159,7 +162,7 @@ final class ResultPublicationManager extends Component
                 revokeReason: $this->revokeReason,
                 revokedByStaffProfileId: $profileId ?? 0,
             );
-            $this->revokingId   = 0;
+            $this->revokingId = 0;
             $this->revokeReason = '';
             $this->flash('Publication revoked.', 'success');
         } catch (MarksException $e) {
@@ -169,26 +172,26 @@ final class ResultPublicationManager extends Component
 
     public function cancelRevoke(): void
     {
-        $this->revokingId   = 0;
+        $this->revokingId = 0;
         $this->revokeReason = '';
     }
 
     public function render(): View
     {
         return view('livewire.admin.publications.result-publication-manager', [
-            'openSemesters'    => $this->openSemesters(),
-            'classGroups'      => $this->classGroups(),
-            'publications'     => $this->publications(),
-            'readiness'        => $this->readinessSummary(),
-            'canPublish'       => $this->adminCan(PermissionKey::RESULTS_PUBLISH),
-            'canRevoke'        => $this->adminCan(PermissionKey::RESULTS_REVOKE),
+            'openSemesters' => $this->openSemesters(),
+            'classGroups' => $this->classGroups(),
+            'publications' => $this->publications(),
+            'readiness' => $this->readinessSummary(),
+            'canPublish' => $this->adminCan(PermissionKey::RESULTS_PUBLISH),
+            'canRevoke' => $this->adminCan(PermissionKey::RESULTS_REVOKE),
         ])->layout('layouts.admin');
     }
 
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 
     private function adminProfileId(): ?int

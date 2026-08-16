@@ -8,6 +8,7 @@ use App\Livewire\Staff\Concerns\HasStaffAuth;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\SvgWriter;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Modules\Attendance\Actions\GenerateQrCredential;
@@ -43,6 +44,7 @@ final class QrCardGenerator extends Component
     public string $generatedQrSvg = '';
 
     public string $flashMessage = '';
+
     public string $flashType = '';
 
     public function mount(): void
@@ -71,19 +73,19 @@ final class QrCardGenerator extends Component
 
         try {
             $result = app(GenerateQrCredential::class)(
-                staffProfileId:          $staffProfileId,
-                issuedByStaffProfileId:  $this->resolveStaffProfileId(),
+                staffProfileId: $staffProfileId,
+                issuedByStaffProfileId: $this->resolveStaffProfileId(),
             );
 
-            $this->generatedStaffProfileId  = $staffProfileId;
-            $this->generatedPlaintextToken  = $result['plaintext_token'];
-            $this->generatedStaffName       = $this->staffName($staffProfileId);
-            $this->generatedQrSvg           = $this->buildQrSvg($result['plaintext_token']);
-            $this->flashMessage             = "New credential generated for {$this->generatedStaffName}. Print or save the QR card now.";
-            $this->flashType                = 'success';
+            $this->generatedStaffProfileId = $staffProfileId;
+            $this->generatedPlaintextToken = $result['plaintext_token'];
+            $this->generatedStaffName = $this->staffName($staffProfileId);
+            $this->generatedQrSvg = $this->buildQrSvg($result['plaintext_token']);
+            $this->flashMessage = "New credential generated for {$this->generatedStaffName}. Print or save the QR card now.";
+            $this->flashType = 'success';
         } catch (StaffAttendanceException $e) {
             $this->flashMessage = $e->getMessage();
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
         }
     }
 
@@ -115,10 +117,10 @@ final class QrCardGenerator extends Component
         try {
             app(RevokeQrCredential::class)($credential, $this->resolveStaffProfileId());
             $this->flashMessage = 'Credential revoked.';
-            $this->flashType    = 'success';
+            $this->flashType = 'success';
         } catch (StaffAttendanceException $e) {
             $this->flashMessage = $e->getMessage();
-            $this->flashType    = 'error';
+            $this->flashType = 'error';
         }
     }
 
@@ -126,12 +128,11 @@ final class QrCardGenerator extends Component
     {
         $this->generatedStaffProfileId = null;
         $this->generatedPlaintextToken = null;
-        $this->generatedStaffName      = '';
-        $this->generatedQrSvg          = '';
+        $this->generatedStaffName = '';
+        $this->generatedQrSvg = '';
     }
 
-    /** @return \Illuminate\Support\Collection */
-    public function staffList(): \Illuminate\Support\Collection
+    public function staffList(): Collection
     {
         $scope = $this->staffScope();
 
@@ -143,12 +144,12 @@ final class QrCardGenerator extends Component
             ->join('people as p', 'p.id', '=', 'sp.person_id')
             ->join('staff_institution_assignments as sia', function ($j): void {
                 $j->on('sia.staff_profile_id', '=', 'sp.id')
-                  ->whereNull('sia.ended_on');
+                    ->whereNull('sia.ended_on');
             })
             ->where('sia.institution_id', $scope['institution_id'])
             ->leftJoin('staff_qr_credentials as sqc', function ($j): void {
                 $j->on('sqc.staff_profile_id', '=', 'sp.id')
-                  ->where('sqc.is_active', true);
+                    ->where('sqc.is_active', true);
             })
             ->select(
                 'sp.id as staff_profile_id',
@@ -181,10 +182,10 @@ final class QrCardGenerator extends Component
             ->setSize(220)
             ->setMargin(4);
 
-        $writer = new SvgWriter();
+        $writer = new SvgWriter;
         $result = $writer->write($qrCode, options: [
-            SvgWriter::WRITER_OPTION_COMPACT                  => true,
-            SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION  => true,
+            SvgWriter::WRITER_OPTION_COMPACT => true,
+            SvgWriter::WRITER_OPTION_EXCLUDE_XML_DECLARATION => true,
         ]);
 
         return $result->getString();

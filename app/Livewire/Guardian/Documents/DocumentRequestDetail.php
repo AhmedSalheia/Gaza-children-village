@@ -63,7 +63,7 @@ final class DocumentRequestDetail extends Component
         try {
             app(DocumentRequestService::class)->provideClarification($request, $this->clarificationResponse);
             $this->clarificationResponse = '';
-            $this->flashMessage          = 'تم إرسال ردك بنجاح. سيقوم الفريق بمراجعة طلبك.';
+            $this->flashMessage = 'تم إرسال ردك بنجاح. سيقوم الفريق بمراجعة طلبك.';
         } catch (\RuntimeException $e) {
             $this->errors[] = $e->getMessage();
         }
@@ -91,8 +91,8 @@ final class DocumentRequestDetail extends Component
 
     public function render(): View
     {
-        $request      = $this->loadOwnedRequest();
-        $issuedDoc    = DB::table('issued_documents')
+        $request = $this->loadOwnedRequest();
+        $issuedDoc = DB::table('issued_documents')
             ->where('request_id', $this->requestId)
             ->whereNull('cancelled_at')
             ->select('id', 'document_number', 'issued_at', 'verification_code')
@@ -104,8 +104,8 @@ final class DocumentRequestDetail extends Component
             ->value('p.full_name_ar');
 
         return view('livewire.guardian.documents.document-request-detail', [
-            'request'     => $request,
-            'issuedDoc'   => $issuedDoc,
+            'request' => $request,
+            'issuedDoc' => $issuedDoc,
             'studentName' => $studentName,
         ])->layout('layouts.guardian');
     }

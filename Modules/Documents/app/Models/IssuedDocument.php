@@ -29,10 +29,10 @@ final class IssuedDocument extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'issued_at'    => 'datetime',
+        'issued_at' => 'datetime',
         'cancelled_at' => 'datetime',
-        'created_at'   => 'datetime',
-        'updated_at'   => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // ── Relationships ─────────────────────────────────────────────────────
@@ -76,12 +76,12 @@ final class IssuedDocument extends Model
     public function verificationSummary(): array
     {
         return [
-            'status'           => $this->isCancelled() ? 'cancelled' : 'valid',
-            'document_number'  => $this->document_number,
-            'document_type'    => $this->document_type_code,
-            'locale'           => $this->locale,
-            'issued_at'        => $this->issued_at?->toDateString(),
-            'cancelled_at'     => $this->cancelled_at?->toDateString(),
+            'status' => $this->isCancelled() ? 'cancelled' : 'valid',
+            'document_number' => $this->document_number,
+            'document_type' => $this->document_type_code,
+            'locale' => $this->locale,
+            'issued_at' => $this->issued_at?->toDateString(),
+            'cancelled_at' => $this->cancelled_at?->toDateString(),
         ];
     }
 }

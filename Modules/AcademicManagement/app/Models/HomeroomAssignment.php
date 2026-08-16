@@ -41,10 +41,10 @@ final class HomeroomAssignment extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'status'     => AssignmentStatus::class,
+        'status' => AssignmentStatus::class,
         'is_co_lead' => 'boolean',
-        'starts_on'  => 'date',
-        'ends_on'    => 'date',
+        'starts_on' => 'date',
+        'ends_on' => 'date',
     ];
 
     /** @return BelongsTo<ClassGroup, $this> */

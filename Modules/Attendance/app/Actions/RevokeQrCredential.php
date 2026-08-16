@@ -32,8 +32,8 @@ final class RevokeQrCredential
                 );
             }
 
-            $locked->is_active                   = false;
-            $locked->revoked_at                  = now();
+            $locked->is_active = false;
+            $locked->revoked_at = now();
             $locked->revoked_by_staff_profile_id = $revokedByStaffProfileId;
             $locked->save();
 
@@ -42,11 +42,11 @@ final class RevokeQrCredential
                 ->where('qr_credential_id', $locked->id)
                 ->where('processing_status', 'pending')
                 ->update([
-                    'processing_status'              => 'rejected',
-                    'rejection_reason'               => 'Credential was revoked.',
-                    'reviewed_by_staff_profile_id'   => $revokedByStaffProfileId,
-                    'reviewed_at'                    => now(),
-                    'updated_at'                     => now(),
+                    'processing_status' => 'rejected',
+                    'rejection_reason' => 'Credential was revoked.',
+                    'reviewed_by_staff_profile_id' => $revokedByStaffProfileId,
+                    'reviewed_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
             return $locked;

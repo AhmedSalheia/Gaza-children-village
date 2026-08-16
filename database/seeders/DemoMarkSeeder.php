@@ -74,8 +74,8 @@ final class DemoMarkSeeder extends Seeder
             ->where('s.code', $code)
             ->value('iso.id');
 
-        $offArabicId  = $subjectOffering('ARABIC');
-        $offMathId    = $subjectOffering('MATH');
+        $offArabicId = $subjectOffering('ARABIC');
+        $offMathId = $subjectOffering('MATH');
         $offEnglishId = $subjectOffering('ENGLISH');
         $offScienceId = $subjectOffering('SCIENCE');
 
@@ -111,10 +111,10 @@ final class DemoMarkSeeder extends Seeder
                 ->exists()
             ) {
                 DB::table('staff_position_periods')->insert([
-                    'staff_position_id'    => $posId,
+                    'staff_position_id' => $posId,
                     'operational_period_id' => $opMornId,
-                    'created_at'           => now(),
-                    'updated_at'           => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -147,15 +147,15 @@ final class DemoMarkSeeder extends Seeder
                 $assignmentIds["{$a['class_group_id']}-{$a['subject_offering_id']}"] = (int) $existing;
             } else {
                 $id = (int) DB::table('teaching_assignments')->insertGetId([
-                    'staff_profile_id'        => $a['staff_profile_id'],
-                    'institution_semester_id'  => $instSemId,
-                    'staff_position_id'        => $a['staff_position_id'],
-                    'class_group_id'           => $a['class_group_id'],
-                    'subject_offering_id'      => $a['subject_offering_id'],
-                    'starts_on'               => '2025-09-01',
-                    'status'                  => 'active',
-                    'created_at'              => now(),
-                    'updated_at'              => now(),
+                    'staff_profile_id' => $a['staff_profile_id'],
+                    'institution_semester_id' => $instSemId,
+                    'staff_position_id' => $a['staff_position_id'],
+                    'class_group_id' => $a['class_group_id'],
+                    'subject_offering_id' => $a['subject_offering_id'],
+                    'starts_on' => '2025-09-01',
+                    'status' => 'active',
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
                 $assignmentIds["{$a['class_group_id']}-{$a['subject_offering_id']}"] = $id;
             }
@@ -176,15 +176,15 @@ final class DemoMarkSeeder extends Seeder
                 ->exists()
             ) {
                 DB::table('homeroom_assignments')->insert([
-                    'staff_profile_id'        => $ha['staff_profile_id'],
-                    'institution_semester_id'  => $instSemId,
-                    'staff_position_id'        => $ha['staff_position_id'],
-                    'class_group_id'           => $ha['class_group_id'],
-                    'is_co_lead'              => $ha['is_co_lead'],
-                    'starts_on'               => '2025-09-01',
-                    'status'                  => 'active',
-                    'created_at'              => now(),
-                    'updated_at'              => now(),
+                    'staff_profile_id' => $ha['staff_profile_id'],
+                    'institution_semester_id' => $instSemId,
+                    'staff_position_id' => $ha['staff_position_id'],
+                    'class_group_id' => $ha['class_group_id'],
+                    'is_co_lead' => $ha['is_co_lead'],
+                    'starts_on' => '2025-09-01',
+                    'status' => 'active',
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -212,16 +212,16 @@ final class DemoMarkSeeder extends Seeder
             } else {
                 $defIds[] = (int) DB::table('assessment_definitions')->insertGetId([
                     'institution_semester_id' => $instSemId,
-                    'class_group_id'          => null,
-                    'subject_offering_id'     => null,
-                    'name_ar'                 => $def['name_ar'],
-                    'name_en'                 => $def['name_en'],
-                    'assessment_type'         => $def['assessment_type'],
-                    'max_score'               => $def['max_score'],
-                    'weight'                  => $def['weight'],
-                    'status'                  => 'active',
-                    'created_at'              => now(),
-                    'updated_at'              => now(),
+                    'class_group_id' => null,
+                    'subject_offering_id' => null,
+                    'name_ar' => $def['name_ar'],
+                    'name_en' => $def['name_en'],
+                    'assessment_type' => $def['assessment_type'],
+                    'max_score' => $def['max_score'],
+                    'weight' => $def['weight'],
+                    'status' => 'active',
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -237,16 +237,16 @@ final class DemoMarkSeeder extends Seeder
 
         // ── 7. Mark sheets ────────────────────────────────────────────────
         // Open window sheets
-        $sheetG1Arabic  = $this->upsertMarkSheet($instSemId, $cgG1aId,  $offArabicId,  $assignmentIds["{$cgG1aId}-{$offArabicId}"],  $scaleId, $openWindowId, 'approved', $staff4Id);
-        $sheetG1Math    = $this->upsertMarkSheet($instSemId, $cgG1aId,  $offMathId,    $assignmentIds["{$cgG1aId}-{$offMathId}"],    $scaleId, $openWindowId, 'approved', $staff4Id);
-        $sheetG1English = $this->upsertMarkSheet($instSemId, $cgG1aId,  $offEnglishId, $assignmentIds["{$cgG1aId}-{$offEnglishId}"], $scaleId, $openWindowId, 'approved', $staff5Id);
-        $sheetG1Science = $this->upsertMarkSheet($instSemId, $cgG1aId,  $offScienceId, $assignmentIds["{$cgG1aId}-{$offScienceId}"], $scaleId, $openWindowId, 'submitted', $staff5Id);
+        $sheetG1Arabic = $this->upsertMarkSheet($instSemId, $cgG1aId, $offArabicId, $assignmentIds["{$cgG1aId}-{$offArabicId}"], $scaleId, $openWindowId, 'approved', $staff4Id);
+        $sheetG1Math = $this->upsertMarkSheet($instSemId, $cgG1aId, $offMathId, $assignmentIds["{$cgG1aId}-{$offMathId}"], $scaleId, $openWindowId, 'approved', $staff4Id);
+        $sheetG1English = $this->upsertMarkSheet($instSemId, $cgG1aId, $offEnglishId, $assignmentIds["{$cgG1aId}-{$offEnglishId}"], $scaleId, $openWindowId, 'approved', $staff5Id);
+        $sheetG1Science = $this->upsertMarkSheet($instSemId, $cgG1aId, $offScienceId, $assignmentIds["{$cgG1aId}-{$offScienceId}"], $scaleId, $openWindowId, 'submitted', $staff5Id);
         $sheetKg1English = $this->upsertMarkSheet($instSemId, $cgKg1aId, $offEnglishId, $assignmentIds["{$cgKg1aId}-{$offEnglishId}"], $scaleId, $openWindowId, 'approved', $staff5Id);
 
         // Closed window sheets (variety of statuses)
-        $sheetG2Arabic  = $this->upsertMarkSheet($instSemId, $cgG2aId,  $offArabicId,  $assignmentIds["{$cgG2aId}-{$offArabicId}"],  $scaleId, $closedWindowId, 'verified', null);
-        $sheetG2Math    = $this->upsertMarkSheet($instSemId, $cgG2aId,  $offMathId,    $assignmentIds["{$cgG2aId}-{$offMathId}"],    null,     $closedWindowId, 'returned', null);
-        $sheetG2English = $this->upsertMarkSheet($instSemId, $cgG2aId,  $offEnglishId, $assignmentIds["{$cgG2aId}-{$offEnglishId}"], null,     null,            'draft',    null);
+        $sheetG2Arabic = $this->upsertMarkSheet($instSemId, $cgG2aId, $offArabicId, $assignmentIds["{$cgG2aId}-{$offArabicId}"], $scaleId, $closedWindowId, 'verified', null);
+        $sheetG2Math = $this->upsertMarkSheet($instSemId, $cgG2aId, $offMathId, $assignmentIds["{$cgG2aId}-{$offMathId}"], null, $closedWindowId, 'returned', null);
+        $sheetG2English = $this->upsertMarkSheet($instSemId, $cgG2aId, $offEnglishId, $assignmentIds["{$cgG2aId}-{$offEnglishId}"], null, null, 'draft', null);
 
         // ── 8. Student marks ──────────────────────────────────────────────
         // G1-A students: STU-004 and STU-005
@@ -314,16 +314,16 @@ final class DemoMarkSeeder extends Seeder
 
             if ($origMark && ! DB::table('student_marks')->where('correction_of_id', $origMark->id)->exists()) {
                 DB::table('student_marks')->insert([
-                    'mark_sheet_id'                => $sheetG1Arabic,
-                    'enrollment_id'                => $enrollG1[0],
-                    'assessment_definition_id'     => $defIds[0],
-                    'score'                        => 19,
-                    'correction_of_id'             => $origMark->id,
+                    'mark_sheet_id' => $sheetG1Arabic,
+                    'enrollment_id' => $enrollG1[0],
+                    'assessment_definition_id' => $defIds[0],
+                    'score' => 19,
+                    'correction_of_id' => $origMark->id,
                     'corrected_by_staff_profile_id' => $staff2Id, // secretary corrected
-                    'corrected_at'                 => now()->subDays(2),
-                    'correction_reason'            => 'Handwriting was misread; original score was 17, corrected to 19 after paper re-check.',
-                    'created_at'                   => now(),
-                    'updated_at'                   => now(),
+                    'corrected_at' => now()->subDays(2),
+                    'correction_reason' => 'Handwriting was misread; original score was 17, corrected to 19 after paper re-check.',
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -361,12 +361,12 @@ final class DemoMarkSeeder extends Seeder
 
         $scaleId = (int) DB::table('grading_scales')->insertGetId([
             'institution_id' => $institutionId,
-            'code'           => 'GCV-STD',
-            'name_ar'        => 'مقياس التقدير المعياري',
-            'name_en'        => 'Standard Grading Scale',
-            'is_active'      => true,
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'code' => 'GCV-STD',
+            'name_ar' => 'مقياس التقدير المعياري',
+            'name_en' => 'Standard Grading Scale',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $grades = [
@@ -382,15 +382,15 @@ final class DemoMarkSeeder extends Seeder
         foreach ($grades as $g) {
             DB::table('grading_scale_grades')->insert([
                 'grading_scale_id' => $scaleId,
-                'code'             => $g['code'],
-                'name_ar'          => $g['name_ar'],
-                'name_en'          => $g['name_en'],
-                'min_score'        => $g['min_score'],
-                'max_score'        => $g['max_score'],
-                'is_passing'       => $g['is_passing'],
-                'sequence'         => $g['sequence'],
-                'created_at'       => now(),
-                'updated_at'       => now(),
+                'code' => $g['code'],
+                'name_ar' => $g['name_ar'],
+                'name_en' => $g['name_en'],
+                'min_score' => $g['min_score'],
+                'max_score' => $g['max_score'],
+                'is_passing' => $g['is_passing'],
+                'sequence' => $g['sequence'],
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
@@ -410,20 +410,20 @@ final class DemoMarkSeeder extends Seeder
 
         return (int) DB::table('mark_entry_windows')->insertGetId([
             'institution_semester_id' => $instSemId,
-            'class_group_id'          => null,
-            'subject_offering_id'     => null,
-            'name_ar'                 => $nameAr,
-            'name_en'                 => $nameEn,
-            'opens_at'                => $opensAt,
-            'closes_at'               => $closesAt,
-            'status'                  => $status,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'class_group_id' => null,
+            'subject_offering_id' => null,
+            'name_ar' => $nameAr,
+            'name_en' => $nameEn,
+            'opens_at' => $opensAt,
+            'closes_at' => $closesAt,
+            'status' => $status,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
     /**
-     * @param 'draft'|'submitted'|'verified'|'returned'|'approved' $status
+     * @param  'draft'|'submitted'|'verified'|'returned'|'approved'  $status
      */
     private function upsertMarkSheet(
         int $instSemId,
@@ -448,15 +448,15 @@ final class DemoMarkSeeder extends Seeder
 
         $row = [
             'institution_semester_id' => $instSemId,
-            'class_group_id'          => $classGroupId,
-            'subject_offering_id'     => $subjectOfferingId,
-            'teaching_assignment_id'  => $teachingAssignmentId,
-            'mark_entry_window_id'    => $windowId,
-            'grading_scale_id'        => $gradingScaleId,
-            'version'                 => 1,
-            'status'                  => $status,
-            'created_at'              => now()->subDays(10),
-            'updated_at'              => now(),
+            'class_group_id' => $classGroupId,
+            'subject_offering_id' => $subjectOfferingId,
+            'teaching_assignment_id' => $teachingAssignmentId,
+            'mark_entry_window_id' => $windowId,
+            'grading_scale_id' => $gradingScaleId,
+            'version' => 1,
+            'status' => $status,
+            'created_at' => now()->subDays(10),
+            'updated_at' => now(),
         ];
 
         if ($status === 'submitted' || $status === 'verified' || $status === 'returned' || $status === 'approved') {
@@ -496,12 +496,12 @@ final class DemoMarkSeeder extends Seeder
         }
 
         DB::table('student_marks')->insert([
-            'mark_sheet_id'            => $sheetId,
-            'enrollment_id'            => $enrollmentId,
+            'mark_sheet_id' => $sheetId,
+            'enrollment_id' => $enrollmentId,
             'assessment_definition_id' => $definitionId,
-            'score'                    => $score,
-            'created_at'               => now(),
-            'updated_at'               => now(),
+            'score' => $score,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

@@ -42,9 +42,9 @@ final class TeachingAssignment extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'status'    => AssignmentStatus::class,
+        'status' => AssignmentStatus::class,
         'starts_on' => 'date',
-        'ends_on'   => 'date',
+        'ends_on' => 'date',
     ];
 
     /** @return BelongsTo<ClassGroup, $this> */

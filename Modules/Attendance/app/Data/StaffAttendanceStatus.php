@@ -21,11 +21,16 @@ final class StaffAttendanceStatus
 {
     // ── Status codes ────────────────────────────────────────────────────────
 
-    public const PRESENT       = 'present';
-    public const ABSENT        = 'absent';
-    public const EXCUSED       = 'excused_absence';
-    public const LATE          = 'late';
-    public const LEAVE         = 'leave';
+    public const PRESENT = 'present';
+
+    public const ABSENT = 'absent';
+
+    public const EXCUSED = 'excused_absence';
+
+    public const LATE = 'late';
+
+    public const LEAVE = 'leave';
+
     public const OFFICIAL_DUTY = 'official_duty';
 
     // ── Metadata catalogue ──────────────────────────────────────────────────
@@ -44,52 +49,52 @@ final class StaffAttendanceStatus
     {
         return [
             self::PRESENT => [
-                'label_ar'              => 'حاضر',
-                'label_en'              => 'Present',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'حاضر',
+                'label_en' => 'Present',
+                'requires_reason' => false,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => true,
+                'counts_as_present' => true,
             ],
             self::ABSENT => [
-                'label_ar'              => 'غائب',
-                'label_en'              => 'Absent',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'غائب',
+                'label_en' => 'Absent',
+                'requires_reason' => false,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => false,
+                'counts_as_present' => false,
             ],
             self::EXCUSED => [
-                'label_ar'              => 'غياب بعذر',
-                'label_en'              => 'Excused Absence',
-                'requires_reason'       => true,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'غياب بعذر',
+                'label_en' => 'Excused Absence',
+                'requires_reason' => true,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => false,
+                'counts_as_present' => false,
             ],
             self::LATE => [
-                'label_ar'              => 'متأخر',
-                'label_en'              => 'Late',
-                'requires_reason'       => false,
-                'allows_arrival_time'   => true,
+                'label_ar' => 'متأخر',
+                'label_en' => 'Late',
+                'requires_reason' => false,
+                'allows_arrival_time' => true,
                 'allows_departure_time' => false,
-                'counts_as_present'     => true,
+                'counts_as_present' => true,
             ],
             self::LEAVE => [
-                'label_ar'              => 'إجازة',
-                'label_en'              => 'Leave',
-                'requires_reason'       => true,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'إجازة',
+                'label_en' => 'Leave',
+                'requires_reason' => true,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => false,
+                'counts_as_present' => false,
             ],
             self::OFFICIAL_DUTY => [
-                'label_ar'              => 'مهمة رسمية',
-                'label_en'              => 'Official Duty',
-                'requires_reason'       => true,
-                'allows_arrival_time'   => false,
+                'label_ar' => 'مهمة رسمية',
+                'label_en' => 'Official Duty',
+                'requires_reason' => true,
+                'allows_arrival_time' => false,
                 'allows_departure_time' => false,
-                'counts_as_present'     => true,
+                'counts_as_present' => true,
             ],
         ];
     }

@@ -92,11 +92,11 @@ final class OpenDailySheet
 
             // Create the sheet
             $sheet = new AttendanceSheet;
-            $sheet->institution_semester_id  = (int) $classGroup->institution_semester_id;
-            $sheet->operational_period_id    = (int) $classGroup->operational_period_id;
-            $sheet->class_group_id           = $classGroupId;
-            $sheet->attendance_date          = $dateStr;
-            $sheet->status                   = SheetStatus::Draft->value;
+            $sheet->institution_semester_id = (int) $classGroup->institution_semester_id;
+            $sheet->operational_period_id = (int) $classGroup->operational_period_id;
+            $sheet->class_group_id = $classGroupId;
+            $sheet->attendance_date = $dateStr;
+            $sheet->status = SheetStatus::Draft->value;
             $sheet->creator_staff_profile_id = $creatorStaffProfileId;
             $sheet->save();
 

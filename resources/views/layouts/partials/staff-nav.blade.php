@@ -139,4 +139,13 @@
         </a>
     </li>
     @endif
+
+    {{-- Formal requests: prepare (secretary) or review/sign (principal/deputy) --}}
+    @if($navCan('formal_request.prepare') || $navCan('formal_request.review'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.formal-requests.index') }}" class="portal-nav__link @active('staff/formal-requests*')">
+            {{ __('ui.formal_requests', [], null, 'Formal Requests') }}
+        </a>
+    </li>
+    @endif
 </ul>

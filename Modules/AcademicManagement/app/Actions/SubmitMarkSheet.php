@@ -41,9 +41,9 @@ final class SubmitMarkSheet
             }
         }
 
-        $sheet->status                          = MarkSheetStatus::Submitted->value;
-        $sheet->submitted_by_staff_profile_id   = $staffProfileId;
-        $sheet->submitted_at                    = now();
+        $sheet->status = MarkSheetStatus::Submitted->value;
+        $sheet->submitted_by_staff_profile_id = $staffProfileId;
+        $sheet->submitted_at = now();
         $sheet->save();
 
         return $sheet;

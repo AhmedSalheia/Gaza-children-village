@@ -110,8 +110,8 @@ final class DocumentCompletionChecker
             // ── Legacy / extra checks (not in the seeder, fail-safe to keep) ──
 
             'student_has_person_record' => $this->checkStudentPersonRecord((int) $enrollment->student_profile_id),
-            'student_has_birth_date'    => $this->checkStudentBirthDate((int) $enrollment->student_profile_id),
-            'student_has_name_ar'       => $this->checkStudentNameAr((int) $enrollment->student_profile_id),
+            'student_has_birth_date' => $this->checkStudentBirthDate((int) $enrollment->student_profile_id),
+            'student_has_name_ar' => $this->checkStudentNameAr((int) $enrollment->student_profile_id),
             'guardian_relationship_exists' => $this->checkGuardianRelationship((int) $enrollment->student_profile_id),
 
             // ── Fail-closed: unknown rule names block issuance ────────────────

@@ -54,8 +54,8 @@ final class VerifyStaffRecord
                 }
             }
 
-            $locked->is_verified                  = true;
-            $locked->verified_at                  = now();
+            $locked->is_verified = true;
+            $locked->verified_at = now();
             $locked->verified_by_staff_profile_id = $actorStaffProfileId;
             $locked->save();
 

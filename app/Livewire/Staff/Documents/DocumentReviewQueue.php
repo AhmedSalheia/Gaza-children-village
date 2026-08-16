@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Documents;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -36,16 +37,16 @@ final class DocumentReviewQueue extends Component
 
     public function render(): View
     {
-        $scope    = $this->staffScope();
+        $scope = $this->staffScope();
         $requests = $this->loadQueue($scope['institution_id'], $scope['institution_semester_id']);
 
         return view('livewire.staff.documents.document-review-queue', [
             'requests' => $requests,
-            'scope'    => $scope,
+            'scope' => $scope,
         ])->layout('layouts.staff');
     }
 
-    private function loadQueue(?int $institutionId, ?int $institutionSemesterId): \Illuminate\Support\Collection
+    private function loadQueue(?int $institutionId, ?int $institutionSemesterId): Collection
     {
         if ($institutionId === null || $institutionSemesterId === null) {
             return collect();

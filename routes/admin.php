@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\IssuedDocumentDownloadController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\ReportDownloadController;
+use App\Http\Controllers\Admin\SecureAttachmentDownloadController;
 use App\Livewire\Admin\AcademicStructure\AcademicLevelIndex;
 use App\Livewire\Admin\AcademicStructure\ClassGroupIndex;
 use App\Livewire\Admin\AcademicStructure\ClassroomIndex;
@@ -11,21 +13,28 @@ use App\Livewire\Admin\AcademicStructure\SubjectIndex;
 use App\Livewire\Admin\Assignments\HomeroomAssignmentIndex;
 use App\Livewire\Admin\Assignments\TeachingAssignmentIndex;
 use App\Livewire\Admin\Audit\CivilRegistryAudit;
+use App\Livewire\Admin\Calendar\CalendarIndex;
+use App\Livewire\Admin\Corrections\CorrectionInbox;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Documents\DocumentApproval;
+use App\Livewire\Admin\Documents\DocumentApprovalQueue;
+use App\Livewire\Admin\Documents\TemplateList;
+use App\Livewire\Admin\Documents\TemplateVersionDetail;
+use App\Livewire\Admin\Enrollments\EnrollmentIndex;
+use App\Livewire\Admin\Enrollments\PromotionIndex;
+use App\Livewire\Admin\Enrollments\TransferIndex;
+use App\Livewire\Admin\FormalRequests\ManagementInbox;
+use App\Livewire\Admin\FormalRequests\ManagementReview;
+use App\Livewire\Admin\Imports\ImportBatchDetail;
+use App\Livewire\Admin\Imports\ImportBatchIndex;
+use App\Livewire\Admin\Institutions\InstitutionIndex;
 use App\Livewire\Admin\Marks\AssessmentDefinitionIndex;
 use App\Livewire\Admin\Marks\GradingScaleIndex;
 use App\Livewire\Admin\Marks\MarkEntryWindowIndex;
 use App\Livewire\Admin\Marks\MarkSheetOverview;
+use App\Livewire\Admin\People\PeopleIndex;
 use App\Livewire\Admin\Publications\AttendancePublicationPolicyConfig;
 use App\Livewire\Admin\Publications\ResultPublicationManager;
-use App\Livewire\Admin\Calendar\CalendarIndex;
-use App\Livewire\Admin\Dashboard;
-use App\Livewire\Admin\Enrollments\EnrollmentIndex;
-use App\Livewire\Admin\Enrollments\PromotionIndex;
-use App\Livewire\Admin\Enrollments\TransferIndex;
-use App\Livewire\Admin\Imports\ImportBatchDetail;
-use App\Livewire\Admin\Imports\ImportBatchIndex;
-use App\Livewire\Admin\Institutions\InstitutionIndex;
-use App\Livewire\Admin\People\PeopleIndex;
 use App\Livewire\Admin\Reports\AttendanceReport as AdminAttendanceReport;
 use App\Livewire\Admin\Reports\MarksReport as AdminMarksReport;
 use App\Livewire\Admin\Stubs\ComingSoonPage;
@@ -129,22 +138,28 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');
 
         // Secure attachment download — authorization gated, no public URL
-        Route::get('/attachments/{attachment}', \App\Http\Controllers\Admin\SecureAttachmentDownloadController::class)
+        Route::get('/attachments/{attachment}', SecureAttachmentDownloadController::class)
             ->name('attachments.download');
 
+        // Formal institution requests — management inbox and review
+        Route::get('/formal-requests', ManagementInbox::class)->name('formal-requests.index');
+        Route::get('/formal-requests/{requestId}', ManagementReview::class)
+            ->where('requestId', '[0-9]+')
+            ->name('formal-requests.review');
+
         // Correction requests — central admin inbox
-        Route::get('/corrections', \App\Livewire\Admin\Corrections\CorrectionInbox::class)->name('corrections.index');
+        Route::get('/corrections', CorrectionInbox::class)->name('corrections.index');
 
         // Document templates — management, versioning, preview, activation
-        Route::get('/documents/templates', \App\Livewire\Admin\Documents\TemplateList::class)->name('documents.templates');
-        Route::get('/documents/templates/{templateId}', \App\Livewire\Admin\Documents\TemplateVersionDetail::class)->name('documents.template-versions');
+        Route::get('/documents/templates', TemplateList::class)->name('documents.templates');
+        Route::get('/documents/templates/{templateId}', TemplateVersionDetail::class)->name('documents.template-versions');
 
         // Document request approval — principal/admin approval queue
-        Route::get('/documents/approvals', \App\Livewire\Admin\Documents\DocumentApprovalQueue::class)->name('documents.queue');
-        Route::get('/documents/approvals/{requestId}', \App\Livewire\Admin\Documents\DocumentApproval::class)
+        Route::get('/documents/approvals', DocumentApprovalQueue::class)->name('documents.queue');
+        Route::get('/documents/approvals/{requestId}', DocumentApproval::class)
             ->where('requestId', '[0-9]+')
             ->name('documents.approve');
-        Route::get('/documents/download/{documentId}', \App\Http\Controllers\Admin\IssuedDocumentDownloadController::class)
+        Route::get('/documents/download/{documentId}', IssuedDocumentDownloadController::class)
             ->where('documentId', '[0-9]+')
             ->name('documents.download');
 

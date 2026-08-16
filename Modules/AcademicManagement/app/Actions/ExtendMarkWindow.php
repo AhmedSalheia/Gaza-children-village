@@ -44,16 +44,16 @@ final class ExtendMarkWindow
         }
 
         // Append to history
-        $history   = $window->extension_history ?? [];
+        $history = $window->extension_history ?? [];
         $history[] = [
-            'extended_at'    => now()->toDateTimeString(),
-            'new_closes_at'  => $newClosesAt->format('Y-m-d H:i:s'),
-            'reason'         => $reason,
-            'actor_ref'      => $actorRef,
+            'extended_at' => now()->toDateTimeString(),
+            'new_closes_at' => $newClosesAt->format('Y-m-d H:i:s'),
+            'reason' => $reason,
+            'actor_ref' => $actorRef,
         ];
 
-        $window->closes_at         = $newClosesAt->format('Y-m-d H:i:s');
-        $window->status            = MarkWindowStatus::Extended->value;
+        $window->closes_at = $newClosesAt->format('Y-m-d H:i:s');
+        $window->status = MarkWindowStatus::Extended->value;
         $window->extension_history = $history;
         $window->save();
 

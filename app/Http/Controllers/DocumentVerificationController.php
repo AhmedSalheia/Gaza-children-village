@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\View\View;
 
 /**
  * Public (unauthenticated) document verification endpoint.
@@ -36,15 +37,15 @@ use Illuminate\Support\Facades\RateLimiter;
  */
 final class DocumentVerificationController extends Controller
 {
-    public function __invoke(Request $request, string $code): \Illuminate\View\View
+    public function __invoke(Request $request, string $code): View
     {
         // Rate limiting: 20 requests per minute per IP
-        $key     = 'verify:'.($request->ip() ?? 'unknown');
+        $key = 'verify:'.($request->ip() ?? 'unknown');
         $maxHits = 20;
 
         if (RateLimiter::tooManyAttempts($key, $maxHits)) {
             return view('document-verification', [
-                'status'   => 'rate_limited',
+                'status' => 'rate_limited',
                 'document' => null,
             ]);
         }
@@ -56,7 +57,7 @@ final class DocumentVerificationController extends Controller
 
         if (strlen($code) !== 64) {
             return view('document-verification', [
-                'status'   => 'invalid',
+                'status' => 'invalid',
                 'document' => null,
             ]);
         }
@@ -80,7 +81,7 @@ final class DocumentVerificationController extends Controller
 
         if (! $document) {
             return view('document-verification', [
-                'status'   => 'invalid',
+                'status' => 'invalid',
                 'document' => null,
             ]);
         }
@@ -96,7 +97,7 @@ final class DocumentVerificationController extends Controller
 
         if (! $catalogueEntry || ! $catalogueEntry->public_verification) {
             return view('document-verification', [
-                'status'   => 'invalid',
+                'status' => 'invalid',
                 'document' => null,
             ]);
         }
@@ -105,16 +106,16 @@ final class DocumentVerificationController extends Controller
 
         // Build the public-safe summary — no PII
         $summary = [
-            'document_number'     => (string) $document->document_number,
-            'document_type'       => (string) $document->document_type_code,
-            'locale'              => (string) $document->locale,
-            'issued_at'           => $document->issued_at ? substr((string) $document->issued_at, 0, 10) : null,
+            'document_number' => (string) $document->document_number,
+            'document_type' => (string) $document->document_type_code,
+            'locale' => (string) $document->locale,
+            'issued_at' => $document->issued_at ? substr((string) $document->issued_at, 0, 10) : null,
             'institution_name_ar' => (string) ($document->institution_name_ar ?? ''),
             'institution_name_en' => (string) ($document->institution_name_en ?? ''),
         ];
 
         return view('document-verification', [
-            'status'   => $status,
+            'status' => $status,
             'document' => $summary,
         ]);
     }

@@ -23,7 +23,8 @@ final class MarkSheetOverview extends Component
     public int $semesterId = 0;
 
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -91,8 +92,8 @@ final class MarkSheetOverview extends Component
     {
         return view('livewire.admin.marks.mark-sheet-overview', [
             'openSemesters' => $this->openSemesters(),
-            'markSheets'    => $this->markSheets(),
-            'stats'         => $this->stats(),
+            'markSheets' => $this->markSheets(),
+            'stats' => $this->stats(),
         ])->layout('layouts.admin');
     }
 }

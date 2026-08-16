@@ -44,10 +44,10 @@ final class AttendanceSheet extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'status'       => SheetStatus::class,
+        'status' => SheetStatus::class,
         'attendance_date' => 'date',
         'submitted_at' => 'datetime',
-        'verified_at'  => 'datetime',
+        'verified_at' => 'datetime',
     ];
 
     /** @return HasMany<AttendanceRecord, $this> */

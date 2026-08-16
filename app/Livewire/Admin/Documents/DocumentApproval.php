@@ -31,7 +31,8 @@ final class DocumentApproval extends Component
 {
     use HasAdminAuth;
 
-    public int    $requestId;
+    public int $requestId;
+
     public string $rejectionReason = '';
 
     /** @var string[] */
@@ -99,7 +100,7 @@ final class DocumentApproval extends Component
         try {
             app(DocumentRequestService::class)->reject($request, $this->rejectionReason, $this->adminId());
             $this->rejectionReason = '';
-            $this->flashMessage    = 'تم رفض الطلب.';
+            $this->flashMessage = 'تم رفض الطلب.';
         } catch (\RuntimeException $e) {
             $this->errors[] = $e->getMessage();
         }
@@ -121,9 +122,9 @@ final class DocumentApproval extends Component
         $templateHashWarning = $this->checkTemplateHashConsistency($request);
 
         return view('livewire.admin.documents.document-approval', [
-            'request'            => $request,
-            'studentName'        => $studentName,
-            'institutionName'    => $institutionName,
+            'request' => $request,
+            'studentName' => $studentName,
+            'institutionName' => $institutionName,
             'templateHashWarning' => $templateHashWarning,
         ])->layout('layouts.admin');
     }

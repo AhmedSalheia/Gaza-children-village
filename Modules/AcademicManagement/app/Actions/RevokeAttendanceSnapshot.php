@@ -33,10 +33,10 @@ final class RevokeAttendanceSnapshot
             throw new MarksException('A revoke reason is required.');
         }
 
-        $snapshot->status                       = 'revoked';
-        $snapshot->revoked_at                   = now();
-        $snapshot->revoke_reason                = $revokeReason;
-        $snapshot->revoked_by_staff_profile_id  = $revokedByStaffProfileId;
+        $snapshot->status = 'revoked';
+        $snapshot->revoked_at = now();
+        $snapshot->revoke_reason = $revokeReason;
+        $snapshot->revoked_by_staff_profile_id = $revokedByStaffProfileId;
         $snapshot->save();
 
         return $snapshot;

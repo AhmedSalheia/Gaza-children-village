@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Assignments;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -34,7 +35,7 @@ final class AssignmentOverview extends Component
         $this->requirePermission(PermissionKey::TEACHING_ASSIGNMENT_MANAGE);
     }
 
-    public function teachingAssignments(): \Illuminate\Support\Collection
+    public function teachingAssignments(): Collection
     {
         $scope = $this->staffScope();
 
@@ -64,7 +65,7 @@ final class AssignmentOverview extends Component
             ->get();
     }
 
-    public function homeroomAssignments(): \Illuminate\Support\Collection
+    public function homeroomAssignments(): Collection
     {
         // Re-assert the homeroom-specific permission so the tab data is independently
         // gated even when switching tabs via Livewire without a full page reload.

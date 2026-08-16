@@ -48,22 +48,22 @@ final class CreateGradingScale
 
             $scale = new GradingScale;
             $scale->institution_id = $institutionId;
-            $scale->code           = $code;
-            $scale->name_ar        = $nameAr;
-            $scale->name_en        = $nameEn;
-            $scale->is_active      = true;
+            $scale->code = $code;
+            $scale->name_ar = $nameAr;
+            $scale->name_en = $nameEn;
+            $scale->is_active = true;
             $scale->save();
 
             foreach ($grades as $gradeData) {
                 $grade = new GradingScaleGrade;
                 $grade->grading_scale_id = $scale->id;
-                $grade->code             = $gradeData['code'];
-                $grade->name_ar          = $gradeData['name_ar'];
-                $grade->name_en          = $gradeData['name_en'] ?? null;
-                $grade->min_score        = $gradeData['min_score'];
-                $grade->max_score        = $gradeData['max_score'];
-                $grade->is_passing       = $gradeData['is_passing'];
-                $grade->sequence         = $gradeData['sequence'];
+                $grade->code = $gradeData['code'];
+                $grade->name_ar = $gradeData['name_ar'];
+                $grade->name_en = $gradeData['name_en'] ?? null;
+                $grade->min_score = $gradeData['min_score'];
+                $grade->max_score = $gradeData['max_score'];
+                $grade->is_passing = $gradeData['is_passing'];
+                $grade->sequence = $gradeData['sequence'];
                 $grade->save();
             }
 

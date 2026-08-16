@@ -28,10 +28,10 @@ final class GradingScaleGrade extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'min_score'  => 'float',
-        'max_score'  => 'float',
+        'min_score' => 'float',
+        'max_score' => 'float',
         'is_passing' => 'boolean',
-        'sequence'   => 'integer',
+        'sequence' => 'integer',
     ];
 
     /** @return BelongsTo<GradingScale, $this> */

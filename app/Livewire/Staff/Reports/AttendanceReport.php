@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Reports;
 
 use App\Exports\AttendanceReportExport;
-use App\Exports\StaffAttendanceReportExport;
 use App\Livewire\Staff\Concerns\HasStaffAuth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -32,10 +33,13 @@ class AttendanceReport extends Component
 {
     use HasStaffAuth;
 
-    public string $reportType   = 'student';
-    public int    $classGroupId = 0;
-    public string $dateFrom     = '';
-    public string $dateTo       = '';
+    public string $reportType = 'student';
+
+    public int $classGroupId = 0;
+
+    public string $dateFrom = '';
+
+    public string $dateTo = '';
 
     public bool $canExport = false;
 
@@ -45,11 +49,11 @@ class AttendanceReport extends Component
         $this->canExport = $this->staffCan(PermissionKey::ATTENDANCE_REPORT_EXPORT);
 
         $this->dateFrom = now()->subDays(14)->toDateString();
-        $this->dateTo   = now()->toDateString();
+        $this->dateTo = now()->toDateString();
     }
 
     #[Computed]
-    public function classGroups(): \Illuminate\Support\Collection
+    public function classGroups(): Collection
     {
         $scope = $this->staffScope();
 
@@ -75,7 +79,7 @@ class AttendanceReport extends Component
     }
 
     #[Computed]
-    public function studentRows(): \Illuminate\Support\Collection
+    public function studentRows(): Collection
     {
         if ($this->reportType !== 'student') {
             return collect();
@@ -133,7 +137,7 @@ class AttendanceReport extends Component
     }
 
     #[Computed]
-    public function staffRows(): \Illuminate\Support\Collection
+    public function staffRows(): Collection
     {
         if ($this->reportType !== 'staff' || ! $this->isFullScopePosition()) {
             return collect();
@@ -210,10 +214,10 @@ class AttendanceReport extends Component
         $total = array_sum($map);
 
         return (object) [
-            'total'   => $total,
+            'total' => $total,
             'present' => (int) ($map['present'] ?? 0),
-            'absent'  => (int) ($map['absent'] ?? 0),
-            'late'    => (int) ($map['late'] ?? 0),
+            'absent' => (int) ($map['absent'] ?? 0),
+            'late' => (int) ($map['late'] ?? 0),
         ];
     }
 
@@ -244,42 +248,42 @@ class AttendanceReport extends Component
             allowedPeriodIds: $allowedPeriodIds,
         );
 
-        $rows     = $export->collection();
+        $rows = $export->collection();
         $filename = 'student-attendance-'.now()->format('Y-m-d').'.xlsx';
-        $path     = 'reports/'.Str::uuid().'/'.$filename;
+        $path = 'reports/'.Str::uuid().'/'.$filename;
 
         Storage::disk('local')->makeDirectory(dirname($path));
         Excel::store($export, $path, 'local');
 
         $exportId = $this->auditExport('attendance_report', [
             'institution_semester_id' => $scope['institution_semester_id'],
-            'class_group_id'          => $this->classGroupId,
-            'date_from'               => $this->dateFrom,
-            'date_to'                 => $this->dateTo,
+            'class_group_id' => $this->classGroupId,
+            'date_from' => $this->dateFrom,
+            'date_to' => $this->dateTo,
         ], $rows->count(), $path);
 
         $this->dispatch('start-download', url: route('staff.reports.download', [
             'export' => encrypt($exportId),
-            'name'   => $filename,
+            'name' => $filename,
         ]));
     }
 
     private function auditExport(string $type, array $scope, int $rowCount, string $filePath): int
     {
         return (int) DB::table('report_exports')->insertGetId([
-            'export_type'      => $type,
-            'actor_type'       => 'staff',
+            'export_type' => $type,
+            'actor_type' => 'staff',
             'actor_account_id' => (int) auth('staff')->id(),
-            'scope'            => json_encode($scope),
-            'locale'           => 'ar',
-            'row_count'        => $rowCount,
-            'file_path'        => $filePath,
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'scope' => json_encode($scope),
+            'locale' => 'ar',
+            'row_count' => $rowCount,
+            'file_path' => $filePath,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.staff.reports.attendance-report')
             ->layout('layouts.staff');

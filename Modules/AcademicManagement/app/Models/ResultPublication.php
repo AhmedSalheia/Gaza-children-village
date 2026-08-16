@@ -36,8 +36,8 @@ final class ResultPublication extends Model
     /** @var array<string, string> */
     protected $casts = [
         'published_at' => 'datetime',
-        'revoked_at'   => 'datetime',
-        'version'      => 'integer',
+        'revoked_at' => 'datetime',
+        'version' => 'integer',
     ];
 
     /** @return HasMany<ResultPublicationRow, $this> */

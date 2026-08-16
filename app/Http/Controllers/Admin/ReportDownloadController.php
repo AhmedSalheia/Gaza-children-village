@@ -51,7 +51,7 @@ class ReportDownloadController extends Controller
         $filename = $request->query('name') ?: basename($path);
 
         return response()->download(Storage::disk('local')->path($path), $filename, [
-            'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="'.rawurlencode($filename).'"',
         ]);
     }

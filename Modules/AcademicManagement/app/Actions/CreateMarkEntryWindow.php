@@ -61,16 +61,16 @@ final class CreateMarkEntryWindow
         }
 
         $window = new MarkEntryWindow;
-        $window->institution_semester_id       = $institutionSemesterId;
-        $window->class_group_id                = $classGroupId;
-        $window->subject_offering_id           = $subjectOfferingId;
-        $window->name_ar                       = $nameAr;
-        $window->name_en                       = $nameEn;
-        $window->opens_at                      = $opensAt->format('Y-m-d H:i:s');
-        $window->closes_at                     = $closesAt->format('Y-m-d H:i:s');
-        $window->status                        = MarkWindowStatus::Scheduled->value;
-        $window->extension_history             = null;
-        $window->created_by_staff_position_id  = $createdByStaffPositionId;
+        $window->institution_semester_id = $institutionSemesterId;
+        $window->class_group_id = $classGroupId;
+        $window->subject_offering_id = $subjectOfferingId;
+        $window->name_ar = $nameAr;
+        $window->name_en = $nameEn;
+        $window->opens_at = $opensAt->format('Y-m-d H:i:s');
+        $window->closes_at = $closesAt->format('Y-m-d H:i:s');
+        $window->status = MarkWindowStatus::Scheduled->value;
+        $window->extension_history = null;
+        $window->created_by_staff_position_id = $createdByStaffPositionId;
         $window->save();
 
         return $window;

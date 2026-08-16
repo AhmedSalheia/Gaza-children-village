@@ -25,7 +25,7 @@ final class SubmitSheet
         AttendanceSheet $sheet,
         int $actorStaffProfileId,
     ): AttendanceSheet {
-        return DB::transaction(function () use ($sheet, $actorStaffProfileId): AttendanceSheet {
+        return DB::transaction(function () use ($sheet): AttendanceSheet {
             $locked = AttendanceSheet::lockForUpdate()->findOrFail($sheet->id);
 
             $status = $locked->status instanceof SheetStatus
@@ -49,7 +49,7 @@ final class SubmitSheet
                 );
             }
 
-            $locked->status       = SheetStatus::Submitted->value;
+            $locked->status = SheetStatus::Submitted->value;
             $locked->submitted_at = now();
             $locked->save();
 

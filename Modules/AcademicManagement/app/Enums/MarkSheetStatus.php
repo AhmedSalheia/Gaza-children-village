@@ -6,12 +6,12 @@ namespace Modules\AcademicManagement\Enums;
 
 enum MarkSheetStatus: string
 {
-    case Draft      = 'draft';
-    case Submitted  = 'submitted';
-    case Returned   = 'returned';
-    case Verified   = 'verified';
-    case Approved   = 'approved';
-    case Published  = 'published';
+    case Draft = 'draft';
+    case Submitted = 'submitted';
+    case Returned = 'returned';
+    case Verified = 'verified';
+    case Approved = 'approved';
+    case Published = 'published';
     case Superseded = 'superseded';
 
     /** Teacher may edit marks. */
@@ -54,12 +54,12 @@ enum MarkSheetStatus: string
     public function labelAr(): string
     {
         return match ($this) {
-            self::Draft      => 'مسودة',
-            self::Submitted  => 'مقدم',
-            self::Returned   => 'معاد',
-            self::Verified   => 'موثق',
-            self::Approved   => 'معتمد',
-            self::Published  => 'منشور',
+            self::Draft => 'مسودة',
+            self::Submitted => 'مقدم',
+            self::Returned => 'معاد',
+            self::Verified => 'موثق',
+            self::Approved => 'معتمد',
+            self::Published => 'منشور',
             self::Superseded => 'موقوف',
         };
     }

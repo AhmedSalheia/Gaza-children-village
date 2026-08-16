@@ -33,21 +33,28 @@ final class AttendancePublicationPolicyConfig extends Component
 {
     use HasAdminAuth;
 
-    public int    $semesterId    = 0;
-    public int    $classGroupId  = 0;
+    public int $semesterId = 0;
+
+    public int $classGroupId = 0;
 
     // Policy form fields
-    public bool   $policyEnabled            = false;
-    public string $detailLevel              = 'summary_only';
-    public int    $publishDelayDays         = 0;
-    public bool   $showReason               = false;
-    public bool   $showArrivalDeparture     = false;
+    public bool $policyEnabled = false;
 
-    public int    $revokingSnapshotId   = 0;
-    public string $revokeReason         = '';
+    public string $detailLevel = 'summary_only';
+
+    public int $publishDelayDays = 0;
+
+    public bool $showReason = false;
+
+    public bool $showArrivalDeparture = false;
+
+    public int $revokingSnapshotId = 0;
+
+    public string $revokeReason = '';
 
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -116,7 +123,7 @@ final class AttendancePublicationPolicyConfig extends Component
         }
 
         $this->validate([
-            'detailLevel'      => ['required', 'in:summary_only,daily_status'],
+            'detailLevel' => ['required', 'in:summary_only,daily_status'],
             'publishDelayDays' => ['required', 'integer', 'min:0', 'max:30'],
         ]);
 
@@ -156,7 +163,7 @@ final class AttendancePublicationPolicyConfig extends Component
     {
         $this->requirePermission(PermissionKey::STUDENT_ATTENDANCE_PUBLISH);
         $this->revokingSnapshotId = $snapshotId;
-        $this->revokeReason       = '';
+        $this->revokeReason = '';
     }
 
     public function confirmRevokeSnapshot(): void
@@ -180,7 +187,7 @@ final class AttendancePublicationPolicyConfig extends Component
                 revokedByStaffProfileId: 0,
             );
             $this->revokingSnapshotId = 0;
-            $this->revokeReason       = '';
+            $this->revokeReason = '';
             $this->flash('Snapshot revoked.', 'success');
         } catch (MarksException $e) {
             $this->flash($e->getMessage(), 'error');
@@ -190,27 +197,27 @@ final class AttendancePublicationPolicyConfig extends Component
     public function cancelRevokeSnapshot(): void
     {
         $this->revokingSnapshotId = 0;
-        $this->revokeReason       = '';
+        $this->revokeReason = '';
     }
 
     public function render(): View
     {
         return view('livewire.admin.publications.attendance-policy-config', [
             'openSemesters' => $this->openSemesters(),
-            'classGroups'   => $this->classGroups(),
-            'policy'        => $this->currentPolicy(),
-            'snapshots'     => $this->snapshots(),
-            'canPublish'    => $this->adminCan(PermissionKey::STUDENT_ATTENDANCE_PUBLISH),
+            'classGroups' => $this->classGroups(),
+            'policy' => $this->currentPolicy(),
+            'snapshots' => $this->snapshots(),
+            'canPublish' => $this->adminCan(PermissionKey::STUDENT_ATTENDANCE_PUBLISH),
         ])->layout('layouts.admin');
     }
 
     private function loadPolicy(): void
     {
         if ($this->semesterId === 0) {
-            $this->policyEnabled        = false;
-            $this->detailLevel          = 'summary_only';
-            $this->publishDelayDays     = 0;
-            $this->showReason           = false;
+            $this->policyEnabled = false;
+            $this->detailLevel = 'summary_only';
+            $this->publishDelayDays = 0;
+            $this->showReason = false;
             $this->showArrivalDeparture = false;
 
             return;
@@ -219,10 +226,10 @@ final class AttendancePublicationPolicyConfig extends Component
         $p = $this->currentPolicy();
 
         if ($p) {
-            $this->policyEnabled        = $p->enabled;
-            $this->detailLevel          = $p->detail_level;
-            $this->publishDelayDays     = $p->publish_delay_days;
-            $this->showReason           = $p->show_reason;
+            $this->policyEnabled = $p->enabled;
+            $this->detailLevel = $p->detail_level;
+            $this->publishDelayDays = $p->publish_delay_days;
+            $this->showReason = $p->show_reason;
             $this->showArrivalDeparture = $p->show_arrival_departure;
         }
     }
@@ -230,6 +237,6 @@ final class AttendancePublicationPolicyConfig extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

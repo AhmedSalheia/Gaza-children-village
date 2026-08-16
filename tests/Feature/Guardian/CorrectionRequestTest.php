@@ -52,38 +52,38 @@ class CorrectionRequestTest extends TestCase
         int $contactPriority = 2,
         bool $isEmergencyContact = false,
     ): array {
-        $guardianAccountClass  = 'Modules\\Accounts\\Models\\GuardianAccount';
-        $guardianProfileClass  = 'Modules\\Students\\Models\\GuardianProfile';
-        $studentProfileClass   = 'Modules\\Students\\Models\\StudentProfile';
-        $relationshipClass     = 'Modules\\Students\\Models\\GuardianStudentRelationship';
+        $guardianAccountClass = 'Modules\\Accounts\\Models\\GuardianAccount';
+        $guardianProfileClass = 'Modules\\Students\\Models\\GuardianProfile';
+        $studentProfileClass = 'Modules\\Students\\Models\\StudentProfile';
+        $relationshipClass = 'Modules\\Students\\Models\\GuardianStudentRelationship';
 
         $account = $guardianAccountClass::factory()->create(['status' => 'active']);
 
-        $guardianPerson  = $this->makePerson('Guardian');
+        $guardianPerson = $this->makePerson('Guardian');
         $guardianProfile = $guardianProfileClass::factory()->create([
-            'person_id'           => $guardianPerson->id,
+            'person_id' => $guardianPerson->id,
             'guardian_account_id' => $account->id,
         ]);
 
-        $studentPerson  = $this->makePerson('Student');
+        $studentPerson = $this->makePerson('Student');
         $studentProfile = $studentProfileClass::factory()->create([
             'person_id' => $studentPerson->id,
         ]);
 
         $relationship = $relationshipClass::factory()->create([
-            'guardian_profile_id'  => $guardianProfile->id,
-            'student_profile_id'   => $studentProfile->id,
-            'verification_status'  => 'verified',
-            'portal_eligible'      => $portalEligible,
-            'ends_on'              => $endsOn,
-            'contact_priority'     => $contactPriority,
+            'guardian_profile_id' => $guardianProfile->id,
+            'student_profile_id' => $studentProfile->id,
+            'verification_status' => 'verified',
+            'portal_eligible' => $portalEligible,
+            'ends_on' => $endsOn,
+            'contact_priority' => $contactPriority,
             'is_emergency_contact' => $isEmergencyContact,
         ]);
 
         return [
-            'account'        => $account,
-            'profileId'      => $guardianProfile->id,
-            'studentId'      => $studentProfile->id,
+            'account' => $account,
+            'profileId' => $guardianProfile->id,
+            'studentId' => $studentProfile->id,
             'relationshipId' => $relationship->id,
         ];
     }
@@ -111,11 +111,11 @@ class CorrectionRequestTest extends TestCase
     private function makeAdminWithPermissions(array $permissionKeys): object
     {
         $adminClass = 'Modules\\Accounts\\Models\\AdministrativeAccount';
-        $admin      = $adminClass::factory()->create(['status' => 'active']);
+        $admin = $adminClass::factory()->create(['status' => 'active']);
 
         $roleId = DB::table('roles')->insertGetId([
-            'code'       => 'test-role-' . $admin->id,
-            'label'      => 'Test Role',
+            'code' => 'test-role-'.$admin->id,
+            'label' => 'Test Role',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -127,26 +127,26 @@ class CorrectionRequestTest extends TestCase
 
             if ($permId === null) {
                 $permId = DB::table('permissions')->insertGetId([
-                    'key'        => $key,
+                    'key' => $key,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             }
 
             DB::table('role_permissions')->insert([
-                'role_id'       => $roleId,
+                'role_id' => $roleId,
                 'permission_id' => $permId,
             ]);
         }
 
         DB::table('administrative_account_roles')->insert([
             'administrative_account_id' => $admin->id,
-            'role_id'                   => $roleId,
-            'granted_by'                => 'test-setup',
-            'granted_at'                => now(),
-            'revoked_at'                => null,
-            'created_at'                => now(),
-            'updated_at'                => now(),
+            'role_id' => $roleId,
+            'granted_by' => 'test-setup',
+            'granted_at' => now(),
+            'revoked_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return $admin;
@@ -157,12 +157,12 @@ class CorrectionRequestTest extends TestCase
     {
         return DB::table('guardian_correction_requests')->insertGetId([
             'guardian_student_relationship_id' => $relationshipId,
-            'requested_contact_priority'       => $priority,
-            'requested_is_emergency_contact'   => null,
-            'status'                           => 'pending',
-            'pending_lock'                     => 1,
-            'created_at'                       => now(),
-            'updated_at'                       => now(),
+            'requested_contact_priority' => $priority,
+            'requested_is_emergency_contact' => null,
+            'status' => 'pending',
+            'pending_lock' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -197,8 +197,8 @@ class CorrectionRequestTest extends TestCase
 
         $this->assertDatabaseHas('guardian_correction_requests', [
             'guardian_student_relationship_id' => $data['relationshipId'],
-            'requested_contact_priority'       => 1,
-            'status'                           => 'pending',
+            'requested_contact_priority' => 1,
+            'status' => 'pending',
         ]);
     }
 
@@ -294,7 +294,7 @@ class CorrectionRequestTest extends TestCase
     /** A1: View-only admin sees pending request section but NOT approve/reject buttons. */
     public function test_view_only_admin_sees_pending_section_without_action_buttons(): void
     {
-        $data  = $this->makeGuardianWithStudent();
+        $data = $this->makeGuardianWithStudent();
         $admin = $this->makeViewOnlyAdmin();
 
         $this->insertPendingRequest($data['relationshipId']);
@@ -310,7 +310,7 @@ class CorrectionRequestTest extends TestCase
     /** A2: Manage admin sees approve/reject buttons on pending requests. */
     public function test_manage_admin_sees_action_buttons_on_pending_requests(): void
     {
-        $data  = $this->makeGuardianWithStudent();
+        $data = $this->makeGuardianWithStudent();
         $admin = $this->makeManageAdmin();
 
         $this->insertPendingRequest($data['relationshipId']);
@@ -325,7 +325,7 @@ class CorrectionRequestTest extends TestCase
     /** A3: View-only admin calling approve directly receives 403. */
     public function test_view_only_admin_cannot_approve_correction_request(): void
     {
-        $data  = $this->makeGuardianWithStudent();
+        $data = $this->makeGuardianWithStudent();
         $admin = $this->makeViewOnlyAdmin();
 
         $crId = $this->insertPendingRequest($data['relationshipId']);
@@ -337,7 +337,7 @@ class CorrectionRequestTest extends TestCase
 
         // Row remains pending — no mutation occurred.
         $this->assertDatabaseHas('guardian_correction_requests', [
-            'id'     => $crId,
+            'id' => $crId,
             'status' => 'pending',
         ]);
     }
@@ -345,7 +345,7 @@ class CorrectionRequestTest extends TestCase
     /** A4: View-only admin calling reject directly receives 403. */
     public function test_view_only_admin_cannot_reject_correction_request(): void
     {
-        $data  = $this->makeGuardianWithStudent();
+        $data = $this->makeGuardianWithStudent();
         $admin = $this->makeViewOnlyAdmin();
 
         $crId = $this->insertPendingRequest($data['relationshipId']);
@@ -356,7 +356,7 @@ class CorrectionRequestTest extends TestCase
             ->assertForbidden();
 
         $this->assertDatabaseHas('guardian_correction_requests', [
-            'id'     => $crId,
+            'id' => $crId,
             'status' => 'pending',
         ]);
     }
@@ -364,17 +364,17 @@ class CorrectionRequestTest extends TestCase
     /** A5: Manage admin approves — relationship updated, request resolved as approved. */
     public function test_manage_admin_can_approve_correction_request(): void
     {
-        $data  = $this->makeGuardianWithStudent(contactPriority: 2, isEmergencyContact: false);
+        $data = $this->makeGuardianWithStudent(contactPriority: 2, isEmergencyContact: false);
         $admin = $this->makeManageAdmin();
 
         $crId = DB::table('guardian_correction_requests')->insertGetId([
             'guardian_student_relationship_id' => $data['relationshipId'],
-            'requested_contact_priority'       => 1,
-            'requested_is_emergency_contact'   => 1,
-            'status'                           => 'pending',
-            'pending_lock'                     => 1,
-            'created_at'                       => now(),
-            'updated_at'                       => now(),
+            'requested_contact_priority' => 1,
+            'requested_is_emergency_contact' => 1,
+            'status' => 'pending',
+            'pending_lock' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         Livewire::actingAs($admin, 'admin')
@@ -396,7 +396,7 @@ class CorrectionRequestTest extends TestCase
     /** A6: Manage admin rejects — relationship unchanged, request resolved as rejected. */
     public function test_manage_admin_can_reject_correction_request(): void
     {
-        $data  = $this->makeGuardianWithStudent(contactPriority: 2, isEmergencyContact: false);
+        $data = $this->makeGuardianWithStudent(contactPriority: 2, isEmergencyContact: false);
         $admin = $this->makeManageAdmin();
 
         $crId = $this->insertPendingRequest($data['relationshipId']);
@@ -441,27 +441,27 @@ class CorrectionRequestTest extends TestCase
      */
     public function test_stale_approve_after_concurrent_reject_is_noop(): void
     {
-        $data  = $this->makeGuardianWithStudent(contactPriority: 2, isEmergencyContact: false);
+        $data = $this->makeGuardianWithStudent(contactPriority: 2, isEmergencyContact: false);
         $admin = $this->makeManageAdmin();
 
         $crId = DB::table('guardian_correction_requests')->insertGetId([
             'guardian_student_relationship_id' => $data['relationshipId'],
-            'requested_contact_priority'       => 1,
-            'requested_is_emergency_contact'   => 1,
-            'status'                           => 'pending',
-            'pending_lock'                     => 1,
-            'created_at'                       => now(),
-            'updated_at'                       => now(),
+            'requested_contact_priority' => 1,
+            'requested_is_emergency_contact' => 1,
+            'status' => 'pending',
+            'pending_lock' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Simulate a concurrent reject resolving the row first.
         DB::table('guardian_correction_requests')
             ->where('id', $crId)
             ->update([
-                'status'       => 'rejected',
+                'status' => 'rejected',
                 'pending_lock' => null,
-                'resolved_at'  => now(),
-                'updated_at'   => now(),
+                'resolved_at' => now(),
+                'updated_at' => now(),
             ]);
 
         // Now the "stale" approve fires — it should find status != 'pending' and be a no-op.
@@ -477,7 +477,7 @@ class CorrectionRequestTest extends TestCase
 
         // Request remains rejected — not overwritten to approved.
         $this->assertDatabaseHas('guardian_correction_requests', [
-            'id'     => $crId,
+            'id' => $crId,
             'status' => 'rejected',
         ]);
     }
@@ -500,7 +500,7 @@ class CorrectionRequestTest extends TestCase
 
         // Request must still be pending — the action was a no-op.
         $this->assertDatabaseHas('guardian_correction_requests', [
-            'id'     => $crId,
+            'id' => $crId,
             'status' => 'pending',
         ]);
     }

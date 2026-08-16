@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Attendance\Actions;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Modules\Attendance\Data\StaffAttendanceStatus;
 use Modules\Attendance\Exceptions\StaffAttendanceException;
@@ -77,17 +78,17 @@ final class CorrectVerifiedStaffRecord
 
             // Append immutable history row
             DB::table('staff_attendance_correction_history')->insert([
-                'staff_attendance_record_id'    => $locked->id,
-                'staff_profile_id'              => $locked->staff_profile_id,
-                'operational_period_id'         => $locked->operational_period_id,
-                'record_date'                   => $locked->record_date instanceof \Carbon\Carbon
+                'staff_attendance_record_id' => $locked->id,
+                'staff_profile_id' => $locked->staff_profile_id,
+                'operational_period_id' => $locked->operational_period_id,
+                'record_date' => $locked->record_date instanceof Carbon
                     ? $locked->record_date->toDateString()
                     : (string) $locked->record_date,
-                'correction_cycle'              => $locked->correction_cycle,
-                'previous_status_code'          => $locked->status_code,
-                'previous_reason'               => $locked->reason,
+                'correction_cycle' => $locked->correction_cycle,
+                'previous_status_code' => $locked->status_code,
+                'previous_reason' => $locked->reason,
                 'corrected_by_staff_profile_id' => $actorStaffProfileId,
-                'corrected_at'                  => $now,
+                'corrected_at' => $now,
             ]);
 
             // NOTE: correction_cycle is NOT incremented here.
@@ -96,15 +97,15 @@ final class CorrectVerifiedStaffRecord
             // for subsequent correction attempts in the same window.
 
             // Write new values
-            $locked->status_code             = $newStatusCode;
-            $locked->reason                  = empty(trim((string) $reason)) ? null : $reason;
-            $locked->confirmed_arrived_at    = StaffAttendanceStatus::allowsArrivalTime($newStatusCode)
+            $locked->status_code = $newStatusCode;
+            $locked->reason = empty(trim((string) $reason)) ? null : $reason;
+            $locked->confirmed_arrived_at = StaffAttendanceStatus::allowsArrivalTime($newStatusCode)
                 ? ($confirmedArrivedAt !== '' ? $confirmedArrivedAt : null)
                 : null;
-            $locked->confirmed_departed_at   = StaffAttendanceStatus::allowsDepartureTime($newStatusCode)
+            $locked->confirmed_departed_at = StaffAttendanceStatus::allowsDepartureTime($newStatusCode)
                 ? ($confirmedDepartedAt !== '' ? $confirmedDepartedAt : null)
                 : null;
-            $locked->source                  = 'correction';
+            $locked->source = 'correction';
             // Keep is_verified = true (correction doesn't un-verify; history tracks the change)
             $locked->save();
 

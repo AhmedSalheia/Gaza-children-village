@@ -18,14 +18,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  *
  * Each row represents one staff_attendance_record for the requested scope.
  */
-final class StaffAttendanceReportExport implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithStyles
+final class StaffAttendanceReportExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStyles, WithTitle
 {
     public function __construct(
-        private readonly int     $institutionSemesterId,
-        private readonly ?int    $operationalPeriodId,
+        private readonly int $institutionSemesterId,
+        private readonly ?int $operationalPeriodId,
         private readonly ?string $dateFrom,
         private readonly ?string $dateTo,
-        private readonly string  $locale = 'ar',
+        private readonly string $locale = 'ar',
     ) {}
 
     public function title(): string
@@ -98,17 +98,17 @@ final class StaffAttendanceReportExport implements FromCollection, WithHeadings,
         if ($this->locale === 'ar') {
             return match ($code) {
                 'present' => 'حاضر',
-                'absent'  => 'غائب',
-                'late'    => 'متأخر',
-                default   => $code ?? '',
+                'absent' => 'غائب',
+                'late' => 'متأخر',
+                default => $code ?? '',
             };
         }
 
         return match ($code) {
             'present' => 'Present',
-            'absent'  => 'Absent',
-            'late'    => 'Late',
-            default   => $code ?? '',
+            'absent' => 'Absent',
+            'late' => 'Late',
+            default => $code ?? '',
         };
     }
 }

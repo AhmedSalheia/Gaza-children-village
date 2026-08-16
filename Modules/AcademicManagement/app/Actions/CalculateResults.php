@@ -6,7 +6,6 @@ namespace Modules\AcademicManagement\Actions;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Modules\AcademicManagement\Models\GradingScale;
 
 /**
  * Pure result-calculation service.
@@ -38,9 +37,9 @@ use Modules\AcademicManagement\Models\GradingScale;
  *       no_assessments — no matching assessment definitions exist
  *
  * @return Collection<int, object> Each item has:
- *   enrollment_id, student_profile_id, subject_offering_id,
- *   raw_total_score, raw_max_possible, normalized_score,
- *   grade_code, grade_name_ar, is_passing, completeness_status
+ *                                 enrollment_id, student_profile_id, subject_offering_id,
+ *                                 raw_total_score, raw_max_possible, normalized_score,
+ *                                 grade_code, grade_name_ar, is_passing, completeness_status
  */
 final class CalculateResults
 {
@@ -59,7 +58,7 @@ final class CalculateResults
 
         // 2. Load grading scales keyed by ID (with their grade tiers)
         $scaleIds = $sheets->pluck('grading_scale_id')->filter()->unique()->values();
-        $scales   = $scaleIds->isEmpty() ? collect() : $this->loadScales($scaleIds->all());
+        $scales = $scaleIds->isEmpty() ? collect() : $this->loadScales($scaleIds->all());
 
         // 3. Load active enrollments for this class group
         $enrollments = DB::table('student_enrollments')
@@ -100,18 +99,19 @@ final class CalculateResults
             if ($definitions->isEmpty()) {
                 foreach ($enrollments as $enrollment) {
                     $results->push((object) [
-                        'enrollment_id'       => (int) $enrollment->enrollment_id,
-                        'student_profile_id'  => (int) $enrollment->student_profile_id,
+                        'enrollment_id' => (int) $enrollment->enrollment_id,
+                        'student_profile_id' => (int) $enrollment->student_profile_id,
                         'subject_offering_id' => (int) $sheet->subject_offering_id,
-                        'raw_total_score'     => null,
-                        'raw_max_possible'    => null,
-                        'normalized_score'    => null,
-                        'grade_code'          => null,
-                        'grade_name_ar'       => null,
-                        'is_passing'          => null,
+                        'raw_total_score' => null,
+                        'raw_max_possible' => null,
+                        'normalized_score' => null,
+                        'grade_code' => null,
+                        'grade_name_ar' => null,
+                        'is_passing' => null,
                         'completeness_status' => 'no_assessments',
                     ]);
                 }
+
                 continue;
             }
 
@@ -145,17 +145,17 @@ final class CalculateResults
                 $eid = (int) $enrollment->enrollment_id;
 
                 $totalWeightedScore = 0.0;
-                $totalWeightUsed    = 0.0;
-                $maxPossible        = 0.0;
-                $missingCount       = 0;
-                $exceptionCount     = 0;
-                $scoredCount        = 0;
+                $totalWeightUsed = 0.0;
+                $maxPossible = 0.0;
+                $missingCount = 0;
+                $exceptionCount = 0;
+                $scoredCount = 0;
 
                 foreach ($definitions as $def) {
-                    $did  = (int) $def->id;
+                    $did = (int) $def->id;
                     $mark = $markIndex[$eid][$did] ?? null;
-                    $w    = (float) $def->weight;
-                    $ms   = (float) $def->max_score;
+                    $w = (float) $def->weight;
+                    $ms = (float) $def->max_score;
 
                     $maxPossible += $w;
 
@@ -170,7 +170,7 @@ final class CalculateResults
                         $score = (float) $mark->score;
                         $contribution = $ms > 0 ? ($score / $ms) * $w : 0.0;
                         $totalWeightedScore += $contribution;
-                        $totalWeightUsed    += $w;
+                        $totalWeightUsed += $w;
                         $scoredCount++;
                     }
                 }
@@ -192,29 +192,29 @@ final class CalculateResults
                 }
 
                 // Grade lookup
-                $gradeCode   = null;
+                $gradeCode = null;
                 $gradeNameAr = null;
-                $isPassing   = null;
+                $isPassing = null;
 
                 if ($scale !== null && $normalizedScore !== null) {
                     $grade = $this->lookupGrade($scale, $normalizedScore);
                     if ($grade !== null) {
-                        $gradeCode   = $grade->code;
+                        $gradeCode = $grade->code;
                         $gradeNameAr = $grade->name_ar;
-                        $isPassing   = (bool) $grade->is_passing;
+                        $isPassing = (bool) $grade->is_passing;
                     }
                 }
 
                 $results->push((object) [
-                    'enrollment_id'       => $eid,
-                    'student_profile_id'  => (int) $enrollment->student_profile_id,
+                    'enrollment_id' => $eid,
+                    'student_profile_id' => (int) $enrollment->student_profile_id,
                     'subject_offering_id' => (int) $sheet->subject_offering_id,
-                    'raw_total_score'     => $totalWeightUsed > 0 ? round($totalWeightedScore, 4) : null,
-                    'raw_max_possible'    => $maxPossible > 0 ? round($maxPossible, 4) : null,
-                    'normalized_score'    => $normalizedScore,
-                    'grade_code'          => $gradeCode,
-                    'grade_name_ar'       => $gradeNameAr,
-                    'is_passing'          => $isPassing,
+                    'raw_total_score' => $totalWeightUsed > 0 ? round($totalWeightedScore, 4) : null,
+                    'raw_max_possible' => $maxPossible > 0 ? round($maxPossible, 4) : null,
+                    'normalized_score' => $normalizedScore,
+                    'grade_code' => $gradeCode,
+                    'grade_name_ar' => $gradeNameAr,
+                    'is_passing' => $isPassing,
                     'completeness_status' => $completeness,
                 ]);
             }

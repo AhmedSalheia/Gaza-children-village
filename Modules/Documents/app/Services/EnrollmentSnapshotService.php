@@ -87,9 +87,9 @@ final class EnrollmentSnapshotService
             ->first();
 
         // Load guardian context (if requested by a guardian)
-        $guardianNameAr      = 'ولي الأمر';
-        $guardianNameEn      = 'Guardian';
-        $guardianRelType     = '';
+        $guardianNameAr = 'ولي الأمر';
+        $guardianNameEn = 'Guardian';
+        $guardianRelType = '';
 
         if ($requestingGuardianAccountId !== null) {
             $guardianProfile = DB::table('guardian_profiles as gp')
@@ -127,26 +127,26 @@ final class EnrollmentSnapshotService
             ->value('full_name_ar') ?? 'مدير المدرسة';
 
         return new DocumentDataContext(
-            studentFullNameAr:     (string) $student->full_name_ar,
-            studentFullNameEn:     (string) ($student->full_name_en ?? $student->full_name_ar),
-            studentBirthDate:      $student->birth_date ? (string) $student->birth_date : '',
-            studentStudentCode:    (string) ($student->student_code ?? ''),
-            studentAcademicLevel:  (string) ($enrollment->academic_level_ar ?? ''),
+            studentFullNameAr: (string) $student->full_name_ar,
+            studentFullNameEn: (string) ($student->full_name_en ?? $student->full_name_ar),
+            studentBirthDate: $student->birth_date ? (string) $student->birth_date : '',
+            studentStudentCode: (string) ($student->student_code ?? ''),
+            studentAcademicLevel: (string) ($enrollment->academic_level_ar ?? ''),
             studentClassGroupName: (string) ($enrollment->class_group_name ?? ''),
-            guardianFullNameAr:    $guardianNameAr,
-            guardianFullNameEn:    $guardianNameEn,
+            guardianFullNameAr: $guardianNameAr,
+            guardianFullNameEn: $guardianNameEn,
             guardianRelationshipType: $guardianRelType,
-            institutionNameAr:     (string) ($enrollment->institution_name_ar ?? ''),
-            institutionNameEn:     (string) ($enrollment->institution_name_en ?? ''),
-            institutionCode:       (string) ($enrollment->institution_code ?? ''),
-            organizationNameAr:    (string) ($organization->org_name_ar ?? ''),
-            organizationNameEn:    (string) ($organization->org_name_en ?? ''),
-            academicYearName:      (string) ($enrollment->academic_year_name ?? ''),
-            semesterName:          (string) ($enrollment->semester_name ?? ''),
-            documentNumber:        $documentNumber,
-            documentIssuedAt:      now()->toDateString(),
-            documentTypeLabelAr:   $documentTypeLabelAr,
-            documentTypeLabelEn:   $documentTypeLabelEn,
+            institutionNameAr: (string) ($enrollment->institution_name_ar ?? ''),
+            institutionNameEn: (string) ($enrollment->institution_name_en ?? ''),
+            institutionCode: (string) ($enrollment->institution_code ?? ''),
+            organizationNameAr: (string) ($organization->org_name_ar ?? ''),
+            organizationNameEn: (string) ($organization->org_name_en ?? ''),
+            academicYearName: (string) ($enrollment->academic_year_name ?? ''),
+            semesterName: (string) ($enrollment->semester_name ?? ''),
+            documentNumber: $documentNumber,
+            documentIssuedAt: now()->toDateString(),
+            documentTypeLabelAr: $documentTypeLabelAr,
+            documentTypeLabelEn: $documentTypeLabelEn,
             documentIssuedByNameAr: (string) $principalNameAr,
         );
     }

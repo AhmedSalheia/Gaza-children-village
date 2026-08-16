@@ -94,14 +94,14 @@ final class OpenMarkSheet
                 ->max('version') ?? 0;
 
             $sheet = new MarkSheet;
-            $sheet->institution_semester_id  = (int) $assignment->institution_semester_id;
-            $sheet->class_group_id           = (int) $assignment->class_group_id;
-            $sheet->subject_offering_id      = (int) $assignment->subject_offering_id;
-            $sheet->teaching_assignment_id   = (int) $assignment->id;
-            $sheet->mark_entry_window_id     = $markEntryWindowId;
-            $sheet->grading_scale_id         = $gradingScaleId;
-            $sheet->version                  = $version + 1;
-            $sheet->status                   = MarkSheetStatus::Draft->value;
+            $sheet->institution_semester_id = (int) $assignment->institution_semester_id;
+            $sheet->class_group_id = (int) $assignment->class_group_id;
+            $sheet->subject_offering_id = (int) $assignment->subject_offering_id;
+            $sheet->teaching_assignment_id = (int) $assignment->id;
+            $sheet->mark_entry_window_id = $markEntryWindowId;
+            $sheet->grading_scale_id = $gradingScaleId;
+            $sheet->version = $version + 1;
+            $sheet->status = MarkSheetStatus::Draft->value;
             $sheet->save();
 
             $this->seedStudentMarkRows($sheet, $assignment);
@@ -148,24 +148,24 @@ final class OpenMarkSheet
             return;
         }
 
-        $now  = now()->toDateTimeString();
+        $now = now()->toDateTimeString();
         $rows = [];
 
         foreach ($enrollments as $enrollmentId) {
             foreach ($definitions as $definitionId) {
                 $rows[] = [
-                    'mark_sheet_id'            => $sheet->id,
-                    'enrollment_id'            => $enrollmentId,
+                    'mark_sheet_id' => $sheet->id,
+                    'enrollment_id' => $enrollmentId,
                     'assessment_definition_id' => $definitionId,
-                    'score'                    => null,
-                    'exception_status'         => null,
-                    'teacher_note'             => null,
-                    'correction_of_id'         => null,
+                    'score' => null,
+                    'exception_status' => null,
+                    'teacher_note' => null,
+                    'correction_of_id' => null,
                     'corrected_by_staff_profile_id' => null,
-                    'corrected_at'             => null,
-                    'correction_reason'        => null,
-                    'created_at'               => $now,
-                    'updated_at'               => $now,
+                    'corrected_at' => null,
+                    'correction_reason' => null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }
         }

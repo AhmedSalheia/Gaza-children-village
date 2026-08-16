@@ -19,15 +19,15 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * Each row is one result_publication_row joined to student and class data.
  * Only non-revoked, non-superseded publications are included.
  *
- * @param array<int>|null $allowedPeriodIds  When set, restricts results to
- *   class groups whose operational_period_id is in this list. Used by the
- *   staff portal to enforce period grants server-side.
+ * @param  array<int>|null  $allowedPeriodIds  When set, restricts results to
+ *                                             class groups whose operational_period_id is in this list. Used by the
+ *                                             staff portal to enforce period grants server-side.
  */
-final class ResultReportExport implements FromCollection, WithHeadings, WithTitle, ShouldAutoSize, WithStyles
+final class ResultReportExport implements FromCollection, ShouldAutoSize, WithHeadings, WithStyles, WithTitle
 {
     public function __construct(
-        private readonly int    $institutionSemesterId,
-        private readonly ?int   $classGroupId,
+        private readonly int $institutionSemesterId,
+        private readonly ?int $classGroupId,
         private readonly string $locale = 'ar',
         /** @var array<int>|null */
         private readonly ?array $allowedPeriodIds = null,
@@ -49,7 +49,7 @@ final class ResultReportExport implements FromCollection, WithHeadings, WithTitl
 
     public function collection(): Collection
     {
-        $cgNameField      = $this->locale === 'ar' ? 'cg.name_ar' : 'cg.name_ar';
+        $cgNameField = $this->locale === 'ar' ? 'cg.name_ar' : 'cg.name_ar';
         $studentNameField = $this->locale === 'ar' ? 'p.full_name_ar' : 'p.full_name_en';
         $subjectNameField = $this->locale === 'ar' ? 's.name_ar' : 's.name_en';
 
@@ -113,20 +113,20 @@ final class ResultReportExport implements FromCollection, WithHeadings, WithTitl
     {
         if ($this->locale === 'ar') {
             return match ($status) {
-                'complete'       => 'مكتمل',
-                'incomplete'     => 'غير مكتمل',
-                'all_absent'     => 'غياب كامل',
+                'complete' => 'مكتمل',
+                'incomplete' => 'غير مكتمل',
+                'all_absent' => 'غياب كامل',
                 'no_assessments' => 'لا توجد تقييمات',
-                default          => $status,
+                default => $status,
             };
         }
 
         return match ($status) {
-            'complete'       => 'Complete',
-            'incomplete'     => 'Incomplete',
-            'all_absent'     => 'All Absent',
+            'complete' => 'Complete',
+            'incomplete' => 'Incomplete',
+            'all_absent' => 'All Absent',
             'no_assessments' => 'No Assessments',
-            default          => ucfirst(str_replace('_', ' ', $status)),
+            default => ucfirst(str_replace('_', ' ', $status)),
         };
     }
 }

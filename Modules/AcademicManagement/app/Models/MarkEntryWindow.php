@@ -38,9 +38,9 @@ final class MarkEntryWindow extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'opens_at'          => 'datetime',
-        'closes_at'         => 'datetime',
-        'status'            => MarkWindowStatus::class,
+        'opens_at' => 'datetime',
+        'closes_at' => 'datetime',
+        'status' => MarkWindowStatus::class,
         'extension_history' => 'array',
     ];
 

@@ -27,9 +27,12 @@ final class MarksVerificationQueue extends Component
     use HasStaffAuth;
 
     public string $returnReason = '';
-    public int    $returningId  = 0;
+
+    public int $returningId = 0;
+
     public string $flashMessage = '';
-    public string $flashType    = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
@@ -143,7 +146,7 @@ final class MarksVerificationQueue extends Component
     public function startReturn(int $sheetId): void
     {
         $this->requirePermission(PermissionKey::MARKS_RETURN);
-        $this->returningId  = $sheetId;
+        $this->returningId = $sheetId;
         $this->returnReason = '';
     }
 
@@ -159,7 +162,7 @@ final class MarksVerificationQueue extends Component
 
         try {
             app(ReturnMarkSheet::class)($sheet, $this->returnReason, (int) $this->staffProfileId());
-            $this->returningId  = 0;
+            $this->returningId = 0;
             $this->returnReason = '';
             $this->flash('Sheet returned to teacher.', 'success');
         } catch (MarksException $e) {
@@ -169,7 +172,7 @@ final class MarksVerificationQueue extends Component
 
     public function cancelReturn(): void
     {
-        $this->returningId  = 0;
+        $this->returningId = 0;
         $this->returnReason = '';
     }
 
@@ -177,9 +180,9 @@ final class MarksVerificationQueue extends Component
     {
         return view('livewire.staff.marks.verification-queue', [
             'submittedSheets' => $this->submittedSheets(),
-            'verifiedSheets'  => $this->verifiedSheets(),
-            'canApprove'      => $this->staffCan(PermissionKey::MARKS_APPROVE),
-            'canReturn'       => $this->staffCan(PermissionKey::MARKS_RETURN),
+            'verifiedSheets' => $this->verifiedSheets(),
+            'canApprove' => $this->staffCan(PermissionKey::MARKS_APPROVE),
+            'canReturn' => $this->staffCan(PermissionKey::MARKS_RETURN),
         ])->layout('layouts.staff');
     }
 
@@ -213,6 +216,6 @@ final class MarksVerificationQueue extends Component
     private function flash(string $message, string $type = 'success'): void
     {
         $this->flashMessage = $message;
-        $this->flashType    = $type;
+        $this->flashType = $type;
     }
 }

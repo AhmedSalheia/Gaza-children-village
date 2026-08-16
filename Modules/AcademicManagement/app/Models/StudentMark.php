@@ -39,9 +39,9 @@ final class StudentMark extends Model
 
     /** @var array<string, string> */
     protected $casts = [
-        'score'            => 'float',
+        'score' => 'float',
         'exception_status' => MarkExceptionStatus::class,
-        'corrected_at'     => 'datetime',
+        'corrected_at' => 'datetime',
     ];
 
     /** @return BelongsTo<MarkSheet, $this> */

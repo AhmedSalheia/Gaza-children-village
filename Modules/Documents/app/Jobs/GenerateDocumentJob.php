@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Modules\Documents\Models\DocumentTemplateVersion;
 use Modules\Documents\Models\IssuedDocument;
 use Modules\Documents\Models\StudentDocumentRequest;
 use Modules\Documents\Services\DocumentNumberService;
@@ -54,8 +55,10 @@ final class GenerateDocumentJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $tries   = 3;
+    public int $tries = 3;
+
     public int $timeout = 120;
+
     public int $backoff = 30;
 
     public function __construct(
@@ -100,7 +103,7 @@ final class GenerateDocumentJob implements ShouldQueue
                 DB::table('student_document_requests')
                     ->where('id', $this->requestId)
                     ->update([
-                        'status'     => StudentDocumentRequest::STATUS_GENERATING,
+                        'status' => StudentDocumentRequest::STATUS_GENERATING,
                         'updated_at' => now(),
                     ]);
 
@@ -124,9 +127,9 @@ final class GenerateDocumentJob implements ShouldQueue
                     StudentDocumentRequest::STATUS_REJECTED,
                 ])
                 ->update([
-                    'status'       => StudentDocumentRequest::STATUS_GENERATION_FAILED,
+                    'status' => StudentDocumentRequest::STATUS_GENERATION_FAILED,
                     'completed_at' => now(),
-                    'updated_at'   => now(),
+                    'updated_at' => now(),
                 ]);
 
             // Re-throw so the queue driver records the failure and can retry
@@ -141,7 +144,7 @@ final class GenerateDocumentJob implements ShouldQueue
      * the student_document_requests row. Any exception here rolls the entire
      * transaction back and the catch block in handle() marks generation_failed.
      *
-     * @param object $request Raw DB row (from lockForUpdate query)
+     * @param  object  $request  Raw DB row (from lockForUpdate query)
      */
     private function generateDocument(
         object $request,
@@ -150,7 +153,7 @@ final class GenerateDocumentJob implements ShouldQueue
         EnrollmentSnapshotService $snapshotService,
         DocumentTemplateVersionService $versionService,
     ): void {
-        $institutionId        = (int) $request->institution_id;
+        $institutionId = (int) $request->institution_id;
         $institutionSemesterId = $request->institution_semester_id
             ? (int) $request->institution_semester_id
             : null;
@@ -163,7 +166,7 @@ final class GenerateDocumentJob implements ShouldQueue
             ->where('document_type_code', $request->document_type_code)
             ->where(function ($q) use ($institutionId): void {
                 $q->where('institution_id', $institutionId)
-                    ->orWhere(function ($q2) use ($institutionId): void {
+                    ->orWhere(function ($q2): void {
                         $q2->whereNull('institution_id');
                     });
             })
@@ -178,23 +181,23 @@ final class GenerateDocumentJob implements ShouldQueue
             );
         }
 
-        $templateVersion = \Modules\Documents\Models\DocumentTemplateVersion::findOrFail(
+        $templateVersion = DocumentTemplateVersion::findOrFail(
             (int) $template->active_version_id
         );
 
         // Generate the sequential document number (inside our transaction)
         $documentNumber = $numberService->next(
-            typeCode:      $request->document_type_code,
+            typeCode: $request->document_type_code,
             institutionId: $institutionId,
-            year:          now()->year,
+            year: now()->year,
         );
 
         // Build data context from enrollment snapshot
         $context = $snapshotService->buildFromEnrollment(
-            enrollmentId:                (int) $request->enrollment_id,
-            documentNumber:              $documentNumber,
-            documentTypeLabelAr:         (string) ($docType->label_ar ?? ''),
-            documentTypeLabelEn:         (string) ($docType->label_en ?? ''),
+            enrollmentId: (int) $request->enrollment_id,
+            documentNumber: $documentNumber,
+            documentTypeLabelAr: (string) ($docType->label_ar ?? ''),
+            documentTypeLabelEn: (string) ($docType->label_en ?? ''),
             requestingGuardianAccountId: $request->requested_by_actor_type === 'guardian'
                 ? (int) $request->requested_by_account_id
                 : null,
@@ -204,7 +207,7 @@ final class GenerateDocumentJob implements ShouldQueue
         $pdfBytes = $versionService->renderPreviewPdf($templateVersion, $context);
 
         // Compute file hash and build storage path
-        $sha256      = hash('sha256', $pdfBytes);
+        $sha256 = hash('sha256', $pdfBytes);
         $storagePath = sprintf(
             'documents/%d/%d/%s.pdf',
             now()->year,
@@ -223,30 +226,30 @@ final class GenerateDocumentJob implements ShouldQueue
         // The unique index on request_id acts as a final backstop if this
         // path is somehow reached twice for the same request.
         $issued = new IssuedDocument;
-        $issued->document_number         = $documentNumber;
-        $issued->document_type_code      = $request->document_type_code;
-        $issued->enrollment_id           = (int) $request->enrollment_id;
-        $issued->student_profile_id      = (int) $request->student_profile_id;
-        $issued->institution_id          = $institutionId;
+        $issued->document_number = $documentNumber;
+        $issued->document_type_code = $request->document_type_code;
+        $issued->enrollment_id = (int) $request->enrollment_id;
+        $issued->student_profile_id = (int) $request->student_profile_id;
+        $issued->institution_id = $institutionId;
         $issued->institution_semester_id = $institutionSemesterId;
-        $issued->template_version_id     = $templateVersion->id;
-        $issued->request_id              = (int) $request->id;
-        $issued->locale                  = (string) $request->locale;
-        $issued->approved_by_account_id  = $this->approverAccountId;
-        $issued->issued_at               = now();
-        $issued->verification_code       = $verificationCode;
-        $issued->verification_code_hash  = $verificationHash;
-        $issued->storage_path            = $storagePath;
-        $issued->file_sha256             = $sha256;
+        $issued->template_version_id = $templateVersion->id;
+        $issued->request_id = (int) $request->id;
+        $issued->locale = (string) $request->locale;
+        $issued->approved_by_account_id = $this->approverAccountId;
+        $issued->issued_at = now();
+        $issued->verification_code = $verificationCode;
+        $issued->verification_code_hash = $verificationHash;
+        $issued->storage_path = $storagePath;
+        $issued->file_sha256 = $sha256;
         $issued->save();
 
         // Mark request as issued — still inside the same transaction
         DB::table('student_document_requests')
             ->where('id', $request->id)
             ->update([
-                'status'       => StudentDocumentRequest::STATUS_ISSUED,
+                'status' => StudentDocumentRequest::STATUS_ISSUED,
                 'completed_at' => now(),
-                'updated_at'   => now(),
+                'updated_at' => now(),
             ]);
     }
 }

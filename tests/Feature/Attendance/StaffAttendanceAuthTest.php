@@ -45,7 +45,8 @@ final class StaffAttendanceAuthTest extends TestCase
 
     // ── Shared org + institution_type ─────────────────────────────────────────
 
-    private int $orgId  = 0;
+    private int $orgId = 0;
+
     private int $typeId = 0;
 
     /** Track per-semester period sequence numbers to satisfy the unique index */
@@ -56,17 +57,17 @@ final class StaffAttendanceAuthTest extends TestCase
         parent::setUp();
 
         $this->orgId = (int) DB::table('organizations')->insertGetId([
-            'code'       => 'ORG-AUTH',
-            'name_en'    => 'Auth Test Org',
-            'is_active'  => true,
+            'code' => 'ORG-AUTH',
+            'name_en' => 'Auth Test Org',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         $this->typeId = (int) DB::table('institution_types')->insertGetId([
-            'code'       => 'TYPE-AUTH',
-            'name_en'    => 'School',
-            'is_active'  => true,
+            'code' => 'TYPE-AUTH',
+            'name_en' => 'School',
+            'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -78,12 +79,12 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_dashboard_attendance_rows_empty_for_foreign_institution_period(): void
     {
-        $instA   = $this->makeInstitution();
-        $semA    = $this->makeSemester($instA);
+        $instA = $this->makeInstitution();
+        $semA = $this->makeSemester($instA);
         $account = $this->makeStaffAccount('principal', $instA, $semA);
 
-        $instB   = $this->makeInstitution();
-        $semB    = $this->makeSemester($instB);
+        $instB = $this->makeInstitution();
+        $semB = $this->makeSemester($instB);
         $periodB = $this->makePeriod($semB);
 
         $component = Livewire::actingAs($account, 'staff')
@@ -99,10 +100,10 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_dashboard_attendance_rows_empty_when_secretary_targets_ungranted_period(): void
     {
-        $inst          = $this->makeInstitution();
-        $sem           = $this->makeSemester($inst);
+        $inst = $this->makeInstitution();
+        $sem = $this->makeSemester($inst);
         $grantedPeriod = $this->makePeriod($sem);
-        $otherPeriod   = $this->makePeriod($sem);   // Same institution, not granted
+        $otherPeriod = $this->makePeriod($sem);   // Same institution, not granted
 
         $account = $this->makeStaffAccount('secretary', $inst, $sem, $grantedPeriod);
 
@@ -119,8 +120,8 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_dashboard_period_summaries_excludes_ungranted_periods_for_secretary(): void
     {
-        $inst          = $this->makeInstitution();
-        $sem           = $this->makeSemester($inst);
+        $inst = $this->makeInstitution();
+        $sem = $this->makeSemester($inst);
         $grantedPeriod = $this->makePeriod($sem);
         $this->makePeriod($sem); // ungrantedPeriod — must NOT appear in summaries
 
@@ -139,12 +140,12 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_entry_save_row_aborts_on_foreign_institution_period(): void
     {
-        $instA   = $this->makeInstitution();
-        $semA    = $this->makeSemester($instA);
+        $instA = $this->makeInstitution();
+        $semA = $this->makeSemester($instA);
         $account = $this->makeStaffAccount('principal', $instA, $semA);
 
-        $instB   = $this->makeInstitution();
-        $semB    = $this->makeSemester($instB);
+        $instB = $this->makeInstitution();
+        $semB = $this->makeSemester($instB);
         $periodB = $this->makePeriod($semB);
 
         Livewire::actingAs($account, 'staff')
@@ -159,10 +160,10 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_entry_save_row_aborts_when_secretary_targets_ungranted_period(): void
     {
-        $inst          = $this->makeInstitution();
-        $sem           = $this->makeSemester($inst);
+        $inst = $this->makeInstitution();
+        $sem = $this->makeSemester($inst);
         $grantedPeriod = $this->makePeriod($sem);
-        $otherPeriod   = $this->makePeriod($sem);
+        $otherPeriod = $this->makePeriod($sem);
 
         $account = $this->makeStaffAccount('secretary', $inst, $sem, $grantedPeriod);
 
@@ -178,41 +179,41 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_entry_staff_rows_returns_empty_for_foreign_institution_period(): void
     {
-        $instA   = $this->makeInstitution();
-        $semA    = $this->makeSemester($instA);
+        $instA = $this->makeInstitution();
+        $semA = $this->makeSemester($instA);
         $account = $this->makeStaffAccount('principal', $instA, $semA);
 
         // Create a staff member at institution B with an attendance record
-        $instB   = $this->makeInstitution();
-        $semB    = $this->makeSemester($instB);
+        $instB = $this->makeInstitution();
+        $semB = $this->makeSemester($instB);
         $periodB = $this->makePeriod($semB);
 
         $personB = (int) DB::table('people')->insertGetId([
             'full_name_ar' => 'Staff B',
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         $profileB = (int) DB::table('staff_profiles')->insertGetId([
-            'person_id'         => $personB,
-            'staff_code'        => 'STF-B-'.uniqid(),
+            'person_id' => $personB,
+            'staff_code' => 'STF-B-'.uniqid(),
             'employment_status' => 'active',
-            'hired_on'          => '2024-01-01',
-            'created_at'        => now(),
-            'updated_at'        => now(),
+            'hired_on' => '2024-01-01',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         DB::table('staff_attendance_records')->insert([
-            'staff_profile_id'          => $profileB,
-            'operational_period_id'     => $periodB,
-            'institution_semester_id'   => $semB,
-            'record_date'               => now()->toDateString(),
-            'status_code'               => 'present',
-            'correction_cycle'          => 0,
-            'is_verified'               => false,
-            'source'                    => 'staff',
-            'creator_staff_profile_id'  => $profileB,
-            'created_at'                => now(),
-            'updated_at'                => now(),
+            'staff_profile_id' => $profileB,
+            'operational_period_id' => $periodB,
+            'institution_semester_id' => $semB,
+            'record_date' => now()->toDateString(),
+            'status_code' => 'present',
+            'correction_cycle' => 0,
+            'is_verified' => false,
+            'source' => 'staff',
+            'creator_staff_profile_id' => $profileB,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $component = Livewire::actingAs($account, 'staff')
@@ -229,29 +230,29 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_scan_queue_start_review_aborts_on_foreign_institution_event(): void
     {
-        $instA   = $this->makeInstitution();
-        $semA    = $this->makeSemester($instA);
+        $instA = $this->makeInstitution();
+        $semA = $this->makeSemester($instA);
         $periodA = $this->makePeriod($semA);
         $accountA = $this->makeStaffAccount('secretary', $instA, $semA, $periodA);
 
-        $instB    = $this->makeInstitution();
-        $semB     = $this->makeSemester($instB);
-        $periodB  = $this->makePeriod($semB);
+        $instB = $this->makeInstitution();
+        $semB = $this->makeSemester($instB);
+        $periodB = $this->makePeriod($semB);
 
         // Create a staff profile + credential in institution B for the scan event
-        $credId  = $this->makeCredential($this->makeProfileId('Staff-B'));
+        $credId = $this->makeCredential($this->makeProfileId('Staff-B'));
         $eventId = (int) DB::table('attendance_scan_events')->insertGetId([
-            'qr_credential_id'        => $credId,
-            'staff_profile_id'        => 1,
+            'qr_credential_id' => $credId,
+            'staff_profile_id' => 1,
             'institution_semester_id' => $semB,
-            'operational_period_id'   => $periodB,
-            'scanned_at'              => now(),
-            'scan_date'               => now()->toDateString(),
-            'direction'               => 'arrival',
-            'device_fingerprint'      => 'device-b',
-            'processing_status'       => 'pending',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => $periodB,
+            'scanned_at' => now(),
+            'scan_date' => now()->toDateString(),
+            'direction' => 'arrival',
+            'device_fingerprint' => 'device-b',
+            'processing_status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         Livewire::actingAs($accountA, 'staff')
@@ -264,27 +265,27 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_scan_queue_start_review_aborts_for_secretary_ungranted_period_event(): void
     {
-        $inst          = $this->makeInstitution();
-        $sem           = $this->makeSemester($inst);
+        $inst = $this->makeInstitution();
+        $sem = $this->makeSemester($inst);
         $grantedPeriod = $this->makePeriod($sem);
-        $otherPeriod   = $this->makePeriod($sem);  // Same institution, not granted
+        $otherPeriod = $this->makePeriod($sem);  // Same institution, not granted
 
         $account = $this->makeStaffAccount('secretary', $inst, $sem, $grantedPeriod);
 
         // Scan event in same semester but ungranted period
-        $credId  = $this->makeCredential($this->makeProfileId('Staff-C'));
+        $credId = $this->makeCredential($this->makeProfileId('Staff-C'));
         $eventId = (int) DB::table('attendance_scan_events')->insertGetId([
-            'qr_credential_id'        => $credId,
-            'staff_profile_id'        => 1,
+            'qr_credential_id' => $credId,
+            'staff_profile_id' => 1,
             'institution_semester_id' => $sem,
-            'operational_period_id'   => $otherPeriod,
-            'scanned_at'              => now(),
-            'scan_date'               => now()->toDateString(),
-            'direction'               => 'arrival',
-            'device_fingerprint'      => 'device-c',
-            'processing_status'       => 'pending',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => $otherPeriod,
+            'scanned_at' => now(),
+            'scan_date' => now()->toDateString(),
+            'direction' => 'arrival',
+            'device_fingerprint' => 'device-c',
+            'processing_status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         Livewire::actingAs($account, 'staff')
@@ -297,29 +298,29 @@ final class StaffAttendanceAuthTest extends TestCase
 
     public function test_scan_queue_render_clears_tampered_foreign_reviewing_event_id(): void
     {
-        $instA   = $this->makeInstitution();
-        $semA    = $this->makeSemester($instA);
+        $instA = $this->makeInstitution();
+        $semA = $this->makeSemester($instA);
         $periodA = $this->makePeriod($semA);
         $account = $this->makeStaffAccount('secretary', $instA, $semA, $periodA);
 
-        $instB   = $this->makeInstitution();
-        $semB    = $this->makeSemester($instB);
+        $instB = $this->makeInstitution();
+        $semB = $this->makeSemester($instB);
         $periodB = $this->makePeriod($semB);
 
         // Scan event in institution B
-        $credId         = $this->makeCredential($this->makeProfileId('Staff-D'));
+        $credId = $this->makeCredential($this->makeProfileId('Staff-D'));
         $foreignEventId = (int) DB::table('attendance_scan_events')->insertGetId([
-            'qr_credential_id'        => $credId,
-            'staff_profile_id'        => 1,
+            'qr_credential_id' => $credId,
+            'staff_profile_id' => 1,
             'institution_semester_id' => $semB,
-            'operational_period_id'   => $periodB,
-            'scanned_at'              => now(),
-            'scan_date'               => now()->toDateString(),
-            'direction'               => 'arrival',
-            'device_fingerprint'      => 'device-d',
-            'processing_status'       => 'pending',
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'operational_period_id' => $periodB,
+            'scanned_at' => now(),
+            'scan_date' => now()->toDateString(),
+            'direction' => 'arrival',
+            'device_fingerprint' => 'device-d',
+            'processing_status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Directly set reviewingEventId (bypassing startReview which would abort).
@@ -350,29 +351,29 @@ final class StaffAttendanceAuthTest extends TestCase
         ];
 
         $principalRoleId = (int) DB::table('roles')->insertGetId([
-            'code'         => 'PRINCIPAL_TEST_ROLE',
-            'label'        => 'Principal',
+            'code' => 'PRINCIPAL_TEST_ROLE',
+            'label' => 'Principal',
             'is_protected' => false,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $secretaryRoleId = (int) DB::table('roles')->insertGetId([
-            'code'         => 'SECRETARY_TEST_ROLE',
-            'label'        => 'Secretary',
+            'code' => 'SECRETARY_TEST_ROLE',
+            'label' => 'Secretary',
             'is_protected' => false,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         foreach ($permKeys as $key) {
             $permId = (int) DB::table('permissions')->insertGetId([
-                'key'         => $key,
+                'key' => $key,
                 'description' => $key,
-                'group'       => 'attendance',
-                'is_system'   => false,
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'group' => 'attendance',
+                'is_system' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             DB::table('role_permissions')->insert([
@@ -391,13 +392,13 @@ final class StaffAttendanceAuthTest extends TestCase
     private function makeInstitution(): int
     {
         return (int) DB::table('institutions')->insertGetId([
-            'organization_id'     => $this->orgId,
+            'organization_id' => $this->orgId,
             'institution_type_id' => $this->typeId,
-            'code'                => 'INST-'.uniqid(),
-            'name_en'             => 'Test Institution',
-            'is_active'           => true,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'code' => 'INST-'.uniqid(),
+            'name_en' => 'Test Institution',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -405,34 +406,34 @@ final class StaffAttendanceAuthTest extends TestCase
     {
         $yearId = (int) DB::table('academic_years')->insertGetId([
             'organization_id' => $this->orgId,
-            'code'            => 'AY-'.uniqid(),
-            'name_en'         => 'Test Year',
-            'starts_on'       => '2025-09-01',
-            'ends_on'         => '2026-06-30',
-            'status'          => 'open',
-            'created_at'      => now(),
-            'updated_at'      => now(),
+            'code' => 'AY-'.uniqid(),
+            'name_en' => 'Test Year',
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-06-30',
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $semId = (int) DB::table('semesters')->insertGetId([
-            'code'             => 'SEM-'.uniqid(),
-            'name_en'          => 'First Semester',
-            'name_ar'          => 'First Semester',
-            'sequence'         => 1,
-            'status'           => 'open',
+            'code' => 'SEM-'.uniqid(),
+            'name_en' => 'First Semester',
+            'name_ar' => 'First Semester',
+            'sequence' => 1,
+            'status' => 'open',
             'academic_year_id' => $yearId,
-            'starts_on'        => '2025-09-01',
-            'ends_on'          => '2026-01-31',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'starts_on' => '2025-09-01',
+            'ends_on' => '2026-01-31',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('institution_semesters')->insertGetId([
             'institution_id' => $institutionId,
-            'semester_id'    => $semId,
-            'status'         => 'open',
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'semester_id' => $semId,
+            'status' => 'open',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -444,15 +445,15 @@ final class StaffAttendanceAuthTest extends TestCase
 
         return (int) DB::table('operational_periods')->insertGetId([
             'institution_semester_id' => $semesterId,
-            'code'                    => 'OP-'.uniqid(),
-            'name_en'                 => 'Period-'.uniqid(),
-            'name_ar'                 => 'Period',
-            'sequence'                => $seq,
-            'starts_at'               => '08:00:00',
-            'ends_at'                 => '13:00:00',
-            'is_active'               => true,
-            'created_at'              => now(),
-            'updated_at'              => now(),
+            'code' => 'OP-'.uniqid(),
+            'name_en' => 'Period-'.uniqid(),
+            'name_ar' => 'Period',
+            'sequence' => $seq,
+            'starts_at' => '08:00:00',
+            'ends_at' => '13:00:00',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -464,17 +465,17 @@ final class StaffAttendanceAuthTest extends TestCase
     {
         $personId = (int) DB::table('people')->insertGetId([
             'full_name_ar' => $label,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return (int) DB::table('staff_profiles')->insertGetId([
-            'person_id'         => $personId,
-            'staff_code'        => 'STF-'.uniqid(),
+            'person_id' => $personId,
+            'staff_code' => 'STF-'.uniqid(),
             'employment_status' => 'active',
-            'hired_on'          => '2024-01-01',
-            'created_at'        => now(),
-            'updated_at'        => now(),
+            'hired_on' => '2024-01-01',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -485,15 +486,15 @@ final class StaffAttendanceAuthTest extends TestCase
     private function makeCredential(int $staffProfileId): int
     {
         return (int) DB::table('staff_qr_credentials')->insertGetId([
-            'staff_profile_id'            => $staffProfileId,
-            'token_hash'                  => hash('sha256', uniqid('test-token-', true)),
-            'is_active'                   => true,
-            'issued_at'                   => now(),
-            'issued_by_staff_profile_id'  => $staffProfileId,
-            'revoked_at'                  => null,
+            'staff_profile_id' => $staffProfileId,
+            'token_hash' => hash('sha256', uniqid('test-token-', true)),
+            'is_active' => true,
+            'issued_at' => now(),
+            'issued_by_staff_profile_id' => $staffProfileId,
+            'revoked_at' => null,
             'revoked_by_staff_profile_id' => null,
-            'created_at'                  => now(),
-            'updated_at'                  => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -524,33 +525,33 @@ final class StaffAttendanceAuthTest extends TestCase
         // Institution assignment (needed by domain actions and institution guards)
         $assignmentId = (int) DB::table('staff_institution_assignments')->insertGetId([
             'staff_profile_id' => $profileId,
-            'institution_id'   => $institutionId,
-            'started_on'       => '2024-01-01',
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'institution_id' => $institutionId,
+            'started_on' => '2024-01-01',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Position — created_by is NOT NULL; use 0 as sentinel (FK not enforced in SQLite by default)
         $positionId = (int) DB::table('staff_positions')->insertGetId([
-            'staff_profile_id'               => $profileId,
+            'staff_profile_id' => $profileId,
             'staff_institution_assignment_id' => $assignmentId,
-            'institution_id'                 => $institutionId,
-            'institution_semester_id'        => $semesterId,
-            'position_definition'            => $positionDef,
-            'started_on'                     => '2024-01-01',
-            'ended_on'                       => null,
-            'created_by'                     => 0,
-            'created_at'                     => now(),
-            'updated_at'                     => now(),
+            'institution_id' => $institutionId,
+            'institution_semester_id' => $semesterId,
+            'position_definition' => $positionDef,
+            'started_on' => '2024-01-01',
+            'ended_on' => null,
+            'created_by' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Period grant for restricted positions
         if ($grantedPeriodId !== null && ! in_array($positionDef, ['principal', 'deputy_principal', 'counselor'], true)) {
             DB::table('staff_position_periods')->insert([
-                'staff_position_id'     => $positionId,
+                'staff_position_id' => $positionId,
                 'operational_period_id' => $grantedPeriodId,
-                'created_at'            => now(),
-                'updated_at'            => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
@@ -567,11 +568,11 @@ final class StaffAttendanceAuthTest extends TestCase
     {
         // Create a role with enter + verify (and read so mount passes), but NOT correct
         $roleId = (int) DB::table('roles')->insertGetId([
-            'code'         => 'VERIFY_ONLY_'.uniqid(),
-            'label'        => 'Verify-Only',
+            'code' => 'VERIFY_ONLY_'.uniqid(),
+            'label' => 'Verify-Only',
             'is_protected' => false,
-            'created_at'   => now(),
-            'updated_at'   => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         foreach (['staff_attendance.enter', 'staff_attendance.verify', 'staff_attendance.read'] as $key) {
@@ -579,10 +580,10 @@ final class StaffAttendanceAuthTest extends TestCase
 
             if ($permId) {
                 DB::table('role_permissions')->insert([
-                    'role_id'      => $roleId,
+                    'role_id' => $roleId,
                     'permission_id' => $permId,
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -590,10 +591,10 @@ final class StaffAttendanceAuthTest extends TestCase
         // Map the chosen position_definition to this verify-only role
         DB::table('position_role_grants')->insert([
             'position_definition' => $positionDef,
-            'role_id'             => $roleId,
-            'granted_by'          => 0,
-            'created_at'          => now(),
-            'updated_at'          => now(),
+            'role_id' => $roleId,
+            'granted_by' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return $this->makeStaffAccount($positionDef, $institutionId, $semesterId);

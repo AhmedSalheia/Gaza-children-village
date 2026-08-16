@@ -7,9 +7,9 @@ namespace Modules\AcademicManagement\Enums;
 enum MarkWindowStatus: string
 {
     case Scheduled = 'scheduled';
-    case Open      = 'open';
-    case Extended  = 'extended';
-    case Closed    = 'closed';
+    case Open = 'open';
+    case Extended = 'extended';
+    case Closed = 'closed';
     case Cancelled = 'cancelled';
 
     public function isOpen(): bool
