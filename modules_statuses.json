@@ -10,6 +10,7 @@
     "Imports": true,
     "Notifications": true,
     "Organization": true,
+    "Requests": true,
     "People": true,
     "Staff": true,
     "Students": true,

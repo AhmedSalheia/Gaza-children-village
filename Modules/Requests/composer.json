@@ -1,0 +1,18 @@
+{
+    "name": "gcv/requests",
+    "description": "GCV DATA — Student correction requests and guardian-initiated change proposals.",
+    "autoload": {
+        "psr-4": {
+            "Modules\\Requests\\": "app/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Requests\\Providers\\RequestsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

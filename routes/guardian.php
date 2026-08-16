@@ -36,6 +36,13 @@ Route::prefix('guardian')->name('guardian.')->group(function (): void {
     Route::middleware(['auth:guardian', 'portal.version:guardian'])->group(function (): void {
         Route::get('/dashboard', \App\Livewire\Guardian\Dashboard::class)->name('dashboard');
         Route::get('/students/{studentProfileId}', \App\Livewire\Guardian\Students\StudentDetail::class)->name('students.detail');
+
+        // Correction requests
+        Route::get('/corrections', \App\Livewire\Guardian\Corrections\MyCorrections::class)->name('corrections.index');
+        Route::get('/corrections/new', \App\Livewire\Guardian\Corrections\NewCorrectionRequest::class)->name('corrections.create');
+        Route::get('/corrections/{requestId}', \App\Livewire\Guardian\Corrections\CorrectionDetail::class)
+            ->where('requestId', '[0-9]+')
+            ->name('corrections.detail');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────

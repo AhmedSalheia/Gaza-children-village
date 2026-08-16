@@ -1,0 +1,13 @@
+{
+    "name": "Requests",
+    "alias": "requests",
+    "description": "Student correction requests and guardian-initiated change proposals.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Requests\\Providers\\RequestsServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

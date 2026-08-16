@@ -20,6 +20,7 @@ return [
         'Imports',
         'Notifications',
         'Organization',
+        'Requests',
         'People',
         'Staff',
         'Students',
@@ -67,5 +68,11 @@ return [
         // Depends on Authorization (permission checks), Accounts (recipient identity),
         // Audit (notification audit trail), Organization (institution scope).
         'Notifications' => ['Authorization', 'Audit', 'Accounts', 'Organization'],
+
+        // Requests: guardian correction requests and data-change proposal workflow.
+        // Depends on Workflow (state machine), Attachments (evidence), Notifications,
+        // Students (profiles/relationships), AcademicManagement, People (person data),
+        // Organization (institution scope), Authorization (permission keys), Audit.
+        'Requests' => ['Workflow', 'Attachments', 'Notifications', 'Students', 'AcademicManagement', 'People', 'Organization', 'Authorization', 'Audit'],
     ],
 ];

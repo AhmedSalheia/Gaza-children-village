@@ -132,6 +132,9 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/attachments/{attachment}', \App\Http\Controllers\Admin\SecureAttachmentDownloadController::class)
             ->name('attachments.download');
 
+        // Correction requests — central admin inbox
+        Route::get('/corrections', \App\Livewire\Admin\Corrections\CorrectionInbox::class)->name('corrections.index');
+
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');
         Route::get('/accounts', ComingSoonPage::class)->name('accounts.index');
