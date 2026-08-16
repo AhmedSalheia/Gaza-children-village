@@ -18,6 +18,7 @@ return [
         'Authorization',
         'CivilRegistry',
         'Imports',
+        'Notifications',
         'Organization',
         'People',
         'Staff',
@@ -61,5 +62,10 @@ return [
         // Depends on Authorization (permission checks), Audit (upload/download events),
         // Organization (institution scope), Accounts (uploader identity).
         'Attachments' => ['Authorization', 'Audit', 'Organization', 'Accounts'],
+
+        // Notifications: in-app portal notifications and background job status.
+        // Depends on Authorization (permission checks), Accounts (recipient identity),
+        // Audit (notification audit trail), Organization (institution scope).
+        'Notifications' => ['Authorization', 'Audit', 'Accounts', 'Organization'],
     ],
 ];

@@ -8,6 +8,7 @@
     "Authorization": true,
     "CivilRegistry": true,
     "Imports": true,
+    "Notifications": true,
     "Organization": true,
     "People": true,
     "Staff": true,

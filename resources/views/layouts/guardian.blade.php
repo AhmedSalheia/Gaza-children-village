@@ -28,6 +28,11 @@
         </a>
 
         <div class="portal-header__actions">
+            {{-- Notification bell (in-app notifications) --}}
+            @auth('guardian')
+            <livewire:notifications.notification-bell portal="guardian" />
+            @endauth
+
             @include('layouts.partials.locale-switcher')
 
             @auth('guardian')

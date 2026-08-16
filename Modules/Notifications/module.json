@@ -1,0 +1,11 @@
+{
+    "name": "Notifications",
+    "alias": "notifications",
+    "description": "GCV DATA Notifications module — in-app portal notifications, notification preferences, operation status tracking, and notification bell Livewire component.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Notifications\\Providers\\NotificationsServiceProvider"
+    ],
+    "files": []
+}

@@ -56,6 +56,11 @@
         </nav>
 
         <div class="portal-header__actions">
+            {{-- Notification bell (in-app notifications) --}}
+            @auth('admin')
+            <livewire:notifications.notification-bell portal="admin" />
+            @endauth
+
             {{-- F20: Locale switcher --}}
             @include('layouts.partials.locale-switcher')
 
