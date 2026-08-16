@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/attachments",
+    "description": "GCV DATA Attachments module — private, validated file storage for evidence and request documents.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Attachments\\": "app/",
+            "Modules\\Attachments\\Database\\Factories\\": "database/factories/",
+            "Modules\\Attachments\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Attachments\\Tests\\": "tests/"
+        }
+    }
+}

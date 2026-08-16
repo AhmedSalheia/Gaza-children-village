@@ -127,6 +127,10 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
 
         // Report file download (path encrypted by Livewire export actions)
         Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');
+
+        // Secure attachment download — authorization gated, no public URL
+        Route::get('/attachments/{attachment}', \App\Http\Controllers\Staff\SecureAttachmentDownloadController::class)
+            ->name('attachments.download');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────

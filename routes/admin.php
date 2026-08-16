@@ -128,6 +128,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         // Report file download (path encrypted by Livewire export actions)
         Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');
 
+        // Secure attachment download — authorization gated, no public URL
+        Route::get('/attachments/{attachment}', \App\Http\Controllers\Admin\SecureAttachmentDownloadController::class)
+            ->name('attachments.download');
+
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');
         Route::get('/accounts', ComingSoonPage::class)->name('accounts.index');

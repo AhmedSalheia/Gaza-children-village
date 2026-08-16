@@ -1,0 +1,11 @@
+{
+    "name": "Attachments",
+    "alias": "attachments",
+    "description": "GCV DATA Attachments module — private validated file storage with authorization-gated download for evidence and request documents.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Attachments\\Providers\\AttachmentsServiceProvider"
+    ],
+    "files": []
+}

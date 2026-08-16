@@ -12,6 +12,7 @@ return [
         'Accounts',
         'AcademicManagement',
         'AcademicCalendar',
+        'Attachments',
         'Attendance',
         'Audit',
         'Authorization',
@@ -55,5 +56,10 @@ return [
         // Workflow: shared state-machine engine. Depends only on Audit for append-only
         // audit events. All cross-module subject references use plain integer IDs.
         'Workflow' => ['Audit'],
+
+        // Attachments: private file storage for evidence and request documents.
+        // Depends on Authorization (permission checks), Audit (upload/download events),
+        // Organization (institution scope), Accounts (uploader identity).
+        'Attachments' => ['Authorization', 'Audit', 'Organization', 'Accounts'],
     ],
 ];

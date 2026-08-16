@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Private attachment storage — never publicly accessible.
+         * Files are served only through SecureAttachmentDownloadController
+         * after authorization checks pass.
+         */
+        'attachments' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/attachments'),
+            'throw'  => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

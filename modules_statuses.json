@@ -2,6 +2,7 @@
     "Accounts": true,
     "AcademicManagement": true,
     "AcademicCalendar": true,
+    "Attachments": true,
     "Attendance": true,
     "Audit": true,
     "Authorization": true,
