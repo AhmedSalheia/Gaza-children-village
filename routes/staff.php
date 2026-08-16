@@ -137,6 +137,15 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         // Secure attachment download — authorization gated, no public URL
         Route::get('/attachments/{attachment}', \App\Http\Controllers\Staff\SecureAttachmentDownloadController::class)
             ->name('attachments.download');
+
+        // Document request review (secretary)
+        Route::get('/documents', \App\Livewire\Staff\Documents\DocumentReviewQueue::class)->name('documents.queue');
+        Route::get('/documents/{requestId}', \App\Livewire\Staff\Documents\DocumentReview::class)
+            ->where('requestId', '[0-9]+')
+            ->name('documents.review');
+        Route::get('/documents/download/{documentId}', \App\Http\Controllers\Staff\IssuedDocumentDownloadController::class)
+            ->where('documentId', '[0-9]+')
+            ->name('documents.download');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────

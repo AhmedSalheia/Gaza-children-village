@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Modules\Documents\Providers;
 
 use Modules\Documents\Contracts\PdfEngineContract;
+use Modules\Documents\Services\DocumentCompletionChecker;
 use Modules\Documents\Services\DocumentNumberService;
+use Modules\Documents\Services\DocumentRequestService;
 use Modules\Documents\Services\DocumentTemplateVersionService;
 use Modules\Documents\Services\DocumentTypeRegistry;
+use Modules\Documents\Services\EnrollmentSnapshotService;
 use Modules\Documents\Services\MpdfEngine;
 use Modules\Documents\Services\TemplatePlaceholderResolver;
 use Nwidart\Modules\Support\ModuleServiceProvider;
@@ -37,5 +40,9 @@ final class DocumentsServiceProvider extends ModuleServiceProvider
                 placeholderResolver: $app->make(TemplatePlaceholderResolver::class),
             );
         });
+
+        $this->app->bind(DocumentRequestService::class);
+        $this->app->bind(DocumentCompletionChecker::class);
+        $this->app->bind(EnrollmentSnapshotService::class);
     }
 }

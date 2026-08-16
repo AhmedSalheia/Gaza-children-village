@@ -139,6 +139,15 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/documents/templates', \App\Livewire\Admin\Documents\TemplateList::class)->name('documents.templates');
         Route::get('/documents/templates/{templateId}', \App\Livewire\Admin\Documents\TemplateVersionDetail::class)->name('documents.template-versions');
 
+        // Document request approval — principal/admin approval queue
+        Route::get('/documents/approvals', \App\Livewire\Admin\Documents\DocumentApprovalQueue::class)->name('documents.queue');
+        Route::get('/documents/approvals/{requestId}', \App\Livewire\Admin\Documents\DocumentApproval::class)
+            ->where('requestId', '[0-9]+')
+            ->name('documents.approve');
+        Route::get('/documents/download/{documentId}', \App\Http\Controllers\Admin\IssuedDocumentDownloadController::class)
+            ->where('documentId', '[0-9]+')
+            ->name('documents.download');
+
         // Stub pages — full implementation deferred to Full Admin Portal release
         Route::get('/staff', ComingSoonPage::class)->name('staff.index');
         Route::get('/accounts', ComingSoonPage::class)->name('accounts.index');

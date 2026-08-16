@@ -43,6 +43,16 @@ Route::prefix('guardian')->name('guardian.')->group(function (): void {
         Route::get('/corrections/{requestId}', \App\Livewire\Guardian\Corrections\CorrectionDetail::class)
             ->where('requestId', '[0-9]+')
             ->name('corrections.detail');
+
+        // Document requests
+        Route::get('/documents', \App\Livewire\Guardian\Documents\MyDocumentRequests::class)->name('documents.index');
+        Route::get('/documents/new', \App\Livewire\Guardian\Documents\NewDocumentRequest::class)->name('documents.new');
+        Route::get('/documents/{requestId}', \App\Livewire\Guardian\Documents\DocumentRequestDetail::class)
+            ->where('requestId', '[0-9]+')
+            ->name('documents.detail');
+        Route::get('/documents/download/{documentId}', \App\Http\Controllers\Guardian\IssuedDocumentDownloadController::class)
+            ->where('documentId', '[0-9]+')
+            ->name('documents.download');
     });
 
     // ── Unprotected smoke-test placeholder ────────────────────────────────

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Attendance\ScanController;
+use App\Http\Controllers\DocumentVerificationController;
 use App\Http\Controllers\LocaleSwitchController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +25,12 @@ Route::post('/locale-switch', LocaleSwitchController::class)->name('locale.switc
 Route::post('/attend', [ScanController::class, 'store'])
     ->middleware('throttle:60,1')
     ->name('attend');
+
+// ── Public document verification (unauthenticated, rate-limited) ──────────
+//
+// Rate limiting: 20 attempts per minute per IP (applied inside the controller).
+// No CSRF required: GET request with no side effects.
+// No PII: reveals only document validity, type, number, institution, and date.
+//
+Route::get('/verify/{code}', DocumentVerificationController::class)
+    ->name('document.verify');
