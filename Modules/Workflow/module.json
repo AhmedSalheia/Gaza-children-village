@@ -1,0 +1,11 @@
+{
+    "name": "Workflow",
+    "alias": "workflow",
+    "description": "GCV DATA Workflow module — shared state-machine engine, WorkflowDefinition, WorkflowInstance, WorkflowAction, ElectronicApproval, and WorkflowTransitionService.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Workflow\\Providers\\WorkflowServiceProvider"
+    ],
+    "files": []
+}

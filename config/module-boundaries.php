@@ -21,6 +21,7 @@ return [
         'People',
         'Staff',
         'Students',
+        'Workflow',
     ],
 
     'public_namespaces' => [
@@ -50,5 +51,9 @@ return [
         // Cross-module data access uses DB::table() and string-variable class references
         // (double-backslash pattern) to avoid boundary-scanner FQCN violations.
         'Attendance' => ['AcademicManagement', 'AcademicCalendar', 'Staff', 'Students', 'Organization', 'Authorization', 'Audit'],
+
+        // Workflow: shared state-machine engine. Depends only on Audit for append-only
+        // audit events. All cross-module subject references use plain integer IDs.
+        'Workflow' => ['Audit'],
     ],
 ];

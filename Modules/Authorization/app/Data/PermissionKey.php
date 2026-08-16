@@ -287,6 +287,100 @@ final class PermissionKey
     public const RESULT_REPORT_EXPORT = 'result_report.export';
 
     // -----------------------------------------------------------------
+    // Workflow engine
+    // -----------------------------------------------------------------
+    public const WORKFLOW_READ   = 'workflow.read';
+
+    public const WORKFLOW_MANAGE = 'workflow.manage';
+
+    // -----------------------------------------------------------------
+    // Secure attachments
+    // -----------------------------------------------------------------
+    public const ATTACHMENT_UPLOAD = 'attachment.upload';
+
+    public const ATTACHMENT_READ   = 'attachment.read';
+
+    // -----------------------------------------------------------------
+    // Guardian correction requests
+    // -----------------------------------------------------------------
+    public const CORRECTION_REQUEST = 'correction.request';
+
+    public const CORRECTION_REVIEW  = 'correction.review';
+
+    public const CORRECTION_APPROVE = 'correction.approve';
+
+    public const CORRECTION_APPLY   = 'correction.apply';
+
+    // -----------------------------------------------------------------
+    // Document requests and issuance
+    // -----------------------------------------------------------------
+    public const DOCUMENT_REQUEST = 'document.request';
+
+    public const DOCUMENT_REVIEW  = 'document.review';
+
+    public const DOCUMENT_APPROVE = 'document.approve';
+
+    public const DOCUMENT_ISSUE   = 'document.issue';
+
+    public const DOCUMENT_DOWNLOAD = 'document.download';
+
+    public const DOCUMENT_CANCEL   = 'document.cancel';
+
+    public const DOCUMENT_REISSUE  = 'document.reissue';
+
+    // -----------------------------------------------------------------
+    // Document templates
+    // -----------------------------------------------------------------
+    public const TEMPLATE_READ     = 'template.read';
+
+    public const TEMPLATE_MANAGE   = 'template.manage';
+
+    public const TEMPLATE_ACTIVATE = 'template.activate';
+
+    // -----------------------------------------------------------------
+    // Formal institution requests
+    // -----------------------------------------------------------------
+    public const FORMAL_REQUEST_PREPARE = 'formal_request.prepare';
+
+    public const FORMAL_REQUEST_REVIEW  = 'formal_request.review';
+
+    public const FORMAL_REQUEST_SIGN    = 'formal_request.sign';
+
+    public const FORMAL_REQUEST_SUBMIT  = 'formal_request.submit';
+
+    public const FORMAL_REQUEST_RESPOND = 'formal_request.respond';
+
+    // -----------------------------------------------------------------
+    // Electronic approvals
+    // -----------------------------------------------------------------
+    public const ELECTRONIC_APPROVAL_CREATE = 'electronic_approval.create';
+
+    public const ELECTRONIC_APPROVAL_REVOKE = 'electronic_approval.revoke';
+
+    // -----------------------------------------------------------------
+    // In-app notifications
+    // -----------------------------------------------------------------
+    public const NOTIFICATION_READ   = 'notification.read';
+
+    public const NOTIFICATION_MANAGE = 'notification.manage';
+
+    // -----------------------------------------------------------------
+    // Reports and exports
+    // -----------------------------------------------------------------
+    public const REPORT_READ              = 'report.read';
+
+    public const REPORT_ORGANIZATION_READ = 'report.organization_read';
+
+    public const EXPORT_CREATE   = 'export.create';
+
+    public const EXPORT_DOWNLOAD = 'export.download';
+
+    // -----------------------------------------------------------------
+    // Document public verification
+    // -----------------------------------------------------------------
+    public const DOCUMENT_VERIFICATION_AUTHENTICATED_READ = 'document_verification.authenticated_read';
+
+    // -----------------------------------------------------------------
     // All keys — used by seeder and architecture test.
     // -----------------------------------------------------------------
 

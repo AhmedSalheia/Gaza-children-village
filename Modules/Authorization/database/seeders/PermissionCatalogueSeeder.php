@@ -178,6 +178,58 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::RESULT_REPORT_READ,
                 PermissionKey::RESULT_REPORT_EXPORT,
             ],
+            'workflow' => [
+                PermissionKey::WORKFLOW_READ,
+                PermissionKey::WORKFLOW_MANAGE,
+            ],
+            'attachment' => [
+                PermissionKey::ATTACHMENT_UPLOAD,
+                PermissionKey::ATTACHMENT_READ,
+            ],
+            'correction' => [
+                PermissionKey::CORRECTION_REQUEST,
+                PermissionKey::CORRECTION_REVIEW,
+                PermissionKey::CORRECTION_APPROVE,
+                PermissionKey::CORRECTION_APPLY,
+            ],
+            'document' => [
+                PermissionKey::DOCUMENT_REQUEST,
+                PermissionKey::DOCUMENT_REVIEW,
+                PermissionKey::DOCUMENT_APPROVE,
+                PermissionKey::DOCUMENT_ISSUE,
+                PermissionKey::DOCUMENT_DOWNLOAD,
+                PermissionKey::DOCUMENT_CANCEL,
+                PermissionKey::DOCUMENT_REISSUE,
+            ],
+            'template' => [
+                PermissionKey::TEMPLATE_READ,
+                PermissionKey::TEMPLATE_MANAGE,
+                PermissionKey::TEMPLATE_ACTIVATE,
+            ],
+            'formal_request' => [
+                PermissionKey::FORMAL_REQUEST_PREPARE,
+                PermissionKey::FORMAL_REQUEST_REVIEW,
+                PermissionKey::FORMAL_REQUEST_SIGN,
+                PermissionKey::FORMAL_REQUEST_SUBMIT,
+                PermissionKey::FORMAL_REQUEST_RESPOND,
+            ],
+            'electronic_approval' => [
+                PermissionKey::ELECTRONIC_APPROVAL_CREATE,
+                PermissionKey::ELECTRONIC_APPROVAL_REVOKE,
+            ],
+            'notification' => [
+                PermissionKey::NOTIFICATION_READ,
+                PermissionKey::NOTIFICATION_MANAGE,
+            ],
+            'report' => [
+                PermissionKey::REPORT_READ,
+                PermissionKey::REPORT_ORGANIZATION_READ,
+                PermissionKey::EXPORT_CREATE,
+                PermissionKey::EXPORT_DOWNLOAD,
+            ],
+            'document_verification' => [
+                PermissionKey::DOCUMENT_VERIFICATION_AUTHENTICATED_READ,
+            ],
         ];
 
         foreach ($groups as $group => $keys) {
@@ -277,6 +329,40 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::STUDENT_VIEW,
                 PermissionKey::ENROLLMENT_VIEW,
                 PermissionKey::GUARDIAN_RELATIONSHIP_VIEW,
+                // Workflow (read + manage for institution admin / data admin)
+                PermissionKey::WORKFLOW_READ,
+                PermissionKey::WORKFLOW_MANAGE,
+                // Attachments
+                PermissionKey::ATTACHMENT_READ,
+                // Correction requests (review + approve + apply for data admin)
+                PermissionKey::CORRECTION_REVIEW,
+                PermissionKey::CORRECTION_APPROVE,
+                PermissionKey::CORRECTION_APPLY,
+                // Documents
+                PermissionKey::DOCUMENT_REVIEW,
+                PermissionKey::DOCUMENT_APPROVE,
+                PermissionKey::DOCUMENT_ISSUE,
+                PermissionKey::DOCUMENT_DOWNLOAD,
+                PermissionKey::DOCUMENT_CANCEL,
+                PermissionKey::DOCUMENT_REISSUE,
+                // Templates (full management for data admin)
+                PermissionKey::TEMPLATE_READ,
+                PermissionKey::TEMPLATE_MANAGE,
+                PermissionKey::TEMPLATE_ACTIVATE,
+                // Formal requests (respond — data admin is management-side)
+                PermissionKey::FORMAL_REQUEST_RESPOND,
+                // Electronic approvals
+                PermissionKey::ELECTRONIC_APPROVAL_CREATE,
+                PermissionKey::ELECTRONIC_APPROVAL_REVOKE,
+                // Notifications
+                PermissionKey::NOTIFICATION_READ,
+                PermissionKey::NOTIFICATION_MANAGE,
+                // Reports
+                PermissionKey::REPORT_READ,
+                PermissionKey::REPORT_ORGANIZATION_READ,
+                PermissionKey::EXPORT_CREATE,
+                PermissionKey::EXPORT_DOWNLOAD,
+                PermissionKey::DOCUMENT_VERIFICATION_AUTHENTICATED_READ,
             ],
 
             RoleCode::PRINCIPAL => [
@@ -356,6 +442,41 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::RESULTS_REVOKE,
                 PermissionKey::RESULT_REPORT_READ,
                 PermissionKey::RESULT_REPORT_EXPORT,
+                // Workflow engine (read + manage for principal)
+                PermissionKey::WORKFLOW_READ,
+                PermissionKey::WORKFLOW_MANAGE,
+                // Attachments
+                PermissionKey::ATTACHMENT_UPLOAD,
+                PermissionKey::ATTACHMENT_READ,
+                // Correction requests (review, approve, apply)
+                PermissionKey::CORRECTION_REVIEW,
+                PermissionKey::CORRECTION_APPROVE,
+                PermissionKey::CORRECTION_APPLY,
+                // Document management
+                PermissionKey::DOCUMENT_REVIEW,
+                PermissionKey::DOCUMENT_APPROVE,
+                PermissionKey::DOCUMENT_ISSUE,
+                PermissionKey::DOCUMENT_DOWNLOAD,
+                PermissionKey::DOCUMENT_CANCEL,
+                PermissionKey::DOCUMENT_REISSUE,
+                // Document templates (read + activate)
+                PermissionKey::TEMPLATE_READ,
+                PermissionKey::TEMPLATE_ACTIVATE,
+                // Formal institution requests (review + sign + submit)
+                PermissionKey::FORMAL_REQUEST_REVIEW,
+                PermissionKey::FORMAL_REQUEST_SIGN,
+                PermissionKey::FORMAL_REQUEST_SUBMIT,
+                // Electronic approvals
+                PermissionKey::ELECTRONIC_APPROVAL_CREATE,
+                PermissionKey::ELECTRONIC_APPROVAL_REVOKE,
+                // Notifications
+                PermissionKey::NOTIFICATION_READ,
+                // Reports
+                PermissionKey::REPORT_READ,
+                PermissionKey::EXPORT_CREATE,
+                PermissionKey::EXPORT_DOWNLOAD,
+                // Document verification
+                PermissionKey::DOCUMENT_VERIFICATION_AUTHENTICATED_READ,
             ],
 
             RoleCode::DEPUTY_PRINCIPAL => [
@@ -416,6 +537,38 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::RESULTS_READ,
                 PermissionKey::RESULT_REPORT_READ,
                 PermissionKey::RESULT_REPORT_EXPORT,
+                // Workflow (read only for deputy)
+                PermissionKey::WORKFLOW_READ,
+                // Attachments
+                PermissionKey::ATTACHMENT_UPLOAD,
+                PermissionKey::ATTACHMENT_READ,
+                // Correction requests (review + approve + apply)
+                PermissionKey::CORRECTION_REVIEW,
+                PermissionKey::CORRECTION_APPROVE,
+                PermissionKey::CORRECTION_APPLY,
+                // Document management
+                PermissionKey::DOCUMENT_REVIEW,
+                PermissionKey::DOCUMENT_APPROVE,
+                PermissionKey::DOCUMENT_ISSUE,
+                PermissionKey::DOCUMENT_DOWNLOAD,
+                PermissionKey::DOCUMENT_CANCEL,
+                PermissionKey::DOCUMENT_REISSUE,
+                // Templates (read only)
+                PermissionKey::TEMPLATE_READ,
+                // Formal requests (review + sign + submit)
+                PermissionKey::FORMAL_REQUEST_REVIEW,
+                PermissionKey::FORMAL_REQUEST_SIGN,
+                PermissionKey::FORMAL_REQUEST_SUBMIT,
+                // Electronic approvals
+                PermissionKey::ELECTRONIC_APPROVAL_CREATE,
+                PermissionKey::ELECTRONIC_APPROVAL_REVOKE,
+                // Notifications
+                PermissionKey::NOTIFICATION_READ,
+                // Reports
+                PermissionKey::REPORT_READ,
+                PermissionKey::EXPORT_CREATE,
+                PermissionKey::EXPORT_DOWNLOAD,
+                PermissionKey::DOCUMENT_VERIFICATION_AUTHENTICATED_READ,
             ],
 
             RoleCode::SECRETARY => [
@@ -467,6 +620,31 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::MARKS_VERIFY,
                 // Result report (read-only)
                 PermissionKey::RESULT_REPORT_READ,
+                // Workflow (read for secretary)
+                PermissionKey::WORKFLOW_READ,
+                // Attachments (secretary can upload + read)
+                PermissionKey::ATTACHMENT_UPLOAD,
+                PermissionKey::ATTACHMENT_READ,
+                // Correction requests (review + apply)
+                PermissionKey::CORRECTION_REVIEW,
+                PermissionKey::CORRECTION_APPLY,
+                // Document management (secretary prepares, reviews, issues)
+                PermissionKey::DOCUMENT_REQUEST,
+                PermissionKey::DOCUMENT_REVIEW,
+                PermissionKey::DOCUMENT_ISSUE,
+                PermissionKey::DOCUMENT_DOWNLOAD,
+                PermissionKey::DOCUMENT_CANCEL,
+                // Templates (read only)
+                PermissionKey::TEMPLATE_READ,
+                // Formal requests (prepare + submit)
+                PermissionKey::FORMAL_REQUEST_PREPARE,
+                PermissionKey::FORMAL_REQUEST_SUBMIT,
+                // Notifications
+                PermissionKey::NOTIFICATION_READ,
+                // Reports
+                PermissionKey::REPORT_READ,
+                PermissionKey::EXPORT_CREATE,
+                PermissionKey::EXPORT_DOWNLOAD,
             ],
 
             RoleCode::TEACHER => [

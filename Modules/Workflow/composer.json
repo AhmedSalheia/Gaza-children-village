@@ -1,0 +1,21 @@
+{
+    "name": "gcv-data/workflow",
+    "description": "GCV DATA Workflow module — state-machine engine, electronic approvals, and workflow definitions.",
+    "type": "library",
+    "require": {
+        "php": "^8.3",
+        "nwidart/laravel-modules": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Workflow\\": "app/",
+            "Modules\\Workflow\\Database\\Factories\\": "database/factories/",
+            "Modules\\Workflow\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Workflow\\Tests\\": "tests/"
+        }
+    }
+}

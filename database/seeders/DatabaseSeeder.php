@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use Modules\AcademicManagement\Database\Seeders\AcademicLevelReferenceSeeder;
 use Modules\Authorization\Database\Seeders\PermissionCatalogueSeeder;
 use Modules\Organization\Database\Seeders\FeatureModuleReferenceSeeder;
+use Modules\Workflow\Database\Seeders\WorkflowDefinitionSeeder;
 use Modules\Organization\Database\Seeders\InstitutionReferenceSeeder;
 use Modules\Organization\Database\Seeders\InstitutionTypeFeatureRuleReferenceSeeder;
 use Modules\Organization\Database\Seeders\InstitutionTypeReferenceSeeder;
@@ -54,6 +55,7 @@ class DatabaseSeeder extends Seeder
             PermissionCatalogueSeeder::class,
             AcademicLevelReferenceSeeder::class,
             DemoSubjectReferenceSeeder::class,
+            WorkflowDefinitionSeeder::class,
         ]);
 
         // ── Demo structural data ─────────────────────────────────────

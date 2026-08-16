@@ -10,5 +10,6 @@
     "Organization": true,
     "People": true,
     "Staff": true,
-    "Students": true
+    "Students": true,
+    "Workflow": true
 }
