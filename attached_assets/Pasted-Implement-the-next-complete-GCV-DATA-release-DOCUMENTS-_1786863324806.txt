@@ -1,0 +1,917 @@
+Implement the next complete GCV DATA release:
+
+DOCUMENTS, CORRECTIONS, FORMAL REQUESTS, APPROVALS, NOTIFICATIONS, AND REPORTING
+
+This must be a complete working vertical release across Admin, Staff, and Guardian portals.
+
+Scope:
+
+1. Shared approval/workflow engine
+2. Secure attachments
+3. Guardian student-correction requests
+4. Student document requests
+5. Formal institution-to-management requests
+6. Electronic approvals/signatures
+7. Versioned bilingual document templates
+8. Immutable PDF document issuance
+9. Secure downloads and public verification
+10. In-app notifications
+11. Queue/job tracking
+12. Consolidated permission-aware reports
+13. PDF and Excel exports
+14. Modern Tailwind/Livewire UI
+15. Complete synthetic demo data
+
+Update `docs/plans/MASTER_IMPLEMENTATION_PLAN.md` and mark this as the current release.
+
+Medical Point, welfare/counseling, Storage, Assets, Women’s Center, complete system administration, external notification delivery, and offline synchronization remain required subsequent releases.
+
+Before implementation, read:
+
+- AGENTS.md
+- docs/SYSTEM_SPECIFICATION.md
+- docs/MODULE_CONVENTIONS.md
+- docs/OPERATIONAL_CONTEXT.md
+- docs/plans/MASTER_IMPLEMENTATION_PLAN.md
+- All existing ADRs
+- Existing Foundation modules
+- Student Registry/Enrolment implementation
+- Attendance/Marks/Publication implementation
+- Existing permissions, audit, queue, storage, localization, and UI conventions
+
+Preserve every existing migration, authorization rule, workflow, and test.
+
+==================================================
+1. MODULE OWNERSHIP
+==================================================
+
+Create or complete these bounded modules:
+
+Workflow owns:
+
+- WorkflowDefinition
+- WorkflowInstance
+- WorkflowStep
+- WorkflowAction
+- ElectronicApproval
+- Workflow history and transition enforcement
+
+Attachments owns:
+
+- SecureAttachment
+- AttachmentLink
+- Safe storage/download services
+- File integrity metadata
+
+Requests owns:
+
+- StudentCorrectionRequest
+- CorrectionFieldProposal
+- StudentDocumentRequest
+- InstitutionFormalRequest
+- Request comments and clarification
+
+Documents owns:
+
+- DocumentType
+- DocumentTemplate
+- DocumentTemplateVersion
+- DocumentRequest orchestration
+- IssuedDocument
+- DocumentVerification
+- Reissue/cancellation/supersession history
+
+Notifications owns:
+
+- In-app Notification
+- NotificationPreference
+- Notification delivery/job abstraction
+
+Reporting owns:
+
+- ReportDefinition
+- ReportRun
+- ExportJob
+- Secure report/download artifacts
+
+Reuse existing:
+
+- Accounts
+- People
+- Students
+- AcademicManagement
+- Attendance
+- Publication
+- Organization
+- AcademicCalendar
+- Staff
+- Authorization
+- Audit
+
+Do not implement a generic EAV business-record system.
+
+Shared workflow infrastructure may coordinate domain-owned requests, but each request type must keep typed domain data and validation.
+
+==================================================
+2. SHARED WORKFLOW ENGINE
+==================================================
+
+Implement a constrained state-machine workflow engine.
+
+WorkflowDefinition must be stable and code-governed.
+
+Initial workflow types:
+
+- student_correction
+- student_document
+- institution_formal_request
+- sensitive_identity_correction
+- guardian_relationship_correction
+- student_transfer_approval
+- result_publication_approval where integration is appropriate
+
+WorkflowInstance must include:
+
+- Definition code/version
+- Typed subject reference
+- Current state
+- Initiating actor and portal
+- Organization/institution scope
+- Institution-semester scope where relevant
+- Assigned/responsible actor or role
+- Due date, nullable
+- Correlation ID
+- Created/completed timestamps
+
+WorkflowAction must append:
+
+- Previous state
+- New state
+- Action code
+- Actor/account/portal
+- Decision/comment
+- Safe metadata
+- Timestamp
+
+Rules:
+
+- State transitions are explicit.
+- Unknown transitions fail.
+- Workflow rows are historical and not overwritten.
+- Role name alone does not authorize an action.
+- Every transition rechecks account, permission, assignment, institution, semester, period, and record state.
+- Cross-institution workflows are denied.
+- Completed/cancelled workflows are immutable except through explicit reopen/supersession actions.
+- Required audit failure rolls back the transition.
+- Concurrent decisions cannot approve the same step twice.
+
+Do not let clients submit arbitrary subject class names or workflow definitions.
+
+==================================================
+3. SECURE ATTACHMENTS
+==================================================
+
+Implement private file attachments.
+
+Fields/concepts:
+
+- Opaque ID
+- Original filename
+- Safe generated storage name
+- MIME type
+- Extension
+- Size
+- SHA-256 hash
+- Private disk/path
+- Uploader actor/account/portal
+- Organization/institution scope
+- Classification
+- Created timestamp
+- Quarantine/available/rejected state
+
+Rules:
+
+- Store outside public web directories.
+- Downloads pass through authorized controllers/services.
+- Never trust client MIME type or filename.
+- Sanitize displayed filenames.
+- Validate size, extension, detected MIME, and expected request purpose.
+- Deny executable/script formats.
+- Use allowlists per workflow.
+- Prevent path traversal.
+- Never render uploaded HTML as trusted application content.
+- Detect duplicate files by hash where useful without leaking cross-scope existence.
+- Attachments remain linked to immutable request history.
+- Removing an attachment from an active view must not erase required historical evidence.
+- Virus-scanner integration may use a contract if no scanner exists in the environment; unscanned files must be clearly classified according to policy.
+
+Initial allowed evidence formats:
+
+- PDF
+- JPG
+- JPEG
+- PNG
+
+Office files require a separate explicit allowlist and safe download behavior.
+
+==================================================
+4. GUARDIAN STUDENT-CORRECTION REQUESTS
+==================================================
+
+Implement StudentCorrectionRequest.
+
+Guardian workflow:
+
+1. Guardian selects an accessible student.
+2. Chooses the record/field requiring correction.
+3. Enters proposed value and explanation.
+4. Adds supporting evidence where appropriate.
+5. Submits.
+6. Secretary reviews.
+7. Secretary accepts, rejects, or requests clarification.
+8. Sensitive changes require principal/deputy or data-administrator approval.
+9. Approved change is applied through the owning domain action.
+10. Guardian receives the decision.
+11. Original request, proposed value, evidence, decisions, and applied change remain historical.
+
+States:
+
+- draft
+- submitted
+- clarification_requested
+- resubmitted
+- under_review
+- approved
+- rejected
+- applied
+- cancelled
+- superseded
+
+Rules:
+
+- Guardian may request correction only for an actively accessible student.
+- Guardian never edits official records directly.
+- The request stores a typed field/change proposal, not an arbitrary model/table/column name.
+- Supported correctable field catalogue is code-governed.
+- Sensitive identifiers and guardian/legal relationships require enhanced approval.
+- Requested and official values are stored/protected according to field classification.
+- Public notifications do not expose proposed sensitive values.
+- Applying a correction is atomic and auditable.
+- If official data changed during review, flag a conflict and require re-review.
+- Rejection and clarification require comments.
+- Applied corrections cannot be silently reversed.
+
+Initial requestable areas:
+
+- Basic student/person spelling
+- Birth-date correction
+- Contact correction
+- Address/displacement information
+- Guardian relationship information
+- Identifier correction through the existing protected identity workflow
+
+Do not allow guardian-requested medical or counselor-note changes through this general workflow.
+
+==================================================
+5. STUDENT DOCUMENT REQUESTS
+==================================================
+
+Implement StudentDocumentRequest.
+
+Initial document types:
+
+- proof_of_enrolment
+- school_acceptance_letter
+- semester_grade_report
+- semester_attendance_report
+- student_information_summary
+- transfer_document
+- end_of_year_certificate
+
+Each DocumentType defines:
+
+- Arabic/English label
+- Required student/enrolment context
+- Required data completeness checks
+- Approval requirement
+- Allowed requesters
+- Template family
+- Validity/expiry behavior
+- Whether public verification is allowed
+- Whether reissue is allowed
+
+Workflow:
+
+1. Guardian or authorized staff requests a document.
+2. Secretary reviews data completeness.
+3. Missing data returns request for clarification/correction.
+4. Required approver approves and electronically signs.
+5. System generates an immutable document.
+6. Requester receives an in-app notification.
+7. Authorized requester downloads the issued copy.
+
+States:
+
+- draft
+- submitted
+- under_review
+- clarification_requested
+- ready_for_approval
+- approved
+- rejected
+- generating
+- issued
+- generation_failed
+- cancelled
+- superseded
+
+A document request does not itself alter student data.
+
+==================================================
+6. FORMAL INSTITUTION REQUESTS
+==================================================
+
+Implement InstitutionFormalRequest.
+
+Workflow:
+
+1. Secretary prepares a draft.
+2. Principal/deputy reviews.
+3. Principal/deputy signs and submits.
+4. Central management reviews.
+5. Central management accepts, rejects, returns, or responds.
+6. Institution tracks the result and response.
+
+Fields/concepts:
+
+- Stable request number
+- Institution
+- Institution semester, optional
+- Request type
+- Arabic/English title
+- Structured body/content
+- Due date
+- Priority
+- Responsible actor
+- Attachments
+- Comments
+- Current state
+- Version/content hash
+- Response
+- Status history
+
+States:
+
+- draft
+- internal_review
+- returned_to_preparer
+- signed
+- submitted_to_management
+- under_management_review
+- clarification_requested
+- accepted
+- rejected
+- responded
+- closed
+- cancelled
+- superseded
+
+Rules:
+
+- Secretary cannot sign as principal.
+- Central read permission does not automatically allow decisions.
+- Institution cannot alter a request after signature/submission.
+- Returned request creates a new editable version while preserving the signed version.
+- All comments identify actor and audience.
+- Restricted internal comments are not visible to guardians or unrelated staff.
+- Requests use electronic signatures, not fake image signatures.
+
+==================================================
+7. ELECTRONIC APPROVAL AND SIGNATURE
+==================================================
+
+Implement audited ElectronicApproval.
+
+Capture:
+
+- Approver account and portal
+- Approval type
+- Decision
+- Exact subject/version
+- Canonical content hash
+- Timestamp
+- Comment
+- Reconfirmation method
+- Revoked/superseded state
+- Safe request/device fingerprint where lawful
+
+For sensitive/signing actions:
+
+- Require recent authentication or password reconfirmation.
+- Use the correct portal guard.
+- Rate-limit failed reconfirmation.
+- Never log or store submitted passwords.
+- Regenerate/reprotect session state where appropriate.
+- Reject approval if content changed after confirmation.
+- Distinguish verifier, approver, signatory, and publisher.
+
+An electronic signature is an auditable system confirmation. Do not claim certificate-based legal cryptographic signing.
+
+Certificate-backed digital signatures remain a future integration unless an approved certificate/provider is supplied.
+
+==================================================
+8. DOCUMENT TEMPLATE ENGINE
+==================================================
+
+Implement versioned bilingual templates.
+
+DocumentTemplate:
+
+- Document type
+- Organization/institution applicability
+- Active version
+- Arabic/English availability
+- Branding configuration
+- Approval requirements
+
+DocumentTemplateVersion:
+
+- Immutable version number
+- Locale
+- Safe template body/schema
+- Approved placeholder catalogue
+- Header/footer configuration
+- Effective dates
+- Creator/approver
+- Status
+- Content hash
+
+Rules:
+
+- Issued documents always reference an immutable template version.
+- Never evaluate arbitrary PHP/Blade code submitted from a browser.
+- Use an approved safe placeholder/template schema.
+- Unknown placeholders fail validation.
+- Template changes create new versions.
+- Existing issued documents never change.
+- Arabic templates render fully RTL, including tables.
+- English templates render LTR.
+- Use the GCV brand and logo without distortion.
+- Draft templates cannot issue official documents.
+- Template activation requires permission and audit.
+
+Provide preview using synthetic/sample data without leaking real records.
+
+==================================================
+9. PDF GENERATION
+==================================================
+
+Choose and document a PDF engine that supports:
+
+- Arabic shaping
+- RTL layout
+- Embedded self-hosted fonts
+- Tables
+- Pagination
+- Headers/footers
+- Reproducible server-side rendering
+- Current Replit/deployment runtime
+
+Inspect installed packages/runtime before selecting an engine.
+
+Do not select an engine merely because it renders simple English HTML. Render and visually test Arabic documents containing tables.
+
+IssuedDocument must record:
+
+- Unique document number
+- Document type
+- Student/enrolment/institution/semester snapshot references
+- Template version
+- Locale
+- Approver/signatory
+- Issued timestamp
+- Verification code/hash
+- Storage path
+- File SHA-256
+- Supersedes/superseded-by
+- Cancellation state/reason
+
+Rules:
+
+- Generated files use private storage.
+- Files are immutable.
+- Reissue creates a new IssuedDocument.
+- Cancellation does not delete the old file/history.
+- Generation is queued and retry-safe.
+- Idempotency prevents duplicate issue numbers/files.
+- Partial generation failures remain recoverable.
+- PDF contains document number and verification method.
+
+==================================================
+10. DOCUMENT NUMBERING AND VERIFICATION
+==================================================
+
+Create concurrency-safe document numbers.
+
+Example structure:
+
+GCV-{TYPE}-{YEAR}-{SEQUENCE}
+
+Do not rely on `MAX(id) + 1`.
+
+Use a locked sequence/counter per approved scope and year.
+
+Public verification:
+
+- Use a high-entropy opaque verification code.
+- Store a secure hash if possible.
+- Do not expose sequential database IDs.
+- Rate-limit lookup.
+- Show only minimal safe information:
+  - Valid/invalid/cancelled status
+  - Document type
+  - Document number
+  - Issuing institution
+  - Issue date
+- Do not expose student name, national ID, birth date, marks, attendance, or document file publicly.
+- Full download still requires authentication and authorization.
+
+Provide authenticated verification with more information only when authorized.
+
+==================================================
+11. IN-APP NOTIFICATIONS
+==================================================
+
+Implement portal-bound in-app notifications first.
+
+Notification fields/concepts:
+
+- Recipient account type/reference
+- Portal
+- Stable notification type
+- Safe translated message key
+- Safe parameters
+- Subject/workflow reference
+- Created/read/dismissed timestamps
+- Priority
+- Action route identifier
+- Expiry, nullable
+
+Notification types include:
+
+- correction_submitted
+- correction_clarification_requested
+- correction_approved
+- correction_rejected
+- correction_applied
+- document_request_submitted
+- document_ready
+- document_rejected
+- formal_request_returned
+- formal_request_responded
+- attendance_awaiting_verification
+- marks_awaiting_verification
+- results_awaiting_approval
+- work_returned
+- results_published
+- semester_closure_warning
+
+Rules:
+
+- No sensitive values in notification text/payload.
+- Route identifiers are resolved server-side.
+- No arbitrary URL supplied by stored payload.
+- Cross-portal notification access is denied.
+- Mark-read/dismiss actions reauthorize the recipient.
+- Notifications do not grant access to the subject.
+- Expired relationship/permission means notification target remains inaccessible.
+- Bulk notification creation uses queues where appropriate.
+
+External email/SMS/WhatsApp delivery uses a future adapter and is not activated without provider configuration.
+
+This does not remove external notification delivery from the full roadmap.
+
+==================================================
+12. QUEUE AND JOB TRACKING
+==================================================
+
+Implement reliable queued jobs for:
+
+- PDF generation
+- Large Excel exports
+- Bulk notifications
+- Report generation
+
+Provide JobStatus/OperationStatus visibility:
+
+- queued
+- running
+- completed
+- failed
+- cancelled
+- expired
+
+Store:
+
+- Requesting actor
+- Portal
+- Scope
+- Progress
+- Safe failure summary
+- Attempts
+- Created/started/completed timestamps
+- Output reference
+- Expiry
+
+Rules:
+
+- Jobs carry explicit actor and operational scope.
+- Jobs never gain broader permission because they run asynchronously.
+- Reauthorize or use a signed immutable authorization decision according to existing architecture.
+- Job payloads do not contain plaintext protected identifiers.
+- Retries are idempotent.
+- Users see only their permitted jobs.
+- Failed jobs do not leave partially official documents.
+
+Configure a Replit development workflow/process for the queue worker without breaking the web/Vite processes.
+
+==================================================
+13. REPORTING
+==================================================
+
+Build a real Reporting module/UI covering currently implemented domains.
+
+Initial report families:
+
+- Student registry
+- Student enrolment and placement
+- Student transfers
+- Student attendance
+- Staff attendance
+- Assessments and marks
+- Published results
+- Missing/incomplete attendance
+- Missing/incomplete marks
+- Teaching assignments
+- Staff assignments and positions
+- Guardian relationships
+- Correction requests
+- Document requests
+- Issued documents
+- Formal institution requests
+- Audit activity
+- Import results
+- Institution and organization summaries
+
+Filters where applicable:
+
+- Institution
+- Institution type
+- Academic year
+- Semester
+- Operational period
+- Grade
+- Class
+- Subject
+- Staff role/position
+- Date range
+- Workflow status
+- Publication status
+
+Rules:
+
+- On-screen and export queries use the same authorization scopes.
+- Central organization-wide reporting requires explicit permission.
+- Institution staff cannot broaden report scope manually.
+- Sensitive fields are excluded unless explicitly authorized.
+- Empty/unauthorized results do not disclose inaccessible record existence.
+- Reports use database aggregation/pagination, not loading everything into memory.
+- Large reports run in the queue.
+- Report definitions are stable and code-governed.
+
+==================================================
+14. PDF AND EXCEL EXPORTS
+==================================================
+
+PDF:
+
+- Human-readable reports
+- Correct Arabic RTL/English LTR
+- Branded headers
+- Filters and generation timestamp
+- Page numbering
+- Permission-aware content
+
+Excel:
+
+- Structured operational data
+- Localized headings
+- Stable machine-readable column option where useful
+- Filters documented in a metadata sheet
+- Frozen headers
+- Auto filters
+- Appropriate column widths
+- Dates stored as dates
+- No formulas from untrusted values
+- Prevent spreadsheet formula injection in text beginning with `=`, `+`, `-`, or `@`
+
+Downloads:
+
+- Private
+- Authorized
+- Expiring
+- Audited
+- Content-disposition filename sanitized
+- No permanent public storage URL
+
+==================================================
+15. PORTAL UI
+==================================================
+
+Use the existing modern Tailwind + Blade + Livewire design.
+
+Admin/Data Admin:
+
+- Workflow monitoring
+- Template/document-type management
+- Template version preview/activation
+- Formal-request inbox
+- Central decision/response screens
+- Report centre
+- Export/job status
+- Notification centre
+- Document verification lookup
+- Issued-document registry
+
+Principal/Deputy:
+
+- Approval/signature queue
+- Formal institution requests
+- Document approval queue
+- Sensitive correction approval
+- Reports and exports
+- Notification centre
+
+Secretary:
+
+- Guardian correction inbox
+- Clarification/review/apply workflow
+- Student document requests
+- Document data-completeness review
+- Formal request preparation
+- Institution reports
+- Job/download centre
+- Notification centre
+
+Guardian:
+
+- Submit correction request
+- Upload evidence
+- Respond to clarification
+- Track correction status/history
+- Request student documents
+- Track document request
+- Download issued documents
+- Notification centre
+
+Every workflow detail screen needs:
+
+- Current state
+- Timeline/history
+- Responsible actor
+- Allowed next actions
+- Comments
+- Attachments
+- Decisions
+- Related student/institution context
+- Audit link where permitted
+
+All Livewire mutations must reauthorize.
+
+==================================================
+16. PERMISSIONS
+==================================================
+
+Extend the permission catalogue with separate permissions for:
+
+- workflow.read/manage
+- attachment.upload/read
+- correction.request/review/approve/apply
+- document.request/review/approve/issue/download/cancel/reissue
+- template.read/manage/activate
+- formal_request.prepare/review/sign/submit/respond
+- electronic_approval.create/revoke
+- notification.read/manage
+- report.read
+- report.organization_read
+- export.create/download
+- document_verification.authenticated_read
+
+Do not combine preparation, verification, approval, signature, issuance, and central response into one permission.
+
+==================================================
+17. DEMO DATA
+==================================================
+
+Extend demo seeders with:
+
+- Correction requests in every major state
+- Clarification/resubmission example
+- Sensitive correction awaiting approval
+- Document requests in review/approved/issued/failed states
+- Bilingual template versions
+- Immutable issued demo PDFs
+- Cancelled and superseded document examples
+- Formal requests in draft/signed/submitted/returned/responded states
+- Approval/signature examples
+- In-app notifications for every portal
+- Report runs and exports
+- Queue-job status examples
+
+Use synthetic data only and preserve DEMO_SEED_PASSWORD rules.
+
+==================================================
+18. TESTS
+==================================================
+
+Test at minimum:
+
+- Valid/invalid workflow transitions
+- Concurrent decision protection
+- Cross-institution denial
+- Guardian relationship-derived access
+- Guardian cannot directly mutate student data
+- Correction conflict detection
+- Sensitive correction approval
+- Applied correction audit/history
+- Secure attachment validation/download
+- Signature content-hash protection
+- Password reconfirmation security
+- Template version immutability
+- Arabic RTL PDF rendering
+- English PDF rendering
+- Concurrency-safe document numbering
+- Issued-file immutability/hash
+- Reissue/cancellation/supersession
+- Public verification privacy
+- Notification portal isolation
+- Notification subject reauthorization
+- Job actor/scope preservation
+- Retry idempotency
+- Report scope and aggregation
+- Excel formula-injection protection
+- Expiring secure downloads
+- Arabic/English UI
+- Full previous regression suite
+
+==================================================
+19. VERIFICATION
+==================================================
+
+Run all commands from AGENTS.md, including:
+
+- composer validate --strict
+- composer check-platform-reqs
+- composer dump-autoload
+- php artisan package:discover
+- php artisan module:list
+- php artisan route:list
+- php artisan migrate:fresh
+- Complete reference/demo seeding
+- Queue worker/job tests
+- PDF render tests
+- Excel export tests
+- vendor/bin/pint --test
+- Full Pest/PHP test suite
+- npm run build
+- git diff --check
+
+Render and visually inspect:
+
+- Arabic proof of enrolment
+- English proof of enrolment
+- Arabic grade report containing a table
+- English attendance report
+- Formal-request PDF
+- Public verification page
+- Guardian request screens
+- Secretary workflow screens
+- Principal approval screen
+- Mobile/desktop Arabic and English layouts
+
+Final report must include:
+
+- Modules/entities/migrations
+- Workflow state machines
+- Correction/document/formal-request behavior
+- Electronic approval implementation
+- PDF engine choice and Arabic verification
+- Document numbering/verification
+- Notification behavior
+- Report/export inventory
+- Queue configuration
+- Demo accounts/data
+- Test/assertion counts
+- Visual inspection results
+- Remaining master-plan releases
+- Explicit confirmation that subsequent required modules remain scheduled
