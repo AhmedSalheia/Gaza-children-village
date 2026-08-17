@@ -11,6 +11,7 @@
     "Imports": true,
     "Notifications": true,
     "Organization": true,
+    "Reporting": true,
     "Requests": true,
     "People": true,
     "Staff": true,

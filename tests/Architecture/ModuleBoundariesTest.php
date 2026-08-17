@@ -37,7 +37,7 @@ it('prevents modules from depending on portal controllers or ui components', fun
 it('allows cross-module references only through approved public surfaces and directions', function (): void {
     $boundaries = config('module-boundaries');
 
-    expect($boundaries['dependencies'])->toHaveCount(17)
+    expect($boundaries['dependencies'])->toHaveCount(18)
         ->and($boundaries['public_namespaces'])->not->toBeEmpty();
 
     foreach (modulePhpFiles() as $path) {

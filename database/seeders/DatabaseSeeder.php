@@ -15,6 +15,7 @@ use Modules\Organization\Database\Seeders\InstitutionReferenceSeeder;
 use Modules\Organization\Database\Seeders\InstitutionTypeFeatureRuleReferenceSeeder;
 use Modules\Organization\Database\Seeders\InstitutionTypeReferenceSeeder;
 use Modules\Organization\Database\Seeders\OrganizationReferenceSeeder;
+use Modules\Reporting\Database\Seeders\ReportDefinitionSeeder;
 use Modules\Workflow\Database\Seeders\WorkflowDefinitionSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -60,6 +61,7 @@ class DatabaseSeeder extends Seeder
             WorkflowDefinitionSeeder::class,
             DocumentTypeSeeder::class,          // document type catalogue (7 types)
             DocumentTemplateFamilySeeder::class, // org-wide template family records
+            ReportDefinitionSeeder::class,      // 21 report family definitions
         ]);
 
         // ── Demo structural data ─────────────────────────────────────

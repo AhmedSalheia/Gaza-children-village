@@ -36,6 +36,7 @@ use App\Livewire\Staff\Marks\MarkWindowExtension;
 use App\Livewire\Staff\Marks\MySubjects;
 use App\Livewire\Staff\Reports\AttendanceReport as StaffAttendanceReport;
 use App\Livewire\Staff\Reports\ResultReport as StaffResultReport;
+use App\Livewire\Staff\Reports\StaffReportCentre;
 use App\Livewire\Staff\Students\AddStudent;
 use App\Livewire\Staff\Students\GuardianRelationships;
 use App\Livewire\Staff\Students\StudentDetail;
@@ -134,6 +135,9 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         // Reports — attendance and marks/results (scoped to staff position)
         Route::get('/reports/attendance', StaffAttendanceReport::class)->name('reports.attendance');
         Route::get('/reports/results', StaffResultReport::class)->name('reports.results');
+
+        // Report centre — scoped, period-restricted report browser
+        Route::get('/reports', StaffReportCentre::class)->name('reports.centre');
 
         // Report file download (path encrypted by Livewire export actions)
         Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');

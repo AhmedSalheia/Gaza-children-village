@@ -37,6 +37,7 @@ use App\Livewire\Admin\Publications\AttendancePublicationPolicyConfig;
 use App\Livewire\Admin\Publications\ResultPublicationManager;
 use App\Livewire\Admin\Reports\AttendanceReport as AdminAttendanceReport;
 use App\Livewire\Admin\Reports\MarksReport as AdminMarksReport;
+use App\Livewire\Admin\Reports\ReportCentre;
 use App\Livewire\Admin\Stubs\ComingSoonPage;
 use App\Livewire\Admin\Students\AddStudent;
 use App\Livewire\Admin\Students\GuardianDetail;
@@ -133,6 +134,9 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         // Reports: attendance and marks/results
         Route::get('/reports/attendance', AdminAttendanceReport::class)->name('reports.attendance');
         Route::get('/reports/marks', AdminMarksReport::class)->name('reports.marks');
+
+        // Report centre — all report families, previews, and exports
+        Route::get('/reports', ReportCentre::class)->name('reports.centre');
 
         // Report file download (path encrypted by Livewire export actions)
         Route::get('/reports/download', ReportDownloadController::class)->name('reports.download');

@@ -13,4 +13,5 @@
 - [Staff attendance QR system](staff-attendance-qr.md) — HMAC token lookup, correction-cycle design, index naming conflicts, assertDatabaseCount signature.
 - [Marks module](marks-module.md) — student_marks partial unique index, student_profiles schema fix, AcademicCalendarBoundaryTest guard update.
 - [Publication module tests](publication-module-tests.md) — Test helper pattern for mark_sheets, attendance_sheets, result/attendance publications.
+- [Reporting module](reporting-module.md) — re-auth inside Livewire actions, trusted staff scope per query, bounded export probe, boundary-count test bump.
 - [Document requests module](document-requests-module.md) — generation_failed is NOT terminal (recoverable); institution seeding requires org→institution_type→institution chain; semesters uses semester_id not name on institution_semesters; RateLimiter::hit uses positional decay param; verification_code_hash is SHA-256(code) for indexed lookup.

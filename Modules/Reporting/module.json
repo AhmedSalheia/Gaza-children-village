@@ -1,0 +1,11 @@
+{
+    "name": "Reporting",
+    "alias": "reporting",
+    "description": "GCV DATA Reporting module — permission-aware report families, paginated on-screen results, background-queued Excel exports with formula-injection protection, and job-status tracking.",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Reporting\\Providers\\ReportingServiceProvider"
+    ],
+    "files": []
+}

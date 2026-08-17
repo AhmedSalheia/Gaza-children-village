@@ -21,6 +21,7 @@ return [
         'Imports',
         'Notifications',
         'Organization',
+        'Reporting',
         'Requests',
         'People',
         'Staff',
@@ -83,5 +84,13 @@ return [
         // Students (student profiles), Organization (institution scope),
         // Authorization (permission keys), Audit (template activation events).
         'Documents' => ['Workflow', 'Attachments', 'Notifications', 'AcademicManagement', 'Students', 'Organization', 'Authorization', 'Audit'],
+
+        // Reporting: permission-aware report families, Excel exports, queued export
+        // jobs, and job-status tracking. Reads data from all domain modules via
+        // DB::table() to avoid ORM cross-module references. Depends on
+        // Notifications (OperationStatus for queued job tracking),
+        // Authorization (permission key look-ups), Audit (audit trail for exports),
+        // Accounts (actor identity), Organization (institution scope).
+        'Reporting' => ['Notifications', 'Authorization', 'Audit', 'Accounts', 'Organization'],
     ],
 ];

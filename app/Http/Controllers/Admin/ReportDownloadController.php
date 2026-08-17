@@ -43,6 +43,11 @@ class ReportDownloadController extends Controller
 
         abort_if(! $record, 403, 'Export record not found or does not belong to this account.');
 
+        // Re-authorize at download time — permissions may have been revoked
+        // after the export was generated.
+        $authService = app('Modules\Reporting\Services\ReportAuthorizationService');
+        abort_if(! $authService->adminCanAccessExport((int) $accountId, (string) $record->export_type), 403);
+
         $path = $record->file_path;
 
         abort_if(! $path || ! str_starts_with($path, 'reports/'), 403);

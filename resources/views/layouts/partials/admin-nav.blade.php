@@ -104,7 +104,13 @@
     </li>
     @endif
 
-    @if($navCan('attendance_report.read') || $navCan('result_report.read'))
+    @if($navCan('report.read'))
+    <li class="portal-nav__item">
+        <a href="{{ route('admin.reports.centre') }}" class="portal-nav__link @active('admin/reports*')">
+            {{ __('ui.reports', [], null, 'Reports') }}
+        </a>
+    </li>
+    @elseif($navCan('attendance_report.read') || $navCan('result_report.read'))
     <li class="portal-nav__item">
         <a href="{{ $navCan('attendance_report.read') ? route('admin.reports.attendance') : route('admin.reports.marks') }}"
            class="portal-nav__link @active('admin/reports*')">
