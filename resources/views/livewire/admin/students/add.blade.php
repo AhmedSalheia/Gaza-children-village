@@ -43,7 +43,7 @@
 
             <div class="form-group">
                 <label class="form-label">{{ __('ui.name_en', [], null, 'English Full Name') }}</label>
-                <input wire:model="fullNameEn" type="text" class="form-control" placeholder="Full name in English">
+                <input wire:model="fullNameEn" type="text" class="form-control" placeholder="{{ __('ui.name_en') }}">
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3)">

@@ -1,9 +1,9 @@
 @extends('layouts.guardian')
 
-@section('title', 'Dashboard')
+@section('title', __('portal.dashboard'))
 
 @section('content')
-    <h1>Guardian Dashboard</h1>
-    <p>Welcome to the GCV DATA Parent / Student Portal.</p>
-    <p>This is a placeholder. Full guardian functionality is deferred to later Foundation phases.</p>
+    <h1>{{ __('portal.guardian_dashboard') }}</h1>
+    <p>{{ __('portal.welcome_guardian') }}</p>
+    <p>{{ __('portal.placeholder_guardian') }}</p>
 @endsection

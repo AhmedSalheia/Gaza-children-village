@@ -112,7 +112,7 @@ class GuardianPortalTest extends TestCase
         Livewire::actingAs($data['account'], 'guardian')
             ->test(Dashboard::class)
             ->assertOk()
-            ->assertSee('ui.no_children_linked');
+            ->assertSee(__('ui.no_children_linked'));
     }
 
     /** portal_eligible=false is excluded from the dashboard — empty state shown. */
@@ -123,7 +123,7 @@ class GuardianPortalTest extends TestCase
         Livewire::actingAs($data['account'], 'guardian')
             ->test(Dashboard::class)
             ->assertOk()
-            ->assertSee('ui.no_children_linked');
+            ->assertSee(__('ui.no_children_linked'));
     }
 
     /** Unverified relationship is not portal-eligible — empty state shown. */
@@ -137,7 +137,7 @@ class GuardianPortalTest extends TestCase
         Livewire::actingAs($data['account'], 'guardian')
             ->test(Dashboard::class)
             ->assertOk()
-            ->assertSee('ui.no_children_linked');
+            ->assertSee(__('ui.no_children_linked'));
     }
 
     // ── Student detail ────────────────────────────────────────────────────
@@ -216,7 +216,7 @@ class GuardianPortalTest extends TestCase
         // Re-render must serve empty state, not stale child data.
         $component->refresh()
             ->assertOk()
-            ->assertSee('ui.no_children_linked');
+            ->assertSee(__('ui.no_children_linked'));
     }
 
     /**
@@ -264,7 +264,7 @@ class GuardianPortalTest extends TestCase
         // Re-render must serve empty state, not stale child data.
         $component->refresh()
             ->assertOk()
-            ->assertSee('ui.no_children_linked');
+            ->assertSee(__('ui.no_children_linked'));
     }
 
     /**

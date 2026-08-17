@@ -41,9 +41,9 @@
             <label class="form-label">{{ __('ui.status', [], null, 'Status') }}</label>
             <select wire:model.live="statusFilter" class="form-control form-select">
                 <option value="">{{ __('ui.all', [], null, 'All') }}</option>
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="suspended">Suspended</option>
+                <option value="draft">{{ __('status.draft') }}</option>
+                <option value="active">{{ __('status.active') }}</option>
+                <option value="suspended">{{ __('status.suspended') }}</option>
             </select>
         </div>
     </div>

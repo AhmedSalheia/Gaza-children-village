@@ -2,7 +2,7 @@
 
     {{-- Date filter --}}
     <div>
-        <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Date') }}</label>
+        <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.date') }}</label>
         <input type="date"
                wire:model.live="selectedDate"
                class="border border-gray-300 rounded px-3 py-1.5 text-sm">
@@ -18,20 +18,20 @@
                 <div class="grid grid-cols-3 gap-2 text-center text-xs">
                     <div>
                         <div class="text-2xl font-bold text-green-600">{{ $summary->present }}</div>
-                        <div class="text-gray-400">{{ __('Present') }}</div>
+                        <div class="text-gray-400">{{ __('ui.present') }}</div>
                     </div>
                     <div>
                         <div class="text-2xl font-bold text-red-500">{{ $summary->absent }}</div>
-                        <div class="text-gray-400">{{ __('Absent') }}</div>
+                        <div class="text-gray-400">{{ __('ui.absent') }}</div>
                     </div>
                     <div>
                         <div class="text-2xl font-bold text-gray-400">{{ $summary->unrecorded }}</div>
-                        <div class="text-gray-400">{{ __('Not recorded') }}</div>
+                        <div class="text-gray-400">{{ __('ui.attend_not_recorded') }}</div>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="col-span-3 text-center text-gray-400 py-8">{{ __('No periods found.') }}</div>
+            <div class="col-span-3 text-center text-gray-400 py-8">{{ __('ui.attend_no_periods') }}</div>
         @endforelse
     </div>
 
@@ -41,11 +41,11 @@
             <table class="min-w-full divide-y divide-gray-200 text-sm">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Name') }}</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Status') }}</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Arrival') }}</th>
-                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('QR Scan') }}</th>
-                        <th class="px-4 py-3 text-center font-medium text-gray-600">{{ __('Verified') }}</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.name') }}</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.status') }}</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_arrival') }}</th>
+                        <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_qr_scan') }}</th>
+                        <th class="px-4 py-3 text-center font-medium text-gray-600">{{ __('ui.verified') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -76,7 +76,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-4 py-6 text-center text-gray-400 text-sm">
-                                {{ __('No records for this period on the selected date.') }}
+                                {{ __('ui.attend_no_records_period') }}
                             </td>
                         </tr>
                     @endforelse

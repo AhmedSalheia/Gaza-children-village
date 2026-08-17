@@ -11,12 +11,12 @@
     @if($generatedPlaintextToken)
         <div class="bg-amber-50 border border-amber-300 rounded-lg p-6 space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="font-semibold text-amber-900">{{ __('New QR Credential — Save Now') }}</h3>
+                <h3 class="font-semibold text-amber-900">{{ __('ui.attend_new_qr_credential') }}</h3>
                 <button wire:click="dismissGeneratedToken"
-                        class="text-amber-600 hover:text-amber-800 text-sm">{{ __('Dismiss') }}</button>
+                        class="text-amber-600 hover:text-amber-800 text-sm">{{ __('ui.dismiss') }}</button>
             </div>
             <p class="text-sm text-amber-800">
-                {{ __('This token will not be shown again. Print or save the QR card for') }}
+                {{ __('ui.attend_token_not_shown') }}
                 <strong>{{ $generatedStaffName }}</strong>.
             </p>
 
@@ -24,7 +24,7 @@
             <div id="qr-card-print"
                  class="bg-white border border-gray-300 rounded-lg p-6 max-w-xs mx-auto text-center print:border-0">
                 <div class="text-sm font-bold tracking-wide uppercase text-teal-700 mb-1">GCV DATA</div>
-                <div class="text-xs text-gray-500 mb-4">{{ __('Staff Attendance Card') }}</div>
+                <div class="text-xs text-gray-500 mb-4">{{ __('ui.attend_staff_card') }}</div>
 
                 {{-- Server-generated SVG QR code (endroid/qr-code — no JS required) --}}
                 <div class="flex justify-center mb-4">
@@ -39,7 +39,7 @@
             <div class="flex gap-3">
                 <button onclick="window.print()"
                         class="px-4 py-2 bg-teal-600 text-white text-sm rounded hover:bg-teal-700">
-                    {{ __('Print Card') }}
+                    {{ __('ui.attend_print_card') }}
                 </button>
             </div>
         </div>
@@ -50,9 +50,9 @@
         <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Name') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Active Credential') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Issued') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.name') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_active_credential') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('workflow.state.issued') }}</th>
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
@@ -62,9 +62,9 @@
                         <td class="px-4 py-3 font-medium text-right">{{ $member->name }}</td>
                         <td class="px-4 py-3 text-right">
                             @if($member->credential_id)
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">{{ __('Active') }}</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">{{ __('ui.active') }}</span>
                             @else
-                                <span class="text-xs text-gray-400">{{ __('None') }}</span>
+                                <span class="text-xs text-gray-400">{{ __('ui.none') }}</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 text-right text-xs text-gray-500">
@@ -72,22 +72,22 @@
                         </td>
                         <td class="px-4 py-3 text-right space-x-2 rtl:space-x-reverse">
                             <button wire:click="generateCredential({{ $member->staff_profile_id }})"
-                                    wire:confirm="{{ $member->credential_id ? __('This will revoke the existing credential. Continue?') : __('Generate a new QR credential?') }}"
+                                    wire:confirm="{{ $member->credential_id ? __('ui.attend_revoke_regen_confirm') : __('ui.attend_generate_confirm') }}"
                                     class="text-xs px-2 py-1 bg-teal-600 text-white rounded hover:bg-teal-700">
-                                {{ $member->credential_id ? __('Regenerate') : __('Generate') }}
+                                {{ $member->credential_id ? __('ui.attend_regenerate') : __('ui.attend_generate') }}
                             </button>
                             @if($member->credential_id)
                                 <button wire:click="revokeCredential({{ $member->credential_id }})"
-                                        wire:confirm="{{ __('Revoke this credential? Pending scans will be rejected.') }}"
+                                        wire:confirm="{{ __('ui.attend_revoke_confirm') }}"
                                         class="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">
-                                    {{ __('Revoke') }}
+                                    {{ __('ui.attend_revoke') }}
                                 </button>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-400">{{ __('No staff found.') }}</td>
+                        <td colspan="4" class="px-4 py-8 text-center text-gray-400">{{ __('ui.attend_no_staff_found') }}</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -96,13 +96,13 @@
 
     {{-- Manual scan form link --}}
     <div class="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-        <h3 class="font-semibold text-gray-800 text-sm">{{ __('Manual Token Entry (Fallback)') }}</h3>
+        <h3 class="font-semibold text-gray-800 text-sm">{{ __('ui.attend_manual_token_entry') }}</h3>
         <p class="text-xs text-gray-500">
-            {{ __('If a scanner is unavailable, the staff member can read their token aloud or enter it here.') }}
+            {{ __('ui.attend_manual_token_hint') }}
         </p>
         <a href="{{ route('staff.attendance.scan-form') }}"
            class="inline-block text-sm text-teal-600 hover:underline">
-            {{ __('Open manual scan entry form →') }}
+            {{ __('ui.attend_open_manual_form') }}
         </a>
     </div>
 

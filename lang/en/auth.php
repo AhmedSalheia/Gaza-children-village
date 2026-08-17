@@ -31,4 +31,16 @@ return [
     'admin_portal' => 'Administration Portal',
     'staff_portal' => 'Staff Portal',
     'guardian_portal' => 'Guardian Portal',
+
+    // Login screens
+    'sign_in_subtitle' => 'Sign in to continue',
+    'login_identifier' => 'Login ID',
+    'restricted_access' => 'Access is restricted to authorized personnel.',
+    'guardian_help' => 'Need access? Contact your school administration.',
+    'admin_hero_title' => 'One place for every school record',
+    'admin_hero_body' => 'Manage institutions, staff, students, and academic records across the whole organization.',
+    'staff_hero_title' => 'Your classroom, organized',
+    'staff_hero_body' => 'Attendance, marks, and student records — everything you need for the school day in one place.',
+    'guardian_hero_title' => "Follow your child's journey",
+    'guardian_hero_body' => 'Results, attendance, and official documents for your children — securely, in one place.',
 ];

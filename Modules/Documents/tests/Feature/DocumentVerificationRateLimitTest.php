@@ -52,7 +52,7 @@ describe('Document verification rate limiting', function (): void {
         $response = $this->get('/verify/'.$unknownCode);
 
         $response->assertStatus(200);
-        $response->assertSeeText('rate_limit');
+        $response->assertSeeText('Rate Limited');
 
         RateLimiter::clear($key);
     });

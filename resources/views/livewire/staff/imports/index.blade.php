@@ -37,15 +37,15 @@
     <div style="margin-block-end:var(--space-4)">
         <select wire:model.live="statusFilter" class="form-control form-select" style="max-inline-size:200px">
             <option value="">{{ __('ui.all_statuses', [], null, 'All Statuses') }}</option>
-            <option value="uploaded">uploaded</option>
-            <option value="parsing">parsing</option>
-            <option value="ready_for_mapping">ready_for_mapping</option>
-            <option value="validating">validating</option>
-            <option value="ready_for_review">ready_for_review</option>
-            <option value="applying">applying</option>
-            <option value="completed">completed</option>
-            <option value="completed_with_errors">completed_with_errors</option>
-            <option value="cancelled">cancelled</option>
+            <option value="uploaded">{{ __('status.uploaded') }}</option>
+            <option value="parsing">{{ __('status.parsing') }}</option>
+            <option value="ready_for_mapping">{{ __('status.ready_for_mapping') }}</option>
+            <option value="validating">{{ __('status.validating') }}</option>
+            <option value="ready_for_review">{{ __('status.ready_for_review') }}</option>
+            <option value="applying">{{ __('status.applying') }}</option>
+            <option value="completed">{{ __('status.completed') }}</option>
+            <option value="completed_with_errors">{{ __('status.completed_with_errors') }}</option>
+            <option value="cancelled">{{ __('status.cancelled') }}</option>
         </select>
     </div>
 

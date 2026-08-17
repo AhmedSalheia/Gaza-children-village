@@ -81,11 +81,13 @@
    ============================================================ */
 :root {
   /* Surfaces */
-  --surface-page:       var(--neutral-50);
+  --surface-page:       #F4F4F1; /* warm off-white derived from brand off-white */
   --surface-card:       var(--neutral-0);
-  --surface-overlay:    rgba(0, 0, 0, 0.5);
+  --surface-overlay:    rgba(11, 20, 31, 0.55);
   --surface-sidebar:    var(--teal-600);
   --surface-header:     var(--teal-700);
+  --surface-header-gradient: linear-gradient(135deg, var(--teal-800) 0%, var(--teal-600) 60%, #2E5266 100%);
+  --surface-hero-gradient:   linear-gradient(160deg, var(--teal-800) 0%, var(--teal-600) 55%, var(--teal-500) 120%);
 
   /* Text */
   --text-primary:       var(--brand-black);
@@ -138,10 +140,10 @@
   --badge-active-bg:    var(--badge-open-bg);
   --badge-active-text:  var(--badge-open-text);
 
-  /* Shadows */
-  --shadow-sm:  0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md:  0 4px 6px rgba(0,0,0,0.07);
-  --shadow-lg:  0 10px 15px rgba(0,0,0,0.10);
+  /* Shadows — teal-tinted layered elevation */
+  --shadow-sm:  0 1px 2px rgba(37, 65, 81, 0.06), 0 1px 3px rgba(37, 65, 81, 0.08);
+  --shadow-md:  0 2px 4px rgba(37, 65, 81, 0.05), 0 6px 16px rgba(37, 65, 81, 0.10);
+  --shadow-lg:  0 4px 8px rgba(37, 65, 81, 0.06), 0 16px 40px rgba(37, 65, 81, 0.16);
 
   /* Spacing (logical — works for LTR and RTL) */
   --space-1:  0.25rem;
@@ -154,9 +156,10 @@
   --space-16: 4rem;
 
   /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -169,7 +172,7 @@
    ============================================================ */
 :root {
   /* Button */
-  --btn-radius:         var(--radius-sm);
+  --btn-radius:         10px;
   --btn-padding-y:      var(--space-2);
   --btn-padding-x:      var(--space-4);
   --btn-font-weight:    600;
@@ -197,14 +200,14 @@
   --nav-item-font-size:  0.9375rem;
 
   /* Header */
-  --header-height:     3.5rem;
-  --header-bg:         var(--surface-header);
+  --header-height:     4rem;
+  --header-bg:         var(--surface-header-gradient);
   --header-text:       var(--text-inverse);
 
   /* Card */
   --card-bg:           var(--surface-card);
-  --card-border:       var(--border-default);
-  --card-radius:       var(--radius-md);
+  --card-border:       #E3E3DF;
+  --card-radius:       var(--radius-lg);
   --card-shadow:       var(--shadow-sm);
   --card-padding:      var(--space-6);
 

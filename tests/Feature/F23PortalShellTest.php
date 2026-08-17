@@ -82,10 +82,10 @@ describe('portal Blade layouts', function (): void {
         }
     });
 
-    it('all layouts include GCV logo img', function (): void {
+    it('all layouts include GCV brand mark', function (): void {
         foreach (['admin', 'staff', 'guardian'] as $portal) {
             $blade = file_get_contents(resource_path("views/layouts/{$portal}.blade.php"));
-            expect($blade)->toContain('gcv-logo-dark.png');
+            expect($blade)->toContain('brand-mark__name');
         }
     });
 

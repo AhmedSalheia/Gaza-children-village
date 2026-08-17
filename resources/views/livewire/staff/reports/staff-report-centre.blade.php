@@ -1,25 +1,25 @@
 <div>
     {{-- ── Page header ─────────────────────────────────────────────────── --}}
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0">مركز التقارير</h4>
+        <h4 class="mb-0">{{ __('reports.report_centre') }}</h4>
     </div>
 
     <div class="row g-4">
         {{-- ── Report family browser ───────────────────────────────────── --}}
         <div class="col-md-3">
             <div class="card">
-                <div class="card-header">عائلات التقارير</div>
+                <div class="card-header">{{ __('reports.report_families') }}</div>
                 <div class="list-group list-group-flush">
                     @forelse($this->definitions as $family => $defs)
                         <div class="list-group-item bg-light small fw-bold text-uppercase">
                             {{ match($family) {
-                                'registry' => 'السجلات',
-                                'attendance' => 'الحضور',
-                                'marks' => 'الدرجات',
-                                'compliance' => 'الالتزام',
-                                'staff' => 'الكادر',
-                                'requests' => 'الطلبات',
-                                'audit' => 'المراجعة',
+                                'registry' => __('reports.family_registry'),
+                                'attendance' => __('reports.family_attendance'),
+                                'marks' => __('reports.family_marks'),
+                                'compliance' => __('reports.family_compliance'),
+                                'staff' => __('reports.family_staff'),
+                                'requests' => __('reports.family_requests'),
+                                'audit' => __('reports.family_audit'),
                                 default => $family,
                             } }}
                         </div>
@@ -32,7 +32,7 @@
                         @endforeach
                     @empty
                         <div class="list-group-item text-muted text-center py-4">
-                            لا تتوفر تقارير ضمن صلاحياتك.
+                            {{ __('reports.no_reports_permission') }}
                         </div>
                     @endforelse
                 </div>
@@ -51,9 +51,9 @@
                         <div class="row g-3">
                             @if(in_array('class_group_id', $this->filterSchema, true))
                                 <div class="col-md-4">
-                                    <label class="form-label">المجموعة الدراسية</label>
+                                    <label class="form-label">{{ __('reports.class_group') }}</label>
                                     <select class="form-select form-select-sm" wire:model.live="classGroupId">
-                                        <option value="0">الكل</option>
+                                        <option value="0">{{ __('reports.all') }}</option>
                                         @foreach($this->classGroups as $cg)
                                             <option value="{{ $cg->id }}">{{ $cg->name_ar }}</option>
                                         @endforeach
@@ -63,14 +63,14 @@
 
                             @if(in_array('date_from', $this->filterSchema, true))
                                 <div class="col-md-3">
-                                    <label class="form-label">من تاريخ</label>
+                                    <label class="form-label">{{ __('reports.date_from') }}</label>
                                     <input type="date" class="form-control form-control-sm" wire:model.live="dateFrom">
                                 </div>
                             @endif
 
                             @if(in_array('date_to', $this->filterSchema, true))
                                 <div class="col-md-3">
-                                    <label class="form-label">إلى تاريخ</label>
+                                    <label class="form-label">{{ __('reports.date_to') }}</label>
                                     <input type="date" class="form-control form-control-sm" wire:model.live="dateTo">
                                 </div>
                             @endif
@@ -79,12 +79,12 @@
                         <div class="mt-3 d-flex gap-2">
                             <button wire:click="runReport" wire:loading.attr="disabled" class="btn btn-primary btn-sm">
                                 <span wire:loading wire:target="runReport" class="spinner-border spinner-border-sm me-1"></span>
-                                عرض التقرير
+                                {{ __('reports.run_report') }}
                             </button>
                             @if($canExport)
                                 <button wire:click="exportReport" wire:loading.attr="disabled" class="btn btn-outline-success btn-sm">
                                     <span wire:loading wire:target="exportReport" class="spinner-border spinner-border-sm me-1"></span>
-                                    تصدير إلى Excel
+                                    {{ __('reports.export_excel') }}
                                 </button>
                             @endif
                         </div>
@@ -100,15 +100,15 @@
                     } }} d-flex align-items-center justify-content-between">
                         <div>
                             @if($this->pendingOperation->status === 'completed')
-                                اكتمل إنشاء ملف التصدير.
+                                {{ __('reports.export_file_completed') }}
                             @elseif($this->pendingOperation->status === 'failed')
-                                فشل التصدير: {{ $this->pendingOperation->failure_summary ?? 'خطأ غير معروف' }}
+                                {{ __('reports.export_failed') }} {{ $this->pendingOperation->failure_summary ?? __('reports.unknown_error') }}
                             @else
-                                جارٍ إنشاء ملف التصدير في الخلفية… ({{ $this->pendingOperation->status === 'queued' ? 'في قائمة الانتظار' : 'قيد المعالجة' }})
+                                {{ __('reports.export_generating') }} ({{ $this->pendingOperation->status === 'queued' ? __('reports.queued') : __('reports.processing') }})
                             @endif
                         </div>
                         @if($this->pendingOperation->status === 'completed')
-                            <button wire:click="downloadCompletedExport" class="btn btn-success btn-sm">تنزيل</button>
+                            <button wire:click="downloadCompletedExport" class="btn btn-success btn-sm">{{ __('reports.download') }}</button>
                         @endif
                     </div>
                 @endif
@@ -117,8 +117,8 @@
                 @if($hasRun)
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <span>النتائج (أول {{ \App\Livewire\Staff\Reports\StaffReportCentre::PREVIEW_LIMIT }} صف)</span>
-                            <span class="small text-muted">{{ $this->rows->count() }} صف معروض</span>
+                            <span>{{ __('reports.results_first_rows', ['limit' => \App\Livewire\Staff\Reports\StaffReportCentre::PREVIEW_LIMIT]) }}</span>
+                            <span class="small text-muted">{{ __('reports.rows_shown', ['count' => $this->rows->count()]) }}</span>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover mb-0 align-middle">
@@ -139,7 +139,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="{{ max(count($this->headings), 1) }}" class="text-center text-muted py-4">
-                                                لا توجد نتائج بالمعايير المحددة.
+                                                {{ __('reports.no_results') }}
                                             </td>
                                         </tr>
                                     @endforelse
@@ -151,7 +151,7 @@
             @else
                 <div class="card">
                     <div class="card-body text-center text-muted py-5">
-                        اختر تقريراً من القائمة الجانبية للبدء.
+                        {{ __('reports.select_report_to_start') }}
                     </div>
                 </div>
             @endif

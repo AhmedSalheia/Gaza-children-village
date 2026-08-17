@@ -2,12 +2,12 @@
 
 <div>
     <div class="page-header">
-        <h1 class="page-title">Submit Mark Correction</h1>
+        <h1 class="page-title">{{ __('marks.submit_correction_title') }}</h1>
         @if($sheet)
             <a href="{{ route('staff.marks.sheet', ['assignmentId' => $sheet->teaching_assignment_id]) }}"
-               class="btn btn--outline btn--sm">← Back to Sheet</a>
+               class="btn btn--outline btn--sm">← {{ __('marks.back_to_sheet') }}</a>
         @else
-            <a href="{{ route('staff.marks.index') }}" class="btn btn--outline btn--sm">← Back</a>
+            <a href="{{ route('staff.marks.index') }}" class="btn btn--outline btn--sm">← {{ __('ui.back') }}</a>
         @endif
     </div>
 
@@ -21,23 +21,22 @@
     @if($sheet)
         <div class="card" style="margin-block-end:var(--space-4)">
             <p style="font-size:var(--text-sm);color:var(--color-muted)">
-                Corrections are append-only. The original mark is preserved and a new correction row is recorded
-                with your reason. Select a mark below to correct it.
+                {{ __('marks.correction_intro') }}
             </p>
         </div>
 
         {{-- Existing corrections --}}
         @if($corrections->isNotEmpty())
-            <h3 style="margin-block-end:var(--space-2)">Previous Corrections</h3>
+            <h3 style="margin-block-end:var(--space-2)">{{ __('marks.previous_corrections') }}</h3>
             <div class="data-table-wrapper" style="margin-block-end:var(--space-4)">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Student</th>
-                            <th>Assessment</th>
-                            <th>Corrected Value</th>
-                            <th>Reason</th>
-                            <th>Date</th>
+                            <th>{{ __('marks.student') }}</th>
+                            <th>{{ __('marks.assessment') }}</th>
+                            <th>{{ __('marks.corrected_value') }}</th>
+                            <th>{{ __('ui.reason') }}</th>
+                            <th>{{ __('ui.date') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,14 +66,14 @@
 
         {{-- Mark selection and correction form --}}
         @if($selectedMarkId === 0)
-            <h3 style="margin-block-end:var(--space-2)">Select a Mark to Correct</h3>
+            <h3 style="margin-block-end:var(--space-2)">{{ __('marks.select_mark_to_correct') }}</h3>
             <div class="data-table-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Student</th>
-                            <th>Assessment</th>
-                            <th>Current Value</th>
+                            <th>{{ __('marks.student') }}</th>
+                            <th>{{ __('marks.assessment') }}</th>
+                            <th>{{ __('marks.current_value') }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -89,18 +88,18 @@
                                     @elseif($mark->exception_status)
                                         <span class="badge badge--archived">{{ ucfirst($mark->exception_status) }}</span>
                                     @else
-                                        <span style="color:var(--color-muted)">Not entered</span>
+                                        <span style="color:var(--color-muted)">{{ __('marks.not_entered') }}</span>
                                     @endif
                                 </td>
                                 <td>
                                     <button wire:click="selectMark({{ $mark->mark_id }})"
                                             class="btn btn--outline btn--sm">
-                                        Correct
+                                        {{ __('marks.correct') }}
                                     </button>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" style="color:var(--color-muted)">No marks found on this sheet.</td></tr>
+                            <tr><td colspan="4" style="color:var(--color-muted)">{{ __('marks.no_marks_on_sheet') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -112,19 +111,19 @@
             @endphp
             <div class="card" style="max-width:520px">
                 <h3 style="margin-block-end:var(--space-3)">
-                    Correction for:
+                    {{ __('marks.correction_for') }}
                     @if($selectedMark)
                         <span dir="rtl">{{ $selectedMark->student_name }}</span>
                         — <span dir="rtl">{{ $selectedMark->assessment_name }}</span>
-                        (current: {{ $selectedMark->score ?? ucfirst($selectedMark->exception_status ?? '—') }})
+                        ({{ __('marks.current_label') }} {{ $selectedMark->score ?? ucfirst($selectedMark->exception_status ?? '—') }})
                     @endif
                 </h3>
 
                 <div class="form-group">
-                    <label class="form-label">Corrected Value</label>
+                    <label class="form-label">{{ __('marks.corrected_value') }}</label>
                     <div style="display:flex;gap:var(--space-3);align-items:flex-start;flex-wrap:wrap">
                         <div>
-                            <label style="font-size:var(--text-sm);color:var(--color-muted)">Score</label>
+                            <label style="font-size:var(--text-sm);color:var(--color-muted)">{{ __('marks.score') }}</label>
                             <input type="number" wire:model="correctedScore"
                                    step="0.01" min="0"
                                    max="{{ $selectedMark?->max_score ?? 100 }}"
@@ -133,35 +132,35 @@
                                    :disabled="$wire.correctedExcept !== ''">
                         </div>
                         <div>
-                            <label style="font-size:var(--text-sm);color:var(--color-muted)">Exception</label>
+                            <label style="font-size:var(--text-sm);color:var(--color-muted)">{{ __('marks.exception') }}</label>
                             <select wire:model="correctedExcept" class="form-control" style="width:130px">
-                                <option value="">— Score —</option>
-                                <option value="absent">Absent</option>
-                                <option value="exempt">Exempt</option>
-                                <option value="medical">Medical</option>
+                                <option value="">{{ __('marks.score_option') }}</option>
+                                <option value="absent">{{ __('marks.absent') }}</option>
+                                <option value="exempt">{{ __('marks.exempt') }}</option>
+                                <option value="medical">{{ __('marks.medical') }}</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="correction-reason">Reason for Correction <span style="color:var(--color-danger)">*</span></label>
+                    <label class="form-label" for="correction-reason">{{ __('marks.reason_for_correction') }} <span style="color:var(--color-danger)">*</span></label>
                     <textarea id="correction-reason"
                               wire:model="correctionReason"
                               class="form-control"
                               rows="3"
-                              placeholder="Describe why this correction is needed (min 5 characters)…"></textarea>
+                              placeholder="{{ __('marks.correction_reason_placeholder') }}"></textarea>
                 </div>
 
                 <div style="display:flex;gap:var(--space-2);margin-block-start:var(--space-3)">
-                    <button wire:click="submitCorrection" class="btn btn--primary">Submit Correction</button>
-                    <button wire:click="cancelCorrection" class="btn btn--outline">Cancel</button>
+                    <button wire:click="submitCorrection" class="btn btn--primary">{{ __('marks.submit_correction') }}</button>
+                    <button wire:click="cancelCorrection" class="btn btn--outline">{{ __('ui.cancel') }}</button>
                 </div>
             </div>
         @endif
     @else
         <div class="card">
-            <p>Mark sheet not found or not accessible.</p>
+            <p>{{ __('marks.sheet_not_found') }}</p>
         </div>
     @endif
 </div>

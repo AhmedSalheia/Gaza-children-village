@@ -12,11 +12,11 @@
     @endif
 
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-xl font-semibold text-gray-900">Formal Requests</h1>
+        <h1 class="text-xl font-semibold text-gray-900">{{ __('ui.formal_requests') }}</h1>
         @if($canPrepare)
             <a href="{{ route('staff.formal-requests.new') }}"
                class="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
-                New Request
+                {{ __('ui.new_request') }}
             </a>
         @endif
     </div>
@@ -25,7 +25,7 @@
     <div class="mb-4 flex gap-3">
         <select wire:model.live="statusFilter"
                 class="rounded border border-gray-300 px-3 py-1.5 text-sm">
-            <option value="">All statuses</option>
+            <option value="">{{ __('ui.all_statuses') }}</option>
             @foreach($statusOptions as $s)
                 <option value="{{ $s }}">{{ ucwords(str_replace('_', ' ', $s)) }}</option>
             @endforeach
@@ -33,7 +33,7 @@
 
         <select wire:model.live="typeFilter"
                 class="rounded border border-gray-300 px-3 py-1.5 text-sm">
-            <option value="">All types</option>
+            <option value="">{{ __('ui.all_types') }}</option>
             @foreach($typeOptions as $t)
                 <option value="{{ $t }}">{{ ucwords($t) }}</option>
             @endforeach
@@ -45,13 +45,13 @@
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-xs uppercase text-gray-500">
                 <tr>
-                    <th class="px-4 py-3 text-start">Number</th>
-                    <th class="px-4 py-3 text-start">Title</th>
-                    <th class="px-4 py-3 text-start">Type</th>
-                    <th class="px-4 py-3 text-start">Status</th>
-                    <th class="px-4 py-3 text-start">Priority</th>
-                    <th class="px-4 py-3 text-start">Date</th>
-                    <th class="px-4 py-3 text-start">Actions</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.document_number') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('requests.title') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.type') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.status') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('requests.priority') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.date') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -71,23 +71,23 @@
                             </span>
                         </td>
                         <td class="px-4 py-3 text-gray-600">
-                            {{ ['', 'Low', 'Medium', 'High', 'Urgent'][$req->priority] ?? $req->priority }}
+                            {{ ['', __('requests.priority_low'), __('requests.priority_medium'), __('requests.priority_high'), __('requests.priority_urgent')][$req->priority] ?? $req->priority }}
                         </td>
                         <td class="px-4 py-3 text-gray-500 text-xs">{{ $req->created_at->format('d M Y') }}</td>
                         <td class="px-4 py-3">
                             <a href="{{ route('staff.formal-requests.detail', $req->id) }}"
-                               class="text-blue-600 hover:underline text-xs me-2">View</a>
+                               class="text-blue-600 hover:underline text-xs me-2">{{ __('ui.view') }}</a>
                             @if($canPrepare && $req->isCancellable())
                                 <button wire:click="cancel({{ $req->id }})"
-                                        wire:confirm="Cancel this request?"
-                                        class="text-red-600 hover:underline text-xs">Cancel</button>
+                                        wire:confirm="{{ __('requests.cancel_confirm') }}"
+                                        class="text-red-600 hover:underline text-xs">{{ __('ui.cancel') }}</button>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
-                            No formal requests found.
+                            {{ __('requests.no_formal_requests') }}
                         </td>
                     </tr>
                 @endforelse

@@ -3,11 +3,11 @@
     {{-- Header --}}
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Daily Attendance Sheet</h1>
+            <h1 class="text-2xl font-bold text-gray-800">{{ __('attendance.daily_sheet_title') }}</h1>
             @if($sheet)
                 <p class="text-sm text-gray-500 mt-1">
                     {{ $sheet->attendance_date->format('l، j F Y') }}
-                    · Status:
+                    · {{ __('attendance.status_label') }}
                     <span class="font-medium {{ $sheet->status->value === 'verified'  ? 'text-green-600'
                         : ($sheet->status->value === 'returned'  ? 'text-red-600'
                         : ($sheet->status->value === 'submitted' ? 'text-blue-600'
@@ -17,7 +17,7 @@
                 </p>
             @endif
         </div>
-        <a href="{{ route('staff.attendance.index') }}" class="text-sm text-indigo-600 hover:underline">← My Classes</a>
+        <a href="{{ route('staff.attendance.index') }}" class="text-sm text-indigo-600 hover:underline">← {{ __('attendance.my_classes') }}</a>
     </div>
 
     {{-- Flash --}}
@@ -28,13 +28,13 @@
     @endif
 
     @if(! $sheet)
-        <p class="text-sm text-gray-500">Loading sheet…</p>
+        <p class="text-sm text-gray-500">{{ __('attendance.loading_sheet') }}</p>
     @else
 
         {{-- Return reason banner --}}
         @if($sheet->status->value === 'returned' && $sheet->return_reason)
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-800">
-                <strong>Returned by secretary:</strong> {{ $sheet->return_reason }}
+                <strong>{{ __('attendance.returned_by_secretary') }}</strong> {{ $sheet->return_reason }}
             </div>
         @endif
 
@@ -43,11 +43,11 @@
             <div class="flex gap-3">
                 <button wire:click="verify"
                         class="px-4 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-                    {{ $sheet->status->value === 'reopened' ? 'Re-verify Sheet' : 'Verify Sheet' }}
+                    {{ $sheet->status->value === 'reopened' ? __('attendance.reverify_sheet') : __('attendance.verify_sheet') }}
                 </button>
                 <button wire:click="startReturn"
                         class="px-4 py-2 bg-red-600 text-white rounded text-sm hover:bg-red-700">
-                    Return to Teacher
+                    {{ __('attendance.return_to_teacher') }}
                 </button>
             </div>
         @endif
@@ -55,15 +55,15 @@
         {{-- Return form --}}
         @if($showReturn)
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 space-y-3">
-                <label class="block text-sm font-medium text-red-800">Return Reason</label>
+                <label class="block text-sm font-medium text-red-800">{{ __('attendance.return_reason') }}</label>
                 <textarea wire:model="returnReason" rows="3"
                           class="border rounded px-3 py-2 text-sm w-full"
-                          placeholder="Explain what the teacher needs to correct…"></textarea>
+                          placeholder="{{ __('attendance.return_reason_placeholder') }}"></textarea>
                 <div class="flex gap-2">
                     <button wire:click="confirmReturn"
-                            class="px-4 py-2 bg-red-600 text-white rounded text-sm">Confirm Return</button>
+                            class="px-4 py-2 bg-red-600 text-white rounded text-sm">{{ __('attendance.confirm_return') }}</button>
                     <button wire:click="$set('showReturn', false)"
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm">Cancel</button>
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm">{{ __('ui.cancel') }}</button>
                 </div>
             </div>
         @endif
@@ -73,18 +73,18 @@
             <div class="flex gap-3">
                 <button wire:click="bulkMarkPresent"
                         class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded text-sm hover:bg-indigo-200">
-                    Bulk Mark All Present
+                    {{ __('attendance.bulk_mark_present') }}
                 </button>
                 <button wire:click="submit"
                         class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">
-                    Submit for Review
+                    {{ __('attendance.submit_for_review') }}
                 </button>
             </div>
         @endif
 
         {{-- Attendance table --}}
         @if($records->isEmpty())
-            <p class="text-sm text-gray-500">No students enrolled in this class group.</p>
+            <p class="text-sm text-gray-500">{{ __('attendance.no_students_enrolled') }}</p>
         @else
             {{-- Pass status catalogue as JSON for Alpine per-row logic --}}
             @php $catalogueJson = json_encode($statuses, JSON_UNESCAPED_UNICODE) @endphp
@@ -93,14 +93,14 @@
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
                         <tr>
-                            <th class="px-4 py-3 text-right w-1/4">Student</th>
-                            <th class="px-4 py-3 text-right">Status</th>
+                            <th class="px-4 py-3 text-right w-1/4">{{ __('attendance.student') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('ui.status') }}</th>
                             @if($sheet->status->isEditable())
-                                <th class="px-4 py-3 text-right">Reason / Time</th>
+                                <th class="px-4 py-3 text-right">{{ __('attendance.reason_time') }}</th>
                                 <th class="px-4 py-3 w-16"></th>
                             @else
-                                <th class="px-4 py-3 text-right">Reason</th>
-                                <th class="px-4 py-3 text-right">History</th>
+                                <th class="px-4 py-3 text-right">{{ __('ui.reason') }}</th>
+                                <th class="px-4 py-3 text-right">{{ __('attendance.history') }}</th>
                             @endif
                         </tr>
                     </thead>
@@ -134,7 +134,7 @@
                                     <td class="px-4 py-3 align-top">
                                         <select x-model="statusCode"
                                                 class="border rounded px-2 py-1.5 text-sm w-full">
-                                            <option value="">— choose —</option>
+                                            <option value="">{{ __('attendance.choose_option') }}</option>
                                             @foreach($statuses as $code => $meta)
                                                 <option value="{{ $code }}">
                                                     {{ $meta['label_ar'] }} / {{ $meta['label_en'] }}
@@ -146,18 +146,18 @@
                                         {{-- Reason (shown when status requires_reason) --}}
                                         <div x-show="needsReason">
                                             <input type="text" x-model="reason"
-                                                   placeholder="Reason (required)"
+                                                   placeholder="{{ __('attendance.reason_required_placeholder') }}"
                                                    class="border rounded px-2 py-1.5 text-sm w-full" />
                                         </div>
                                         {{-- Arrival time (shown for LATE) --}}
                                         <div x-show="needsArrival">
-                                            <label class="text-xs text-gray-500">Arrived at</label>
+                                            <label class="text-xs text-gray-500">{{ __('attendance.arrived_at') }}</label>
                                             <input type="time" x-model="arrivedAt"
                                                    class="border rounded px-2 py-1.5 text-sm w-full" />
                                         </div>
                                         {{-- Departure time (shown for LEFT_EARLY) --}}
                                         <div x-show="needsDepart">
-                                            <label class="text-xs text-gray-500">Left at</label>
+                                            <label class="text-xs text-gray-500">{{ __('attendance.left_at') }}</label>
                                             <input type="time" x-model="departedAt"
                                                    class="border rounded px-2 py-1.5 text-sm w-full" />
                                         </div>
@@ -165,7 +165,7 @@
                                     <td class="px-4 py-3 align-top">
                                         <button @click="save()"
                                                 class="px-3 py-1.5 bg-indigo-600 text-white rounded text-xs hover:bg-indigo-700 whitespace-nowrap">
-                                            Save
+                                            {{ __('ui.save') }}
                                         </button>
                                     </td>
                                 </tr>
@@ -184,10 +184,10 @@
                                     <td class="px-4 py-3 text-right text-gray-600 text-xs">
                                         <div>{{ $record->reason ?? '—' }}</div>
                                         @if($record->arrived_at)
-                                            <div class="text-gray-400">Arrived: {{ $record->arrived_at }}</div>
+                                            <div class="text-gray-400">{{ __('attendance.arrived_prefix') }} {{ $record->arrived_at }}</div>
                                         @endif
                                         @if($record->departed_at)
-                                            <div class="text-gray-400">Left: {{ $record->departed_at }}</div>
+                                            <div class="text-gray-400">{{ __('attendance.left_prefix') }} {{ $record->departed_at }}</div>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3 text-right text-xs text-gray-400">
@@ -196,7 +196,7 @@
                                                 {{ $statuses[$record->previous_status_code]['label_ar'] ?? $record->previous_status_code }}
                                             </span>
                                             <span class="text-gray-300">→</span>
-                                            corrected
+                                            {{ __('attendance.corrected') }}
                                         @else
                                             —
                                         @endif

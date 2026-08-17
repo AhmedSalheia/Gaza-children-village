@@ -1,9 +1,9 @@
 @extends('layouts.staff')
 
-@section('title', 'Dashboard')
+@section('title', __('portal.dashboard'))
 
 @section('content')
-    <h1>Staff Dashboard</h1>
-    <p>Welcome to the GCV DATA Staff Portal.</p>
-    <p>This is a placeholder. Full staff functionality is deferred to later Foundation phases.</p>
+    <h1>{{ __('portal.staff_dashboard') }}</h1>
+    <p>{{ __('portal.welcome_staff') }}</p>
+    <p>{{ __('portal.placeholder_staff') }}</p>
 @endsection

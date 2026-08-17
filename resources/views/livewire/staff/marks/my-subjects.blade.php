@@ -14,11 +14,11 @@
 
     @if($openWindows->isNotEmpty())
         <div class="card" style="margin-block-end:var(--space-4);background:var(--color-info-bg,#eff6ff)">
-            <p style="font-weight:600;margin-block-end:var(--space-1)">Open mark-entry windows:</p>
+            <p style="font-weight:600;margin-block-end:var(--space-1)">{{ __('marks.open_windows_label') }}</p>
             @foreach($openWindows as $window)
                 <p style="font-size:var(--text-sm)">
-                    {{ $window->name_ar ?? 'Window' }}
-                    — closes {{ \Carbon\Carbon::parse($window->closes_at)->diffForHumans() }}
+                    {{ $window->name_ar ?? __('marks.window') }}
+                    — {{ __('marks.closes_label') }} {{ \Carbon\Carbon::parse($window->closes_at)->diffForHumans() }}
                 </p>
             @endforeach
         </div>
@@ -28,10 +28,10 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Class</th>
-                    <th>Subject</th>
-                    <th>Mark Sheet Status</th>
-                    <th>Actions</th>
+                    <th>{{ __('marks.class') }}</th>
+                    <th>{{ __('ui.subject') }}</th>
+                    <th>{{ __('marks.mark_sheet_status') }}</th>
+                    <th>{{ __('ui.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,18 +49,18 @@
                                     default => 'archived'
                                 } }}">{{ $row->sheet_status }}</span>
                             @else
-                                <span class="badge badge--archived">No sheet</span>
+                                <span class="badge badge--archived">{{ __('marks.no_sheet') }}</span>
                             @endif
                         </td>
                         <td>
                             <a href="{{ route('staff.marks.sheet', ['assignmentId' => $row->assignment_id]) }}"
                                class="btn btn--primary btn--sm">
                                 @if($row->sheet_status === null)
-                                    Open Sheet
+                                    {{ __('marks.open_sheet') }}
                                 @elseif(in_array($row->sheet_status, ['draft','returned']))
-                                    Continue Entry
+                                    {{ __('marks.continue_entry') }}
                                 @else
-                                    View Sheet
+                                    {{ __('marks.view_sheet') }}
                                 @endif
                             </a>
                         </td>
@@ -68,7 +68,7 @@
                 @empty
                     <tr>
                         <td colspan="4" class="empty-state">
-                            {{ $canVerify ? 'No assignments in this semester.' : 'You have no teaching assignments this semester.' }}
+                            {{ $canVerify ? __('marks.no_assignments_semester') : __('marks.no_teaching_assignments') }}
                         </td>
                     </tr>
                 @endforelse

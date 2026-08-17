@@ -108,8 +108,8 @@
         <div class="form-group">
             <label for="draftLocale" class="form-label">{{ __('documents.locale_label', [], null, 'Locale') }}</label>
             <select id="draftLocale" wire:model="draftLocale" class="form-control form-control--sm">
-                <option value="ar">العربية (AR)</option>
-                <option value="en">English (EN)</option>
+                <option value="ar">{{ __('documents.locale_option_ar') }}</option>
+                <option value="en">{{ __('documents.locale_option_en') }}</option>
             </select>
         </div>
 

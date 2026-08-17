@@ -26,8 +26,8 @@
 
         <select wire:model.live="actorTypeFilter" class="form-control form-select" style="max-inline-size:180px">
             <option value="">{{ __('ui.all_actor_types', [], null, 'All actor types') }}</option>
-            <option value="administrative">administrative</option>
-            <option value="staff">staff</option>
+            <option value="administrative">{{ __('status.administrative') }}</option>
+            <option value="staff">{{ __('status.staff') }}</option>
         </select>
 
         <input type="date" wire:model.live="dateFrom" class="form-control" style="max-inline-size:160px">

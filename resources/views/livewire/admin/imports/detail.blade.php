@@ -102,12 +102,12 @@
                     <div style="display:flex;gap:var(--space-2);margin-block-end:var(--space-3)">
                         <select wire:model="previewStatusFilter" class="form-control form-select" style="max-inline-size:180px">
                             <option value="">{{ __('ui.all', [], null, 'All rows') }}</option>
-                            <option value="created">created</option>
-                            <option value="updated">updated</option>
-                            <option value="skipped_existing">skipped</option>
-                            <option value="conflict">conflict</option>
-                            <option value="invalid">invalid</option>
-                            <option value="failed">failed</option>
+                            <option value="created">{{ __('status.created') }}</option>
+                            <option value="updated">{{ __('status.updated') }}</option>
+                            <option value="skipped_existing">{{ __('status.skipped') }}</option>
+                            <option value="conflict">{{ __('status.conflict') }}</option>
+                            <option value="invalid">{{ __('status.invalid') }}</option>
+                            <option value="failed">{{ __('status.failed') }}</option>
                         </select>
                         <button wire:click="loadPreview" class="btn btn--outline btn--sm">{{ __('ui.refresh', [], null, 'Refresh') }}</button>
                     </div>

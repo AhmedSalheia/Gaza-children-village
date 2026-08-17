@@ -6,7 +6,7 @@
 @endphp
 <div>
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-xl font-semibold text-gray-900">Formal Requests — Management Inbox</h1>
+        <h1 class="text-xl font-semibold text-gray-900">{{ __('requests.formal_management_inbox') }}</h1>
     </div>
 
     @if($flashMessage)
@@ -19,7 +19,7 @@
     <div class="mb-4 flex gap-3">
         <select wire:model.live="statusFilter"
                 class="rounded border border-gray-300 px-3 py-1.5 text-sm">
-            <option value="">All statuses</option>
+            <option value="">{{ __('ui.all_statuses') }}</option>
             @foreach($statusOptions as $s)
                 <option value="{{ $s }}">{{ ucwords(str_replace('_', ' ', $s)) }}</option>
             @endforeach
@@ -27,7 +27,7 @@
 
         <select wire:model.live="institutionFilter"
                 class="rounded border border-gray-300 px-3 py-1.5 text-sm">
-            <option value="">All institutions</option>
+            <option value="">{{ __('ui.all_institutions') }}</option>
             @foreach($institutions as $inst)
                 <option value="{{ $inst->id }}">{{ $inst->name_en }}</option>
             @endforeach
@@ -38,13 +38,13 @@
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-xs uppercase text-gray-500">
                 <tr>
-                    <th class="px-4 py-3 text-start">Number</th>
-                    <th class="px-4 py-3 text-start">Institution</th>
-                    <th class="px-4 py-3 text-start">Title</th>
-                    <th class="px-4 py-3 text-start">Type</th>
-                    <th class="px-4 py-3 text-start">Status</th>
-                    <th class="px-4 py-3 text-start">Priority</th>
-                    <th class="px-4 py-3 text-start">Actions</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.document_number') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.institution') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('requests.title') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.type') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.status') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('requests.priority') }}</th>
+                    <th class="px-4 py-3 text-start">{{ __('ui.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -60,17 +60,17 @@
                             </span>
                         </td>
                         <td class="px-4 py-3 text-gray-600">
-                            {{ ['', 'Low', 'Medium', 'High', 'Urgent'][$req->priority] ?? $req->priority }}
+                            {{ ['', __('requests.priority_low'), __('requests.priority_medium'), __('requests.priority_high'), __('requests.priority_urgent')][$req->priority] ?? $req->priority }}
                         </td>
                         <td class="px-4 py-3">
                             <a href="{{ route('admin.formal-requests.review', $req->id) }}"
-                               class="text-blue-600 hover:underline text-xs">Review</a>
+                               class="text-blue-600 hover:underline text-xs">{{ __('ui.review') }}</a>
                         </td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
-                            No requests in the management inbox.
+                            {{ __('requests.no_management_requests') }}
                         </td>
                     </tr>
                 @endforelse

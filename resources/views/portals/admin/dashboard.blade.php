@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard')
+@section('title', __('portal.dashboard'))
 
 @section('content')
-    <h1>Admin Dashboard</h1>
-    <p>Welcome to the GCV DATA Admin Portal.</p>
-    <p>This is a placeholder. Full admin functionality is deferred to later Foundation phases.</p>
+    <h1>{{ __('portal.admin_dashboard') }}</h1>
+    <p>{{ __('portal.welcome_admin') }}</p>
+    <p>{{ __('portal.placeholder_admin') }}</p>
 @endsection

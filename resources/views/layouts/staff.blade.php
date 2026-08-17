@@ -17,14 +17,12 @@
 
 <header class="portal-header" role="banner">
     <div class="portal-header__inner">
-        <a href="{{ route('staff.dashboard') }}" class="portal-header__brand" aria-label="GCV DATA — {{ __('auth.staff_portal') }}">
-            <img
-                src="{{ asset('brand/gcv-logo-dark.png') }}"
-                alt="GCV DATA"
-                class="portal-header__logo"
-                width="120"
-                height="40"
-            >
+        <a href="{{ route('staff.dashboard') }}" class="portal-header__brand brand-mark" aria-label="GCV DATA — {{ __('auth.staff_portal') }}">
+            <span class="brand-mark__glyph" aria-hidden="true">GCV</span>
+            <span class="brand-mark__text">
+                <span class="brand-mark__name">GCV DATA</span>
+                <span class="brand-mark__tagline">{{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
+            </span>
         </a>
 
         <nav class="portal-header__nav" role="navigation" aria-label="{{ __('auth.staff_portal') }}">
@@ -75,12 +73,16 @@
 </header>
 
 <div class="portal-body">
-    @if(session('success'))
-        <div class="alert alert--success" role="alert">{{ session('success') }}</div>
-    @endif
+    @if(session('success') || session('error'))
+        <div class="flash-region">
+            @if(session('success'))
+                <div class="alert alert--success" role="alert">{{ session('success') }}</div>
+            @endif
 
-    @if(session('error'))
-        <div class="alert alert--danger" role="alert">{{ session('error') }}</div>
+            @if(session('error'))
+                <div class="alert alert--danger" role="alert">{{ session('error') }}</div>
+            @endif
+        </div>
     @endif
 
     <main id="main-content" class="portal-main" tabindex="-1">
@@ -88,6 +90,13 @@
         {{ $slot ?? '' }}
     </main>
 </div>
+
+<footer class="portal-footer">
+    <div class="portal-footer__inner">
+        <span>GCV DATA — {{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
+        <span>{{ __('ui.footer_rights', ['year' => now()->year], null, '© :year All rights reserved') }}</span>
+    </div>
+</footer>
 
 @include('layouts.partials.confirm-dialog')
 

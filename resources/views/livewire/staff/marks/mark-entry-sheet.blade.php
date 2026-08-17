@@ -2,8 +2,8 @@
 
 <div>
     <div class="page-header">
-        <h1 class="page-title">Mark Entry Sheet</h1>
-        <a href="{{ route('staff.marks.index') }}" class="btn btn--outline btn--sm">← Back</a>
+        <h1 class="page-title">{{ __('marks.mark_entry_sheet') }}</h1>
+        <a href="{{ route('staff.marks.index') }}" class="btn btn--outline btn--sm">← {{ __('ui.back') }}</a>
     </div>
 
     @if($flashMessage !== '')
@@ -30,14 +30,14 @@
             @if($sheet->isEditable() && $canEnter)
                 <div style="display:flex;align-items:center;gap:var(--space-2)">
                     <label style="font-size:var(--text-sm);color:var(--color-muted)" for="scale-select">
-                        Grading Scale:
+                        {{ __('marks.grading_scale_label') }}
                     </label>
                     <select id="scale-select"
                             wire:model.live="selectedScaleId"
                             wire:change="attachGradingScale"
                             class="form-control"
                             style="width:auto;min-width:160px">
-                        <option value="">— None —</option>
+                        <option value="">{{ __('marks.none_option') }}</option>
                         @foreach($gradingScales as $scale)
                             <option value="{{ $scale->id }}"
                                 {{ (int)$selectedScaleId === (int)$scale->id ? 'selected' : '' }}>
@@ -48,13 +48,13 @@
                 </div>
             @elseif($sheet->grading_scale_id)
                 <span style="font-size:var(--text-sm);color:var(--color-muted)">
-                    Scale: {{ $gradingScales->firstWhere('id', $sheet->grading_scale_id)?->name_ar ?? '—' }}
+                    {{ __('marks.scale_label') }} {{ $gradingScales->firstWhere('id', $sheet->grading_scale_id)?->name_ar ?? '—' }}
                 </span>
             @endif
 
             @if($sheet->return_reason)
                 <div style="color:var(--color-danger);font-size:var(--text-sm)">
-                    <strong>Return reason:</strong> {{ $sheet->return_reason }}
+                    <strong>{{ __('marks.return_reason_label') }}</strong> {{ $sheet->return_reason }}
                 </div>
             @endif
         </div>
@@ -62,17 +62,17 @@
         @if($sheet->isEditable() && $canEnter)
             {{-- Action bar --}}
             <div style="display:flex;gap:var(--space-2);margin-block-end:var(--space-3);align-items:center">
-                <button wire:click="submit" class="btn btn--primary">Submit for Review</button>
+                <button wire:click="submit" class="btn btn--primary">{{ __('marks.submit_for_review') }}</button>
                 @if($canReturn)
-                    <button wire:click="startReturn" class="btn btn--outline">Return</button>
+                    <button wire:click="startReturn" class="btn btn--outline">{{ __('marks.return') }}</button>
                 @endif
             </div>
         @endif
 
         @if($canVerify && $sheet->status->value === 'submitted')
             <div style="display:flex;gap:var(--space-2);margin-block-end:var(--space-3)">
-                <button wire:click="verify" class="btn btn--primary">Verify</button>
-                <button wire:click="startReturn" class="btn btn--outline">Return to Teacher</button>
+                <button wire:click="verify" class="btn btn--primary">{{ __('marks.verify') }}</button>
+                <button wire:click="startReturn" class="btn btn--outline">{{ __('marks.return_to_teacher') }}</button>
             </div>
         @endif
 
@@ -81,7 +81,7 @@
             <div style="margin-block-end:var(--space-3)">
                 <a href="{{ route('staff.marks.correct', ['sheetId' => $sheet->id]) }}"
                    class="btn btn--outline btn--sm">
-                    Submit Mark Correction
+                    {{ __('marks.submit_correction_title') }}
                 </a>
             </div>
         @endif
@@ -89,11 +89,11 @@
         {{-- Return dialog --}}
         @if($showReturn)
             <div class="card" style="margin-block-end:var(--space-4);border-color:var(--color-warning)">
-                <h3 style="margin-block-end:var(--space-2)">Return Reason</h3>
-                <textarea wire:model="returnReason" class="form-control" rows="3" placeholder="Explain what needs to be corrected…"></textarea>
+                <h3 style="margin-block-end:var(--space-2)">{{ __('marks.return_reason') }}</h3>
+                <textarea wire:model="returnReason" class="form-control" rows="3" placeholder="{{ __('marks.return_needs_correction_placeholder') }}"></textarea>
                 <div style="display:flex;gap:var(--space-2);margin-block-start:var(--space-2)">
-                    <button wire:click="confirmReturn" class="btn btn--danger btn--sm">Confirm Return</button>
-                    <button wire:click="$set('showReturn', false)" class="btn btn--outline btn--sm">Cancel</button>
+                    <button wire:click="confirmReturn" class="btn btn--danger btn--sm">{{ __('marks.confirm_return') }}</button>
+                    <button wire:click="$set('showReturn', false)" class="btn btn--outline btn--sm">{{ __('ui.cancel') }}</button>
                 </div>
             </div>
         @endif
@@ -107,9 +107,9 @@
 
                 $exceptOptions = [
                     ''        => '—',
-                    'absent'  => 'Absent',
-                    'exempt'  => 'Exempt',
-                    'medical' => 'Medical',
+                    'absent'  => __('marks.absent'),
+                    'exempt'  => __('marks.exempt'),
+                    'medical' => __('marks.medical'),
                 ];
             @endphp
 
@@ -117,7 +117,7 @@
                 <table class="data-table" id="mark-sheet-table">
                     <thead>
                         <tr>
-                            <th style="min-width:200px">Student</th>
+                            <th style="min-width:200px">{{ __('marks.student') }}</th>
                             @foreach($assessments as $assessment)
                                 <th style="min-width:160px">
                                     <div dir="rtl">{{ $assessment->name_ar }}</div>
@@ -164,12 +164,12 @@
                                                     @change="saveException()"
                                                     class="form-control"
                                                     style="width:100px;font-size:var(--text-xs)"
-                                                    aria-label="Exception status"
+                                                    aria-label="{{ __('marks.exception_status') }}"
                                                 >
-                                                    <option value="">Score</option>
-                                                    <option value="absent">Absent</option>
-                                                    <option value="exempt">Exempt</option>
-                                                    <option value="medical">Medical</option>
+                                                    <option value="">{{ __('marks.score') }}</option>
+                                                    <option value="absent">{{ __('marks.absent') }}</option>
+                                                    <option value="exempt">{{ __('marks.exempt') }}</option>
+                                                    <option value="medical">{{ __('marks.medical') }}</option>
                                                 </select>
                                             </div>
                                         @else
@@ -221,13 +221,13 @@
             </script>
         @else
             <p style="color:var(--color-muted);padding:var(--space-4)">
-                No students or assessments found for this sheet.
+                {{ __('marks.no_students_assessments') }}
             </p>
         @endif
     @else
         <div class="card">
-            <p>Mark sheet could not be loaded. The mark-entry window may be closed or you may not have a teaching assignment for this class.</p>
-            <a href="{{ route('staff.marks.index') }}" class="btn btn--primary btn--sm" style="margin-block-start:var(--space-2)">Back to My Subjects</a>
+            <p>{{ __('marks.sheet_could_not_load') }}</p>
+            <a href="{{ route('staff.marks.index') }}" class="btn btn--primary btn--sm" style="margin-block-start:var(--space-2)">{{ __('marks.back_to_my_subjects') }}</a>
         </div>
     @endif
 </div>

@@ -11,8 +11,8 @@
     @if($correctingRecordId)
         <div class="bg-amber-50 border border-amber-300 rounded-lg p-5 space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="font-semibold text-amber-900 text-sm">{{ __('Correct Verified Record') }}</h3>
-                <button wire:click="cancelCorrection" class="text-amber-600 hover:text-amber-800 text-xs">{{ __('Cancel') }}</button>
+                <h3 class="font-semibold text-amber-900 text-sm">{{ __('ui.attend_correct_verified') }}</h3>
+                <button wire:click="cancelCorrection" class="text-amber-600 hover:text-amber-800 text-xs">{{ __('ui.cancel') }}</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4"
                  x-data="{
@@ -21,25 +21,25 @@
                      get allowsArrival()  { return this.status === 'late'; }
                  }">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('New Status') }}</label>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.attend_new_status') }}</label>
                     <select wire:model.live="correctStatus"
                             x-model="status"
                             class="border border-gray-300 rounded px-2 py-1.5 text-sm w-full">
-                        <option value="">— {{ __('Select') }} —</option>
+                        <option value="">— {{ __('ui.attend_select') }} —</option>
                         @foreach($statuses as $code => $meta)
                             <option value="{{ $code }}">{{ $meta['label_ar'] }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div x-show="requiresReason">
-                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Reason') }}</label>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.reason') }}</label>
                     <input type="text"
                            wire:model="correctReason"
                            class="border border-gray-300 rounded px-2 py-1.5 text-sm w-full"
-                           placeholder="{{ __('Required') }}">
+                           placeholder="{{ __('ui.required') }}">
                 </div>
                 <div x-show="allowsArrival">
-                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Confirmed Arrival') }}</label>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.attend_confirmed_arrival') }}</label>
                     <input type="time"
                            wire:model="correctArrivedAt"
                            class="border border-gray-300 rounded px-2 py-1.5 text-sm w-full">
@@ -47,13 +47,13 @@
             </div>
             <div class="flex gap-3">
                 <button wire:click="submitCorrection"
-                        wire:confirm="{{ __('Save this correction? A history record will be created.') }}"
+                        wire:confirm="{{ __('ui.attend_save_correction_confirm') }}"
                         class="px-4 py-2 bg-amber-700 text-white text-sm rounded hover:bg-amber-800">
-                    {{ __('Save Correction') }}
+                    {{ __('ui.attend_save_correction') }}
                 </button>
                 <button wire:click="cancelCorrection"
                         class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50">
-                    {{ __('Cancel') }}
+                    {{ __('ui.cancel') }}
                 </button>
             </div>
         </div>
@@ -62,13 +62,13 @@
     {{-- Filters --}}
     <div class="flex flex-wrap gap-4">
         <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Date') }}</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.date') }}</label>
             <input type="date"
                    wire:model.live="selectedDate"
                    class="border border-gray-300 rounded px-3 py-1.5 text-sm">
         </div>
         <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Period') }}</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.period') }}</label>
             <select wire:model.live="selectedPeriodId"
                     class="border border-gray-300 rounded px-3 py-1.5 text-sm">
                 @foreach($periods as $period)
@@ -83,12 +83,12 @@
         <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Name') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Status') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Reason') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Arrival') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('QR Scan') }}</th>
-                    <th class="px-4 py-3 text-center font-medium text-gray-600">{{ __('Verified') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.name') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.status') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.reason') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_arrival') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_qr_scan') }}</th>
+                    <th class="px-4 py-3 text-center font-medium text-gray-600">{{ __('ui.verified') }}</th>
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
@@ -117,7 +117,7 @@
                                     wire:model="rowStatus.{{ $row->staff_profile_id }}"
                                     x-model="status"
                                     class="border border-gray-300 rounded px-2 py-1 text-xs w-full">
-                                    <option value="">-- {{ __('Select') }} --</option>
+                                    <option value="">-- {{ __('ui.attend_select') }} --</option>
                                     @foreach($statuses as $code => $meta)
                                         <option value="{{ $code }}"
                                             {{ $row->status_code === $code ? 'selected' : '' }}>
@@ -136,7 +136,7 @@
                                 <input type="text"
                                        wire:model="rowReason.{{ $row->staff_profile_id }}"
                                        x-show="requiresReason"
-                                       placeholder="{{ __('Required') }}"
+                                       placeholder="{{ __('ui.required') }}"
                                        class="border border-gray-300 rounded px-2 py-1 text-xs w-full">
                             @endif
                         </td>
@@ -182,21 +182,21 @@
                                 @if($correctingRecordId !== $row->record_id)
                                     <button wire:click="startCorrection({{ $row->record_id }})"
                                             class="text-xs px-2 py-1 bg-amber-600 text-white rounded hover:bg-amber-700">
-                                        {{ __('Correct') }}
+                                        {{ __('requests.approve_btn') }}
                                     </button>
                                 @else
-                                    <span class="text-xs text-amber-600 font-medium">{{ __('editing…') }}</span>
+                                    <span class="text-xs text-amber-600 font-medium">{{ __('ui.attend_editing') }}</span>
                                 @endif
                             @else
                                 <button wire:click="saveRow({{ $row->staff_profile_id }})"
                                         class="text-xs px-2 py-1 bg-teal-600 text-white rounded hover:bg-teal-700">
-                                    {{ __('Save') }}
+                                    {{ __('ui.save') }}
                                 </button>
                                 @if($row->record_id && $row->status_code)
                                     <button wire:click="verifyRecord({{ $row->record_id }})"
-                                            wire:confirm="{{ __('Verify this attendance record?') }}"
+                                            wire:confirm="{{ __('ui.attend_verify_confirm') }}"
                                             class="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700">
-                                        {{ __('Verify') }}
+                                        {{ __('ui.verify') }}
                                     </button>
                                 @endif
                             @endif
@@ -205,7 +205,7 @@
                 @empty
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
-                            {{ __('No staff records for the selected period and date.') }}
+                            {{ __('ui.attend_no_staff_records') }}
                         </td>
                     </tr>
                 @endforelse

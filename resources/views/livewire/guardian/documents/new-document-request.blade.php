@@ -30,7 +30,7 @@
 
         {{-- Step indicator --}}
         <div class="mb-6 flex gap-2 text-sm">
-            @foreach ([1 => 'اختيار الطالب', 2 => 'نوع الوثيقة', 3 => 'المراجعة'] as $n => $label)
+            @foreach ([1 => __('documents.step_select_student'), 2 => __('documents.step_document_type'), 3 => __('documents.step_review')] as $n => $label)
                 <div class="flex items-center gap-1 {{ $step >= $n ? 'text-indigo-700 font-semibold' : 'text-gray-400' }}">
                     <span class="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs
                         {{ $step > $n ? 'bg-indigo-600 border-indigo-600 text-white' : ($step === $n ? 'border-indigo-600 text-indigo-600' : 'border-gray-300 text-gray-400') }}">
@@ -45,16 +45,16 @@
         {{-- Step 1: Select Student --}}
         @if ($step === 1)
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="font-semibold text-gray-800 mb-4">اختيار الطالب</h2>
+                <h2 class="font-semibold text-gray-800 mb-4">{{ __('documents.step_select_student') }}</h2>
                 @if ($students->isEmpty())
-                    <p class="text-gray-500">لا يوجد طلاب مرتبطون بحسابك.</p>
+                    <p class="text-gray-500">{{ __('documents.no_linked_students') }}</p>
                 @else
                     <div class="grid gap-3">
                         @foreach ($students as $student)
                             <button wire:click="selectStudent({{ $student->id }})"
                                     class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-indigo-400 hover:bg-indigo-50 transition-colors text-right">
                                 <span class="font-medium text-gray-900">{{ $student->full_name_ar }}</span>
-                                <span class="text-indigo-600">اختيار ←</span>
+                                <span class="text-indigo-600">{{ __('documents.select_action') }} ←</span>
                             </button>
                         @endforeach
                     </div>
@@ -65,9 +65,9 @@
         {{-- Step 2: Document type --}}
         @if ($step === 2)
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="font-semibold text-gray-800 mb-1">نوع الوثيقة</h2>
+                <h2 class="font-semibold text-gray-800 mb-1">{{ __('documents.step_document_type') }}</h2>
                 @if ($selectedStudent)
-                    <p class="text-sm text-gray-500 mb-4">الطالب: {{ $selectedStudent->full_name_ar }}</p>
+                    <p class="text-sm text-gray-500 mb-4">{{ __('documents.student') }}: {{ $selectedStudent->full_name_ar }}</p>
                 @endif
 
                 <div class="grid gap-3 mb-4">
@@ -86,23 +86,23 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">اللغة</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('documents.locale_field') }}</label>
                     <select wire:model="locale" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                        <option value="ar">العربية</option>
-                        <option value="en">English</option>
+                        <option value="ar">{{ __('documents.locale_ar') }}</option>
+                        <option value="en">{{ __('documents.locale_en') }}</option>
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">ملاحظات (اختياري)</label>
-                    <textarea wire:model="purposeNotes" rows="3" placeholder="أضف أي ملاحظات أو سبب الطلب..."
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('documents.notes_optional') }}</label>
+                    <textarea wire:model="purposeNotes" rows="3" placeholder="{{ __('documents.notes_placeholder') }}"
                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"></textarea>
                 </div>
 
                 <div class="flex justify-between">
-                    <button wire:click="backToStep(1)" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">← العودة</button>
+                    <button wire:click="backToStep(1)" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">← {{ __('documents.back') }}</button>
                     <button wire:click="proceedToReview" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">
-                        مراجعة الطلب →
+                        {{ __('documents.review_request') }} →
                     </button>
                 </div>
             </div>
@@ -111,37 +111,37 @@
         {{-- Step 3: Review and confirm --}}
         @if ($step === 3)
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="font-semibold text-gray-800 mb-4">مراجعة الطلب</h2>
+                <h2 class="font-semibold text-gray-800 mb-4">{{ __('documents.review_request') }}</h2>
 
                 <dl class="grid gap-3 text-sm">
                     @if ($selectedStudent)
                         <div class="flex justify-between py-2 border-b border-gray-100">
-                            <dt class="text-gray-500">الطالب</dt>
+                            <dt class="text-gray-500">{{ __('documents.student') }}</dt>
                             <dd class="font-medium text-gray-900">{{ $selectedStudent->full_name_ar }}</dd>
                         </div>
                     @endif
                     <div class="flex justify-between py-2 border-b border-gray-100">
-                        <dt class="text-gray-500">نوع الوثيقة</dt>
+                        <dt class="text-gray-500">{{ __('documents.document_type') }}</dt>
                         <dd class="font-medium text-gray-900">{{ $documentTypeCode }}</dd>
                     </div>
                     <div class="flex justify-between py-2 border-b border-gray-100">
-                        <dt class="text-gray-500">اللغة</dt>
-                        <dd class="font-medium text-gray-900">{{ $locale === 'ar' ? 'العربية' : 'English' }}</dd>
+                        <dt class="text-gray-500">{{ __('documents.locale_field') }}</dt>
+                        <dd class="font-medium text-gray-900">{{ $locale === 'ar' ? __('documents.locale_ar') : __('documents.locale_en') }}</dd>
                     </div>
                     @if ($purposeNotes)
                         <div class="flex justify-between py-2 border-b border-gray-100">
-                            <dt class="text-gray-500">ملاحظات</dt>
+                            <dt class="text-gray-500">{{ __('documents.notes') }}</dt>
                             <dd class="font-medium text-gray-900">{{ $purposeNotes }}</dd>
                         </div>
                     @endif
                 </dl>
 
                 <div class="mt-6 flex justify-between">
-                    <button wire:click="backToStep(2)" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">← تعديل</button>
+                    <button wire:click="backToStep(2)" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">← {{ __('documents.edit') }}</button>
                     <button wire:click="submit" wire:loading.attr="disabled"
                             class="px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50">
-                        <span wire:loading.remove>إرسال الطلب</span>
-                        <span wire:loading>جاري الإرسال...</span>
+                        <span wire:loading.remove>{{ __('documents.submit_request') }}</span>
+                        <span wire:loading>{{ __('documents.submitting') }}</span>
                     </button>
                 </div>
             </div>

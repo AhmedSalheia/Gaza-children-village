@@ -1,7 +1,7 @@
 <div>
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-xl font-bold text-gray-900">تفاصيل طلب الوثيقة</h1>
-        <a href="{{ route('guardian.documents.index') }}" class="text-sm text-gray-500 hover:text-gray-700">← العودة للقائمة</a>
+        <h1 class="text-xl font-bold text-gray-900">{{ __('documents.request_detail_title') }}</h1>
+        <a href="{{ route('guardian.documents.index') }}" class="text-sm text-gray-500 hover:text-gray-700">← {{ __('documents.back_to_list') }}</a>
     </div>
 
     @if ($flashMessage)
@@ -21,19 +21,19 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-4">
         <dl class="grid gap-3 text-sm">
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">الطالب</dt>
+                <dt class="text-gray-500">{{ __('documents.student') }}</dt>
                 <dd class="font-medium text-gray-900">{{ $studentName ?? '—' }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">نوع الوثيقة</dt>
+                <dt class="text-gray-500">{{ __('documents.document_type') }}</dt>
                 <dd class="font-medium text-gray-900">{{ $request->document_type_code }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">اللغة</dt>
-                <dd class="font-medium text-gray-900">{{ $request->locale === 'ar' ? 'العربية' : 'English' }}</dd>
+                <dt class="text-gray-500">{{ __('documents.locale_field') }}</dt>
+                <dd class="font-medium text-gray-900">{{ $request->locale === 'ar' ? __('documents.locale_ar') : __('documents.locale_en') }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">الحالة</dt>
+                <dt class="text-gray-500">{{ __('documents.status') }}</dt>
                 <dd>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                         {{ $request->status === 'issued' ? 'bg-green-100 text-green-800' : '' }}
@@ -47,24 +47,24 @@
             </div>
             @if ($request->purpose_notes)
                 <div class="flex justify-between py-2 border-b border-gray-100">
-                    <dt class="text-gray-500">ملاحظات</dt>
+                    <dt class="text-gray-500">{{ __('documents.notes') }}</dt>
                     <dd class="text-gray-900">{{ $request->purpose_notes }}</dd>
                 </div>
             @endif
             @if ($request->clarification_reason)
                 <div class="py-2 border-b border-gray-100">
-                    <dt class="text-gray-500 mb-1">طلب التوضيح</dt>
+                    <dt class="text-gray-500 mb-1">{{ __('documents.clarification_request') }}</dt>
                     <dd class="text-orange-700 bg-orange-50 rounded p-3 text-sm">{{ $request->clarification_reason }}</dd>
                 </div>
             @endif
             @if ($request->rejection_reason)
                 <div class="py-2 border-b border-gray-100">
-                    <dt class="text-gray-500 mb-1">سبب الرفض</dt>
+                    <dt class="text-gray-500 mb-1">{{ __('documents.rejection_reason') }}</dt>
                     <dd class="text-red-700 bg-red-50 rounded p-3 text-sm">{{ $request->rejection_reason }}</dd>
                 </div>
             @endif
             <div class="flex justify-between py-2">
-                <dt class="text-gray-500">تاريخ الطلب</dt>
+                <dt class="text-gray-500">{{ __('documents.request_date') }}</dt>
                 <dd class="text-gray-700">{{ \Carbon\Carbon::parse($request->created_at)->format('Y-m-d') }}</dd>
             </div>
         </dl>
@@ -73,12 +73,12 @@
     {{-- Issued document download --}}
     @if ($issuedDoc)
         <div class="bg-green-50 border border-green-200 rounded-xl p-6 mb-4">
-            <h2 class="font-semibold text-green-800 mb-3">✓ الوثيقة جاهزة للتحميل</h2>
-            <p class="text-sm text-green-700 mb-1">رقم الوثيقة: <strong>{{ $issuedDoc->document_number }}</strong></p>
-            <p class="text-sm text-green-700 mb-4">تاريخ الإصدار: {{ \Carbon\Carbon::parse($issuedDoc->issued_at)->format('Y-m-d') }}</p>
+            <h2 class="font-semibold text-green-800 mb-3">✓ {{ __('documents.document_ready') }}</h2>
+            <p class="text-sm text-green-700 mb-1">{{ __('documents.document_number_label') }} <strong>{{ $issuedDoc->document_number }}</strong></p>
+            <p class="text-sm text-green-700 mb-4">{{ __('documents.issued_date_label') }} {{ \Carbon\Carbon::parse($issuedDoc->issued_at)->format('Y-m-d') }}</p>
             <a href="{{ route('guardian.documents.download', $issuedDoc->id) }}"
                class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
-                تحميل الوثيقة PDF
+                {{ __('documents.download_pdf') }}
             </a>
         </div>
     @endif
@@ -86,12 +86,12 @@
     {{-- Clarification response form --}}
     @if ($request->status === 'pending_clarification')
         <div class="bg-orange-50 border border-orange-200 rounded-xl p-6 mb-4">
-            <h2 class="font-semibold text-orange-800 mb-3">ردّ على طلب التوضيح</h2>
-            <textarea wire:model="clarificationResponse" rows="4" placeholder="اكتب ردك هنا..."
+            <h2 class="font-semibold text-orange-800 mb-3">{{ __('documents.respond_clarification_title') }}</h2>
+            <textarea wire:model="clarificationResponse" rows="4" placeholder="{{ __('documents.clarification_response_placeholder') }}"
                       class="w-full border border-orange-300 rounded-lg px-3 py-2 text-sm resize-none mb-3"></textarea>
             <button wire:click="provideClarification"
                     class="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm hover:bg-orange-700">
-                إرسال الرد
+                {{ __('documents.send_response') }}
             </button>
         </div>
     @endif
@@ -100,9 +100,9 @@
     @if (! $request->isTerminal())
         <div class="flex justify-end">
             <button wire:click="cancel"
-                    wire:confirm="هل أنت متأكد من إلغاء الطلب؟"
+                    wire:confirm="{{ __('documents.cancel_confirm') }}"
                     class="px-4 py-2 text-sm text-red-600 border border-red-200 rounded-lg hover:bg-red-50">
-                إلغاء الطلب
+                {{ __('documents.cancel_request') }}
             </button>
         </div>
     @endif

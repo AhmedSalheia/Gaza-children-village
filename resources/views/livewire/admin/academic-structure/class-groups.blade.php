@@ -20,9 +20,9 @@
 
         <select wire:model.live="lifecycleFilter" class="form-control form-select" style="max-inline-size:160px">
             <option value="">{{ __('ui.all_statuses', [], null, 'All statuses') }}</option>
-            <option value="draft">Draft</option>
-            <option value="active">Active</option>
-            <option value="archived">Archived</option>
+            <option value="draft">{{ __('status.draft') }}</option>
+            <option value="active">{{ __('status.active') }}</option>
+            <option value="archived">{{ __('status.archived') }}</option>
         </select>
     </div>
 

@@ -10,19 +10,19 @@
     {{-- Filters --}}
     <div class="flex flex-wrap gap-4">
         <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Date') }}</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.date') }}</label>
             <input type="date"
                    wire:model.live="filterDate"
                    class="border border-gray-300 rounded px-3 py-1.5 text-sm">
         </div>
         <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Status') }}</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.status') }}</label>
             <select wire:model.live="filterStatus"
                     class="border border-gray-300 rounded px-3 py-1.5 text-sm">
-                <option value="pending">{{ __('Pending') }}</option>
-                <option value="accepted">{{ __('Accepted') }}</option>
-                <option value="rejected">{{ __('Rejected') }}</option>
-                <option value="">{{ __('All') }}</option>
+                <option value="pending">{{ __('ui.pending') }}</option>
+                <option value="accepted">{{ __('workflow.state.accepted') }}</option>
+                <option value="rejected">{{ __('workflow.state.rejected') }}</option>
+                <option value="">{{ __('ui.all') }}</option>
             </select>
         </div>
     </div>
@@ -31,46 +31,46 @@
     @if($reviewingEvent)
         <div class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
-                <h3 class="text-lg font-semibold text-gray-800">{{ __('Review Scan Event') }}</h3>
+                <h3 class="text-lg font-semibold text-gray-800">{{ __('ui.attend_review_scan_event') }}</h3>
 
                 <div class="space-y-2 text-sm">
-                    <div><span class="text-gray-500">{{ __('Time') }}:</span> {{ \Carbon\Carbon::parse($reviewingEvent->scanned_at)->format('H:i:s') }}</div>
-                    <div><span class="text-gray-500">{{ __('Direction candidate') }}:</span> {{ ucfirst($reviewingEvent->direction) }}</div>
+                    <div><span class="text-gray-500">{{ __('ui.attend_time') }}:</span> {{ \Carbon\Carbon::parse($reviewingEvent->scanned_at)->format('H:i:s') }}</div>
+                    <div><span class="text-gray-500">{{ __('ui.attend_direction_candidate') }}:</span> {{ ucfirst($reviewingEvent->direction) }}</div>
                     @if($reviewingEvent->device_fingerprint)
-                        <div><span class="text-gray-500">{{ __('Device') }}:</span> {{ $reviewingEvent->device_fingerprint }}</div>
+                        <div><span class="text-gray-500">{{ __('ui.attend_device') }}:</span> {{ $reviewingEvent->device_fingerprint }}</div>
                     @endif
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Confirm Direction') }}</label>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.attend_confirm_direction') }}</label>
                     <select wire:model="confirmedDirection"
                             class="border border-gray-300 rounded px-3 py-1.5 text-sm w-full">
-                        <option value="">{{ __('Keep original') }} ({{ $reviewingEvent->direction }})</option>
-                        <option value="arrival">{{ __('Arrival') }}</option>
-                        <option value="departure">{{ __('Departure') }}</option>
-                        <option value="unknown">{{ __('Unknown') }}</option>
+                        <option value="">{{ __('ui.attend_keep_original') }} ({{ $reviewingEvent->direction }})</option>
+                        <option value="arrival">{{ __('ui.attend_arrival') }}</option>
+                        <option value="departure">{{ __('ui.attend_departure') }}</option>
+                        <option value="unknown">{{ __('ui.unknown') }}</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-2">{{ __('Decision') }}</label>
+                    <label class="block text-xs font-medium text-gray-600 mb-2">{{ __('ui.decision') }}</label>
                     <div class="flex gap-3">
                         <label class="flex items-center gap-1.5 text-sm">
-                            <input type="radio" wire:model="reviewOutcome" value="accepted"> {{ __('Accept') }}
+                            <input type="radio" wire:model="reviewOutcome" value="accepted"> {{ __('requests.approve_btn') }}
                         </label>
                         <label class="flex items-center gap-1.5 text-sm">
-                            <input type="radio" wire:model="reviewOutcome" value="rejected"> {{ __('Reject') }}
+                            <input type="radio" wire:model="reviewOutcome" value="rejected"> {{ __('ui.reject') }}
                         </label>
                     </div>
                 </div>
 
                 @if($reviewOutcome === 'rejected')
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Rejection reason') }}</label>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('ui.attend_rejection_reason') }}</label>
                         <textarea wire:model="rejectionReason"
                                   rows="2"
                                   class="border border-gray-300 rounded px-3 py-2 text-sm w-full resize-none"
-                                  placeholder="{{ __('Required') }}"></textarea>
+                                  placeholder="{{ __('ui.required') }}"></textarea>
                     </div>
                 @endif
 
@@ -78,11 +78,11 @@
                     <button wire:click="submitReview"
                             :disabled="!$wire.reviewOutcome"
                             class="px-4 py-2 bg-teal-600 text-white text-sm rounded hover:bg-teal-700 disabled:opacity-50">
-                        {{ __('Confirm') }}
+                        {{ __('ui.confirm') }}
                     </button>
                     <button wire:click="cancelReview"
                             class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200">
-                        {{ __('Cancel') }}
+                        {{ __('ui.cancel') }}
                     </button>
                 </div>
             </div>
@@ -94,10 +94,10 @@
         <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Staff') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Scanned At') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Direction') }}</th>
-                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('Status') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.staff') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_scanned_at') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.attend_confirm_direction') }}</th>
+                    <th class="px-4 py-3 text-right font-medium text-gray-600">{{ __('ui.status') }}</th>
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
@@ -126,17 +126,17 @@
                             @if($event->processing_status === 'pending')
                                 <button wire:click="startReview({{ $event->id }})"
                                         class="text-xs px-2 py-1 bg-teal-600 text-white rounded hover:bg-teal-700">
-                                    {{ __('Review') }}
+                                    {{ __('ui.review') }}
                                 </button>
                             @elseif($event->rejection_reason)
-                                <span class="text-xs text-gray-400" title="{{ $event->rejection_reason }}">{{ __('Rejected') }}</span>
+                                <span class="text-xs text-gray-400" title="{{ $event->rejection_reason }}">{{ __('workflow.state.rejected') }}</span>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
-                            {{ __('No scan events for the selected filters.') }}
+                            {{ __('ui.attend_no_scan_events') }}
                         </td>
                     </tr>
                 @endforelse

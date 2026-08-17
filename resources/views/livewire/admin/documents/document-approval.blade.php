@@ -1,7 +1,7 @@
 <div>
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-xl font-bold text-gray-900">موافقة على طلب الوثيقة</h1>
-        <a href="{{ route('admin.documents.queue') }}" class="text-sm text-gray-500 hover:text-gray-700">← العودة للقائمة</a>
+        <h1 class="text-xl font-bold text-gray-900">{{ __('documents.approval_title') }}</h1>
+        <a href="{{ route('admin.documents.queue') }}" class="text-sm text-gray-500 hover:text-gray-700">← {{ __('documents.back_to_list') }}</a>
     </div>
 
     @if ($flashMessage)
@@ -20,7 +20,7 @@
 
     @if ($templateHashWarning)
         <div class="mb-4 bg-amber-50 border border-amber-300 rounded-xl p-4">
-            <h3 class="font-semibold text-amber-800 flex items-center gap-2">⚠ تنبيه بشأن قالب الوثيقة</h3>
+            <h3 class="font-semibold text-amber-800 flex items-center gap-2">⚠ {{ __('documents.template_hash_warning_title') }}</h3>
             <p class="text-amber-700 text-sm mt-1">{{ $templateHashWarning }}</p>
         </div>
     @endif
@@ -28,23 +28,23 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <dl class="grid gap-3 text-sm">
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">الطالب</dt>
+                <dt class="text-gray-500">{{ __('documents.student') }}</dt>
                 <dd class="font-medium text-gray-900">{{ $studentName ?? '—' }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">المدرسة</dt>
+                <dt class="text-gray-500">{{ __('documents.school') }}</dt>
                 <dd class="text-gray-900">{{ $institutionName ?? '—' }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">نوع الوثيقة</dt>
+                <dt class="text-gray-500">{{ __('documents.document_type') }}</dt>
                 <dd class="text-gray-900">{{ $request->document_type_code }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">اللغة</dt>
-                <dd class="text-gray-900">{{ $request->locale === 'ar' ? 'العربية' : 'English' }}</dd>
+                <dt class="text-gray-500">{{ __('documents.locale_field') }}</dt>
+                <dd class="text-gray-900">{{ $request->locale === 'ar' ? __('documents.locale_ar') : __('documents.locale_en') }}</dd>
             </div>
             <div class="flex justify-between py-2 border-b border-gray-100">
-                <dt class="text-gray-500">الحالة</dt>
+                <dt class="text-gray-500">{{ __('documents.status') }}</dt>
                 <dd>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                         {{ $request->status }}
@@ -53,7 +53,7 @@
             </div>
             @if ($request->purpose_notes)
                 <div class="py-2">
-                    <dt class="text-gray-500 mb-1">ملاحظات ولي الأمر</dt>
+                    <dt class="text-gray-500 mb-1">{{ __('documents.guardian_notes') }}</dt>
                     <dd class="text-gray-900 bg-gray-50 rounded p-3">{{ $request->purpose_notes }}</dd>
                 </div>
             @endif
@@ -64,32 +64,32 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {{-- Approve --}}
             <div class="bg-green-50 border border-green-200 rounded-xl p-6">
-                <h2 class="font-semibold text-green-800 mb-3">الموافقة على الطلب</h2>
-                <p class="text-green-700 text-sm mb-4">بالموافقة، سيتم توليد وثيقة PDF وإتاحتها للتحميل.</p>
+                <h2 class="font-semibold text-green-800 mb-3">{{ __('documents.approve_request') }}</h2>
+                <p class="text-green-700 text-sm mb-4">{{ __('documents.approve_hint') }}</p>
                 <button wire:click="approve"
-                        wire:confirm="هل أنت متأكد من الموافقة على هذا الطلب؟"
+                        wire:confirm="{{ __('documents.approve_confirm') }}"
                         wire:loading.attr="disabled"
                         class="w-full px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-50">
-                    <span wire:loading.remove>✓ الموافقة وإصدار الوثيقة</span>
-                    <span wire:loading>جاري المعالجة...</span>
+                    <span wire:loading.remove>✓ {{ __('documents.approve_and_issue') }}</span>
+                    <span wire:loading>{{ __('documents.processing') }}</span>
                 </button>
             </div>
 
             {{-- Reject --}}
             <div class="bg-red-50 border border-red-200 rounded-xl p-6">
-                <h2 class="font-semibold text-red-800 mb-3">رفض الطلب</h2>
-                <textarea wire:model="rejectionReason" rows="3" placeholder="سبب الرفض (مطلوب)..."
+                <h2 class="font-semibold text-red-800 mb-3">{{ __('documents.reject_request') }}</h2>
+                <textarea wire:model="rejectionReason" rows="3" placeholder="{{ __('documents.rejection_reason_placeholder') }}"
                           class="w-full border border-red-300 rounded-lg px-3 py-2 text-sm resize-none mb-3 bg-white"></textarea>
                 <button wire:click="reject"
-                        wire:confirm="هل أنت متأكد من رفض هذا الطلب؟"
+                        wire:confirm="{{ __('documents.reject_confirm') }}"
                         class="w-full px-4 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
-                    ✗ رفض الطلب
+                    ✗ {{ __('documents.reject_request') }}
                 </button>
             </div>
         </div>
     @else
         <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center text-gray-500">
-            <p>تم اتخاذ الإجراء على هذا الطلب. الحالة الحالية: <strong>{{ $request->status }}</strong></p>
+            <p>{{ __('documents.action_taken') }} <strong>{{ $request->status }}</strong></p>
         </div>
     @endif
 </div>

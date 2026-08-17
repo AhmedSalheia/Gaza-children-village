@@ -1,23 +1,23 @@
 <div>
     <div class="mb-6">
-        <h1 class="text-xl font-bold text-gray-900">قائمة طلبات الوثائق</h1>
-        <p class="text-sm text-gray-500 mt-1">الطلبات المعلقة والتي تحتاج إلى مراجعة</p>
+        <h1 class="text-xl font-bold text-gray-900">{{ __('documents.review_queue_title') }}</h1>
+        <p class="text-sm text-gray-500 mt-1">{{ __('documents.review_queue_subtitle') }}</p>
     </div>
 
     @if ($requests->isEmpty())
         <div class="text-center py-16 text-gray-500">
-            <p>لا توجد طلبات معلقة.</p>
+            <p>{{ __('documents.no_pending_requests') }}</p>
         </div>
     @else
         <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
             <table class="w-full text-sm text-right">
                 <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
                     <tr>
-                        <th class="px-4 py-3">الطالب</th>
-                        <th class="px-4 py-3">نوع الوثيقة</th>
-                        <th class="px-4 py-3">الحالة</th>
-                        <th class="px-4 py-3">تاريخ التقديم</th>
-                        <th class="px-4 py-3">إجراء</th>
+                        <th class="px-4 py-3">{{ __('documents.student') }}</th>
+                        <th class="px-4 py-3">{{ __('documents.document_type') }}</th>
+                        <th class="px-4 py-3">{{ __('documents.status') }}</th>
+                        <th class="px-4 py-3">{{ __('documents.submitted_date') }}</th>
+                        <th class="px-4 py-3">{{ __('documents.action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -42,7 +42,7 @@
                             <td class="px-4 py-3">
                                 <a href="{{ route('staff.documents.review', $req->id) }}"
                                    class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
-                                    مراجعة
+                                    {{ __('documents.review') }}
                                 </a>
                             </td>
                         </tr>

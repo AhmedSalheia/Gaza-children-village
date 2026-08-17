@@ -176,7 +176,7 @@ class CorrectionRequestTest extends TestCase
         Livewire::actingAs($data['account'], 'guardian')
             ->test(StudentDetail::class, ['studentProfileId' => $data['studentId']])
             ->assertOk()
-            ->assertSee('ui.flag_correction');
+            ->assertSee(__('ui.flag_correction'));
     }
 
     /** G2: Submit a valid correction request — row stored, pending indicator shown. */
@@ -193,7 +193,7 @@ class CorrectionRequestTest extends TestCase
             ->call('submitCorrectionRequest')
             ->assertOk()
             ->assertSet('correctionFormOpen', false)
-            ->assertSee('ui.correction_submitted');
+            ->assertSee(__('ui.correction_submitted'));
 
         $this->assertDatabaseHas('guardian_correction_requests', [
             'guardian_student_relationship_id' => $data['relationshipId'],
@@ -211,7 +211,7 @@ class CorrectionRequestTest extends TestCase
         Livewire::actingAs($data['account'], 'guardian')
             ->test(StudentDetail::class, ['studentProfileId' => $data['studentId']])
             ->assertOk()
-            ->assertSee('ui.correction_pending');
+            ->assertSee(__('ui.correction_pending'));
     }
 
     /** G3: A second submission is blocked while one is pending. */
@@ -302,9 +302,9 @@ class CorrectionRequestTest extends TestCase
         Livewire::actingAs($admin, 'admin')
             ->test(GuardianDetail::class, ['guardianId' => $data['profileId']])
             ->assertOk()
-            ->assertSee('ui.pending_corrections')
-            ->assertDontSee('ui.approve')
-            ->assertDontSee('ui.reject');
+            ->assertSee(__('ui.pending_corrections'))
+            ->assertDontSee(__('ui.approve'))
+            ->assertDontSee(__('ui.reject'));
     }
 
     /** A2: Manage admin sees approve/reject buttons on pending requests. */
@@ -318,8 +318,8 @@ class CorrectionRequestTest extends TestCase
         Livewire::actingAs($admin, 'admin')
             ->test(GuardianDetail::class, ['guardianId' => $data['profileId']])
             ->assertOk()
-            ->assertSee('ui.pending_corrections')
-            ->assertSee('ui.approve');
+            ->assertSee(__('ui.pending_corrections'))
+            ->assertSee(__('ui.approve'));
     }
 
     /** A3: View-only admin calling approve directly receives 403. */

@@ -90,9 +90,9 @@
     <div style="display:flex;gap:var(--space-3);margin-block-end:var(--space-4)">
         <select wire:model.live="reviewFilter" class="form-control form-select" style="max-inline-size:180px">
             <option value="">{{ __('ui.all', [], null, 'All') }}</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="pending">{{ __('status.pending') }}</option>
+            <option value="approved">{{ __('status.approved') }}</option>
+            <option value="rejected">{{ __('status.rejected') }}</option>
         </select>
     </div>
 

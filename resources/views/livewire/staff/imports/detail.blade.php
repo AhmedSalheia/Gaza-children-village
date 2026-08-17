@@ -121,9 +121,9 @@
             <div style="display:flex;gap:var(--space-2);align-items:center">
                 <select wire:model.live="previewStatus" class="form-control form-select form-select--sm" style="font-size:var(--text-sm)">
                     <option value="">{{ __('ui.all', [], null, 'All') }}</option>
-                    <option value="valid">valid</option>
-                    <option value="invalid">invalid</option>
-                    <option value="skipped">skipped</option>
+                    <option value="valid">{{ __('status.valid') }}</option>
+                    <option value="invalid">{{ __('status.invalid') }}</option>
+                    <option value="skipped">{{ __('status.skipped') }}</option>
                 </select>
                 <button wire:click="$set('previewPage', max(1, previewPage - 1))" class="btn btn--outline btn--sm">‹</button>
                 <span style="font-size:var(--text-sm)">{{ $previewPage }}</span>

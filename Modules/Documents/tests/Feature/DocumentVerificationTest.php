@@ -133,7 +133,7 @@ describe('Public document verification endpoint', function (): void {
         $response = $this->get('/verify/'.$data['code']);
 
         $response->assertStatus(200);
-        $response->assertSeeText('valid');
+        $response->assertSeeText('Valid Document');
         $response->assertSeeText('GCV-POE-2026-00099');
         $response->assertSeeText('مدرسة الاختبار');
     });
@@ -157,7 +157,7 @@ describe('Public document verification endpoint', function (): void {
         $response = $this->get('/verify/'.$data['code']);
 
         $response->assertStatus(200);
-        $response->assertSeeText('cancelled');
+        $response->assertSeeText('Cancelled');
         $response->assertSeeText('GCV-POE-2026-00099');
     });
 
@@ -167,14 +167,14 @@ describe('Public document verification endpoint', function (): void {
         $response = $this->get('/verify/'.$unknownCode);
 
         $response->assertStatus(200);
-        $response->assertSeeText('invalid');
+        $response->assertSeeText('Not Found');
     });
 
     test('code with wrong length returns invalid status', function (): void {
         $response = $this->get('/verify/tooshort');
 
         $response->assertStatus(200);
-        $response->assertSeeText('invalid');
+        $response->assertSeeText('Not Found');
     });
 
     test('verification uses SHA-256 hash for lookup, not plain code', function (): void {
@@ -204,7 +204,7 @@ describe('Public document verification endpoint', function (): void {
         $response = $this->get('/verify/'.$data['code']);
 
         $response->assertStatus(200);
-        $response->assertSeeText('invalid');
+        $response->assertSeeText('Not Found');
     });
 
     test('document type with public_verification true returns valid on valid code', function (): void {
@@ -228,7 +228,7 @@ describe('Public document verification endpoint', function (): void {
         $response = $this->get('/verify/'.$data['code']);
 
         $response->assertStatus(200);
-        $response->assertSeeText('valid');
+        $response->assertSeeText('Valid Document');
     });
 });
 
