@@ -34,6 +34,8 @@ return [
         'Contracts',
         'Data',
         'Events',
+        'Exceptions',
+        'Services',
     ],
 
     'dependencies' => [
@@ -75,7 +77,7 @@ return [
         // Depends on Workflow (state machine), Attachments (evidence), Notifications,
         // Students (profiles/relationships), AcademicManagement, People (person data),
         // Organization (institution scope), Authorization (permission keys), Audit.
-        'Requests' => ['Workflow', 'Attachments', 'Notifications', 'Students', 'AcademicManagement', 'People', 'Organization', 'Authorization', 'Audit'],
+        'Requests' => ['Workflow', 'Attachments', 'Notifications', 'Students', 'AcademicManagement', 'People', 'Organization', 'Authorization', 'Audit', 'Accounts'],
 
         // Documents: document type catalogue, template versioning, PDF generation,
         // and sequential document numbering. Depends on Workflow (approval flow for

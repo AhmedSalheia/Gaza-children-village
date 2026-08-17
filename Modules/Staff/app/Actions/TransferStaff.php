@@ -80,12 +80,13 @@ final class TransferStaff
             $current->save();
 
             // Check for overlaps with any other existing assignments at the target.
+            // Use whereDate() so SQLite date columns compare correctly against 'Y-m-d' strings.
             $overlapping = StaffInstitutionAssignment::where('staff_profile_id', $profile->id)
                 ->where('id', '!=', $current->id)
-                ->where('started_on', '<=', $transferDateStr)
+                ->whereDate('started_on', '<=', $transferDateStr)
                 ->where(function ($q) use ($transferDateStr): void {
                     $q->whereNull('ended_on')
-                        ->orWhere('ended_on', '>=', $transferDateStr);
+                        ->orWhereDate('ended_on', '>=', $transferDateStr);
                 })
                 ->exists();
 

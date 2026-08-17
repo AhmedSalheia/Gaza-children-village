@@ -54,9 +54,11 @@ describe('student and person identity are separate records', function (): void {
         $student = app(CreateStudentProfile::class)($person->id);
 
         $person->refresh();
+        // person_id cross-links the two records; auto-increment IDs from different tables
+        // may coincide when the DB is fresh (both = 1) — assert linkage, not ID inequality.
         expect($person->full_name_ar)->toBe($originalName)
             ->and($student->person_id)->toBe($person->id)
-            ->and($student->id)->not->toBe($person->id); // different records
+            ->and($student->id)->toBeGreaterThan(0); // student record was persisted
     });
 
     it('a Person may have at most one StudentProfile', function (): void {

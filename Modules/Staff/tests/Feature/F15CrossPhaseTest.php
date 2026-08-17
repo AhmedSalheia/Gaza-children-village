@@ -68,10 +68,8 @@ describe('cross-phase identity — no duplication', function (): void {
         $account = crossPhaseStaffAccount();
         app(LinkStaffAccount::class)($profile, $account->id);
 
-        expect($person->id)->not->toBe($profile->id);
-        expect($person->id)->not->toBe($account->id);
-        expect($profile->id)->not->toBe($account->id);
-
+        // person, profile and account are three separate records in different tables.
+        // Their auto-increment IDs may coincide; we verify counts instead.
         $personCls = 'Modules\\People\\Models\\Person';
         $accountCls = 'Modules\\Accounts\\Models\\StaffAccount';
         expect($personCls::count())->toBe(1);

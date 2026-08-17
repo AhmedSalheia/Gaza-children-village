@@ -86,11 +86,13 @@ final class StaffPosition extends Model
     {
         $dateStr = $date->format('Y-m-d');
 
+        // Use whereDate() so SQLite date columns (stored as 'Y-m-d H:i:s' by Carbon) compare
+        // correctly against plain 'Y-m-d' strings.
         return $query
-            ->where('started_on', '<=', $dateStr)
+            ->whereDate('started_on', '<=', $dateStr)
             ->where(fn (Builder $q) => $q
                 ->whereNull('ended_on')
-                ->orWhere('ended_on', '>=', $dateStr)
+                ->orWhereDate('ended_on', '>=', $dateStr)
             );
     }
 }

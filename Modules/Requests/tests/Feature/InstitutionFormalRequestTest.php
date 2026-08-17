@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Admin\FormalRequests\ManagementInbox;
-use App\Livewire\Admin\FormalRequests\ManagementReview;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
-use Modules\Accounts\Models\AdministrativeAccount;
 use Modules\Requests\Models\InstitutionFormalRequest;
 use Modules\Requests\Models\InstitutionFormalRequestComment;
 use Modules\Requests\Resolvers\FormalRequestContentResolver;
@@ -950,10 +947,11 @@ describe('per-render/per-action authorization re-check', function (): void {
         // Uses Livewire::test() to directly verify that requirePermission() passes
         // when the admin has a non-revoked grant in administrative_account_roles.
         $adminId = seedManagementAdmin(60);
-        $admin = AdministrativeAccount::findOrFail($adminId);
+        $adminAccCls = 'Modules\\Accounts\\Models\\AdministrativeAccount';
+        $admin = $adminAccCls::findOrFail($adminId);
 
         Livewire::actingAs($admin, 'admin')
-            ->test(ManagementInbox::class)
+            ->test('App\\Livewire\\Admin\\FormalRequests\\ManagementInbox')
             ->assertOk();
     });
 
@@ -964,10 +962,11 @@ describe('per-render/per-action authorization re-check', function (): void {
             'id' => 61, 'username' => 'ungrant-admin', 'password' => bcrypt('secret'),
             'status' => 'active', 'created_at' => now(), 'updated_at' => now(),
         ]);
-        $admin = AdministrativeAccount::findOrFail(61);
+        $adminAccCls = 'Modules\\Accounts\\Models\\AdministrativeAccount';
+        $admin = $adminAccCls::findOrFail(61);
 
         Livewire::actingAs($admin, 'admin')
-            ->test(ManagementInbox::class)
+            ->test('App\\Livewire\\Admin\\FormalRequests\\ManagementInbox')
             ->assertForbidden();
     });
 
@@ -975,11 +974,12 @@ describe('per-render/per-action authorization re-check', function (): void {
         // Verifies requirePermission() re-runs on every render: revoking the grant
         // must cause the next Livewire property update to return 403.
         $adminId = seedManagementAdmin(62);
-        $admin = AdministrativeAccount::findOrFail($adminId);
+        $adminAccCls = 'Modules\\Accounts\\Models\\AdministrativeAccount';
+        $admin = $adminAccCls::findOrFail($adminId);
 
         // First mount — must succeed
         $component = Livewire::actingAs($admin, 'admin')
-            ->test(ManagementInbox::class)
+            ->test('App\\Livewire\\Admin\\FormalRequests\\ManagementInbox')
             ->assertOk();
 
         // Revoke the grant mid-session
@@ -1000,10 +1000,11 @@ describe('per-render/per-action authorization re-check', function (): void {
             'id' => 63, 'username' => 'review-noperm', 'password' => bcrypt('secret'),
             'status' => 'active', 'created_at' => now(), 'updated_at' => now(),
         ]);
-        $admin = AdministrativeAccount::findOrFail(63);
+        $adminAccCls = 'Modules\\Accounts\\Models\\AdministrativeAccount';
+        $admin = $adminAccCls::findOrFail(63);
 
         Livewire::actingAs($admin, 'admin')
-            ->test(ManagementReview::class, ['requestId' => $req->id])
+            ->test('App\\Livewire\\Admin\\FormalRequests\\ManagementReview', ['requestId' => $req->id])
             ->assertForbidden();
     });
 
@@ -1012,10 +1013,11 @@ describe('per-render/per-action authorization re-check', function (): void {
             'current_status' => InstitutionFormalRequest::STATUS_SUBMITTED_TO_MANAGEMENT,
         ]);
         $adminId = seedManagementAdmin(64);
-        $admin = AdministrativeAccount::findOrFail($adminId);
+        $adminAccCls = 'Modules\\Accounts\\Models\\AdministrativeAccount';
+        $admin = $adminAccCls::findOrFail($adminId);
 
         Livewire::actingAs($admin, 'admin')
-            ->test(ManagementReview::class, ['requestId' => $req->id])
+            ->test('App\\Livewire\\Admin\\FormalRequests\\ManagementReview', ['requestId' => $req->id])
             ->assertOk();
     });
 

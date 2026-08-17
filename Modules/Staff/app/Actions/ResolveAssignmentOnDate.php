@@ -20,11 +20,13 @@ final class ResolveAssignmentOnDate
     ): ?StaffInstitutionAssignment {
         $dateStr = $date->format('Y-m-d');
 
+        // Use whereDate() so SQLite date columns (stored as 'Y-m-d H:i:s' by Carbon) compare
+        // correctly against plain 'Y-m-d' strings.
         return StaffInstitutionAssignment::where('staff_profile_id', $profile->id)
-            ->where('started_on', '<=', $dateStr)
+            ->whereDate('started_on', '<=', $dateStr)
             ->where(function ($q) use ($dateStr): void {
                 $q->whereNull('ended_on')
-                    ->orWhere('ended_on', '>=', $dateStr);
+                    ->orWhereDate('ended_on', '>=', $dateStr);
             })
             ->first();
     }

@@ -71,8 +71,9 @@ final class StudentProfile extends Model
      */
     public function activeGuardianRelationships(): HasMany
     {
+        // ends_on = today means the relationship ended today; use '>' so today's end is treated as closed.
         return $this->hasMany(GuardianStudentRelationship::class)
-            ->where(fn ($q) => $q->whereNull('ends_on')->orWhere('ends_on', '>=', now()->toDateString()));
+            ->where(fn ($q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>', now()->toDateString()));
     }
 
     /**
@@ -83,10 +84,11 @@ final class StudentProfile extends Model
      */
     public function portalEligibleRelationships(): HasMany
     {
+        // ends_on = today means the relationship ended today; use '>' so today's end is treated as closed.
         return $this->hasMany(GuardianStudentRelationship::class)
             ->where('verification_status', 'verified')
             ->where('portal_eligible', true)
-            ->where(fn ($q) => $q->whereNull('ends_on')->orWhere('ends_on', '>=', now()->toDateString()));
+            ->where(fn ($q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>', now()->toDateString()));
     }
 
     public function isActive(): bool

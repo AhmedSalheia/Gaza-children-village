@@ -34,10 +34,11 @@ final class CreateGuardianStudentRelationship
         bool $isEmergencyContact = false,
     ): GuardianStudentRelationship {
         // Prevent duplicate active relationship of the same type between the same pair.
+        // ends_on = today means the relationship ended today; use '>' so today's end is treated as closed.
         $duplicate = GuardianStudentRelationship::where('student_profile_id', $student->id)
             ->where('guardian_profile_id', $guardian->id)
             ->where('relationship_type', $type->value)
-            ->where(fn ($q) => $q->whereNull('ends_on')->orWhere('ends_on', '>=', now()->toDateString()))
+            ->where(fn ($q) => $q->whereNull('ends_on')->orWhereDate('ends_on', '>', now()->toDateString()))
             ->exists();
 
         if ($duplicate) {

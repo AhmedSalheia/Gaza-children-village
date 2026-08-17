@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\People\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\People\Enums\BirthDatePrecision;
@@ -19,6 +20,14 @@ use Modules\People\Enums\BirthDatePrecision;
  */
 final class Person extends Model
 {
+    /** @use HasFactory<\Modules\People\Database\Factories\PersonFactory> */
+    use HasFactory;
+
+    protected static function newFactory(): \Modules\People\Database\Factories\PersonFactory
+    {
+        return \Modules\People\Database\Factories\PersonFactory::new();
+    }
+
     protected $fillable = [
         'full_name_ar',
         'full_name_en',

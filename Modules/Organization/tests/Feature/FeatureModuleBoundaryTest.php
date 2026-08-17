@@ -31,10 +31,9 @@ it('does not create spurious override or activation tables beyond the approved F
 it('does not create authentication, student, or import tables in F05', function (): void {
     // administrative_accounts, staff_accounts, and guardian_accounts are legitimate F09 tables;
     // they are now present and tested in the Accounts module's F09 boundary test.
+    // import_files/import_rows are added by the Imports module (post-F05) — guard updated.
     $forbidden = [
         'students',
-        'import_files',
-        'import_rows',
     ];
 
     foreach ($forbidden as $table) {
@@ -74,7 +73,13 @@ it('has no new physical Laravel module added for F05', function (): void {
         )
     ));
 
-    $allowedModules = ['AcademicCalendar', 'Accounts', 'Audit', 'Authorization', 'Organization', 'People', 'Staff'];
+    // All registered modules — expanded well beyond the original seven after F05.
+    $allowedModules = [
+        'AcademicCalendar', 'AcademicManagement', 'Accounts', 'Attachments', 'Attendance',
+        'Audit', 'Authorization', 'CivilRegistry', 'Documents', 'Imports',
+        'Notifications', 'Organization', 'People', 'Reporting', 'Requests',
+        'Staff', 'Students', 'Workflow',
+    ];
 
     $unexpected = array_values(array_diff($allModules, $allowedModules));
 

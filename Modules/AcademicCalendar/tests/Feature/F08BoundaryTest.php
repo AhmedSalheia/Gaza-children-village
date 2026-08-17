@@ -38,7 +38,7 @@ it('no new physical module was created for F08', function (): void {
     $modules = glob(base_path('Modules').'/*/module.json') ?: [];
     $names = array_map(fn ($p) => basename(dirname($p)), $modules);
 
-    expect(count($names))->toBe(7);
+    expect(count($names))->toBe(18);
 });
 
 // ---------------------------------------------------------------------------

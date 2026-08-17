@@ -18,7 +18,8 @@ it('does not create a module-activation table in the organization module', funct
 });
 
 it('does not create import tables in F03', function (): void {
-    $importTables = ['import_files', 'import_rows', 'import_batches', 'excel_imports'];
+    // import_files/import_rows/import_batches are added by the Imports module (post-F03) — guard updated.
+    $importTables = ['excel_imports'];
 
     foreach ($importTables as $table) {
         expect(Schema::hasTable($table))->toBeFalse("Unexpected table: {$table}");
@@ -27,8 +28,9 @@ it('does not create import tables in F03', function (): void {
 
 it('does not create student tables in F03', function (): void {
     // gaza_civil_records is now legitimately created by the CivilRegistry module.
-    // Only student-module tables remain forbidden from Organization migrations.
-    $forbidden = ['students', 'student_profiles', 'guardian_students'];
+    // student_profiles is now legitimately created by the Students module (post-F03) — guard updated.
+    // Only the legacy generic 'students' and 'guardian_students' tables remain forbidden.
+    $forbidden = ['students', 'guardian_students'];
 
     foreach ($forbidden as $table) {
         expect(Schema::hasTable($table))->toBeFalse("Unexpected table: {$table}");

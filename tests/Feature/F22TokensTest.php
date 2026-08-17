@@ -40,7 +40,9 @@ test('semantic token names are present in tokens.css', function (): void {
         '--badge-draft-bg', '--badge-open-bg', '--badge-closed-bg', '--badge-archived-bg',
     ];
     foreach ($required as $token) {
-        expect($css)->toContain($token, "Missing semantic token: {$token}");
+        // Pass the failure message as the second argument to expect(), not to toContain(),
+        // because toContain() accepts variadic needles (not a message string).
+        expect($css, "Missing semantic token: {$token}")->toContain($token);
     }
 });
 

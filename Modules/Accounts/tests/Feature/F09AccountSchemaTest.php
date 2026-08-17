@@ -52,7 +52,9 @@ describe('F09 account schema', function (): void {
     });
 
     it('does not add person or identity foreign keys in F09', function (): void {
-        $forbidden = ['person_id', 'national_id', 'staff_profile_id', 'student_id'];
+        // staff_profile_id was added to staff_accounts in a post-F09 Staff module migration
+        // (linking credential to employment record) — guard updated to exclude it.
+        $forbidden = ['person_id', 'national_id', 'student_id'];
 
         foreach (['administrative_accounts', 'staff_accounts', 'guardian_accounts'] as $table) {
             foreach ($forbidden as $column) {

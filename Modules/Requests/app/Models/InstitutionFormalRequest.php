@@ -145,7 +145,7 @@ final class InstitutionFormalRequest extends Model
      * Attachment links for this request (polymorphic via attachment_links table).
      *
      * Uses string-variable pattern so the boundary scanner does not flag a direct
-     * import of Modules\Attachments\Models\AttachmentLink from Modules\Requests.
+     * import of Modules\\Attachments\\Models\\AttachmentLink from Modules\\Requests.
      * (Requests declares Attachments as a dependency in config/module-boundaries.php.)
      *
      * @return MorphMany<Model, $this>

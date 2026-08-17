@@ -41,11 +41,13 @@ final class StartAssignment
 
             // Check for overlap: any existing assignment where
             //   assignment.started_on <= $startDate AND (assignment.ended_on IS NULL OR assignment.ended_on >= $startDate)
+            // Use whereDate() so SQLite date columns (stored as 'Y-m-d H:i:s' by Carbon) compare
+            // correctly against plain 'Y-m-d' strings.
             $overlapping = StaffInstitutionAssignment::where('staff_profile_id', $profile->id)
-                ->where('started_on', '<=', $startDate)
+                ->whereDate('started_on', '<=', $startDate)
                 ->where(function ($q) use ($startDate): void {
                     $q->whereNull('ended_on')
-                        ->orWhere('ended_on', '>=', $startDate);
+                        ->orWhereDate('ended_on', '>=', $startDate);
                 })
                 ->exists();
 

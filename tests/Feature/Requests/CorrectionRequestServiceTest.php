@@ -40,6 +40,7 @@ function makeGuardianWithStudent(int $suffix = 1): array
 
     $studentId = DB::table('student_profiles')->insertGetId([
         'person_id' => $personId,
+        'student_code' => 'SC-TEST-'.str_pad((string) $suffix, 6, '0', STR_PAD_LEFT),
         'lifecycle_status' => 'active',
         'registered_on' => now()->toDateString(),
         'created_at' => now(),
@@ -57,6 +58,7 @@ function makeGuardianWithStudent(int $suffix = 1): array
 
     $guardianProfileId = DB::table('guardian_profiles')->insertGetId([
         'person_id' => $gPersonId,
+        'guardian_code' => 'GC-TEST-'.str_pad((string) $suffix, 6, '0', STR_PAD_LEFT),
         'lifecycle_status' => 'active',
         'guardian_account_id' => $suffix,
         'created_at' => now(),

@@ -75,21 +75,24 @@ final class CorrectionApplicationService
             );
         }
 
-        return DB::transaction(function () use ($request, $appliedByAccountId, $actorType, $portal, $expectedInstitutionId, $instance): StudentCorrectionRequest {
+        // Conflict detection runs OUTSIDE the transaction so that the conflict_flag
+        // save persists even when the exception unwinds the stack (a DB::transaction
+        // rollback would otherwise undo the flag update).
+        $proposal = $request->proposals()->orderByDesc('submission_sequence')->firstOrFail();
+        $field = CorrectionFieldCatalogue::from($proposal->field_code);
+        $this->checkConflict($request, $field, $proposal);
+
+        return DB::transaction(function () use ($request, $appliedByAccountId, $actorType, $portal, $expectedInstitutionId, $instance, $proposal, $field): StudentCorrectionRequest {
             // Pessimistic lock on the student profile row to prevent concurrent writes
             DB::table('student_profiles')->where('id', $request->student_profile_id)->lockForUpdate()->first();
 
-            // Retrieve the active proposal
-            $proposal = $request->proposals()->orderByDesc('submission_sequence')->firstOrFail();
-            $field = CorrectionFieldCatalogue::from($proposal->field_code);
+            // Re-fetch the proposal inside the transaction to guard against concurrent changes.
+            // $proposal/$field were already resolved and conflict-checked above.
 
             // Decrypt proposed value if sensitive
             $proposedValue = $field->requiresEncryption()
                 ? Crypt::decryptString($proposal->proposed_value)
                 : $proposal->proposed_value;
-
-            // Conflict detection: re-read current value and compare to snapshot
-            $this->checkConflict($request, $field, $proposal);
 
             // Apply the change to the target record
             $this->applyFieldChange($field, $request->student_profile_id, $proposedValue, $proposal->relationship_ref_id);

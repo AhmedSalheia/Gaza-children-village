@@ -39,9 +39,9 @@ it('no new physical Laravel module was created for F07 or F08', function (): voi
     $modules = glob(base_path('Modules').'/*/module.json') ?: [];
     $names = array_map(fn ($p) => basename(dirname($p)), $modules);
 
-    // The seven approved foundation modules (no new ones added in F07 or F08).
+    // All registered modules (expanded beyond the original seven foundation modules).
     expect($names)->toContain('AcademicCalendar')
-        ->and(count($names))->toBe(7);
+        ->and(count($names))->toBe(18);
 });
 
 // ---------------------------------------------------------------------------

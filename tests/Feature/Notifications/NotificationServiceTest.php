@@ -45,8 +45,8 @@ function sendTestNotification(
 
 describe('NotificationType catalogue', function (): void {
 
-    it('all() returns exactly 18 types', function (): void {
-        expect(NotificationType::all())->toHaveCount(18);
+    it('all() returns exactly 19 types', function (): void {
+        expect(NotificationType::all())->toHaveCount(19);
     });
 
     it('all types contain a dot (domain.action format)', function (): void {

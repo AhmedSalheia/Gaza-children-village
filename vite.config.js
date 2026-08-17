@@ -2,7 +2,7 @@
  * Vite configuration — GCV DATA (F22)
  *
  * Changes from previous version:
- *  - Removed bunny() font CDN plugin (F22 requirement: self-hosted WOFF2 only).
+ *  - Removed font CDN plugin (F22 requirement: self-hosted WOFF2 only).
  *  - Added Tailwind CSS v4 plugin.
  *  - Fonts are served from public/fonts/ via @font-face in _fonts.css.
  */

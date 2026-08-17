@@ -103,10 +103,12 @@ final class AssignPosition
         }
 
         // Auto-resolve: find the active assignment covering startStr.
+        // Use whereDate() so SQLite date columns (stored as 'Y-m-d H:i:s' by Carbon) compare
+        // correctly against plain 'Y-m-d' strings.
         $assignment = StaffInstitutionAssignment::where('staff_profile_id', $profile->id)
             ->where('institution_id', $institutionId)
-            ->where('started_on', '<=', $startStr)
-            ->where(fn ($q) => $q->whereNull('ended_on')->orWhere('ended_on', '>=', $startStr))
+            ->whereDate('started_on', '<=', $startStr)
+            ->where(fn ($q) => $q->whereNull('ended_on')->orWhereDate('ended_on', '>=', $startStr))
             ->first();
 
         if ($assignment === null) {

@@ -127,7 +127,7 @@ describe('CreateDraftEnrollment', function (): void {
         $person = $personCls::factory()->create();
         $student = $studentCls::factory()->create([
             'person_id' => $person->id,
-            'lifecycle_status' => 'registered',
+            'lifecycle_status' => 'inactive', // 'registered' was removed; use 'inactive' to test non-active rejection
         ]);
         $inst = enrInstitution();
         $sem = enrSemester($inst->id);
