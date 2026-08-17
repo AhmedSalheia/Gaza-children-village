@@ -31,7 +31,7 @@ final class DemoPublicationSeeder extends Seeder
         $inst1Id = (int) DB::table('institutions')->where('code', 'academy_1')->value('id');
 
         if ($inst1Id === 0) {
-            $this->command->warn('DemoPublicationSeeder: academy_1 not found. Skipping.');
+            $this->command?->warn('DemoPublicationSeeder: academy_1 not found. Skipping.');
 
             return;
         }
@@ -42,7 +42,7 @@ final class DemoPublicationSeeder extends Seeder
             ->value('id');
 
         if ($instSemId === 0) {
-            $this->command->warn('DemoPublicationSeeder: No open semester. Skipping.');
+            $this->command?->warn('DemoPublicationSeeder: No open semester. Skipping.');
 
             return;
         }
@@ -61,9 +61,9 @@ final class DemoPublicationSeeder extends Seeder
                     publisherStaffProfileId: $principalId,
                     requireAllApproved: false, // demo: publish with whatever is approved
                 );
-                $this->command->info('DemoPublicationSeeder: Published results for CG-G1-A.');
+                $this->command?->info('DemoPublicationSeeder: Published results for CG-G1-A.');
             } catch (\Throwable $e) {
-                $this->command->warn('DemoPublicationSeeder: Could not publish G1-A results: '.$e->getMessage());
+                $this->command?->warn('DemoPublicationSeeder: Could not publish G1-A results: '.$e->getMessage());
             }
         }
 
@@ -76,9 +76,9 @@ final class DemoPublicationSeeder extends Seeder
                     publisherStaffProfileId: $principalId,
                     requireAllApproved: false,
                 );
-                $this->command->info('DemoPublicationSeeder: Published results for CG-KG1-A.');
+                $this->command?->info('DemoPublicationSeeder: Published results for CG-KG1-A.');
             } catch (\Throwable $e) {
-                $this->command->warn('DemoPublicationSeeder: Could not publish KG1-A results: '.$e->getMessage());
+                $this->command?->warn('DemoPublicationSeeder: Could not publish KG1-A results: '.$e->getMessage());
             }
         }
 
@@ -101,10 +101,10 @@ final class DemoPublicationSeeder extends Seeder
                         classGroupId: $cgG1aId,
                         publisherStaffProfileId: $principalId,
                     );
-                    $this->command->info('DemoPublicationSeeder: Published attendance snapshot for CG-G1-A.');
+                    $this->command?->info('DemoPublicationSeeder: Published attendance snapshot for CG-G1-A.');
                 }
             } catch (\Throwable $e) {
-                $this->command->warn('DemoPublicationSeeder: Could not publish attendance snapshot: '.$e->getMessage());
+                $this->command?->warn('DemoPublicationSeeder: Could not publish attendance snapshot: '.$e->getMessage());
             }
         }
     }

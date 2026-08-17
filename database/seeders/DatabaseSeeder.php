@@ -91,9 +91,19 @@ class DatabaseSeeder extends Seeder
             DemoPublicationSeeder::class,
         ]);
 
-        // ── Demo accounts must come last (requires staff + guardians) ─
+        // ── Demo accounts (requires staff + guardians) ───────────────
         $this->call([
             DemoAccountSeeder::class,
+        ]);
+
+        // ── Demo workflows / documents / notifications ────────────────
+        // These need portal accounts, so they run after DemoAccountSeeder.
+        $this->call([
+            DemoCorrectionRequestSeeder::class,
+            DemoDocumentRequestSeeder::class,
+            DemoFormalRequestSeeder::class,
+            DemoNotificationSeeder::class,
+            DemoJobStatusSeeder::class,
         ]);
     }
 }

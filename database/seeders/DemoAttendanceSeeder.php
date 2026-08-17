@@ -28,7 +28,7 @@ final class DemoAttendanceSeeder extends Seeder
         $inst1Id = (int) DB::table('institutions')->where('code', 'academy_1')->value('id');
 
         if ($inst1Id === 0) {
-            $this->command->warn('DemoAttendanceSeeder: academy_1 not found. Skipping.');
+            $this->command?->warn('DemoAttendanceSeeder: academy_1 not found. Skipping.');
 
             return;
         }
@@ -39,7 +39,7 @@ final class DemoAttendanceSeeder extends Seeder
             ->value('id');
 
         if ($instSemId === 0) {
-            $this->command->warn('DemoAttendanceSeeder: No open semester. Skipping.');
+            $this->command?->warn('DemoAttendanceSeeder: No open semester. Skipping.');
 
             return;
         }

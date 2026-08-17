@@ -23,7 +23,7 @@ final class DemoAcademicStructureSeeder extends Seeder
         $inst1Id = DB::table('institutions')->where('code', 'academy_1')->value('id');
 
         if ($inst1Id === null) {
-            $this->command->warn('DemoAcademicStructureSeeder: academy_1 not found. Skipping.');
+            $this->command?->warn('DemoAcademicStructureSeeder: academy_1 not found. Skipping.');
 
             return;
         }
@@ -35,7 +35,7 @@ final class DemoAcademicStructureSeeder extends Seeder
             ->value('id');
 
         if ($instSemId === null) {
-            $this->command->warn('DemoAcademicStructureSeeder: No open institution semester for academy_1. Skipping.');
+            $this->command?->warn('DemoAcademicStructureSeeder: No open institution semester for academy_1. Skipping.');
 
             return;
         }
@@ -92,7 +92,7 @@ final class DemoAcademicStructureSeeder extends Seeder
             ->value('id');
 
         if ($morningOpPeriodId === null) {
-            $this->command->warn('DemoAcademicStructureSeeder: Morning operational period not found. Skipping class groups.');
+            $this->command?->warn('DemoAcademicStructureSeeder: Morning operational period not found. Skipping class groups.');
 
             return;
         }

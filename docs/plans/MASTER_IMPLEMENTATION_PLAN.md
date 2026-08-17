@@ -1,6 +1,6 @@
 # GCV DATA Master Implementation Plan
 
-**Status:** Foundation ✅ Complete · Student Registry and Enrolment 🚧 In Progress · All other releases 📋 Planned  
+**Status:** Foundation ✅ · Student Registry ✅ · Attendance ✅ · Assessments/Publication ✅ · Parent Portal ✅ · Documents/Requests/Reports ✅ · Notifications ✅ (delivered early with release 6) · Student Welfare 🚧 CURRENT · Remaining releases 📋 Planned  
 **Version:** 1.0  
 **Date:** 15 August 2026  
 **Source specification:** `docs/SYSTEM_SPECIFICATION.md` v0.2
@@ -27,7 +27,9 @@ All F01–F23 phases implemented and passing.
 
 ---
 
-## 2. Student Registry and Enrolment Release 🚧 CURRENT
+## 2. Student Registry and Enrolment Release ✅ COMPLETE
+
+Delivered: Students, AcademicManagement, CivilRegistry, and Imports modules; student/guardian registries with relationships and verification; class structure (levels, classrooms, class groups, subjects, offerings); enrollments, transfers, promotion proposals; civil-registry advisory lookups; staged Excel import pipeline; demo dataset (32 students, guardians, enrollments, import batches).
 
 **Goal:** A genuinely usable Admin/Secretary workflow for student registration, guardian relationships, class placement, transfers, and promotion.
 
@@ -123,7 +125,9 @@ Foundation complete (F01–F23), specifically: People, Organization, AcademicCal
 
 ---
 
-## 3. Attendance Release 📋 PLANNED
+## 3. Attendance Release ✅ COMPLETE
+
+Delivered: student attendance sheets (draft → submitted → returned → verified), per-row statuses, scope-guarded staff access, staff attendance with QR badge check-in (HMAC tokens) and correction cycle, attendance publication snapshots for guardians.
 
 ### 3.1 Actors
 
@@ -187,7 +191,9 @@ Student Registry and Enrolment release (StudentEnrollment, ClassGroup, Instituti
 
 ---
 
-## 4. Assessments, Marks, Results, and Publication Release 📋 PLANNED
+## 4. Assessments, Marks, Results, and Publication Release ✅ COMPLETE
+
+Delivered: assessments and mark sheets with the full teacher → secretary → principal cycle, student marks with partial-unique constraints, immutable published result snapshots with supersession, guardian-visible published results.
 
 ### 4.1 Actors
 
@@ -253,7 +259,9 @@ Attendance release (for complete semester data before publication)
 
 ---
 
-## 5. Parent / Student Portal Release 📋 PLANNED
+## 5. Parent / Student Portal Release ✅ COMPLETE
+
+Delivered: guardian account setup and authentication (anti-enumeration, session-version revocation), child selector, published results/attendance/placement views, correction request submission with evidence, document request submission and downloads.
 
 ### 5.1 Actors
 
@@ -319,7 +327,17 @@ Student Registry and Enrolment (guardian relationships), Assessments/Publication
 
 ---
 
-## 6. Documents, Requests, Reports, and Exports Release 📋 PLANNED
+## 6. Documents, Requests, Reports, and Exports Release ✅ COMPLETE
+
+**Delivered inventory (with the Notifications release, brought forward from §12):**
+- **Documents module** — document type catalogue (7 types), versioned bilingual (ar/en) templates with placeholder catalogue and sanitization, mPDF engine (Arabic RTL), sequential document numbering, immutable issued documents with SHA-256 file hashes, public verification endpoint (`/verify/{code}`, hashed verification codes), reissue/supersession and cancellation chains, guardian document requests with completeness → approval → generation workflow (recoverable `generation_failed`).
+- **Corrections (Requests module)** — guardian correction requests over an 8-field catalogue (standard vs sensitive classification), full workflow (draft → submitted → clarification → resubmitted → under_review → approved → applied / rejected / cancelled), conflict detection, encrypted sensitive proposals, principal electronic approval with reconfirmation tokens, application service writing back to official records with audit trail.
+- **Formal requests (Requests module)** — institution → management requests with sequential numbering, electronic signatures (content hashes via reconfirmation tokens, principal/deputy only), audience-restricted encrypted comments (internal/management/all), management review with clarification cycle, responses, and closure.
+- **Workflow module** — reusable workflow definitions/instances/actions (append-only), electronic approvals, reconfirmation token service.
+- **Attachments module** — quarantine-scanned secure attachments with polymorphic links.
+- **Notifications module** — in-app portal notifications (19 types across admin/staff/guardian), preferences, read/dismiss/expiry; operation status tracking (queued/running/completed/failed) for background jobs.
+- **Reporting module** — 21 report definitions, admin and staff report centres with per-query trusted scope, re-authorization at execution/download, bounded chunked Excel exports via queued jobs, report run history.
+- **Demo dataset** — seeders covering all correction/document/formal-request states, issued bilingual PDFs, reissue chain, notifications for all types/portals, operation statuses, and report runs; `migrate:fresh --seed` clean and idempotent.
 
 ### 6.1 Actors
 
@@ -349,7 +367,7 @@ Document generation, approval, versioning, verification, reissuance, cancellatio
 
 ---
 
-## 7. Student Welfare and Behaviour Boundaries Release 📋 PLANNED
+## 7. Student Welfare and Behaviour Boundaries Release 🚧 CURRENT
 
 ### 7.1 Actors
 
@@ -456,7 +474,7 @@ Women's Center Administrator, Trainer, Data Administrator, Beneficiary (future p
 
 ---
 
-## 12. Notifications Release 📋 PLANNED
+## 12. Notifications Release ✅ COMPLETE (delivered early, with Release 6)
 
 ### 12.1 Actors
 

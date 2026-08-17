@@ -22,7 +22,7 @@ final class DemoCalendarSeeder extends Seeder
         $orgId = DB::table('organizations')->where('code', 'gcv')->value('id');
 
         if ($orgId === null) {
-            $this->command->warn('DemoCalendarSeeder: GCV organization not found. Skipping.');
+            $this->command?->warn('DemoCalendarSeeder: GCV organization not found. Skipping.');
 
             return;
         }
@@ -78,7 +78,7 @@ final class DemoCalendarSeeder extends Seeder
         $inst2Id = DB::table('institutions')->where('code', 'academy_2')->value('id');
 
         if ($inst1Id === null || $inst2Id === null) {
-            $this->command->warn('DemoCalendarSeeder: Institutions academy_1/academy_2 not found. Skipping.');
+            $this->command?->warn('DemoCalendarSeeder: Institutions academy_1/academy_2 not found. Skipping.');
 
             return;
         }

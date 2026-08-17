@@ -27,7 +27,7 @@ final class DemoStaffSeeder extends Seeder
         $inst1Id = DB::table('institutions')->where('code', 'academy_1')->value('id');
 
         if ($inst1Id === null) {
-            $this->command->warn('DemoStaffSeeder: academy_1 not found. Skipping.');
+            $this->command?->warn('DemoStaffSeeder: academy_1 not found. Skipping.');
 
             return;
         }

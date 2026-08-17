@@ -46,7 +46,7 @@ final class EnrollmentSnapshotService
             ->select(
                 'se.student_profile_id',
                 'se.institution_semester_id',
-                'cg.name as class_group_name',
+                'cg.name_ar as class_group_name',
                 'is.institution_id',
                 'sem.name_ar as semester_name',
                 'inst.name_ar as institution_name_ar',
