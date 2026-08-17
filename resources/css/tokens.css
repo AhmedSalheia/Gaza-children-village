@@ -200,7 +200,7 @@
   --nav-item-font-size:  0.9375rem;
 
   /* Header */
-  --header-height:     4rem;
+  --header-height:     8rem;
   --header-bg:         var(--surface-header-gradient);
   --header-text:       var(--text-inverse);
 

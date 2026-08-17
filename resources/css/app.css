@@ -938,7 +938,7 @@ h1, h2, h3, .heading-display {
   flex: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  min-block-size: calc(100vh - var(--header-height));
+  min-block-size: calc(85vh - var(--header-height));
 }
 
 .auth-hero {
@@ -950,6 +950,7 @@ h1, h2, h3, .heading-display {
   padding: var(--space-16) var(--space-12);
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
 /* Soft gold orb — brand warmth on the teal field */

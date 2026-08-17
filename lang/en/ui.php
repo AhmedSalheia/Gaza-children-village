@@ -440,7 +440,7 @@ return [
     'showing' => 'Showing :from - :to of :total',
     'showing_results' => 'Showing :from–:to of :total',
     'skip_to_content' => 'Skip to main content',
-    'org_name' => 'Gaza Community Volunteers',
+    'org_name' => 'Gaza Children Village',
     'footer_rights' => '© :year All rights reserved',
     'sr7_release' => 'SR-7 Admin Portal — Student Registry Module',
     'staff' => 'Staff',

@@ -5,13 +5,6 @@
 @section('content')
 <div class="auth-layout">
     <section class="auth-hero" aria-hidden="true">
-        <div class="brand-mark">
-            <span class="brand-mark__glyph">GCV</span>
-            <span class="brand-mark__text">
-                <span class="brand-mark__name">GCV DATA</span>
-                <span class="brand-mark__tagline">{{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
-            </span>
-        </div>
         <h2 class="auth-hero__title">{{ __('auth.admin_hero_title', [], null, 'One place for every school record') }}</h2>
         <span class="auth-hero__accent"></span>
         <p class="auth-hero__body">{{ __('auth.admin_hero_body', [], null, 'Manage institutions, staff, students, and academic records across the whole organization.') }}</p>

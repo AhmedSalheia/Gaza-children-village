@@ -17,12 +17,8 @@
 
 <header class="portal-header" role="banner">
     <div class="portal-header__inner">
-        <a href="{{ route('guardian.dashboard') }}" class="portal-header__brand brand-mark" aria-label="GCV DATA — {{ __('auth.guardian_portal') }}">
-            <span class="brand-mark__glyph" aria-hidden="true">GCV</span>
-            <span class="brand-mark__text">
-                <span class="brand-mark__name">GCV DATA</span>
-                <span class="brand-mark__tagline">{{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
-            </span>
+        <a href="{{ route('guardian.dashboard') }}" class="portal-header__brand brand-mark h-full" aria-label="GCV DATA — {{ __('auth.guardian_portal') }}">
+            <img src="{{ asset('assets/img/gcv-logo-dark.png') }}" class="h-full" alt="GCV logo" />
         </a>
 
         <div class="portal-header__actions">
@@ -64,13 +60,7 @@
     </main>
 </div>
 
-<footer class="portal-footer">
-    <div class="portal-footer__inner">
-        <span>GCV DATA — {{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
-        <span>{{ __('ui.footer_rights', ['year' => now()->year], null, '© :year All rights reserved') }}</span>
-    </div>
-</footer>
-
+@include('layouts.partials.footer')
 @include('layouts.partials.confirm-dialog')
 
 </body>

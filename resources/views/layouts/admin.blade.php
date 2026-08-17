@@ -20,12 +20,8 @@
 {{-- F23: Shared portal header --}}
 <header class="portal-header" role="banner">
     <div class="portal-header__inner">
-        <a href="{{ route('admin.dashboard') }}" class="portal-header__brand brand-mark" aria-label="GCV DATA — {{ __('auth.admin_portal') }}">
-            <span class="brand-mark__glyph" aria-hidden="true">GCV</span>
-            <span class="brand-mark__text">
-                <span class="brand-mark__name">GCV DATA</span>
-                <span class="brand-mark__tagline">{{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
-            </span>
+        <a href="{{ route('admin.dashboard') }}" class="portal-header__brand brand-mark h-full" aria-label="GCV DATA — {{ __('auth.admin_portal') }}">
+            <img src="{{ asset('assets/img/gcv-logo-dark.png') }}" class="h-full" alt="GCV logo" />
         </a>
 
         <nav class="portal-header__nav" role="navigation" aria-label="{{ __('auth.admin_portal') }}">
@@ -94,14 +90,8 @@
     </main>
 </div>
 
-<footer class="portal-footer">
-    <div class="portal-footer__inner">
-        <span>GCV DATA — {{ __('ui.org_name', [], null, 'Gaza Community Volunteers') }}</span>
-        <span>{{ __('ui.footer_rights', ['year' => now()->year], null, '© :year All rights reserved') }}</span>
-    </div>
-</footer>
+@include('layouts.partials.footer')
 
-{{-- F23: Confirmation dialog (global) --}}
 @include('layouts.partials.confirm-dialog')
 
 </body>
