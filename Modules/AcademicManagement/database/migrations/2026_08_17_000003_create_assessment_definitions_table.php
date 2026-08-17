@@ -68,7 +68,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->index(['institution_semester_id', 'class_group_id', 'subject_offering_id']);
+            $table->index(['institution_semester_id', 'class_group_id', 'subject_offering_id'],'ins_sem_cls_grp_sub');
             $table->index(['institution_semester_id', 'status']);
         });
     }

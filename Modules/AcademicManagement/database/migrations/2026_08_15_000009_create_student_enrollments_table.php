@@ -44,9 +44,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Common lookup: student's history in a semester.
-            $table->index(['student_profile_id', 'institution_semester_id']);
+            $table->index(['student_profile_id', 'institution_semester_id'],'stu_semester');
             // Active enrollment guard query.
-            $table->index(['student_profile_id', 'enrollment_status']);
+            $table->index(['student_profile_id', 'enrollment_status'],'profile_enrollment');
             $table->index('class_group_id');
         });
     }

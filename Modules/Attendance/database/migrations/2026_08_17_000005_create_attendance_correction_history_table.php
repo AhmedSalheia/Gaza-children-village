@@ -32,7 +32,7 @@ return new class extends Migration
 
             // Within-module FK (cascade delete keeps history consistent with record lifecycle)
             $table->foreignId('attendance_record_id')
-                ->constrained('student_attendance_records')
+                ->constrained('student_attendance_records',indexName: 'att_rec_sty_att')
                 ->cascadeOnDelete();
 
             // Denormalized for efficient lookups without joining back to records

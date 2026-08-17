@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Each subject may be offered at most once per semester.
-            $table->unique(['institution_semester_id', 'subject_id']);
+            $table->unique(['institution_semester_id', 'subject_id'],'ins_senester');
             $table->index('institution_semester_id');
         });
     }

@@ -46,8 +46,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['result_publication_id', 'enrollment_id', 'subject_offering_id']);
-            $table->index(['result_publication_id', 'student_profile_id']);
+            $table->unique(['result_publication_id', 'enrollment_id', 'subject_offering_id'],'res_pub_enr_sub');
+            $table->index(['result_publication_id', 'student_profile_id'],'res_pub_stu_pro');
         });
     }
 

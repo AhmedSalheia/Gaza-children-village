@@ -54,7 +54,7 @@ return new class extends Migration
             $table->index('staff_profile_id');
             $table->index('institution_semester_id');
             $table->index('staff_position_id');
-            $table->index(['class_group_id', 'subject_offering_id', 'status']);
+            $table->index(['class_group_id', 'subject_offering_id', 'status'],'cls_grp_sub_state');
         });
     }
 

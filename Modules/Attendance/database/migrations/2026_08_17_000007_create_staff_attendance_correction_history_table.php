@@ -21,7 +21,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('staff_attendance_record_id')
-                ->constrained('staff_attendance_records')
+                ->constrained('staff_attendance_records', indexName: 'stf_att_rec')
                 ->cascadeOnDelete();
 
             // Denormalized for efficient lookups

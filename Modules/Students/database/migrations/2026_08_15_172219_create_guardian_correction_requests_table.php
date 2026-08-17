@@ -33,7 +33,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('guardian_student_relationship_id')
-                ->constrained('guardian_student_relationships')
+                ->constrained('guardian_student_relationships',indexName: 'gcr_guardian_rel_fk',)
                 ->restrictOnDelete();
 
             // The guardian's proposed values (null = no change requested for that field)

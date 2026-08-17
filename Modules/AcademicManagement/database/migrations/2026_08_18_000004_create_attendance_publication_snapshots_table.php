@@ -52,7 +52,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->index(['institution_semester_id', 'class_group_id', 'status']);
+            $table->index(['institution_semester_id', 'class_group_id', 'status'],'ins_sem_cls_grp_stt');
         });
     }
 

@@ -23,15 +23,23 @@ return new class extends Migration
     {
         Schema::table('student_marks', function ($table): void {
             $table->dropUnique('student_marks_sheet_enrollment_assessment_unique');
-        });
 
-        // Partial unique index — only original marks (correction_of_id IS NULL)
-        // are constrained. Correction rows may share the same triplet.
-        DB::statement(
-            'CREATE UNIQUE INDEX student_marks_original_unique '.
-            'ON student_marks (mark_sheet_id, enrollment_id, assessment_definition_id) '.
-            'WHERE correction_of_id IS NULL'
-        );
+            $table->unsignedTinyInteger('original_guard')
+                ->nullable()
+                ->storedAs(
+                    'IF(correction_of_id IS NULL, 1, NULL)'
+                );
+
+                $table->unique(
+                    [
+                        'mark_sheet_id',
+                        'enrollment_id',
+                        'assessment_definition_id',
+                        'original_guard',
+                    ],
+                    'student_marks_original_unique'
+                );
+        });
     }
 
     public function down(): void

@@ -61,7 +61,7 @@ return new class extends Migration
             // A class may have multiple historical sheets if reopened; the current
             // active one is always the one with the latest created_at that is not
             // in a superseded state. Business logic prevents duplicate drafts.
-            $table->index(['class_group_id', 'attendance_date', 'status']);
+            $table->index(['class_group_id', 'attendance_date', 'status'],'cls_grp_att_stt');
             $table->index('institution_semester_id');
             $table->index('operational_period_id');
         });

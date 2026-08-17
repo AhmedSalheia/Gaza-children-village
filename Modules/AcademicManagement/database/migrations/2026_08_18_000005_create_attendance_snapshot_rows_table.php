@@ -39,8 +39,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['snapshot_id', 'enrollment_id', 'attendance_date']);
-            $table->index(['snapshot_id', 'student_profile_id']);
+            $table->unique(['snapshot_id', 'enrollment_id', 'attendance_date'],'snp_enr_att');
+            $table->index(['snapshot_id', 'student_profile_id'],'snp_stu_pro');
         });
     }
 

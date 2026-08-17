@@ -46,7 +46,7 @@ return new class extends Migration
             // Common lookup: all active relationships for a student
             $table->index(['student_profile_id', 'ends_on']);
             // Portal eligibility query
-            $table->index(['guardian_profile_id', 'verification_status', 'portal_eligible']);
+            $table->index(['guardian_profile_id', 'verification_status', 'portal_eligible'],'Portal_eligibility');
         });
     }
 

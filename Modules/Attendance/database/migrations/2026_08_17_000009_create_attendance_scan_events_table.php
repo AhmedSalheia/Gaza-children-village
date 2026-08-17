@@ -62,7 +62,7 @@ return new class extends Migration
             );
 
             $table->index('staff_profile_id');
-            $table->index(['operational_period_id', 'scan_date', 'processing_status']);
+            $table->index(['operational_period_id', 'scan_date', 'processing_status'],'op_per_scn_dt_pros_stt');
             $table->index('processing_status');
         });
     }
