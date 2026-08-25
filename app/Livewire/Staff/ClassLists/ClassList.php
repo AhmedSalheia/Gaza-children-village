@@ -66,7 +66,7 @@ final class ClassList extends Component
     public function classStudents(): Collection
     {
         if ($this->classGroupId === 0) {
-            return collect();
+            $this->classGroupId = $this->classGroups()->first()->id;
         }
 
         // Verify the class group belongs to the staff's scope.
@@ -96,6 +96,7 @@ final class ClassList extends Component
             ->where('se.class_group_id', $this->classGroupId)
             ->whereIn('se.enrollment_status', ['active', 'draft'])
             ->select(
+                'p.national_id as national_id',
                 'sp.id as student_id',
                 'p.full_name_ar as name_ar',
                 'p.full_name_en as name_en',
@@ -109,6 +110,8 @@ final class ClassList extends Component
 
     public function downloadCsv(): void
     {
+        //TODO: Change to Excel Export
+
         $this->requirePermission('enrollment.view');
 
         if ($this->classGroupId === 0) {
@@ -132,12 +135,11 @@ final class ClassList extends Component
             ]);
         }
 
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+
         $this->stream(
-            content: implode("\n", $csvLines),
-            headers: [
-                'Content-Type' => 'text/csv; charset=utf-8',
-                'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-            ]
+            content: implode("\n", $csvLines)
         );
     }
 

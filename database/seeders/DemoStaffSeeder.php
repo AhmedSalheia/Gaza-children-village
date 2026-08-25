@@ -100,6 +100,7 @@ final class DemoStaffSeeder extends Seeder
             }
 
             $personId = DB::table('people')->insertGetId([
+                'national_id' => random_int(111111111,999999999),
                 'full_name_ar' => $s['full_name_ar'],
                 'full_name_en' => $s['full_name_en'],
                 'birth_date' => $s['birth_date'],

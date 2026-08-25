@@ -13,7 +13,7 @@
                 <div style="font-size:var(--text-xs);color:var(--text-secondary);text-transform:uppercase;letter-spacing:var(--tracking-wide)">{{ __('ui.semester', [], null, 'Semester') }}</div>
                 <div style="font-size:var(--text-base);font-weight:600;color:var(--text-primary)">
                     {{ $semesterInfo->semester_name }}
-                    <span class="badge badge--{{ $semesterInfo->status === 'open' ? 'open' : 'closed' }}" style="margin-inline-start:var(--space-2)">{{ $semesterInfo->status }}</span>
+                    <span class="badge badge--{{ $semesterInfo->status === 'open' ? 'open' : 'closed' }}" style="margin-inline-start:var(--space-2)">{{ __('ui.'.$semesterInfo->status,[], null, $semesterInfo->status) }}</span>
                 </div>
             </div>
             @endif
@@ -98,7 +98,7 @@
                         {{ $batch->original_filename ?? '#' . $batch->id }}
                         @endif
                     </td>
-                    <td><span class="badge badge--{{ match($batch->status) {'completed'=>'active','cancelled','completed_with_errors'=>'closed',default=>'pending'} }}">{{ $batch->status }}</span></td>
+                    <td><span class="badge badge--{{ match($batch->status) {'completed'=>'active','cancelled','completed_with_errors'=>'closed',default=>'pending'} }}">{{ __('ui.'.(match($batch->status) {'completed'=>'active','cancelled','completed_with_errors'=>'closed',default=>'pending'}), [], null, $batch->status) }}</span></td>
                     <td>{{ $batch->created_at }}</td>
                 </tr>
                 @endforeach

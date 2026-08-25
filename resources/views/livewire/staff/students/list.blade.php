@@ -72,7 +72,7 @@
                     </td>
                     <td>{{ $student->class_group_name }}</td>
                     <td>{{ $student->level_name }}</td>
-                    <td><span class="badge badge--{{ match($student->enrollment_status) {'active'=>'active','draft'=>'draft','suspended'=>'pending',default=>'closed'} }}">{{ $student->enrollment_status }}</span></td>
+                    <td><span class="badge badge--{{ match($student->enrollment_status) {'active'=>'active','draft'=>'draft','suspended'=>'pending',default=>'closed'} }}">{{ __('ui.'.$student->enrollment_status) }}</span></td>
                     <td style="white-space:nowrap">
                         <a href="{{ route('staff.students.detail', ['studentProfileId' => $student->student_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.view', [], null, 'View') }}</a>
                         @if($canManageEnrollments)

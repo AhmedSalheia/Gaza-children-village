@@ -109,6 +109,7 @@ final class DemoGuardianSeeder extends Seeder
 
             // Create Person for guardian
             $personId = DB::table('people')->insertGetId([
+                'national_id' => random_int(111111111,999999999),
                 'full_name_ar' => $g['full_name_ar'],
                 'full_name_en' => $g['full_name_en'],
                 'birth_date' => $g['birth_date'],

@@ -13,6 +13,8 @@ return [
     'actions' => 'الإجراءات',
     'activate' => 'تفعيل',
     'activate_portal' => 'تفعيل البوابة',
+    'withdrawn' => 'مسقط',
+    'transferred' => 'منقول',
     'active' => 'نشط',
     'active_enrollments' => 'التسجيلات النشطة',
     'active_imports' => 'عمليات الاستيراد النشطة',
@@ -128,8 +130,8 @@ return [
     'civil_registry_audit' => 'تدقيق استعلامات السجل المدني',
     'civil_registry_lookup' => 'استعلام السجل المدني',
     'class_group' => 'الشعبة',
-    'class_groups' => 'الشعب الصفية',
-    'class_lists' => 'قوائم الصفوف',
+    'class_groups' => 'الشعب',
+    'class_lists' => 'الصفوف',
     'classroom' => 'القاعة',
     'classrooms' => 'القاعات الدراسية',
     'clear' => 'مسح',
@@ -515,4 +517,6 @@ return [
     'year_only' => 'السنة فقط',
     'years' => 'سنوات',
     'yes' => 'نعم',
+    'male' => 'ذكر',
+    'female' => 'انثى'
 ];

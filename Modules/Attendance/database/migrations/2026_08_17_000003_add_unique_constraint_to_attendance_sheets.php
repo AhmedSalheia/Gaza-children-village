@@ -39,7 +39,7 @@ return new class extends Migration
         Schema::table('student_attendance_sheets', function (Blueprint $table): void {
             $table->dropUnique('sas_class_date_unique');
             $table->dropIndex(['status']);
-            $table->index(['class_group_id', 'attendance_date', 'status']);
+            $table->index(['class_group_id', 'attendance_date', 'status'],'cls_grp_att_stt');
         });
     }
 };

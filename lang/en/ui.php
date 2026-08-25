@@ -13,6 +13,8 @@ return [
     'actions' => 'Actions',
     'activate' => 'Activate',
     'activate_portal' => 'Activate Portal',
+    'withdrawn' => 'Withdrawn',
+    'transferred' => 'Transferred',
     'active' => 'Active',
     'active_enrollments' => 'Active Enrolments',
     'active_imports' => 'Active Imports',
@@ -515,4 +517,6 @@ return [
     'year_only' => 'Year Only',
     'years' => 'years',
     'yes' => 'Yes',
+    'male' => 'Male',
+    'female' => 'Female'
 ];

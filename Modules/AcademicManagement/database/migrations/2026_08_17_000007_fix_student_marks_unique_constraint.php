@@ -44,13 +44,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement('DROP INDEX IF EXISTS student_marks_original_unique');
-
         Schema::table('student_marks', function ($table): void {
-            $table->unique(
-                ['mark_sheet_id', 'enrollment_id', 'assessment_definition_id'],
-                'student_marks_sheet_enrollment_assessment_unique'
-            );
+
         });
     }
 };

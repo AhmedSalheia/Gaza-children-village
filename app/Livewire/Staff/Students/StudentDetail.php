@@ -61,7 +61,8 @@ final class StudentDetail extends Component
                 'p.full_name_en',
                 'p.birth_date',
                 'p.birth_date_precision',
-                'p.gender'
+                'p.gender',
+                'p.national_id'
             )
             ->first();
     }

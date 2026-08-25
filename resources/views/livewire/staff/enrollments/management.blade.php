@@ -130,18 +130,18 @@
                     </td>
                     <td>{{ $e->class_group_name }}</td>
                     <td>{{ $e->level_name }}</td>
-                    <td><span class="badge badge--{{ match($e->enrollment_status) {'active'=>'active','draft'=>'draft','suspended'=>'pending',default=>'closed'} }}">{{ $e->enrollment_status }}</span></td>
+                    <td><span class="badge badge--{{ match($e->enrollment_status) {'active'=>'active','draft'=>'draft','suspended'=>'pending',default=>'closed'} }}">{{ __('ui.'.$e->enrollment_status) }}</span></td>
                     <td>{{ $e->enrolled_on }}</td>
                     <td style="white-space:nowrap">
                         @if($e->enrollment_status === 'draft')
                             <button wire:click="startChangePlacement({{ $e->id }})" class="btn btn--outline btn--sm">{{ __('ui.change_placement_short', [], null, 'Placement') }}</button>
                             <button wire:click="activate({{ $e->id }})" class="btn btn--secondary btn--sm">{{ __('ui.activate', [], null, 'Activate') }}</button>
-                            <button wire:click="$set('withdrawingEnrollmentId', {{ $e->id }})" class="btn btn--ghost btn--sm">{{ __('ui.withdraw', [], null, 'Withdraw') }}</button>
+                            <button wire:click="$set('withdrawingEnrollmentId', {{ $e->id }})" class="btn btn--outline--secondary btn--sm">{{ __('ui.withdraw', [], null, 'Withdraw') }}</button>
                         @elseif($e->enrollment_status === 'active')
                             @if($canTransfer)
                             <a href="{{ route('staff.enrollments.transfer', ['studentProfileId' => $e->student_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
                             @endif
-                            <button wire:click="$set('suspendingEnrollmentId', {{ $e->id }})" class="btn btn--ghost btn--sm">{{ __('ui.suspend', [], null, 'Suspend') }}</button>
+                            <button wire:click="$set('suspendingEnrollmentId', {{ $e->id }})" class="btn btn--outline--secondary btn--sm">{{ __('ui.suspend', [], null, 'Suspend') }}</button>
                         @endif
                     </td>
                 </tr>

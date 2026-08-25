@@ -32,12 +32,12 @@
         <div class="card">
             <h2 style="font-size:var(--text-lg);font-weight:600;margin-block-end:var(--space-4)">{{ __('ui.profile', [], null, 'Profile') }}</h2>
             <dl style="display:grid;grid-template-columns:auto 1fr;gap:var(--space-2) var(--space-4)">
-                <dt style="color:var(--text-secondary);font-size:var(--text-sm)">{{ __('ui.student_code', [], null, 'Student Code') }}</dt>
-                <dd style="font-weight:500">{{ $student?->student_code }}</dd>
+                <dt style="color:var(--text-secondary);font-size:var(--text-sm)">{{ __('ui.national_id', [], null, 'National ID') }}</dt>
+                <dd style="font-weight:500">{{ $student?->national_id }}</dd>
                 <dt style="color:var(--text-secondary);font-size:var(--text-sm)">{{ __('ui.status', [], null, 'Status') }}</dt>
-                <dd><span class="badge badge--{{ $student?->lifecycle_status === 'active' ? 'active' : 'draft' }}">{{ $student?->lifecycle_status }}</span></dd>
+                <dd><span class="badge badge--{{ $student?->lifecycle_status === 'active' ? 'active' : 'draft' }}">{{ __('ui.'.$student?->lifecycle_status) }}</span></dd>
                 <dt style="color:var(--text-secondary);font-size:var(--text-sm)">{{ __('ui.gender', [], null, 'Gender') }}</dt>
-                <dd>{{ $student?->gender ?? '—' }}</dd>
+                <dd>{{ __('ui.'.$student?->gender) }}</dd>
                 <dt style="color:var(--text-secondary);font-size:var(--text-sm)">{{ __('ui.birth_date', [], null, 'Birth Date') }}</dt>
                 <dd>{{ $student?->birth_date ? \Carbon\Carbon::parse($student->birth_date)->format('Y-m-d') : '—' }}</dd>
                 <dt style="color:var(--text-secondary);font-size:var(--text-sm)">{{ __('ui.registered_on', [], null, 'Registered On') }}</dt>
@@ -95,7 +95,7 @@
                         <td>{{ $rel->relationship_type }}</td>
                         <td>
                             <span class="badge badge--{{ $rel->verification_status === 'verified' ? 'active' : 'pending' }}">
-                                {{ $rel->verification_status }}
+                                {{ __('ui.'.$rel->verification_status) }}
                             </span>
                         </td>
                         <td>{{ $rel->portal_eligible ? '✓' : '—' }}</td>
@@ -129,7 +129,7 @@
                         <td>{{ $e->semester_name }}</td>
                         <td>{{ $e->class_group_name }}</td>
                         <td>{{ $e->level_name }}</td>
-                        <td><span class="badge badge--{{ match($e->enrollment_status) {'active'=>'active','draft'=>'draft','completed'=>'archived',default=>'closed'} }}">{{ $e->enrollment_status }}</span></td>
+                        <td><span class="badge badge--{{ match($e->enrollment_status) {'active'=>'active','draft'=>'draft','completed'=>'archived',default=>'closed'} }}">{{ __('ui.'.$e->enrollment_status) }}</span></td>
                         <td>{{ $e->enrolled_on }}</td>
                     </tr>
                     @endforeach

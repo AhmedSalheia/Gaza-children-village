@@ -26,7 +26,7 @@
                         @if($cg->classroom_name)
                         <div style="font-size:var(--text-xs);opacity:0.7">{{ $cg->classroom_name }}</div>
                         @endif
-                        <span style="font-size:var(--text-xs);padding:1px 6px;border-radius:999px;background:rgba(0,0,0,0.1)">{{ $cg->lifecycle_status }}</span>
+                        <span style="font-size:var(--text-xs);padding:1px 6px;border-radius:999px;background:rgba(0,0,0,0.1)">{{ __('ui.'. $cg->lifecycle_status, [], null, $cg->lifecycle_status) }}</span>
                     </button>
                 </li>
                 @endforeach
@@ -62,7 +62,7 @@
                 <table class="data-table">
                     <thead><tr>
                         <th>#</th>
-                        <th>{{ __('ui.student_code', [], null, 'Code') }}</th>
+                        <th>{{ __('ui.national_id', [], null, 'National ID') }}</th>
                         <th>{{ __('ui.name', [], null, 'Name') }}</th>
                         <th>{{ __('ui.status', [], null, 'Status') }}</th>
                         <th>{{ __('ui.enrolled_on', [], null, 'Enrolled On') }}</th>
@@ -71,7 +71,7 @@
                         @forelse($classStudents as $i => $s)
                         <tr>
                             <td style="color:var(--text-secondary)">{{ $i + 1 }}</td>
-                            <td>{{ $s->student_code }}</td>
+                            <td>{{ $s->national_id }}</td>
                             <td>
                                 <a href="{{ route('staff.students.detail', ['studentProfileId' => $s->student_id]) }}" class="link" wire:navigate>
                                     {{ $s->name_ar }}
@@ -80,7 +80,7 @@
                                 <div style="font-size:var(--text-xs);color:var(--text-secondary)">{{ $s->name_en }}</div>
                                 @endif
                             </td>
-                            <td><span class="badge badge--{{ match($s->enrollment_status) {'active'=>'active','draft'=>'draft',default=>'closed'} }}">{{ $s->enrollment_status }}</span></td>
+                            <td><span class="badge badge--{{ match($s->enrollment_status) {'active'=>'active','draft'=>'draft',default=>'closed'} }}">{{ __('ui.'. (match($s->enrollment_status) {'active'=>'active','draft'=>'draft',default=>'closed'}), [], null, match($s->enrollment_status) {'active'=>'active','draft'=>'draft',default=>'closed'}) }}</span></td>
                             <td>{{ $s->enrolled_on }}</td>
                         </tr>
                         @empty

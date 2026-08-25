@@ -17,6 +17,7 @@ final class PersonFactory extends Factory
     public function definition(): array
     {
         return [
+            'national_id' => $this->faker->numberBetween(111111111,99999999),
             'full_name_ar' => $this->faker->name(),
             'full_name_en' => $this->faker->optional()->name(),
             'birth_date' => null,
