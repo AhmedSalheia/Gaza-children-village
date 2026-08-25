@@ -119,7 +119,7 @@
   --interactive-danger-hover: #B2382A;
   --interactive-danger-text:  var(--neutral-0);
 
-  --interactive-ghost-hover:  var(--teal-50);
+  --interactive-ghost-hover:  var(--teal-600);
 
   /* Focus ring */
   --focus-ring-color:  var(--gold-400);

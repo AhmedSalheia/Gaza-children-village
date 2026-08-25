@@ -21,6 +21,7 @@ final class PersonFactory extends Factory
             'full_name_en' => $this->faker->optional()->name(),
             'birth_date' => null,
             'birth_date_precision' => null,
+            'gender' => $this->faker->gender()
         ];
     }
 

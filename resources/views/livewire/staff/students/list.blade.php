@@ -76,7 +76,7 @@
                     <td style="white-space:nowrap">
                         <a href="{{ route('staff.students.detail', ['studentProfileId' => $student->student_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.view', [], null, 'View') }}</a>
                         @if($canManageEnrollments)
-                        <a href="{{ route('staff.enrollments.transfer', ['studentProfileId' => $student->student_id]) }}" class="btn btn--ghost btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
+                        <a href="{{ route('staff.enrollments.transfer', ['studentProfileId' => $student->student_id]) }}" class="btn btn--outline--secondary btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
                         @endif
                     </td>
                 </tr>
