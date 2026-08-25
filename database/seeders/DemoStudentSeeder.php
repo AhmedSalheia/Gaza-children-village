@@ -76,6 +76,7 @@ final class DemoStudentSeeder extends Seeder
             $personId = DB::table('people')->insertGetId([
                 'full_name_ar' => $data['full_name_ar'],
                 'full_name_en' => $data['full_name_en'],
+                'gender' => $data['sex'],
                 'birth_date' => $data['birth_date'],
                 'birth_date_precision' => $data['birth_date'] !== null ? 'exact' : 'unknown',
                 'created_at' => now(),
