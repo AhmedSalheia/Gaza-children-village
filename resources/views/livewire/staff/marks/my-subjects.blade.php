@@ -5,7 +5,7 @@
         <h1 class="page-title">{{ __('ui.marks', [], null, 'Marks') }}</h1>
     </div>
 
-    @if($flashMessage !== '')
+    @if(($flashMessage ?? '') !== '')
         <div class="alert alert--{{ $flashType === 'success' ? 'success' : 'danger' }}"
              x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)">
             {{ $flashMessage }}
