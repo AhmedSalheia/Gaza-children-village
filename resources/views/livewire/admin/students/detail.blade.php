@@ -48,7 +48,7 @@
                                 <span dir="rtl">{{ $rel->full_name_ar }}</span>
                             </a>
                             <span style="font-size:var(--text-sm);color:var(--text-secondary);margin-inline-start:var(--space-2)">
-                                {{ $rel->relationship_type }}
+                                {{ __('ui.'.$rel->relationship_type)  }}
                             </span>
                         </div>
                         @php

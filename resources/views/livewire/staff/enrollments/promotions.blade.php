@@ -32,7 +32,7 @@
                 <label class="form-label form-label--required">{{ __('ui.proposed_outcome', [], null, 'Proposed Outcome') }}</label>
                 <select wire:model="proposalStatus" class="form-control form-select">
                     @foreach($proposalStatuses as $s)
-                    <option value="{{ $s->value }}">{{ $s->value }}</option>
+                    <option value="{{ $s->value }}">{{ __('ui.'.$s->value)  }}</option>
                     @endforeach
                 </select>
             </div>
@@ -114,14 +114,14 @@
                         <a href="{{ route('staff.students.detail', ['studentProfileId' => $p->student_id]) }}" class="link" wire:navigate>{{ $p->student_name }}</a>
                     </td>
                     <td>{{ $p->class_group_name }} / {{ $p->level_name }}</td>
-                    <td><span class="badge badge--draft">{{ $p->proposed_status }}</span></td>
+                    <td><span class="badge badge--draft">{{ __('ui.'.$p->proposed_status)  }}</span></td>
                     <td>
                         <span class="badge badge--{{ match($p->review_status) {'pending'=>'pending','approved'=>'active','rejected'=>'closed',default=>'draft'} }}">
-                            {{ $p->review_status }}
+                            {{ __('ui.'.$p->review_status ) }}
                         </span>
                     </td>
                     <td>{{ $p->reason ?? '—' }}</td>
-                    <td>{{ $p->reviewed_by ?? '—' }}</td>
+                    <td>{{ $p->reviewed_by  ?? '—' }}</td>
                     <td>
                         @if($canApprove && $p->review_status === 'pending')
                         <button wire:click="startReview({{ $p->id }})" class="btn btn--outline btn--sm">{{ __('ui.review', [], null, 'Review') }}</button>

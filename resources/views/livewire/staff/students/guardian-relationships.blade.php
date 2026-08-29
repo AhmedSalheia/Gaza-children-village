@@ -37,7 +37,7 @@
             <select wire:model="relationshipType" class="form-control form-select @error('relationshipType') form-control--error @enderror">
                 <option value="">— {{ __('ui.select', [], null, 'Select') }} —</option>
                 @foreach($relationshipTypes as $type)
-                <option value="{{ $type->value }}">{{ $type->value }}</option>
+                <option value="{{ $type->value }}">{{__('ui.'.$type->value)  }}</option>
                 @endforeach
             </select>
             @error('relationshipType') <span class="form-error">{{ $message }}</span> @enderror
@@ -46,7 +46,7 @@
             <label class="form-label">{{ __('ui.legal_authority', [], null, 'Legal Authority') }}</label>
             <select wire:model="legalAuthority" class="form-control form-select">
                 @foreach($legalAuthorityOptions as $opt)
-                <option value="{{ $opt->value }}">{{ $opt->value }}</option>
+                <option value="{{ $opt->value }}">{{ __('ui.'.$opt->value) }}</option>
                 @endforeach
             </select>
         </div>
@@ -92,10 +92,10 @@
                 @forelse($relationships as $rel)
                 <tr>
                     <td>{{ $rel->guardian_name }}</td>
-                    <td>{{ $rel->relationship_type }}</td>
-                    <td><span class="badge badge--{{ $rel->verification_status === 'verified' ? 'active' : 'pending' }}">{{ $rel->verification_status }}</span></td>
+                    <td>{{ __('ui.'.$rel->relationship_type ) }}</td>
+                    <td><span class="badge badge--{{ $rel->verification_status === 'verified' ? 'active' : 'pending' }}">{{ __('ui.'.$rel->verification_status) }}</span></td>
                     <td>{{ $rel->portal_eligible ? '✓' : '—' }}</td>
-                    <td>{{ $rel->legal_authority }}</td>
+                    <td>{{ __('ui.'.$rel->legal_authority) }}</td>
                     <td>{{ $rel->ends_on ?? __('ui.active', [], null, 'Active') }}</td>
                     <td style="white-space:nowrap">
                         @if($canVerify && $rel->verification_status !== 'verified' && !$rel->ends_on)

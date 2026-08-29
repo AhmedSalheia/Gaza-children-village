@@ -47,7 +47,7 @@
                                     'verified' => 'warning',
                                     'approved','published' => 'active',
                                     default => 'archived'
-                                } }}">{{ $row->sheet_status }}</span>
+                                } }}">{{__('ui.'. $row->sheet_status) }}</span>
                             @else
                                 <span class="badge badge--archived">{{ __('marks.no_sheet') }}</span>
                             @endif

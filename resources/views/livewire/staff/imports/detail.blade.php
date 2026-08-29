@@ -14,7 +14,7 @@
                 'completed' => 'active',
                 'cancelled', 'completed_with_errors' => 'closed',
                 default => 'pending'
-            } }}">{{ $batch->status }}</span>
+            } }}">{{__('ui.'.$batch->status ) }}</span>
             <span style="font-size:var(--text-sm);color:var(--text-secondary);margin-inline-start:var(--space-2)">
                 {{ number_format(($batch->file_size_bytes ?? 0) / 1024, 1) }} KB
             </span>
@@ -152,7 +152,7 @@
                                 'invalid' => 'closed',
                                 'skipped' => 'draft',
                                 default => 'pending'
-                            } }}">{{ $row['status'] ?? '—' }}</span>
+                            } }}">{{ __('ui.'. $row['status'] ) ?? '—' }}</span>
                         </td>
                         <td style="font-size:var(--text-xs);max-inline-size:300px">
                             @if(isset($row['data']) && is_array($row['data']))

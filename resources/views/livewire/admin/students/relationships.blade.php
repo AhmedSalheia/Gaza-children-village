@@ -53,7 +53,7 @@
                             <span dir="rtl">{{ $rel->student_name }}</span>
                             <code style="font-size:var(--text-xs)">{{ $rel->student_code }}</code>
                         </td>
-                        <td>{{ $rel->relationship_type }}</td>
+                        <td>{{__('ui.'.$rel->relationship_type)}}</td>
                         <td>
                             <span class="badge badge--{{ $isActive ? 'active' : 'closed' }}">
                                 {{ $isActive ? __('ui.active', [], null, 'Active') : __('ui.ended', [], null, 'Ended') }}

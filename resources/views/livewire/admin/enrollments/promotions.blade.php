@@ -39,13 +39,13 @@
                         <td dir="rtl">{{ $proposal->current_class_group }}</td>
                         <td>
                             <span class="badge badge--{{ match($proposal->proposed_status) { 'promoted' => 'open', 'repeating' => 'pending', default => 'draft' } }}">
-                                {{ $proposal->proposed_status }}
+                                {{ __('ui.'. $proposal->proposed_status) }}
                             </span>
                         </td>
-                        <td>{{ $proposal->proposed_level ?? '—' }}</td>
+                        <td>{{ __('ui.'.$proposal->proposed_level) ?? '-'  }}</td>
                         <td>
                             <span class="badge badge--{{ match($proposal->review_status) { 'approved' => 'active', 'rejected' => 'closed', default => 'pending' } }}">
-                                {{ $proposal->review_status }}
+                                {{ __('ui.'.)$proposal->review_status  }}
                             </span>
                         </td>
                         <td style="font-size:var(--text-sm);color:var(--text-secondary)">

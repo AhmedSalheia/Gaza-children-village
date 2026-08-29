@@ -60,7 +60,7 @@
                                     'verified' => 'warning',
                                     'approved','published' => 'active',
                                     default => 'archived'
-                                } }}">{{ $sheet->status }}</span>
+                                } }}">{{ __('ui.'.$sheet->status)  }}</span>
                             </td>
                             <td>{{ $sheet->version }}</td>
                             <td>{{ $sheet->submitted_at ? \Carbon\Carbon::parse($sheet->submitted_at)->format('d/m') : '—' }}</td>

@@ -46,7 +46,7 @@
                             $relVerified = $rel->verification_status === 'verified';
                         @endphp
                         <div style="display:flex;gap:var(--space-1);margin-block-start:var(--space-1)">
-                            <span class="badge badge--draft">{{ $rel->relationship_type }}</span>
+                            <span class="badge badge--draft">{{ __('ui.'.$rel->relationship_type)}}</span>
                             <span class="badge badge--{{ $relActive ? 'active' : 'closed' }}">
                                 {{ $relActive ? __('ui.active', [], null, 'Active') : __('ui.ended', [], null, 'Ended') }}
                             </span>

@@ -69,7 +69,7 @@
                             'cancelled', 'completed_with_errors' => 'closed',
                             'uploaded', 'parsing', 'ready_for_mapping', 'validating', 'ready_for_review', 'applying' => 'pending',
                             default => 'draft'
-                        } }}">{{ $batch->status }}</span>
+                        } }}">{{__('ui.'.$batch->status)  }}</span>
                     </td>
                     <td>{{ $batch->file_size_bytes ? number_format($batch->file_size_bytes / 1024, 1) . ' KB' : '—' }}</td>
                     <td style="max-inline-size:200px;overflow:hidden;text-overflow:ellipsis">{{ $batch->notes ?? '—' }}</td>
