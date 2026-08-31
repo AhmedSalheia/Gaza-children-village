@@ -366,6 +366,7 @@ return [
     'portal_eligible' => 'Portal',
     'invalid'=>'Invalid',
     'failed'=>'Failed',
+    'recent_notifications'=>'Recent Notifications',
     'conflict'=>'Conflict',
     'precision' => 'Precision',
     'present' => 'Present',

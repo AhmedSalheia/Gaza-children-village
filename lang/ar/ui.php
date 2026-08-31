@@ -515,6 +515,7 @@ return [
     'mother'=>'أم',
      'invalid'=>'غير صالح',
     'failed'=>'فشل',
+    'recent_notifications'=>'اشعارات حديثة',
     'repeating'=>'مكرر',
     'promoted'=>'تمت ترقيته',
     'graduated'=>'متخرج',
