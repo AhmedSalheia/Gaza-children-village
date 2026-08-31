@@ -37,7 +37,7 @@
                         </td>
                         <td>
                             <span class="badge badge--{{ $guardian->lifecycle_status === 'active' ? 'active' : 'archived' }}">
-                                {{ $guardian->lifecycle_status }}
+                                {{ __('ui.'.$guardian->lifecycle_status )}}
                             </span>
                         </td>
                         <td>

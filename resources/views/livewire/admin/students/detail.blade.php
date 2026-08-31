@@ -9,7 +9,7 @@
             </h1>
             @if($student)
                 <span class="badge badge--{{ match($student->lifecycle_status) { 'active' => 'active', 'draft' => 'draft', 'withdrawn','inactive' => 'closed', 'graduated' => 'archived', default => 'pending' } }}">
-                    {{ $student->lifecycle_status }}
+                    {{ __('ui.'. $student->lifecycle_status )}}
                 </span>
             @endif
         </div>

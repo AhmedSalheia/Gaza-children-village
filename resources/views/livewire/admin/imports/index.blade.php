@@ -54,7 +54,7 @@
         <select wire:model.live="statusFilter" class="form-control form-select" style="max-inline-size:220px">
             <option value="">{{ __('ui.all_statuses', [], null, 'All statuses') }}</option>
             @foreach($statusOptions as $opt)
-                <option value="{{ $opt }}">{{ $opt }}</option>
+                <option value="{{ $opt }}">{{__('ui.'.$opt)  }}</option>
             @endforeach
         </select>
     </div>
@@ -83,7 +83,7 @@
                                 'ready_for_review', 'ready_for_mapping' => 'open',
                                 'applying', 'validating', 'parsing' => 'pending',
                                 default => 'draft'
-                            } }}">{{ $batch->status }}</span>
+                            } }}">{{ __('ui.'.$batch->status)  }}</span>
                         </td>
                         <td style="font-size:var(--text-sm)">
                             {{ $batch->created_at ? \Carbon\Carbon::parse($batch->created_at)->format('Y-m-d H:i') : '—' }}

@@ -18,7 +18,8 @@
         <select wire:model.live="typeFilter" class="form-control form-select" style="max-inline-size:200px">
             <option value="">{{ __('ui.all_types', [], null, 'All types') }}</option>
             @foreach($institutionTypes as $type)
-                <option value="{{ $type->id }}">{{ $type->name_ar ?: $type->name_en }}</option>
+                <option value="{{ $type->id }}">        {{ __('ui.institution_types.' . $type->name_en, [], null, $type->name_ar ?: $type->name_en) }}
+</option>
             @endforeach
         </select>
 

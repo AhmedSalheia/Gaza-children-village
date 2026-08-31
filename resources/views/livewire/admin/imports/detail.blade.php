@@ -22,7 +22,7 @@
                     'cancelled', 'completed_with_errors' => 'closed',
                     'ready_for_review', 'ready_for_mapping' => 'open',
                     default => 'pending'
-                } }}">{{ $batch->status->value }}</span>
+                } }}">{{ __('ui.'.$batch->status->value)  }}</span>
             @endif
         </div>
     </div>
@@ -134,7 +134,7 @@
                                             <td>{{ $row['row_number'] }}</td>
                                             <td>
                                                 <span class="badge badge--{{ match($row['status']) { 'created','updated' => 'active', 'skipped_existing' => 'pending', default => 'closed' } }}">
-                                                    {{ $row['status'] }}
+                                                    {{__('ui.'.$row['status'] ) }}
                                                 </span>
                                             </td>
                                             <td style="font-size:var(--text-sm)">{{ $row['summary'] ?? $row['proposed_action'] ?? '—' }}</td>

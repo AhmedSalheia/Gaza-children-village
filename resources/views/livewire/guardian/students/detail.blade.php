@@ -28,7 +28,7 @@
             <div style="font-size:var(--text-base);color:var(--text-secondary)">{{ $student->full_name_en }}</div>
             @endif
             <div style="margin-block-start:var(--space-1);display:flex;gap:var(--space-2);flex-wrap:wrap">
-                <span class="badge badge--active">{{ $student->lifecycle_status }}</span>
+                <span class="badge badge--active">{{__('ui.'.$student->lifecycle_status)  }}</span>
             </div>
         </div>
     </div>

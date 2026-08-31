@@ -45,7 +45,7 @@
                         <td>{{ __('ui.'.$proposal->proposed_level) ?? '-'  }}</td>
                         <td>
                             <span class="badge badge--{{ match($proposal->review_status) { 'approved' => 'active', 'rejected' => 'closed', default => 'pending' } }}">
-                                {{ __('ui.'.)$proposal->review_status  }}
+                                {{ __('ui.'.$proposal->review_status)  }}
                             </span>
                         </td>
                         <td style="font-size:var(--text-sm);color:var(--text-secondary)">

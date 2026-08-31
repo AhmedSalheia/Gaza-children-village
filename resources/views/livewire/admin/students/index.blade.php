@@ -22,7 +22,7 @@
         <select wire:model.live="statusFilter" class="form-control form-select" style="max-inline-size:160px">
             <option value="">{{ __('ui.all_statuses', [], null, 'All statuses') }}</option>
             @foreach($statusOptions as $opt)
-                <option value="{{ $opt }}">{{ $opt }}</option>
+                <option value="{{ $opt }}">{{ __('ui.'.$opt) }}</option>
             @endforeach
         </select>
 
@@ -72,7 +72,7 @@
                                 'withdrawn', 'inactive' => 'closed',
                                 'graduated' => 'archived',
                                 default => 'pending'
-                            } }}">{{ $student->lifecycle_status }}</span>
+                            } }}">{{ __('ui.'.$student->lifecycle_status)  }}</span>
                         </td>
                         <td style="font-size:var(--text-sm);color:var(--text-secondary)">{{ $student->registered_on ?? '—' }}</td>
                         <td>
@@ -88,10 +88,18 @@
         </table>
     </div>
 
-    <div class="pagination">
-        <div class="pagination__info">
-            {{ $students->total() }} {{ __('ui.students', [], null, 'students') }}
-        </div>
+   <div class="pagination">
+    <div class="pagination__info">
+        <span class="pagination__count">
+            {{ $students->total() }}
+        </span>
+
+        <span>
+            {{ __('ui.students', [], null, 'students') }}
+        </span>
+    </div>
+
+    <div class="pagination__links">
         {{ $students->links() }}
     </div>
 </div>

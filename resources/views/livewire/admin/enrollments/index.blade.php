@@ -33,7 +33,7 @@
         <select wire:model.live="statusFilter" class="form-control form-select" style="max-inline-size:160px">
             <option value="">{{ __('ui.all_statuses', [], null, 'All statuses') }}</option>
             @foreach($statusOptions as $opt)
-                <option value="{{ $opt }}">{{ $opt }}</option>
+                <option value="{{ $opt }}">{{__('ui.'.$opt )}}</option>
             @endforeach
         </select>
     </div>
@@ -67,7 +67,7 @@
                                 'withdrawn','transferred' => 'closed',
                                 'completed','promoted' => 'archived',
                                 default => 'pending'
-                            } }}">{{ $enrollment->enrollment_status }}</span>
+                            } }}">{{ __('ui.'.$enrollment->enrollment_status ) }}</span>
                         </td>
                         <td style="font-size:var(--text-sm)">{{ $enrollment->enrolled_on ?? '—' }}</td>
                     </tr>

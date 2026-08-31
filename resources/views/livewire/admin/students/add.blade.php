@@ -18,7 +18,7 @@
                     background:{{ $step >= $n ? 'var(--interactive-primary)' : 'var(--neutral-200)' }};
                     color:{{ $step >= $n ? 'var(--neutral-0)' : 'var(--text-secondary)' }};
                 ">{{ $n }}</div>
-                <span style="font-size:var(--text-sm);{{ $step === $n ? 'font-weight:600' : 'color:var(--text-secondary)' }}">{{ $label }}</span>
+                <span style="font-size:var(--text-sm);{{ $step === $n ? 'font-weight:600' : 'color:var(--text-secondary)' }}">{{__('ui.'.$label)  }}</span>
                 @if($n < 4)
                     <span style="color:var(--border-default)">→</span>
                 @endif

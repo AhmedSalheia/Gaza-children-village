@@ -109,7 +109,7 @@
                                     'withdrawn', 'inactive' => 'closed',
                                     'graduated' => 'archived',
                                     default => 'pending'
-                                } }}">{{ $status }}</span>
+                                } }}">{{__('ui.'.$status) }}</span>
                             </td>
                             <td>{{ number_format($count) }}</td>
                         </tr>
@@ -147,7 +147,7 @@
                                     'cancelled', 'completed_with_errors' => 'closed',
                                     'uploaded', 'parsing', 'ready_for_mapping', 'validating', 'ready_for_review', 'applying' => 'pending',
                                     default => 'draft'
-                                } }}">{{ $batch->status }}</span>
+                                } }}">{{__('ui.'.$batch->status)  }}</span>
                             </td>
                         </tr>
                     @empty
