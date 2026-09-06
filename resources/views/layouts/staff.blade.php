@@ -44,7 +44,7 @@
                         : [];
                     $navCan = fn (string $key): bool => array_key_exists($key, $navPermissions);
                 @endphp
-                @include('layouts.partials.staff-nav', ['navCan' => $navCan])
+
             @endauth
         </nav>
 
@@ -65,6 +65,8 @@
 </header>
 
 <div class="portal-body">
+    @include('layouts.partials.staff-nav', ['navCan' => $navCan])
+
     @if(session('success') || session('error'))
         <div class="flash-region">
             @if(session('success'))

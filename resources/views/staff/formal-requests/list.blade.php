@@ -6,36 +6,36 @@
 @endphp
 <div>
     @if($flashMessage)
-        <div class="mb-4 rounded border border-blue-300 bg-blue-50 px-4 py-2 text-sm text-blue-800">
-            {{ $flashMessage }}
-        </div>
+    <div class="mb-4 rounded border border-blue-300 bg-blue-50 px-4 py-2 text-sm text-blue-800">
+        {{ $flashMessage }}
+    </div>
     @endif
 
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-xl font-semibold text-gray-900">{{ __('ui.formal_requests') }}</h1>
         @if($canPrepare)
-            <a href="{{ route('staff.formal-requests.new') }}"
-               class="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
-                {{ __('ui.new_request') }}
-            </a>
-        @endif
-    </div>
+        <a href="{{ route('staff.formal-requests.new') }}"
+        class="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
+        {{ __('ui.new_request') }}
+    </a>
+    @endif
+</div>
 
-    {{-- Filters --}}
-    <div class="mb-4 flex gap-3">
-        <select wire:model.live="statusFilter"
-                class="rounded border border-gray-300 px-3 py-1.5 text-sm">
-            <option value="">{{ __('ui.all_statuses') }}</option>
+{{-- Filters --}}
+<div class="mb-4 flex gap-3">
+    <select wire:model.live="statusFilter"
+    class="rounded border border-gray-300 px-3 py-1.5 text-sm">
+    <option value="">{{ __('ui.all_statuses') }}</option>
             @foreach($statusOptions as $s)
-                <option value="{{ $s }}">{{ ucwords(str_replace('_', ' ', $s)) }}</option>
+            <option value="{{ $s }}">{{ ucwords(str_replace('_', ' ', $s)) }}</option>
             @endforeach
         </select>
 
         <select wire:model.live="typeFilter"
-                class="rounded border border-gray-300 px-3 py-1.5 text-sm">
-            <option value="">{{ __('ui.all_types') }}</option>
+        class="rounded border border-gray-300 px-3 py-1.5 text-sm">
+        <option value="">{{ __('ui.all_types') }}</option>
             @foreach($typeOptions as $t)
-                <option value="{{ $t }}">{{ ucwords($t) }}</option>
+            <option value="{{ $t }}">{{ ucwords($t) }}</option>
             @endforeach
         </select>
     </div>
@@ -62,26 +62,26 @@
                         <td class="px-4 py-3 text-gray-600">{{ ucwords($req->request_type) }}</td>
                         <td class="px-4 py-3">
                             <span class="rounded-full px-2 py-0.5 text-xs font-medium
-                                @if(in_array($req->current_status, ['closed','cancelled','superseded'])) bg-gray-100 text-gray-600
-                                @elseif($req->current_status === 'signed') bg-green-100 text-green-700
-                                @elseif(str_contains($req->current_status, 'review')) bg-yellow-100 text-yellow-700
-                                @elseif(str_contains($req->current_status, 'returned')) bg-red-100 text-red-700
-                                @else bg-blue-100 text-blue-700 @endif">
-                                {{ ucwords(str_replace('_', ' ', $req->current_status)) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-gray-600">
-                            {{ ['', __('requests.priority_low'), __('requests.priority_medium'), __('requests.priority_high'), __('requests.priority_urgent')][$req->priority] ?? $req->priority }}
-                        </td>
-                        <td class="px-4 py-3 text-gray-500 text-xs">{{ $req->created_at->format('d M Y') }}</td>
-                        <td class="px-4 py-3">
-                            <a href="{{ route('staff.formal-requests.detail', $req->id) }}"
-                               class="text-blue-600 hover:underline text-xs me-2">{{ __('ui.view') }}</a>
+                            @if(in_array($req->current_status, ['closed','cancelled','superseded'])) bg-gray-100 text-gray-600
+                            @elseif($req->current_status === 'signed') bg-green-100 text-green-700
+                            @elseif(str_contains($req->current_status, 'review')) bg-yellow-100 text-yellow-700
+                            @elseif(str_contains($req->current_status, 'returned')) bg-red-100 text-red-700
+                            @else bg-blue-100 text-blue-700 @endif">
+                            {{ ucwords(str_replace('_', ' ', $req->current_status)) }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-600">
+                        {{ ['', __('requests.priority_low'), __('requests.priority_medium'), __('requests.priority_high'), __('requests.priority_urgent')][$req->priority] ?? $req->priority }}
+                    </td>
+                    <td class="px-4 py-3 text-gray-500 text-xs">{{ $req->created_at->format('d M Y') }}</td>
+                    <td class="px-4 py-3">
+                        <a href="{{ route('staff.formal-requests.detail', $req->id) }}"
+                            class="text-blue-600 hover:underline text-xs me-2">{{ __('ui.view') }}</a>
                             @if($canPrepare && $req->isCancellable())
-                                <button wire:click="cancel({{ $req->id }})"
-                                        wire:confirm="{{ __('requests.cancel_confirm') }}"
+                            <button wire:click="cancel({{ $req->id }})"
+                                wire:confirm="{{ __('requests.cancel_confirm') }}"
                                         class="text-red-600 hover:underline text-xs">{{ __('ui.cancel') }}</button>
-                            @endif
+                                        @endif
                         </td>
                     </tr>
                 @empty
@@ -90,8 +90,8 @@
                             {{ __('requests.no_formal_requests') }}
                         </td>
                     </tr>
-                @endforelse
-            </tbody>
+                    @endforelse
+                </tbody>
         </table>
     </div>
 
