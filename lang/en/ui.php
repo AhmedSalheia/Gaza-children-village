@@ -389,7 +389,7 @@ return [
                         'select_class_to_filter_sections'=>'Select a class to display its sections',
                             'reset_filters'=>'Reset Filiters',
                                 'class_lists_description'=>'View students by class and section',
-                                    'available_sections'=>'available_sections',
+                                    'available_sections'=>'Available Sections',
 
 
 
