@@ -372,6 +372,36 @@ return [
     'ready_for_mapping'=>'ready For Mapping',
     'validating'=>'VAlidating',
     'proposed_level'=>'Level',
+    'filters'=>'Filters',
+    'filter_by_class_section'=>'filter by class section',
+    'filters_active'=>'filters active',
+        'class'=>'Class',
+            'all_classes'=>'All Classes',
+                'select_class_help'=>'Select Class Help',
+                    'section'=>'Section',
+    'select_class_first'=>'Select Class First',
+    'all_sections'=>'All Sections',
+        'section_disabled_help'=>'Choose a class first to load its sections',
+            'select_section_help'=>'Select a section to view its students',
+                'class_filter_active'=>'Class Active',
+                    'section_filter_active'=>'Activee Section',
+                    'and'=>'And',
+                        'select_class_to_filter_sections'=>'Select a class to display its sections',
+                            'reset_filters'=>'Reset Filiters',
+                                'class_lists_description'=>'View students by class and section',
+                                    'available_sections'=>'available_sections',
+
+
+
+
+
+
+
+
+
+
+
+'select_section'=>'Select Section',
 
     'applying'=>'Applying',
     'completed_with_errors'=>'Completed With Errors',
