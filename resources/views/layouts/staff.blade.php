@@ -21,33 +21,6 @@
             <img src="{{ asset('assets/img/gcv-logo-dark.png') }}" class="h-full" alt="GCV logo" />
         </a>
 
-        <nav class="portal-header__nav" role="navigation" aria-label="{{ __('auth.staff_portal') }}">
-            @auth('staff')
-                @php
-                    /**
-                     * Compute the authenticated staff member's permission set for nav rendering.
-                     * Permission chain: staff_accounts → staff_profiles → staff_positions (active)
-                     * → position_role_grants → role_permissions → permissions
-                     */
-                    $staffAccount = auth('staff')->user();
-                    $navPermissions = ($staffAccount && $staffAccount->staff_profile_id)
-                        ? \Illuminate\Support\Facades\DB::table('staff_positions as pos')
-                            ->join('position_role_grants as prg', 'prg.position_definition', '=', 'pos.position_definition')
-                            ->join('role_permissions as rp', 'rp.role_id', '=', 'prg.role_id')
-                            ->join('permissions as p', 'p.id', '=', 'rp.permission_id')
-                            ->where('pos.staff_profile_id', $staffAccount->staff_profile_id)
-                            ->where('pos.started_on', '<=', now()->toDateString())
-                            ->where(fn ($q) => $q->whereNull('pos.ended_on')->orWhere('pos.ended_on', '>=', now()->toDateString()))
-                            ->pluck('p.key')
-                            ->flip()
-                            ->toArray()
-                        : [];
-                    $navCan = fn (string $key): bool => array_key_exists($key, $navPermissions);
-                @endphp
-
-            @endauth
-        </nav>
-
         <div class="portal-header__actions">
 
             @include('layouts.partials.locale-switcher')
@@ -65,7 +38,7 @@
 </header>
 
 <div class="portal-body">
-    @include('layouts.partials.staff-nav', ['navCan' => $navCan])
+    @include('layouts.partials.staff-nav')
 
     @if(session('success') || session('error'))
         <div class="flash-region">
