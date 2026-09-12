@@ -83,7 +83,7 @@ final class NewFormalRequest extends Component
         return view('staff.formal-requests.new', [
             'requestTypes' => InstitutionFormalRequest::REQUEST_TYPES,
             'priorityOptions' => [1 => 'Low', 2 => 'Medium', 3 => 'High', 4 => 'Urgent'],
-        ]);
+        ])->layout('layouts.staff');
     }
 
     /** @return array<string, mixed> */

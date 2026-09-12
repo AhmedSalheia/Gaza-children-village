@@ -76,6 +76,6 @@ final class AttendanceQueue extends Component
     {
         return view('livewire.staff.attendance.queue', [
             'sheets' => $this->pendingSheets(),
-        ]);
+        ])->layout('layouts.staff');
     }
 }

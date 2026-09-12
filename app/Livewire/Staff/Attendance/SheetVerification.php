@@ -224,7 +224,7 @@ final class SheetVerification extends Component
             'records' => $this->records(),
             'statuses' => StudentAttendanceStatus::catalogue(),
             'correctionHistory' => $this->correctionHistory(),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     private function flash(string $message, string $type = 'success'): void

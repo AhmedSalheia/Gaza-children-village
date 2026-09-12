@@ -168,7 +168,7 @@ final class StaffAttendanceDashboard extends Component
         return view('livewire.staff.attendance.staff-dashboard', [
             'summaries' => $this->periodSummaries(),
             'attendanceRows' => $this->attendanceRows(),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     private function defaultPeriodId(): int

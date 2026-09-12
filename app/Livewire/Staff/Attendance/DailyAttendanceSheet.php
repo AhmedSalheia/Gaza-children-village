@@ -340,7 +340,7 @@ final class DailyAttendanceSheet extends Component
             'records' => $this->records(),
             'statuses' => StudentAttendanceStatus::catalogue(),
             'canManage' => $this->staffCan(PermissionKey::STUDENT_ATTENDANCE_VERIFY),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     private function flash(string $message, string $type = 'success'): void

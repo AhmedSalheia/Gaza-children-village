@@ -167,7 +167,7 @@ final class QrCardGenerator extends Component
     {
         return view('livewire.staff.attendance.qr-card-generator', [
             'staffList' => $this->staffList(),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

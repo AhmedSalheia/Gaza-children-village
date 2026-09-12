@@ -215,7 +215,7 @@ final class ScanEventQueue extends Component
             'reviewingEvent' => $this->reviewingEventId !== null
                 ? $this->scopedReviewingEvent()
                 : null,
-        ]);
+        ])->layout('layouts.staff');
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

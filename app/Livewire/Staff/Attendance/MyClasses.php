@@ -116,6 +116,6 @@ final class MyClasses extends Component
     {
         return view('livewire.staff.attendance.my-classes', [
             'classes' => $this->classes(),
-        ]);
+        ])->layout('layouts.staff');
     }
 }

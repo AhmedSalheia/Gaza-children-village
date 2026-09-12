@@ -518,7 +518,7 @@ final class FormalRequestDetail extends Component
             'canSubmit' => $this->staffCan(PermissionKey::FORMAL_REQUEST_SUBMIT),
             'canSupersede' => $canPrepare
                 && in_array($request->current_status, $supersedableStatuses, true),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     /**

@@ -102,7 +102,7 @@ final class FormalRequestList extends Component
             'canPrepare' => $this->staffCan(PermissionKey::FORMAL_REQUEST_PREPARE),
             'canReview' => $this->staffCan(PermissionKey::FORMAL_REQUEST_REVIEW),
             'canSign' => $this->staffCan(PermissionKey::FORMAL_REQUEST_SIGN),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     /**

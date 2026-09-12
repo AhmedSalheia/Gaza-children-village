@@ -5,7 +5,7 @@
     function is_route(String $route): bool
     {
         $current = app('router')->current()->uri;
-        $preg_route = '/' . str_replace(['/','*'],['\/','.*'], $route) .'/';
+        $preg_route = '/' . str_replace(['/','*'],['\/','.*'], $route) .'$/';
 
         return preg_match($preg_route, $current);
     }
@@ -113,7 +113,7 @@
     {{-- Staff Attendance: secretary daily entry --}}
     @if($navCan('staff_attendance.enter'))
     <li class="portal-nav__item">
-        <a href="{{ route('staff.staff-attendance.index') }}" class="portal-nav__link {{ active('staff/staff-attendance') }} {{ active('staff/staff-attendance/*') }}">
+        <a href="{{ route('staff.staff-attendance.index') }}" class="portal-nav__link {{ active('staff/staff-attendance') }}">
             {{ __('ui.staff_attendance', [], null, 'Staff Attendance') }}
         </a>
     </li>

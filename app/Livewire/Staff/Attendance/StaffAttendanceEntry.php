@@ -305,7 +305,7 @@ final class StaffAttendanceEntry extends Component
             'staffRows' => $this->staffRows(),
             'periods' => $this->availablePeriods(),
             'statuses' => StaffAttendanceStatus::catalogue(),
-        ]);
+        ])->layout('layouts.staff');
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
