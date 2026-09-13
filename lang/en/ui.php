@@ -399,9 +399,13 @@ return [
 
 
 
+     'download_excel'=>'Excel Download',
 
 
+
+'class_group' => 'Class Group', 'student_name' => 'Student Name','student_code' => 'Student Code', 'subject' => 'Subject', 'score_100' => 'Score (100)', 'grade' => 'Grade', 'completeness' => 'Completeness', 'published_at' => 'Published At', 'date' => 'Date', 'created_at' => 'Created At', 'updated_at' => 'Updated At', 'status' => 'Status', 'total' => 'Total', 'count' => 'Count',
 'select_section'=>'Select Section',
+'sheet_id' => 'Mark Sheet ID', 'class_group' => 'Class Group', 'student_name' => 'Student Name', 'student_code' => 'Student Code', 'subject' => 'Subject', 'teacher' => 'Teacher', 'status' => 'Status', 'version' => 'Version', 'submitted_at' => 'Submitted At', 'approved_at' => 'Approved At', 'score_100' => 'Score (100)', 'grade' => 'Grade', 'completeness' => 'Completeness', 'total' => 'Total', 'draft' => 'Draft', 'submitted' => 'Submitted', 'verified' => 'Verified', 'returned' => 'Returned', 'approved' => 'Approved', 'complete' => 'Complete', 'incomplete' => 'Incomplete', 'all_absent' => 'All Absent', 'no_assessments' => 'No Assessments',
 
     'applying'=>'Applying',
     'completed_with_errors'=>'Completed With Errors',

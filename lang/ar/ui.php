@@ -38,7 +38,10 @@ return [
     'class_lists_description'=>'رؤية الطلاب بواسطة اختيار الصف والشعبة',
     'available_sections'=>'الشعب المتاحة',
     'select_section'=>'اختيار الشعبة',
-
+     'download_excel'=>'تنزيل أكسل',
+     'class_group' => 'المجموعة الدراسية', 'student_name' => 'اسم الطالب', 'student_code' => 'رقم الطالب', 'subject' => 'المادة', 'score_100' => 'الدرجة (100)', 'grade' => 'التقدير', 'completeness' => 'حالة الاكتمال', 'published_at' => 'تاريخ النشر', 'date' => 'التاريخ', 'created_at' => 'تاريخ الإنشاء', 'updated_at' => 'تاريخ التحديث', 'status' => 'الحالة', 'total' => 'الإجمالي', 'count' => 'العدد',
+     'sheet_id' => 'رقم كشف الدرجات', 'class_group' => 'المجموعة الدراسية', 'student_name' => 'اسم الطالب', 'student_code' => 'رقم الطالب', 'subject' => 'المادة', 'teacher' => 'المعلم', 'status' => 'الحالة', 'version' => 'الإصدار', 'submitted_at' => 'تاريخ التسليم', 'approved_at' => 'تاريخ الاعتماد', 'score_100' => 'الدرجة (100)', 'grade' => 'التقدير', 'completeness' => 'حالة الاكتمال', 'total' => 'الإجمالي', 'draft' => 'مسودة', 'submitted' => 'تم التسليم', 'verified' => 'تم التحقق', 'returned' => 'معاد', 'approved' => 'معتمد', 'complete' => 'مكتمل', 'incomplete' => 'غير مكتمل', 'all_absent' => 'غياب كامل', 'no_assessments' => 'لا توجد تقييمات',
+     'level' =>'المستوى',
     'select_class_first'=>'اختيار الصف أولا',
     'all_sections'=>'جميع الشعب',
     'section_disabled_help'=>'اختار الصف اولا ليتم تحميل الشعب',

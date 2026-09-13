@@ -71,7 +71,7 @@ final class ImportBatchIndex extends Component
         $this->requirePermission('import.upload');
 
         $this->validate([
-            'uploadFile' => ['required', 'file', 'max:51200', 'mimes:csv,xlsx'],
+    'uploadFile' => ['required', 'file', 'max:102400', 'mimes:csv,xlsx'],
         ]);
 
         $scope = $this->staffScope();

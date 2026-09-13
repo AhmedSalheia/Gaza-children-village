@@ -4,26 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Staff\ClassLists;
 
+use App\Exports\ClassStudentsExport;
 use App\Livewire\Staff\Concerns\HasStaffAuth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
 
-/**
- * Class list viewer — read-only for all staff roles.
- *
- * Teachers see this as their primary view (enrollment.view permission).
- * Secretaries and principals also see it but can navigate to enrollment
- * management from here.
- *
- * Period-restricted staff see only class groups for their assigned periods.
- *
- * Filtering:
- * - Academic Level = Class / الصف
- * - Class Group = Section / الشعبة
- */
 final class ClassList extends Component
 {
     use HasStaffAuth;
@@ -56,13 +45,26 @@ final class ClassList extends Component
         }
 
         $query = DB::table('class_groups as cg')
-            ->join('academic_levels as al', 'al.id', '=', 'cg.academic_level_id')
-            ->leftJoin('classrooms as cr', 'cr.id', '=', 'cg.classroom_id')
+            ->join(
+                'academic_levels as al',
+                'al.id',
+                '=',
+                'cg.academic_level_id'
+            )
+            ->leftJoin(
+                'classrooms as cr',
+                'cr.id',
+                '=',
+                'cg.classroom_id'
+            )
             ->where(
                 'cg.institution_semester_id',
                 $scope['institution_semester_id']
             )
-            ->whereNotIn('cg.lifecycle_status', ['archived']);
+            ->whereNotIn(
+                'cg.lifecycle_status',
+                ['archived']
+            );
 
         /*
          * Filter by selected academic level / class.
@@ -110,10 +112,8 @@ final class ClassList extends Component
     }
 
     /**
-     * Get available academic levels / classes for the current staff scope.
-     *
-     * These are derived from the accessible class groups, so the user
-     * cannot select a class outside their allowed semester/period scope.
+     * Get available academic levels / classes
+     * for the current staff scope.
      */
     public function academicLevels(): Collection
     {
@@ -134,7 +134,10 @@ final class ClassList extends Component
                 'cg.institution_semester_id',
                 $scope['institution_semester_id']
             )
-            ->whereNotIn('cg.lifecycle_status', ['archived']);
+            ->whereNotIn(
+                'cg.lifecycle_status',
+                ['archived']
+            );
 
         /*
          * Period restriction.
@@ -184,17 +187,15 @@ final class ClassList extends Component
 
     /**
      * Called whenever the class / academic level changes.
-     *
-     * The previously selected section may no longer belong to the
-     * newly selected class, so reset the section selection.
      */
     public function updatedAcademicLevelId(): void
     {
         $this->classGroupId = 0;
 
         /*
-         * If a class was selected, automatically select the first
-         * available section only when there is exactly one section.
+         * If a class was selected, automatically select
+         * the first available section only when there is
+         * exactly one section.
          */
         if ($this->academicLevelId > 0) {
             $sections = $this->sections();
@@ -215,12 +216,15 @@ final class ClassList extends Component
         }
 
         /*
-         * Make sure the selected section actually belongs to the
-         * selected class when a class filter is active.
+         * Make sure the selected section actually belongs
+         * to the selected class when a class filter is active.
          */
         if ($this->academicLevelId > 0) {
             $section = $this->sections()
-                ->firstWhere('id', $this->classGroupId);
+                ->firstWhere(
+                    'id',
+                    $this->classGroupId
+                );
 
             if (! $section) {
                 $this->classGroupId = 0;
@@ -243,8 +247,8 @@ final class ClassList extends Component
     public function classStudents(): Collection
     {
         /*
-         * If there is no selected section, don't automatically select
-         * the first one. This allows the filters to work naturally.
+         * If there is no selected section, don't automatically
+         * select the first one.
          */
         if ($this->classGroupId === 0) {
             return collect();
@@ -260,7 +264,10 @@ final class ClassList extends Component
         }
 
         $classGroup = DB::table('class_groups')
-            ->where('id', $this->classGroupId)
+            ->where(
+                'id',
+                $this->classGroupId
+            )
             ->where(
                 'institution_semester_id',
                 $scope['institution_semester_id']
@@ -272,12 +279,14 @@ final class ClassList extends Component
         }
 
         /*
-         * If an academic level filter is active, verify that the
-         * selected section belongs to that academic level.
+         * If an academic level filter is active,
+         * verify that the selected section belongs
+         * to that academic level.
          */
         if (
             $this->academicLevelId > 0 &&
-            (int) $classGroup->academic_level_id !== $this->academicLevelId
+            (int) $classGroup->academic_level_id !==
+                $this->academicLevelId
         ) {
             return collect();
         }
@@ -335,12 +344,10 @@ final class ClassList extends Component
     }
 
     /**
-     * Download the selected class group's students as CSV.
+     * Download the selected class group's students as Excel.
      */
-    public function downloadCsv(): void
+    public function downloadExcel()
     {
-        // TODO: Change to Excel Export
-
         $this->requirePermission('enrollment.view');
 
         if ($this->classGroupId === 0) {
@@ -361,44 +368,27 @@ final class ClassList extends Component
             ($classGroup->code ?? $this->classGroupId) .
             '-' .
             now()->format('Y-m-d') .
-            '.csv';
+            '.xlsx';
 
-        $csvLines = [
-            'Student Code,Name (Arabic),Name (English),Status,Enrolled On'
-        ];
-
-        foreach ($students as $s) {
-            $csvLines[] = implode(',', [
-                '"' . ($s->student_code ?? '') . '"',
-                '"' . ($s->name_ar ?? '') . '"',
-                '"' . ($s->name_en ?? '') . '"',
-                '"' . ($s->enrollment_status ?? '') . '"',
-                '"' . ($s->enrolled_on ?? '') . '"',
-            ]);
-        }
-
-        header('Content-Type: text/csv; charset=utf-8');
-        header(
-            'Content-Disposition: attachment; filename="' .
-            $filename .
-            '"'
-        );
-
-        $this->stream(
-            content: implode("\n", $csvLines)
+        return Excel::download(
+            new ClassStudentsExport($students),
+            $filename
         );
     }
 
     public function render(): View
     {
-        return view('livewire.staff.class-lists.index', [
-            'classGroups' => $this->classGroups(),
-            'academicLevels' => $this->academicLevels(),
-            'sections' => $this->sections(),
-            'classStudents' => $this->classStudents(),
-            'canManageEnrollments' => $this->staffCan(
-                'enrollment.manage'
-            ),
-        ])->layout('layouts.staff');
+        return view(
+            'livewire.staff.class-lists.index',
+            [
+                'classGroups' => $this->classGroups(),
+                'academicLevels' => $this->academicLevels(),
+                'sections' => $this->sections(),
+                'classStudents' => $this->classStudents(),
+                'canManageEnrollments' => $this->staffCan(
+                    'enrollment.manage'
+                ),
+            ]
+        )->layout('layouts.staff');
     }
 }

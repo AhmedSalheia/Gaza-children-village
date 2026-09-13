@@ -2,7 +2,63 @@
     /** @var \App\Livewire\Staff\ClassLists\ClassList $this */
 @endphp
 
-<div>
+<div class="class-list-page">
+
+    {{-- =========================================================
+         REMOVE YELLOW FOCUS / OUTLINE / SHADOW
+    ========================================================== --}}
+    <style>
+        .class-list-page,
+        .class-list-page *,
+        .class-list-page *:focus,
+        .class-list-page *:focus-visible {
+            outline: none !important;
+            outline-color: transparent !important;
+        }
+
+        .class-list-page .card {
+            border-color: #e5e7eb !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .class-list-page table,
+        .class-list-page thead,
+        .class-list-page tbody,
+        .class-list-page tr,
+        .class-list-page th,
+        .class-list-page td {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .class-list-page table {
+            border: none !important;
+        }
+
+        .class-list-page tr {
+            border-color: #eef2f7;
+        }
+
+        .class-list-page button:focus,
+        .class-list-page button:focus-visible,
+        .class-list-page select:focus,
+        .class-list-page select:focus-visible,
+        .class-list-page a:focus,
+        .class-list-page a:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .class-list-page select {
+            outline: none !important;
+        }
+
+        .class-list-page button {
+            outline: none !important;
+        }
+    </style>
+
 
     {{-- =========================================================
          PAGE HEADER
@@ -10,20 +66,19 @@
     <div
         style="
             display:flex;
-            align-items:center;
+            align-items:flex-start;
             justify-content:space-between;
-            gap:var(--space-4);
-            margin-block-end:var(--space-6);
+            gap:20px;
+            margin-bottom:24px;
         "
     >
         <div>
             <h1
                 style="
-                    font-size:var(--text-2xl);
-                    font-weight:700;
-                    color:var(--text-primary);
                     margin:0;
-                    line-height:1.3;
+                    font-size:28px;
+                    font-weight:800;
+                    color:#172033;
                 "
             >
                 {{ __('ui.class_lists', [], null, 'Class Lists') }}
@@ -31,9 +86,9 @@
 
             <p
                 style="
-                    margin:var(--space-1) 0 0;
-                    font-size:var(--text-sm);
-                    color:var(--text-secondary);
+                    margin:7px 0 0;
+                    color:#64748b;
+                    font-size:14px;
                 "
             >
                 {{ __('ui.class_lists_description', [], null, 'View students by class and section.') }}
@@ -43,57 +98,196 @@
 
 
     {{-- =========================================================
-         FILTER CARD
+         FILTERS
     ========================================================== --}}
     <div
+        class="card"
         style="
-            background:var(--surface-primary);
-            border:1px solid var(--border-color);
-            border-radius:var(--radius-lg);
-            margin-block-end:var(--space-6);
-            overflow:hidden;
-            box-shadow:0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom:22px;
+            padding:20px;
+            border:1px solid #e5e7eb;
+            box-shadow:none !important;
         "
     >
 
-        {{-- Filter Header --}}
         <div
             style="
                 display:flex;
                 align-items:center;
                 justify-content:space-between;
-                gap:var(--space-4);
-                padding:var(--space-4) var(--space-5);
-                border-block-end:1px solid var(--border-color);
-                background:var(--surface-secondary, var(--surface-primary));
+                gap:15px;
+                margin-bottom:18px;
+            "
+        >
+            <div>
+                <h2
+                    style="
+                        margin:0;
+                        font-size:17px;
+                        font-weight:750;
+                        color:#172033;
+                    "
+                >
+                    {{ __('ui.filters', [], null, 'Filters') }}
+                </h2>
+
+                <p
+                    style="
+                        margin:5px 0 0;
+                        font-size:13px;
+                        color:#64748b;
+                    "
+                >
+                    {{ __('ui.filter_by_class_section', [], null, 'Filter students by class and section.') }}
+                </p>
+            </div>
+
+            @if ($academicLevelId > 0 || $classGroupId > 0)
+                <span
+                    style="
+                        display:inline-flex;
+                        align-items:center;
+                        gap:6px;
+                        padding:6px 10px;
+                        border-radius:999px;
+                        background:#eff6ff;
+                        color:#2563eb;
+                        font-size:12px;
+                        font-weight:700;
+                    "
+                >
+                    {{ __('ui.filters_active', [], null, 'Filters active') }}
+                </span>
+            @endif
+        </div>
+
+
+        <div
+            style="
+                display:grid;
+                grid-template-columns:
+                    minmax(220px, 1fr)
+                    minmax(220px, 1fr)
+                    auto;
+                gap:14px;
+                align-items:end;
             "
         >
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:var(--space-3);
-                "
-            >
-
-                {{-- Filter Icon --}}
-                <div
+            {{-- Class --}}
+            <div>
+                <label
+                    for="academicLevelId"
                     style="
-                        width:38px;
-                        height:38px;
-                        display:flex;
+                        display:block;
+                        margin-bottom:7px;
+                        font-size:13px;
+                        font-weight:700;
+                        color:#334155;
+                    "
+                >
+                    {{ __('ui.class', [], null, 'Class') }}
+                </label>
+
+                <select
+                    id="academicLevelId"
+                    wire:model.live="academicLevelId"
+                    class="form-control"
+                    style="
+                        width:100%;
+                        min-height:42px;
+                        outline:none !important;
+                    "
+                >
+                    <option value="0">
+                        {{ __('ui.all_classes', [], null, 'All Classes') }}
+                    </option>
+
+                    @foreach ($academicLevels as $level)
+                        <option value="{{ $level->id }}">
+                            {{ $level->name_ar }}
+
+                            @if ($level->name_en)
+                                — {{ $level->name_en }}
+                            @endif
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+
+            {{-- Section --}}
+            <div>
+                <label
+                    for="classGroupId"
+                    style="
+                        display:block;
+                        margin-bottom:7px;
+                        font-size:13px;
+                        font-weight:700;
+                        color:#334155;
+                    "
+                >
+                    {{ __('ui.section', [], null, 'Section') }}
+                </label>
+
+                <select
+                    id="classGroupId"
+                    wire:model.live="classGroupId"
+                    class="form-control"
+                    style="
+                        width:100%;
+                        min-height:42px;
+                        outline:none !important;
+                    "
+                    @disabled($academicLevelId === 0)
+                >
+                    @if ($academicLevelId === 0)
+
+                        <option value="0">
+                            {{ __('ui.select_class_first', [], null, 'Select a class first...') }}
+                        </option>
+
+                    @else
+
+                        <option value="0">
+                            {{ __('ui.select_section', [], null, 'Select a section') }}
+                        </option>
+
+                        @foreach ($sections as $section)
+                            <option value="{{ $section->id }}">
+                                {{ $section->name_ar }}
+
+                                @if ($section->code)
+                                    — {{ $section->code }}
+                                @endif
+                            </option>
+                        @endforeach
+
+                    @endif
+                </select>
+            </div>
+
+
+            {{-- Reset --}}
+            <div>
+                <button
+                    type="button"
+                    wire:click="resetFilters"
+                    class="btn btn--outline btn--sm"
+                    style="
+                        min-height:42px;
+                        display:inline-flex;
                         align-items:center;
                         justify-content:center;
-                        border-radius:var(--radius-sm);
-                        background:var(--interactive-primary);
-                        color:white;
-                        flex-shrink:0;
+                        gap:7px;
+                        outline:none !important;
+                        box-shadow:none !important;
                     "
                 >
                     <svg
-                        width="19"
-                        height="19"
+                        width="16"
+                        height="16"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -102,284 +296,81 @@
                         stroke-linejoin="round"
                         aria-hidden="true"
                     >
-                        <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                        <path d="M3 12a9 9 0 1 0 3-6.7" />
+                        <polyline points="3 3 3 9 9 9" />
                     </svg>
-                </div>
 
-                <div>
-                    <h2
-                        style="
-                            margin:0;
-                            font-size:var(--text-base);
-                            font-weight:700;
-                            color:var(--text-primary);
-                        "
-                    >
-                        {{ __('ui.filters', [], null, 'Filters') }}
-                    </h2>
-
-                    <p
-                        style="
-                            margin:2px 0 0;
-                            font-size:var(--text-xs);
-                            color:var(--text-secondary);
-                        "
-                    >
-                        {{ __('ui.filter_by_class_section', [], null, 'Filter students by class and section.') }}
-                    </p>
-                </div>
+                    {{ __('ui.reset_filters', [], null, 'Reset Filters') }}
+                </button>
             </div>
-
-
-            {{-- Active Filters Indicator --}}
-            @if($academicLevelId > 0 || $classGroupId > 0)
-
-                <div
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:var(--space-2);
-                        padding:5px 10px;
-                        border-radius:999px;
-                        background:rgba(34,197,94,0.10);
-                        color:var(--text-primary);
-                        font-size:var(--text-xs);
-                        font-weight:600;
-                        white-space:nowrap;
-                    "
-                >
-                    <span
-                        style="
-                            width:7px;
-                            height:7px;
-                            border-radius:50%;
-                            background:#22c55e;
-                        "
-                    ></span>
-
-                    {{ __('ui.filters_active', [], null, 'Filters active') }}
-                </div>
-
-            @endif
 
         </div>
 
 
-        {{-- Filter Body --}}
-        <div style="padding:var(--space-5);">
+        {{-- Filter information --}}
+        <div
+            style="
+                display:flex;
+                align-items:center;
+                gap:8px;
+                margin-top:18px;
+                padding-top:14px;
+                border-top:1px solid #e5e7eb;
+                font-size:12px;
+                color:#64748b;
+            "
+        >
 
-            <div
-                style="
-                    display:grid;
-                    grid-template-columns:repeat(2, minmax(0, 1fr));
-                    gap:var(--space-5);
-                "
-            >
+            @if ($academicLevelId > 0)
 
-                {{-- =====================================================
-                     CLASS FILTER
-                ====================================================== --}}
-            <div class="form-group" style="margin:0">
-
-    <label
-        for="academicLevelId"
-        class="form-label"
-    >
-        {{ __('ui.class', [], null, 'Class') }}
-    </label>
-
-    <select
-        id="academicLevelId"
-        wire:model.live="academicLevelId"
-        class="form-control"
-    >
-        <option value="0">
-            {{ __('ui.all_classes', [], null, 'All Classes') }}
-        </option>
-
-        @foreach($academicLevels as $level)
-
-            <option value="{{ $level->id }}">
-                {{ $level->name_ar }}
-
-                @if($level->name_en)
-                    — {{ $level->name_en }}
-                @endif
-            </option>
-
-        @endforeach
-
-    </select>
-
-</div>
-
-
-                {{-- =====================================================
-                     SECTION FILTER
-                ====================================================== --}}
-      <div class="form-group" style="margin:0">
-
-    <label
-        for="classGroupId"
-        class="form-label"
-    >
-        {{ __('ui.section', [], null, 'Section') }}
-    </label>
-
-    <select
-        id="classGroupId"
-        wire:model.live="classGroupId"
-        class="form-control"
-        @disabled($academicLevelId === 0)
-    >
-
-        @if($academicLevelId === 0)
-
-            <option value="0">
-                {{ __('ui.select_class_first', [], null, 'Select a class first...') }}
-            </option>
-
-        @else
-
-            <option value="0">
-                {{ __('ui.all_sections', [], null, 'All Sections') }}
-            </option>
-
-            @foreach($sections as $section)
-
-                <option value="{{ $section->id }}">
-                    {{ $section->name_ar }}
-
-                    @if($section->code)
-                        — {{ $section->code }}
-                    @endif
-                </option>
-
-            @endforeach
-
-        @endif
-
-    </select>
-
-</div>
-
-
-            {{-- =====================================================
-                 FILTER FOOTER
-            ====================================================== --}}
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    justify-content:space-between;
-                    gap:var(--space-4);
-                    margin-block-start:var(--space-5);
-                    padding-block-start:var(--space-4);
-                    border-block-start:1px solid var(--border-color);
-                "
-            >
-
-                <div
+                <span
                     style="
-                        display:flex;
+                        display:inline-flex;
                         align-items:center;
-                        gap:8px;
-                        font-size:var(--text-xs);
-                        color:var(--text-secondary);
+                        justify-content:center;
+                        width:20px;
+                        height:20px;
+                        border-radius:50%;
+                        background:#ecfdf5;
+                        color:#16a34a;
+                        font-weight:700;
                     "
                 >
+                    ✓
+                </span>
 
-                    @if($academicLevelId > 0)
+                <span>
+                    {{ __('ui.class_filter_active', [], null, 'Class filter is active.') }}
 
-                        <span
-                            style="
-                                display:inline-flex;
-                                align-items:center;
-                                justify-content:center;
-                                width:20px;
-                                height:20px;
-                                border-radius:50%;
-                                background:rgba(34,197,94,0.10);
-                                color:#16a34a;
-                                font-weight:700;
-                            "
-                        >
-                            ✓
-                        </span>
-
-                        <span>
-                            {{ __('ui.class_filter_active', [], null, 'Class filter is active.') }}
-
-                            @if($classGroupId > 0)
-                                {{ __('ui.and', [], null, 'and') }}
-                                {{ __('ui.section_filter_active', [], null, 'section filter is active.') }}
-                            @endif
-                        </span>
-
-                    @else
-
-                        <span
-                            style="
-                                display:inline-flex;
-                                align-items:center;
-                                justify-content:center;
-                                width:20px;
-                                height:20px;
-                                border-radius:50%;
-                                background:var(--surface-secondary, #f3f4f6);
-                                color:var(--text-secondary);
-                                font-weight:700;
-                            "
-                        >
-                            i
-                        </span>
-
-                        <span>
-                            {{ __('ui.select_class_to_filter_sections', [], null, 'Select a class to display its sections.') }}
-                        </span>
-
+                    @if ($classGroupId > 0)
+                        {{ __('ui.and', [], null, 'and') }}
+                        {{ __('ui.section_filter_active', [], null, 'section filter is active.') }}
                     @endif
+                </span>
 
-                </div>
+            @else
 
+                <span
+                    style="
+                        display:inline-flex;
+                        align-items:center;
+                        justify-content:center;
+                        width:20px;
+                        height:20px;
+                        border-radius:50%;
+                        background:#f1f5f9;
+                        color:#64748b;
+                        font-weight:700;
+                    "
+                >
+                    i
+                </span>
 
-                {{-- Reset --}}
-                @if($academicLevelId > 0 || $classGroupId > 0)
+                <span>
+                    {{ __('ui.select_class_to_filter_sections', [], null, 'Select a class to display its sections.') }}
+                </span>
 
-                    <button
-                        type="button"
-                        wire:click="resetFilters"
-                        class="btn btn--outline btn--sm"
-                        style="
-                            display:inline-flex;
-                            align-items:center;
-                            gap:7px;
-                            white-space:nowrap;
-                        "
-                    >
-
-                        <svg
-                            width="15"
-                            height="15"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                            <path d="M3 4v5h5"/>
-                        </svg>
-
-                        {{ __('ui.reset_filters', [], null, 'Reset Filters') }}
-
-                    </button>
-
-                @endif
-
-            </div>
+            @endif
 
         </div>
 
@@ -392,38 +383,35 @@
     <div
         style="
             display:grid;
-            grid-template-columns:280px minmax(0, 1fr);
-            gap:var(--space-6);
+            grid-template-columns:minmax(260px, 320px) minmax(0, 1fr);
+            gap:22px;
             align-items:start;
         "
     >
 
-
         {{-- =====================================================
-             LEFT: CLASS GROUPS
+             CLASS GROUPS
         ====================================================== --}}
         <div
+            class="card"
             style="
-                background:var(--surface-primary);
-                border:1px solid var(--border-color);
-                border-radius:var(--radius-md);
-                overflow:hidden;
+                border:1px solid #e5e7eb;
+                box-shadow:none !important;
             "
         >
 
             <div
                 style="
-                    padding:var(--space-4);
-                    border-block-end:1px solid var(--border-color);
+                    padding:18px 18px 14px;
+                    border-bottom:1px solid #e5e7eb;
                 "
             >
-
                 <h2
                     style="
                         margin:0;
-                        font-size:var(--text-base);
-                        font-weight:700;
-                        color:var(--text-primary);
+                        font-size:17px;
+                        font-weight:750;
+                        color:#172033;
                     "
                 >
                     {{ __('ui.class_groups', [], null, 'Class Groups') }}
@@ -431,59 +419,118 @@
 
                 <p
                     style="
-                        margin:4px 0 0;
-                        font-size:var(--text-xs);
-                        color:var(--text-secondary);
+                        margin:5px 0 0;
+                        font-size:13px;
+                        color:#64748b;
                     "
                 >
                     {{ __('ui.available_sections', [], null, 'Available sections') }}
                 </p>
-
             </div>
 
 
-            <div style="padding:var(--space-3);">
+            <div style="padding:10px;">
 
-                @if($classGroups->isEmpty())
+                @forelse($classGroups as $cg)
 
-                    <div
+                    <button
+                        type="button"
+                        wire:click="$set('classGroupId', {{ $cg->id }})"
                         style="
-                            padding:var(--space-5);
-                            text-align:center;
-                            color:var(--text-secondary);
-                            font-size:var(--text-sm);
+                            width:100%;
+                            text-align:start;
+                            border:0;
+                            background:{{ $classGroupId == $cg->id ? '#eff6ff' : 'transparent' }};
+                            border-radius:10px;
+                            padding:13px;
+                            margin-bottom:5px;
+                            cursor:pointer;
+                            transition:background .15s ease;
+                            outline:none !important;
+                            box-shadow:none !important;
                         "
                     >
 
                         <div
                             style="
-                                width:40px;
-                                height:40px;
-                                margin:0 auto var(--space-3);
                                 display:flex;
                                 align-items:center;
-                                justify-content:center;
-                                border-radius:50%;
-                                background:var(--surface-secondary, #f3f4f6);
+                                justify-content:space-between;
+                                gap:10px;
                             "
                         >
-                            <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                            <strong
+                                style="
+                                    color:#172033;
+                                    font-size:14px;
+                                "
                             >
-                                <circle cx="12" cy="12" r="9"/>
-                                <path d="M12 8v4"/>
-                                <path d="M12 16h.01"/>
-                            </svg>
+                                {{ $cg->name_ar }}
+                            </strong>
+
+                            @if ($cg->code)
+                                <span
+                                    style="
+                                        font-size:11px;
+                                        color:#64748b;
+                                        font-weight:700;
+                                    "
+                                >
+                                    {{ $cg->code }}
+                                </span>
+                            @endif
                         </div>
 
-                        @if($academicLevelId > 0)
+
+                        <div
+                            style="
+                                margin-top:5px;
+                                font-size:12px;
+                                color:#64748b;
+                            "
+                        >
+                            {{ $cg->level_name }}
+
+                            @if ($cg->classroom_name)
+                                · {{ $cg->classroom_name }}
+                            @endif
+                        </div>
+
+
+                        @if ($cg->lifecycle_status)
+                            <div style="margin-top:8px;">
+
+                                <span
+                                    style="
+                                        display:inline-flex;
+                                        padding:4px 8px;
+                                        border-radius:999px;
+                                        background:#f1f5f9;
+                                        color:#475569;
+                                        font-size:11px;
+                                        font-weight:700;
+                                    "
+                                >
+                                    {{ __('ui.' . $cg->lifecycle_status, [], null, $cg->lifecycle_status) }}
+                                </span>
+
+                            </div>
+                        @endif
+
+                    </button>
+
+                @empty
+
+                    <div
+                        style="
+                            padding:30px 15px;
+                            text-align:center;
+                            color:#64748b;
+                            font-size:13px;
+                        "
+                    >
+
+                        @if ($academicLevelId > 0)
 
                             {{ __('ui.no_sections_for_class', [], null, 'No sections found for this class.') }}
 
@@ -495,137 +542,7 @@
 
                     </div>
 
-                @else
-
-                    <ul
-                        style="
-                            list-style:none;
-                            margin:0;
-                            padding:0;
-                            display:flex;
-                            flex-direction:column;
-                            gap:4px;
-                        "
-                    >
-
-                        @foreach($classGroups as $cg)
-
-                            <li>
-
-                                <button
-                                    type="button"
-                                    wire:click="$set('classGroupId', {{ $cg->id }})"
-                                    style="
-                                        width:100%;
-                                        text-align:start;
-                                        padding:12px;
-                                        border-radius:var(--radius-sm);
-                                        border:1px solid {{ $classGroupId === $cg->id ? 'var(--interactive-primary)' : 'transparent' }};
-                                        cursor:pointer;
-                                        background:{{ $classGroupId === $cg->id ? 'var(--interactive-primary)' : 'transparent' }};
-                                        color:{{ $classGroupId === $cg->id ? 'white' : 'var(--text-primary)' }};
-                                        transition:all 0.15s ease;
-                                    "
-                                >
-
-                                    <div
-                                        style="
-                                            display:flex;
-                                            align-items:center;
-                                            justify-content:space-between;
-                                            gap:8px;
-                                            margin-block-end:4px;
-                                        "
-                                    >
-
-                                        <span
-                                            style="
-                                                font-weight:600;
-                                                font-size:var(--text-sm);
-                                            "
-                                        >
-                                            {{ $cg->name_ar }}
-                                        </span>
-
-                                        @if($classGroupId === $cg->id)
-
-                                            <span
-                                                style="
-                                                    font-size:11px;
-                                                    opacity:0.9;
-                                                "
-                                            >
-                                                ✓
-                                            </span>
-
-                                        @endif
-
-                                    </div>
-
-
-                                    <div
-                                        style="
-                                            font-size:var(--text-xs);
-                                            opacity:0.75;
-                                            margin-block-end:3px;
-                                        "
-                                    >
-                                        {{ $cg->level_name }}
-                                    </div>
-
-
-                                    @if($cg->classroom_name)
-
-                                        <div
-                                            style="
-                                                font-size:var(--text-xs);
-                                                opacity:0.7;
-                                                margin-block-end:3px;
-                                            "
-                                        >
-                                            {{ $cg->classroom_name }}
-                                        </div>
-
-                                    @endif
-
-
-                                    @if($cg->code)
-
-                                        <div
-                                            style="
-                                                font-size:var(--text-xs);
-                                                opacity:0.7;
-                                                margin-block-end:6px;
-                                            "
-                                        >
-                                            {{ $cg->code }}
-                                        </div>
-
-                                    @endif
-
-
-                                    <span
-                                        style="
-                                            display:inline-flex;
-                                            align-items:center;
-                                            padding:2px 7px;
-                                            border-radius:999px;
-                                            background:rgba(0,0,0,0.10);
-                                            font-size:10px;
-                                        "
-                                    >
-                                        {{ __('ui.' . $cg->lifecycle_status, [], null, $cg->lifecycle_status) }}
-                                    </span>
-
-                                </button>
-
-                            </li>
-
-                        @endforeach
-
-                    </ul>
-
-                @endif
+                @endforelse
 
             </div>
 
@@ -633,86 +550,75 @@
 
 
         {{-- =====================================================
-             RIGHT: STUDENTS
+             STUDENTS
         ====================================================== --}}
         <div
+            class="card"
             style="
-                min-width:0;
-                background:var(--surface-primary);
-                border:1px solid var(--border-color);
-                border-radius:var(--radius-md);
-                overflow:hidden;
+                border:1px solid #e5e7eb;
+                box-shadow:none !important;
             "
         >
 
-            @if($classGroupId === 0)
+            @if ($classGroupId === 0)
 
-                {{-- Empty State --}}
+                {{-- Empty state --}}
                 <div
                     style="
-                        min-height:360px;
-                        display:flex;
-                        flex-direction:column;
-                        align-items:center;
-                        justify-content:center;
-                        padding:var(--space-8);
-                        color:var(--text-secondary);
+                        padding:70px 30px;
                         text-align:center;
                     "
                 >
 
                     <div
                         style="
-                            width:64px;
-                            height:64px;
+                            width:54px;
+                            height:54px;
+                            margin:0 auto 15px;
+                            border-radius:14px;
+                            background:#eff6ff;
+                            color:#2563eb;
                             display:flex;
                             align-items:center;
                             justify-content:center;
-                            border-radius:50%;
-                            background:var(--surface-secondary, #f3f4f6);
-                            margin-block-end:var(--space-4);
                         "
                     >
-
                         <svg
-                            width="28"
-                            height="28"
+                            width="25"
+                            height="25"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
-                            stroke-width="1.8"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                         >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
-
                     </div>
 
-
-                    <div
+                    <h3
                         style="
-                            font-size:var(--text-lg);
-                            font-weight:600;
-                            color:var(--text-primary);
-                            margin-block-end:var(--space-2);
+                            margin:0;
+                            font-size:18px;
+                            font-weight:750;
+                            color:#172033;
                         "
                     >
                         {{ __('ui.select_section', [], null, 'Select a section') }}
-                    </div>
+                    </h3>
 
-
-                    <div
+                    <p
                         style="
-                            max-width:420px;
-                            font-size:var(--text-sm);
-                            line-height:1.6;
+                            margin:7px 0 0;
+                            color:#64748b;
+                            font-size:13px;
                         "
                     >
-                        @if($academicLevelId === 0)
+                        @if ($academicLevelId === 0)
 
                             {{ __('ui.select_class_first', [], null, 'Select a class first, then choose a section to view its students.') }}
 
@@ -721,83 +627,77 @@
                             {{ __('ui.select_section_to_view_students', [], null, 'Choose a section to view the students enrolled in it.') }}
 
                         @endif
-                    </div>
+                    </p>
 
                 </div>
 
             @else
 
-                {{-- =================================================
-                     STUDENT HEADER
-                ================================================== --}}
+                @php
+                    $selectedSection = $sections->firstWhere('id', $classGroupId);
+                @endphp
+
+
+                {{-- Students Header --}}
                 <div
                     style="
-                        display:flex;
-                        align-items:center;
-                        justify-content:space-between;
-                        gap:var(--space-4);
-                        padding:var(--space-4) var(--space-5);
-                        border-block-end:1px solid var(--border-color);
+                        padding:20px;
+                        border-bottom:1px solid #e5e7eb;
                     "
                 >
 
-                    @php
-                        $selectedSection = $sections->firstWhere('id', $classGroupId);
-                    @endphp
+                    <div
+                        style="
+                            display:flex;
+                            align-items:flex-start;
+                            justify-content:space-between;
+                            gap:18px;
+                            flex-wrap:wrap;
+                        "
+                    >
 
-
-                    <div>
-
-                        <h2
-                            style="
-                                margin:0;
-                                font-size:var(--text-lg);
-                                font-weight:700;
-                                color:var(--text-primary);
-                            "
-                        >
-                            {{ __('ui.students', [], null, 'Students') }}
-
-                            <span
-                                style="
-                                    font-weight:500;
-                                    color:var(--text-secondary);
-                                "
-                            >
-                                ({{ $classStudents->count() }})
-                            </span>
-                        </h2>
-
-
-                        @if($selectedSection)
+                        <div>
 
                             <div
                                 style="
                                     display:flex;
                                     align-items:center;
+                                    gap:10px;
                                     flex-wrap:wrap;
-                                    gap:6px;
-                                    margin-block-start:5px;
-                                    font-size:var(--text-xs);
-                                    color:var(--text-secondary);
                                 "
                             >
+                                <h2
+                                    style="
+                                        margin:0;
+                                        font-size:20px;
+                                        font-weight:800;
+                                        color:#172033;
+                                    "
+                                >
+                                    {{ __('ui.students', [], null, 'Students') }}
 
-                                <span>
-                                    {{ $selectedSection->level_name }}
-                                </span>
+                                    <span
+                                        style="
+                                            font-weight:500;
+                                            color:#64748b;
+                                        "
+                                    >
+                                        ({{ $classStudents->count() }})
+                                    </span>
+                                </h2>
 
-                                <span>•</span>
+                                @if ($selectedSection?->code)
 
-                                <strong style="color:var(--text-primary);">
-                                    {{ $selectedSection->name_ar }}
-                                </strong>
-
-                                @if($selectedSection->code)
-
-                                    <span>•</span>
-
-                                    <span>
+                                    <span
+                                        style="
+                                            padding:5px 9px;
+                                            border-radius:999px;
+                                            background:#eff6ff;
+                                            color:#2563eb;
+                                            font-size:11px;
+                                            font-weight:800;
+                                        "
+                                    >
                                         {{ $selectedSection->code }}
                                     </span>
 
@@ -805,63 +705,108 @@
 
                             </div>
 
-                        @endif
+                            <div
+                                style="
+                                    margin-top:6px;
+                                    font-size:13px;
+                                    color:#64748b;
+                                "
+                            >
+                                {{ $selectedSection?->level_name ?? '' }}
 
-                    </div>
+                                @if ($selectedSection?->classroom_name)
+                                    · {{ $selectedSection->classroom_name }}
+                                @endif
+                            </div>
+
+                        </div>
 
 
-                    {{-- Actions --}}
-                    <div
-                        style="
-                            display:flex;
-                            align-items:center;
-                            gap:var(--space-2);
-                            flex-wrap:wrap;
-                        "
-                    >
-
-                        <button
-                            type="button"
-                            wire:click="downloadCsv"
-                            class="btn btn--outline btn--sm"
+                        {{-- Actions --}}
+                        <div
                             style="
-                                display:inline-flex;
+                                display:flex;
                                 align-items:center;
-                                gap:7px;
+                                gap:8px;
+                                flex-wrap:wrap;
                             "
                         >
 
-                            <svg
-                                width="15"
-                                height="15"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                            {{-- Excel --}}
+                            <button
+                                type="button"
+                                wire:click="downloadExcel"
+                                wire:loading.attr="disabled"
+                                wire:target="downloadExcel"
+                                class="btn btn--outline btn--sm"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    gap:7px;
+                                    outline:none !important;
+                                    box-shadow:none !important;
+                                "
                             >
-                                <path d="M12 3v12"/>
-                                <path d="m7 10 5 5 5-5"/>
-                                <path d="M5 21h14"/>
-                            </svg>
 
-                            {{ __('ui.download_csv', [], null, 'Download CSV') }}
+                                <span
+                                    wire:loading.remove
+                                    wire:target="downloadExcel"
+                                >
+                                    <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                        <polyline points="14 2 14 8 20 8" />
+                                        <line x1="16" y1="13" x2="8" y2="13" />
+                                        <line x1="16" y1="17" x2="8" y2="17" />
+                                        <line x1="10" y1="9" x2="8" y2="9" />
+                                    </svg>
+                                </span>
 
-                        </button>
+                                <span
+                                    wire:loading
+                                    wire:target="downloadExcel"
+                                >
+                                    {{ __('ui.preparing', [], null, 'Preparing...') }}
+                                </span>
+
+                                <span
+                                    wire:loading.remove
+                                    wire:target="downloadExcel"
+                                >
+                                    {{ __('ui.download_excel', [], null, 'Download Excel') }}
+                                </span>
+
+                            </button>
 
 
-                        @if($canManageEnrollments)
+                            {{-- Manage Enrollments --}}
+                            @if ($canManageEnrollments)
 
-                            <a
-                                href="{{ route('staff.enrollments.index') }}"
-                                class="btn btn--secondary btn--sm"
-                                wire:navigate
-                            >
-                                {{ __('ui.manage_enrollments', [], null, 'Manage Enrollments') }}
-                            </a>
+                                <a
+                                    href="{{ route('staff.enrollments.index') }}"
+                                    class="btn btn--secondary btn--sm"
+                                    wire:navigate
+                                    style="
+                                        outline:none !important;
+                                        box-shadow:none !important;
+                                    "
+                                >
+                                    {{ __('ui.manage_enrollments', [], null, 'Manage Enrollments') }}
+                                </a>
 
-                        @endif
+                            @endif
+
+                        </div>
 
                     </div>
 
@@ -871,29 +816,122 @@
                 {{-- =================================================
                      STUDENTS TABLE
                 ================================================== --}}
-                <div class="data-table-wrapper">
+                <div
+                    style="
+                        width:100%;
+                        overflow-x:auto;
+                    "
+                >
 
-                    <table class="data-table">
+                    <table
+                        style="
+                            width:100%;
+                            min-width:760px;
+                            border-collapse:collapse;
+                            table-layout:fixed;
+                            direction:rtl;
+                            border:none !important;
+                            outline:none !important;
+                            box-shadow:none !important;
+                        "
+                    >
+
+                        <colgroup>
+                            <col style="width:6%;">
+                            <col style="width:18%;">
+                            <col style="width:38%;">
+                            <col style="width:16%;">
+                            <col style="width:22%;">
+                        </colgroup>
+
 
                         <thead>
 
-                            <tr>
+                            <tr
+                                style="
+                                    background:#f8fafc;
+                                    border-bottom:1px solid #e5e7eb;
+                                    outline:none !important;
+                                    box-shadow:none !important;
+                                "
+                            >
 
-                                <th>#</th>
+                                {{-- # --}}
+                                <th
+                                    style="
+                                        padding:13px 16px;
+                                        text-align:center;
+                                        font-size:12px;
+                                        font-weight:800;
+                                        color:#475569;
+                                        white-space:nowrap;
+                                        outline:none !important;
+                                    "
+                                >
+                                    #
+                                </th>
 
-                                <th>
+
+                                {{-- National ID --}}
+                                <th
+                                    style="
+                                        padding:13px 16px;
+                                        text-align:right;
+                                        font-size:12px;
+                                        font-weight:800;
+                                        color:#475569;
+                                        white-space:nowrap;
+                                        outline:none !important;
+                                    "
+                                >
                                     {{ __('ui.national_id', [], null, 'National ID') }}
                                 </th>
 
-                                <th>
+
+                                {{-- Name --}}
+                                <th
+                                    style="
+                                        padding:13px 16px;
+                                        text-align:right;
+                                        font-size:12px;
+                                        font-weight:800;
+                                        color:#475569;
+                                        white-space:nowrap;
+                                        outline:none !important;
+                                    "
+                                >
                                     {{ __('ui.name', [], null, 'Name') }}
                                 </th>
 
-                                <th>
+
+                                {{-- Status --}}
+                                <th
+                                    style="
+                                        padding:13px 16px;
+                                        text-align:center;
+                                        font-size:12px;
+                                        font-weight:800;
+                                        color:#475569;
+                                        white-space:nowrap;
+                                        outline:none !important;
+                                    "
+                                >
                                     {{ __('ui.status', [], null, 'Status') }}
                                 </th>
 
-                                <th>
+
+                                {{-- Enrolled On --}}
+                                <th
+                                    style="
+                                        padding:13px 16px;
+                                        text-align:center;
+                                        font-size:12px;
+                                        font-weight:800;
+                                        color:#475569;
+                                        white-space:nowrap;
+                                        outline:none !important;
+                                    "
+                                >
                                     {{ __('ui.enrolled_on', [], null, 'Enrolled On') }}
                                 </th>
 
@@ -904,10 +942,10 @@
 
                         <tbody>
 
-                            @forelse($classStudents as $i => $s)
+                            @forelse($classStudents as $index => $student)
 
                                 @php
-                                    $status = match ($s->enrollment_status) {
+                                    $status = match ($student->enrollment_status) {
                                         'active' => 'active',
                                         'draft' => 'draft',
                                         default => 'closed',
@@ -915,57 +953,162 @@
                                 @endphp
 
 
-                                <tr>
+                                <tr
+                                    style="
+                                        border-bottom:1px solid #eef2f7;
+                                        outline:none !important;
+                                        box-shadow:none !important;
+                                    "
+                                >
 
-                                    <td style="color:var(--text-secondary);">
-                                        {{ $i + 1 }}
+                                    {{-- # --}}
+                                    <td
+                                        style="
+                                            padding:14px 16px;
+                                            font-size:13px;
+                                            color:#64748b;
+                                            text-align:center;
+                                            vertical-align:middle;
+                                            white-space:nowrap;
+                                            outline:none !important;
+                                        "
+                                    >
+                                        {{ $index + 1 }}
                                     </td>
 
 
-                                    <td>
-                                        {{ $s->national_id }}
+                                    {{-- National ID --}}
+                                    <td
+                                        style="
+                                            padding:14px 16px;
+                                            font-size:13px;
+                                            color:#334155;
+                                            text-align:right;
+                                            vertical-align:middle;
+                                            white-space:nowrap;
+                                            outline:none !important;
+                                        "
+                                    >
+                                        {{ $student->national_id ?? '—' }}
                                     </td>
 
 
-                                    <td>
+                                    {{-- Name --}}
+                                    <td
+                                        style="
+                                            padding:14px 16px;
+                                            text-align:right;
+                                            vertical-align:middle;
+                                            outline:none !important;
+                                        "
+                                    >
 
                                         <a
-                                            href="{{ route('staff.students.detail', ['studentProfileId' => $s->student_id]) }}"
-                                            class="link"
+                                            href="{{ route('staff.students.detail', ['studentProfileId' => $student->student_id]) }}"
                                             wire:navigate
+                                            style="
+                                                display:block;
+                                                text-decoration:none;
+                                                color:#172033;
+                                                outline:none !important;
+                                                box-shadow:none !important;
+                                            "
                                         >
-                                            {{ $s->name_ar }}
-                                        </a>
-
-
-                                        @if($s->name_en)
 
                                             <div
                                                 style="
-                                                    margin-block-start:2px;
-                                                    font-size:var(--text-xs);
-                                                    color:var(--text-secondary);
+                                                    font-size:14px;
+                                                    font-weight:750;
+                                                    line-height:1.5;
                                                 "
                                             >
-                                                {{ $s->name_en }}
+                                                {{ $student->name_ar ?? '—' }}
                                             </div>
 
-                                        @endif
+
+                                            @if ($student->name_en)
+
+                                                <div
+                                                    style="
+                                                        margin-top:3px;
+                                                        font-size:12px;
+                                                        color:#64748b;
+                                                        line-height:1.4;
+                                                        direction:ltr;
+                                                        text-align:right;
+                                                    "
+                                                >
+                                                    {{ $student->name_en }}
+                                                </div>
+
+                                            @endif
+
+
+                                            @if ($student->student_code)
+
+                                                <div
+                                                    style="
+                                                        margin-top:3px;
+                                                        font-size:11px;
+                                                        color:#94a3b8;
+                                                        line-height:1.4;
+                                                    "
+                                                >
+                                                    {{ $student->student_code }}
+                                                </div>
+
+                                            @endif
+
+                                        </a>
 
                                     </td>
 
 
-                                    <td>
+                                    {{-- Status --}}
+                                    <td
+                                        style="
+                                            padding:14px 16px;
+                                            text-align:center;
+                                            vertical-align:middle;
+                                            white-space:nowrap;
+                                            outline:none !important;
+                                        "
+                                    >
 
-                                        <span class="badge badge--{{ $status }}">
-                                            {{ __('ui.' . $status, [], null, $status) }}
+                                        <span
+                                            style="
+                                                display:inline-flex;
+                                                align-items:center;
+                                                justify-content:center;
+                                                padding:5px 10px;
+                                                min-width:65px;
+                                                border-radius:999px;
+                                                background:{{ $status === 'active' ? '#ecfdf5' : '#fef3c7' }};
+                                                color:{{ $status === 'active' ? '#047857' : '#92400e' }};
+                                                font-size:11px;
+                                                font-weight:800;
+                                            "
+                                        >
+                                            {{ __('ui.' . $status, [], null, ucfirst($status)) }}
                                         </span>
 
                                     </td>
 
 
-                                    <td>
-                                        {{ $s->enrolled_on }}
+                                    {{-- Enrolled On --}}
+                                    <td
+                                        style="
+                                            padding:14px 16px;
+                                            font-size:13px;
+                                            color:#64748b;
+                                            text-align:center;
+                                            vertical-align:middle;
+                                            white-space:nowrap;
+                                            direction:ltr;
+                                            outline:none !important;
+                                        "
+                                    >
+                                        {{ $student->enrolled_on ?? '—' }}
                                     </td>
 
                                 </tr>
@@ -973,21 +1116,18 @@
                             @empty
 
                                 <tr>
-
                                     <td
                                         colspan="5"
                                         style="
+                                            padding:50px 20px;
                                             text-align:center;
-                                            color:var(--text-secondary);
-                                            padding:var(--space-10);
-                                            font-style:italic;
+                                            color:#64748b;
+                                            font-size:13px;
+                                            outline:none !important;
                                         "
                                     >
-
                                         {{ __('ui.no_students_in_class', [], null, 'No students in this class group.') }}
-
                                     </td>
-
                                 </tr>
 
                             @endforelse
@@ -1004,4 +1144,4 @@
 
     </div>
 
-</div>
+</div>`

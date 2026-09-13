@@ -184,17 +184,7 @@ class StaffReportCentre extends Component
     }
 
     #[Computed]
-    public function headings(): array
-    {
-        if ($this->rows->isEmpty()) {
-            return [];
-        }
-
-        return array_map(
-            fn (string $key): string => ucwords(str_replace('_', ' ', $key)),
-            array_keys((array) $this->rows->first()),
-        );
-    }
+public function headings(): array { if ($this->rows->isEmpty()) { return []; } return array_map( fn (string $key): string => $this->translateHeading($key), array_keys((array) $this->rows->first()), ); }
 
     // ── Export (sync ≤ threshold, queued above) ─────────────────────────────
 
@@ -424,6 +414,61 @@ class StaffReportCentre extends Component
             limit: $limit,
         );
     }
+/**
+ * Translate report column heading according to current locale.
+ */
+private function translateHeading(string $key): string
+{
+    $translationKey = match ($key) {
+        'class_group',
+        'class_group_name' => 'ui.class_group',
+
+        'student_name',
+        'name' => 'ui.student_name',
+
+        'student_code',
+        'student_id' => 'ui.student_code',
+
+        'subject',
+        'subject_name' => 'ui.subject',
+
+        'score',
+        'normalized_score',
+        'score_100' => 'ui.score_100',
+
+        'grade',
+        'grade_code' => 'ui.grade',
+
+        'completeness',
+       'completeness_status' => 'ui.completeness',
+
+        'published_at',
+        'publication_date' => 'ui.published_at',
+
+        'date',
+        'created_at' => 'ui.date',
+
+        'updated_at' => 'ui.updated_at',
+
+        'status' => 'ui.status',
+
+        'total',
+  'total_count' => 'ui.total',
+
+        'count' => 'ui.count',
+
+        default => null,
+    };
+
+    if ($translationKey !== null) {
+        return __($translationKey);
+    }
+
+    // Fallback for fields that do not yet have a translation.
+    return ucwords(
+        str_replace('_', ' ', $key)
+    );
+}
 
     public function render(): View
     {
