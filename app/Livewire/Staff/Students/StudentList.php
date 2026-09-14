@@ -89,6 +89,7 @@ final class StudentList extends Component
                 'sp.id as student_id',
                 'p.full_name_ar as name_ar',
                 'p.full_name_en as name_en',
+                'p.national_id as national_id',
                 'sp.student_code',
                 'sp.lifecycle_status',
                 'se.id as enrollment_id',

@@ -33,13 +33,15 @@ final class StudentDetail extends Component
     #[Locked]
     public int $studentProfileId;
 
-    public function mount(int $studentProfileId): void
+    public function mount(int $studentNationalId): void
     {
         if (! $this->staffCan('student.view') && ! $this->staffCan('student.view_restricted')) {
             abort(403);
         }
 
-        $this->studentProfileId = $studentProfileId;
+        $this->studentProfileId = DB::table('student_profiles as sp')
+        ->join('people as p','p.id', '=', 'sp.person_id')
+        ->where('p.national_id', $studentNationalId)->get('sp.id')->first()->id;
 
         // assertStudentAccessible applies period restriction for ALL positions
         // (not only teacher). A secretary with no period grants cannot view

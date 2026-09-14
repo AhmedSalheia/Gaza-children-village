@@ -52,10 +52,13 @@ final class TransferStudent extends Component
 
     public string $capacityOverrideReason = '';
 
-    public function mount(int $studentProfileId): void
+    public function mount(int $studentNationalId): void
     {
         $this->requirePermission('enrollment.transfer');
-        $this->studentProfileId = $studentProfileId;
+        $this->studentProfileId = DB::table('student_profiles as sp')
+            ->join('people as p','p.id', '=', 'sp.person_id')
+            ->where('p.national_id', $studentNationalId)->get('sp.id')->first()->id;
+
         $this->assertStudentAccessible($this->studentProfileId);
         $this->enrolledOn = now()->toDateString();
     }
@@ -65,7 +68,7 @@ final class TransferStudent extends Component
         return DB::table('student_profiles as sp')
             ->join('people as p', 'p.id', '=', 'sp.person_id')
             ->where('sp.id', $this->studentProfileId)
-            ->select('sp.id', 'p.full_name_ar')
+            ->select('sp.id', 'p.full_name_ar','p.national_id')
             ->first();
     }
 

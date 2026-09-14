@@ -55,10 +55,14 @@ final class GuardianRelationships extends Component
 
     public string $endReason = '';
 
-    public function mount(int $studentProfileId): void
+    public function mount(int $studentNationalId): void
     {
         $this->requirePermission('guardian_relationship.view');
-        $this->studentProfileId = $studentProfileId;
+
+        $this->studentProfileId = DB::table('student_profiles as sp')
+            ->join('people as p','p.id', '=', 'sp.person_id')
+            ->where('p.national_id', $studentNationalId)->get('sp.id')->first()->id;
+
         $this->assertStudentAccessible($this->studentProfileId);
     }
 
@@ -185,7 +189,7 @@ final class GuardianRelationships extends Component
         return DB::table('student_profiles as sp')
             ->join('people as p', 'p.id', '=', 'sp.person_id')
             ->where('sp.id', $this->studentProfileId)
-            ->select('sp.id', 'p.full_name_ar')
+            ->select('sp.id', 'p.full_name_ar', 'p.national_id')
             ->first();
     }
 

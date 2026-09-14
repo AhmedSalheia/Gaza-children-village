@@ -61,9 +61,9 @@
             <tbody>
                 @forelse($students as $student)
                 <tr>
-                    <td>{{ $student->student_code }}</td>
+                    <td>{{ $student->national_id }}</td>
                     <td>
-                        <a href="{{ route('staff.students.detail', ['studentProfileId' => $student->student_id]) }}" class="link" wire:navigate>
+                        <a href="{{ route('staff.students.detail', ['studentNationalId' => $student->national_id]) }}" class="link" wire:navigate>
                             {{ $student->name_ar }}
                         </a>
                         @if($student->name_en)
@@ -74,9 +74,9 @@
                     <td>{{ $student->level_name }}</td>
                     <td><span class="badge badge--{{ match($student->enrollment_status) {'active'=>'active','draft'=>'draft','suspended'=>'pending',default=>'closed'} }}">{{ __('ui.'.$student->enrollment_status) }}</span></td>
                     <td style="white-space:nowrap">
-                        <a href="{{ route('staff.students.detail', ['studentProfileId' => $student->student_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.view', [], null, 'View') }}</a>
+                        <a href="{{ route('staff.students.detail', ['studentNationalId' => $student->student_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.view', [], null, 'View') }}</a>
                         @if($canManageEnrollments)
-                        <a href="{{ route('staff.enrollments.transfer', ['studentProfileId' => $student->student_id]) }}" class="btn btn--outline--secondary btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
+                        <a href="{{ route('staff.enrollments.transfer', ['studentNationalId' => $student->student_id]) }}" class="btn btn--outline--secondary btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
                         @endif
                     </td>
                 </tr>

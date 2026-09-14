@@ -78,11 +78,11 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
         // Students
         Route::get('/students', StudentList::class)->name('students.index');
         Route::get('/students/add', AddStudent::class)->name('students.add');
-        Route::get('/students/{studentProfileId}', StudentDetail::class)
-            ->where('studentProfileId', '[0-9]+')
+        Route::get('/students/{studentNationalId}', StudentDetail::class)
+            ->where('studentNationalId', '[0-9]{9}')
             ->name('students.detail');
-        Route::get('/students/{studentProfileId}/relationships', GuardianRelationships::class)
-            ->where('studentProfileId', '[0-9]+')
+        Route::get('/students/{studentNationalId}/relationships', GuardianRelationships::class)
+            ->where('studentNationalId', '[0-9]{9}')
             ->name('students.relationships');
 
         // Class lists (teacher-accessible read-only)
@@ -93,8 +93,8 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
 
         // Enrollments
         Route::get('/enrollments', EnrollmentManagement::class)->name('enrollments.index');
-        Route::get('/enrollments/transfer/{studentProfileId}', TransferStudent::class)
-            ->where('studentProfileId', '[0-9]+')
+        Route::get('/enrollments/transfer/{studentNationalId}', TransferStudent::class)
+            ->where('studentNationalId', '[0-9]{9}')
             ->name('enrollments.transfer');
         Route::get('/promotions', PromotionReview::class)->name('promotions.index');
 

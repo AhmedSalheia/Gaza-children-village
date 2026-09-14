@@ -1360,7 +1360,7 @@
             .action-primary:hover {
                 color: #fff;
                 transform: translateY(-2px);
-                box-shadow: 0 9px 20px rgba(65, 125, 170, .22);
+                box-shadow: 0 9px 20px rgba(129, 195, 245, 0.22);
             }
 
             .action-success {

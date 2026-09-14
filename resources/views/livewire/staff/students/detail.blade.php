@@ -15,12 +15,12 @@
         </div>
         <div style="display:flex;gap:var(--space-2)">
             @if($canManageRelationships)
-            <a href="{{ route('staff.students.relationships', ['studentProfileId' => $studentProfileId]) }}" class="btn btn--outline btn--sm" wire:navigate>
+            <a href="{{ route('staff.students.relationships', ['studentNationalId' => $student->national_id]) }}" class="btn btn--outline btn--sm" wire:navigate>
                 {{ __('ui.relationships', [], null, 'Relationships') }}
             </a>
             @endif
             @if($canTransfer)
-            <a href="{{ route('staff.enrollments.transfer', ['studentProfileId' => $studentProfileId]) }}" class="btn btn--secondary btn--sm" wire:navigate>
+            <a href="{{ route('staff.enrollments.transfer', ['studentNationalId' => $student->national_id]) }}" class="btn btn--secondary btn--sm" wire:navigate>
                 {{ __('ui.transfer', [], null, 'Transfer') }}
             </a>
             @endif
@@ -74,7 +74,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-block-end:var(--space-4)">
             <h2 style="font-size:var(--text-lg);font-weight:600;margin:0">{{ __('ui.guardians', [], null, 'Guardians') }}</h2>
             @if($canManageRelationships)
-            <a href="{{ route('staff.students.relationships', ['studentProfileId' => $studentProfileId]) }}" class="btn btn--outline btn--sm" wire:navigate>
+            <a href="{{ route('staff.students.relationships', ['studentNationalId' => $student->national_id]) }}" class="btn btn--outline btn--sm" wire:navigate>
                 {{ __('ui.manage', [], null, 'Manage') }}
             </a>
             @endif

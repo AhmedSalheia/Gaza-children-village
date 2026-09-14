@@ -3,7 +3,7 @@
 <div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-block-end:var(--space-6);flex-wrap:wrap;gap:var(--space-3)">
         <div>
-            <a href="{{ route('staff.students.detail', ['studentProfileId' => $studentProfileId]) }}" class="link" wire:navigate style="font-size:var(--text-sm)">
+            <a href="{{ route('staff.students.detail', ['studentNationalId' => $student->national_id]) }}" class="link" wire:navigate style="font-size:var(--text-sm)">
                 ← {{ __('ui.back_to_profile', [], null, 'Back to Profile') }}
             </a>
             <h1 style="font-size:var(--text-2xl);font-weight:700;margin:var(--space-1) 0 0">
