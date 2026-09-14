@@ -106,6 +106,8 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
             ->where('sheetId', '[0-9]+')
             ->name('attendance.verify');
 
+        Route::get('/positions', StaffAttendanceEntry::class)->name('staff.positions');
+
         // Staff attendance — secretary entry and QR management
         Route::get('/staff-attendance', StaffAttendanceEntry::class)->name('staff-attendance.index');
         Route::get('/staff-attendance/dashboard', StaffAttendanceDashboard::class)->name('staff-attendance.dashboard');

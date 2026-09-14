@@ -2,22 +2,7 @@
 
 
 @php
-    function is_route(String $route): bool
-    {
-        $current = app('router')->current()->uri;
-        $preg_route = '/' . str_replace(['/','*'],['\/','.*'], $route) .'$/';
-
-        return preg_match($preg_route, $current);
-    }
-
-    function active(String $route) {
-        if (is_route($route))
-            return 'active';
-        else
-            return;
-    }
-
-     /**
+ /**
      * Compute the authenticated staff member's permission set for nav rendering.
      * Permission chain: staff_accounts → staff_profiles → staff_positions (active)
      * → position_role_grants → role_permissions → permissions
@@ -106,6 +91,15 @@
     <li class="portal-nav__item">
         <a href="{{ route('staff.attendance.queue') }}" class="portal-nav__link {{ active('staff/attendance/queue*') }} {{ active('staff/attendance/verify*') }}">
             {{ __('ui.attendance_queue', [], null, 'Attendance Queue') }}
+        </a>
+    </li>
+    @endif
+
+    {{-- Staff Page: secretary|Principal|Deputy --}}
+    @if($navCan('staff_position.view'))
+    <li class="portal-nav__item">
+        <a href="{{ route('staff.staff.positions') }}" class="portal-nav__link {{ active('staff/positions') }}">
+            {{ __('ui.staff', [], null, 'Staff') }}
         </a>
     </li>
     @endif
