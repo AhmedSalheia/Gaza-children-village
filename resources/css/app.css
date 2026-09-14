@@ -242,18 +242,21 @@ h1, h2, h3, .heading-display {
     background: var(--surface-page);
     color: var(--teal-600);
     font-weight: bold;
+    border: 3px solid var(--gold-500);
 }
 
 html[dir=ltr] .portal-nav__link.active,
 html[dir=ltr] .portal-nav__link[aria-current="page"]
 {
     border-radius: 1rem 0 0 1rem;
+    border-right: 0;
 }
 
 html[dir=rtl] .portal-nav__link.active,
 html[dir=rtl] .portal-nav__link[aria-current="page"]
 {
     border-radius: 0 1rem 1rem 0;
+    border-left: 0;
 }
 
 /* ----- Locale switcher — segmented pill ----- */

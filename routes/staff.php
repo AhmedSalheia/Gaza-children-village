@@ -15,6 +15,7 @@ use App\Livewire\Staff\Attendance\ScanEventQueue;
 use App\Livewire\Staff\Attendance\SheetVerification;
 use App\Livewire\Staff\Attendance\StaffAttendanceDashboard;
 use App\Livewire\Staff\Attendance\StaffAttendanceEntry;
+use App\Livewire\Staff\Positions\PositionList;
 use App\Livewire\Staff\ClassLists\ClassList;
 use App\Livewire\Staff\Corrections\CorrectionInbox;
 use App\Livewire\Staff\Corrections\CorrectionReview;
@@ -106,7 +107,7 @@ Route::prefix('staff')->name('staff.')->group(function (): void {
             ->where('sheetId', '[0-9]+')
             ->name('attendance.verify');
 
-        Route::get('/positions', StaffAttendanceEntry::class)->name('staff.positions');
+        Route::get('/positions', PositionList::class)->name('staff.positions');
 
         // Staff attendance — secretary entry and QR management
         Route::get('/staff-attendance', StaffAttendanceEntry::class)->name('staff-attendance.index');

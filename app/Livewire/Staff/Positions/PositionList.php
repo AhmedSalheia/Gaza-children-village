@@ -5,196 +5,371 @@ declare(strict_types=1);
 namespace App\Livewire\Staff\Positions;
 
 use App\Livewire\Staff\Concerns\HasStaffAuth;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
-use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\WithPagination;
+use Modules\Attendance\Actions\CorrectVerifiedStaffRecord;
+use Modules\Attendance\Actions\CreateDailyStaffRecord;
+use Modules\Attendance\Actions\VerifyStaffRecord;
+use Modules\Attendance\Data\StaffAttendanceStatus;
+use Modules\Attendance\Exceptions\StaffAttendanceException;
+use Modules\Attendance\Models\StaffAttendanceRecord;
 
-/**
- * Institution-scoped student list for staff.
- *
- * Period restriction (F16 spec):
- *   - Full-scope positions (principal, deputy_principal, counselor): see all
- *     class groups in the semester — isFullScopePosition() returns true.
- *   - Period-restricted positions (secretary, teacher): see only students
- *     enrolled in class groups whose operational_period_id is in their explicit
- *     period grants. No grants → zero results (do not fall through to all).
- *
- * Cross-institution isolation: all queries scoped to institution_semester_id
- * from the staff's active position.
- */
-final class StudentList extends Component
+final class PositionList extends Component
 {
     use HasStaffAuth;
-    use WithPagination;
 
-    #[Url(as: 'q')]
-    public string $search = '';
+    public string $selectedDate = '';
 
-    #[Url]
-    public string $statusFilter = '';
+    public int $selectedPeriodId = 0;
 
-    #[Url]
-    public int $classGroupFilter = 0;
+    /** @var array<int, string> Editable row state: staffProfileId → statusCode */
+    public array $rowStatus = [];
 
-    #[Url]
-    public int $levelFilter = 0;
+    /** @var array<int, string> */
+    public array $rowReason = [];
+
+    /** @var array<int, string> */
+    public array $rowArrivedAt = [];
+
+    /** @var array<int, string> */
+    public array $rowDepartedAt = [];
+
+    // ── Correction form state ─────────────────────────────────────────────────
+
+    public ?int $correctingRecordId = null;
+
+    public string $correctStatus = '';
+
+    public string $correctReason = '';
+
+    public string $correctArrivedAt = '';
+
+    public string $correctDepartedAt = '';
+
+    public string $flashMessage = '';
+
+    public string $flashType = '';
 
     public function mount(): void
     {
-        if (! $this->staffCan('student.view') && ! $this->staffCan('student.view_restricted')) {
-            abort(403);
+        $this->requirePermission('staff_position.view');
+        $this->selectedDate = now()->toDateString();
+        $this->selectedPeriodId = $this->defaultPeriodId();
+    }
+
+    public function updatedSelectedDate(): void
+    {
+        $this->clearRowState();
+        $this->cancelCorrection();
+    }
+
+    public function updatedSelectedPeriodId(): void
+    {
+        $this->clearRowState();
+        $this->cancelCorrection();
+    }
+
+    // ── Row save / verify ─────────────────────────────────────────────────────
+
+    public function saveRow(int $staffProfileId): void
+    {
+        $this->requirePermission('staff_position.view');
+        $this->assertPeriodAllowed($this->selectedPeriodId); // aborts on tampering
+
+        $statusCode = $this->rowStatus[$staffProfileId] ?? '';
+
+        if ($statusCode === '') {
+            return;
+        }
+
+        try {
+            app(CreateDailyStaffRecord::class)(
+                staffProfileId: $staffProfileId,
+                operationalPeriodId: $this->selectedPeriodId,
+                date: $this->selectedDate,
+                statusCode: $statusCode,
+                reason: $this->rowReason[$staffProfileId] ?? null,
+                creatorStaffProfileId: $this->resolveStaffProfileId(),
+                confirmedArrivedAt: $this->rowArrivedAt[$staffProfileId] ?? null,
+                confirmedDepartedAt: $this->rowDepartedAt[$staffProfileId] ?? null,
+            );
+
+            $this->flashMessage = 'Saved.';
+            $this->flashType = 'success';
+        } catch (StaffAttendanceException $e) {
+            $this->flashMessage = $e->getMessage();
+            $this->flashType = 'error';
         }
     }
 
-    public function updatedSearch(): void
+    public function verifyRecord(int $recordId): void
     {
-        $this->resetPage();
+        $this->requirePermission('staff_position.view');
+
+        $record = StaffAttendanceRecord::find($recordId);
+
+        if (! $record) {
+            $this->flashMessage = 'Record not found.';
+            $this->flashType = 'error';
+
+            return;
+        }
+
+        $this->assertPeriodAllowed((int) $record->operational_period_id);
+
+        try {
+            app(VerifyStaffRecord::class)($record, $this->resolveStaffProfileId());
+            $this->flashMessage = 'Record verified.';
+            $this->flashType = 'success';
+        } catch (StaffAttendanceException $e) {
+            $this->flashMessage = $e->getMessage();
+            $this->flashType = 'error';
+        }
     }
 
-    public function updatedStatusFilter(): void
+    // ── Correction form ───────────────────────────────────────────────────────
+
+    public function startCorrection(int $recordId): void
     {
-        $this->resetPage();
+        $this->requirePermission('staff_attendance.correct');
+
+        $record = StaffAttendanceRecord::find($recordId);
+
+        if (! $record || ! $record->is_verified) {
+            $this->flashMessage = 'Only verified records can be corrected.';
+            $this->flashType = 'error';
+
+            return;
+        }
+
+        $this->assertPeriodAllowed((int) $record->operational_period_id);
+
+        $this->correctingRecordId = $recordId;
+        $this->correctStatus = (string) $record->status_code;
+        $this->correctReason = (string) ($record->reason ?? '');
+        $this->correctArrivedAt = (string) ($record->confirmed_arrived_at ?? '');
+        $this->correctDepartedAt = (string) ($record->confirmed_departed_at ?? '');
     }
 
-    public function updatedClassGroupFilter(): void
+    public function submitCorrection(): void
     {
-        $this->resetPage();
+        $this->requirePermission('staff_attendance.correct');
+
+        if ($this->correctingRecordId === null) {
+            return;
+        }
+
+        $record = StaffAttendanceRecord::find($this->correctingRecordId);
+
+        if (! $record) {
+            $this->cancelCorrection();
+
+            return;
+        }
+
+        $this->assertPeriodAllowed((int) $record->operational_period_id);
+
+        try {
+            app(CorrectVerifiedStaffRecord::class)(
+                record: $record,
+                newStatusCode: $this->correctStatus,
+                reason: $this->correctReason ?: null,
+                actorStaffProfileId: $this->resolveStaffProfileId(),
+                confirmedArrivedAt: $this->correctArrivedAt ?: null,
+                confirmedDepartedAt: $this->correctDepartedAt ?: null,
+            );
+
+            $this->flashMessage = 'Correction saved.';
+            $this->flashType = 'success';
+            $this->cancelCorrection();
+        } catch (StaffAttendanceException $e) {
+            $this->flashMessage = $e->getMessage();
+            $this->flashType = 'error';
+        }
     }
 
-    public function updatedLevelFilter(): void
+    public function cancelCorrection(): void
     {
-        $this->resetPage();
+        $this->correctingRecordId = null;
+        $this->correctStatus = '';
+        $this->correctReason = '';
+        $this->correctArrivedAt = '';
+        $this->correctDepartedAt = '';
     }
 
-    public function students(): LengthAwarePaginator
+    // ── Data queries ──────────────────────────────────────────────────────────
+
+    public function staffRows(): Collection
     {
+        if ($this->selectedPeriodId === 0 || $this->selectedDate === '') {
+            return collect();
+        }
+
+        // READ guard: return empty if the client-supplied period is out of scope.
+        // Do NOT abort — that would break the component render.
+        if (! $this->periodAllowedInScope($this->selectedPeriodId)) {
+            return collect();
+        }
+
         $scope = $this->staffScope();
 
-        if ($scope['institution_semester_id'] === null) {
-            return new LengthAwarePaginator([], 0, 25);
-        }
+        // institution_id is guaranteed non-null if periodAllowedInScope passed
+        /** @var int $institutionId */
+        $institutionId = $scope['institution_id'];
 
-        $query = DB::table('student_enrollments as se')
-            ->join('student_profiles as sp', 'sp.id', '=', 'se.student_profile_id')
+        // Load existing attendance records for this period + date
+        $records = DB::table('staff_attendance_records')
+            ->where('operational_period_id', $this->selectedPeriodId)
+            ->whereDate('record_date', $this->selectedDate)
+            ->get()
+            ->keyBy('staff_profile_id');
+
+        // Staff with active assignments at this institution only
+        $staff = DB::table('staff_profiles as sp')
             ->join('people as p', 'p.id', '=', 'sp.person_id')
-            ->join('class_groups as cg', 'cg.id', '=', 'se.class_group_id')
-            ->join('academic_levels as al', 'al.id', '=', 'cg.academic_level_id')
-            ->where('se.institution_semester_id', $scope['institution_semester_id'])
-            ->whereNotIn('se.enrollment_status', ['completed', 'withdrawn'])
-            ->select(
-                'sp.id as student_id',
-                'p.full_name_ar as name_ar',
-                'p.full_name_en as name_en',
-                'p.national_id as national_id',
-                'sp.student_code',
-                'sp.lifecycle_status',
-                'se.id as enrollment_id',
-                'se.enrollment_status',
-                'cg.id as class_group_id',
-                'cg.name_ar as class_group_name',
-                'al.name_ar as level_name'
-            );
+            ->join('staff_institution_assignments as sia', function ($j): void {
+                $j->on('sia.staff_profile_id', '=', 'sp.id')
+                    ->whereNull('sia.ended_on');
+            })
+            ->where('sia.institution_id', $institutionId)
+            ->select('sp.id as staff_profile_id', 'p.full_name_ar as name', 'p.national_id as national_id')
+            ->orderBy('p.full_name_ar')
+            ->distinct()
+            ->get();
 
-        // Period restriction (F16): full-scope positions see all periods;
-        // restricted positions (secretary, teacher) see only explicit grants.
-        if (! $this->isFullScopePosition()) {
-            $allowedPeriods = $this->allowedPeriodIds();
+        return $staff->map(function ($member) use ($records) {
+            $record = $records->get($member->staff_profile_id);
 
-            if (empty($allowedPeriods)) {
-                // No explicit period grants → no access.
-                return new LengthAwarePaginator([], 0, 25);
-            }
-
-            $query->whereIn('cg.operational_period_id', $allowedPeriods);
-        }
-
-        if ($this->search !== '') {
-            $query->where(fn ($q) => $q
-                ->where('p.full_name_ar', 'like', '%'.$this->search.'%')
-                ->orWhere('p.full_name_en', 'like', '%'.$this->search.'%')
-                ->orWhere('sp.student_code', 'like', '%'.$this->search.'%')
-            );
-        }
-
-        if ($this->statusFilter !== '') {
-            $query->where('se.enrollment_status', $this->statusFilter);
-        }
-
-        if ($this->classGroupFilter > 0) {
-            $query->where('se.class_group_id', $this->classGroupFilter);
-        }
-
-        if ($this->levelFilter > 0) {
-            $query->where('cg.academic_level_id', $this->levelFilter);
-        }
-
-        return $query->orderBy('p.full_name_ar')->paginate(25);
+            return (object) [
+                'staff_profile_id' => $member->staff_profile_id,
+                'name' => $member->name,
+                'national_id' => $member->national_id,
+                'record_id' => $record?->id,
+                'status_code' => $record?->status_code,
+                'reason' => $record?->reason,
+                'confirmed_arrived' => $record?->confirmed_arrived_at,
+                'confirmed_departed' => $record?->confirmed_departed_at,
+                'scanned_arrived' => $record?->scanned_arrived_at,
+                'scanned_departed' => $record?->scanned_departed_at,
+                'is_verified' => (bool) ($record?->is_verified ?? false),
+            ];
+        });
     }
 
-    public function classGroups(): Collection
+    /** @return list<object> */
+    public function availablePeriods(): array
     {
         $scope = $this->staffScope();
 
         if ($scope['institution_semester_id'] === null) {
-            return collect();
+            return [];
         }
 
-        $query = DB::table('class_groups as cg')
-            ->join('academic_levels as al', 'al.id', '=', 'cg.academic_level_id')
-            ->where('cg.institution_semester_id', $scope['institution_semester_id'])
-            ->whereNotIn('cg.lifecycle_status', ['archived']);
+        $query = DB::table('operational_periods')
+            ->where('institution_semester_id', $scope['institution_semester_id'])
+            ->select('id', 'name_en as name');
 
         if (! $this->isFullScopePosition()) {
-            $allowedPeriods = $this->allowedPeriodIds();
+            $allowed = $this->allowedPeriodIds();
 
-            if (empty($allowedPeriods)) {
-                return collect();
+            if (empty($allowed)) {
+                return [];
             }
 
-            $query->whereIn('cg.operational_period_id', $allowedPeriods);
+            $query->whereIn('id', $allowed);
         }
 
-        return $query->orderBy('al.name_ar')->orderBy('cg.name_ar')->get(['cg.id', 'cg.name_ar', 'al.name_ar as level_name']);
-    }
-
-    public function academicLevels(): Collection
-    {
-        $scope = $this->staffScope();
-
-        if ($scope['institution_semester_id'] === null) {
-            return collect();
-        }
-
-        $query = DB::table('class_groups as cg')
-            ->join('academic_levels as al', 'al.id', '=', 'cg.academic_level_id')
-            ->where('cg.institution_semester_id', $scope['institution_semester_id'])
-            ->distinct();
-
-        if (! $this->isFullScopePosition()) {
-            $allowedPeriods = $this->allowedPeriodIds();
-
-            if (empty($allowedPeriods)) {
-                return collect();
-            }
-
-            $query->whereIn('cg.operational_period_id', $allowedPeriods);
-        }
-
-        return $query->orderBy('al.name_ar')->get(['al.id', 'al.name_ar']);
+        return $query->orderBy('name')->get()->all();
     }
 
     public function render(): View
     {
-        return view('livewire.staff.students.list', [
-            'students' => $this->students(),
-            'classGroups' => $this->classGroups(),
-            'academicLevels' => $this->academicLevels(),
-            'canCreateStudent' => $this->staffCan('student.create'),
-            'canManageEnrollments' => $this->staffCan('enrollment.manage'),
+        return view('livewire.staff.positions.list', [
+            'staffRows' => $this->staffRows(),
+            'periods' => $this->availablePeriods(),
+            'statuses' => StaffAttendanceStatus::catalogue(),
         ])->layout('layouts.staff');
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private function clearRowState(): void
+    {
+        $this->rowStatus = [];
+        $this->rowReason = [];
+        $this->rowArrivedAt = [];
+        $this->rowDepartedAt = [];
+    }
+
+    private function defaultPeriodId(): int
+    {
+        $periods = $this->availablePeriods();
+
+        return $periods ? (int) $periods[0]->id : 0;
+    }
+
+    private function resolveStaffProfileId(): int
+    {
+        $profileId = $this->staffProfileId();
+
+        if ($profileId === null) {
+            abort(403, 'No staff profile linked to this account.');
+        }
+
+        return $profileId;
+    }
+
+    /**
+     * Returns true iff the period passes both the institution-semester check and
+     * (for restricted positions) the period-grant check.
+     *
+     * Used by READS (return empty) and also by assertPeriodAllowed (abort 403).
+     */
+    private function periodAllowedInScope(int $periodId): bool
+    {
+        if ($periodId === 0) {
+            return false;
+        }
+
+        $scope = $this->staffScope();
+
+        if ($scope['institution_semester_id'] === null || $scope['institution_id'] === null) {
+            return false;
+        }
+
+        // Layer 1: period must belong to this actor's institution semester
+        $belongsToSemester = DB::table('operational_periods')
+            ->where('id', $periodId)
+            ->where('institution_semester_id', $scope['institution_semester_id'])
+            ->exists();
+
+        if (! $belongsToSemester) {
+            return false;
+        }
+
+        // Layer 2: for restricted roles, the period must be in their grant list
+        if ($this->isFullScopePosition()) {
+            return true;
+        }
+
+        return in_array($periodId, $this->allowedPeriodIds(), true);
+    }
+
+    /**
+     * Abort 403 if the given period is outside the actor's scope.
+     *
+     * Two-layer check:
+     *   1. Period must belong to the actor's trusted institution_semester_id.
+     *   2. For non-full-scope (secretary) positions, also in their grant list.
+     *
+     * "Full scope" means all periods in the actor's own semester — not globally.
+     */
+    private function assertPeriodAllowed(int $periodId): void
+    {
+        if (! $this->periodAllowedInScope($periodId)) {
+            abort(403, 'Period does not belong to your authorised scope.');
+        }
     }
 }
