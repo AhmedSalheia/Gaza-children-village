@@ -125,8 +125,8 @@
                 @forelse($enrollments as $e)
                 <tr>
                     <td>
-                        <a href="{{ route('staff.students.detail', ['studentProfileId' => $e->student_id]) }}" class="link" wire:navigate>{{ $e->student_name }}</a>
-                        <div style="font-size:var(--text-xs);color:var(--text-secondary)">{{ $e->student_code }}</div>
+                        <a href="{{ route('staff.students.detail', ['studentNationalId' => $e->national_id]) }}" class="link" wire:navigate>{{ $e->student_name }}</a>
+                        <div style="font-size:var(--text-xs);color:var(--text-secondary)">{{ $e->national_id }}</div>
                     </td>
                     <td>{{ $e->class_group_name }}</td>
                     <td>{{ $e->level_name }}</td>

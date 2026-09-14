@@ -110,7 +110,8 @@ final class EnrollmentManagement extends Component
                 'p.full_name_ar as student_name',
                 'cg.id as class_group_id',
                 'cg.name_ar as class_group_name',
-                'al.name_ar as level_name'
+                'al.name_ar as level_name',
+                'p.national_id as national_id'
             );
 
         if (! $this->isFullScopePosition()) {
@@ -126,7 +127,7 @@ final class EnrollmentManagement extends Component
         if ($this->search !== '') {
             $query->where(fn ($q) => $q
                 ->where('p.full_name_ar', 'like', '%'.$this->search.'%')
-                ->orWhere('sp.student_code', 'like', '%'.$this->search.'%')
+                ->orWhere('p.national_id', 'like', '%'.$this->search.'%')
             );
         }
 

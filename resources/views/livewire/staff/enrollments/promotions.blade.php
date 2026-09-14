@@ -111,7 +111,7 @@
                 @forelse($proposals as $p)
                 <tr>
                     <td>
-                        <a href="{{ route('staff.students.detail', ['studentProfileId' => $p->student_id]) }}" class="link" wire:navigate>{{ $p->student_name }}</a>
+                        <a href="{{ route('staff.students.detail', ['studentNationalId' => $p->national_id]) }}" class="link" wire:navigate>{{ $p->student_name }}</a>
                     </td>
                     <td>{{ $p->class_group_name }} / {{ $p->level_name }}</td>
                     <td><span class="badge badge--draft">{{ __('ui.'.$p->proposed_status)  }}</span></td>

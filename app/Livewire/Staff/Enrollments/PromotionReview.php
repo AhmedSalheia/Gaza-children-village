@@ -111,6 +111,7 @@ final class PromotionReview extends Component
                 'se.id as enrollment_id',
                 'sp.id as student_id',
                 'p.full_name_ar as student_name',
+                'p.national_id as national_id',
                 'cg.name_ar as class_group_name',
                 'al.name_ar as level_name'
             );
@@ -148,7 +149,7 @@ final class PromotionReview extends Component
             ->join('class_groups as cg', 'cg.id', '=', 'se.class_group_id')
             ->where('se.institution_semester_id', $scope['institution_semester_id'])
             ->whereIn('se.enrollment_status', ['active', 'completed'])
-            ->select('se.id', 'p.full_name_ar as student_name', 'cg.name_ar as class_group_name');
+            ->select('se.id', 'p.full_name_ar as student_name', 'cg.name_ar as class_group_name','p.national_id');
 
         if (! $this->isFullScopePosition()) {
             $allowedPeriods = $this->allowedPeriodIds();

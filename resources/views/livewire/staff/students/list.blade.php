@@ -74,9 +74,9 @@
                     <td>{{ $student->level_name }}</td>
                     <td><span class="badge badge--{{ match($student->enrollment_status) {'active'=>'active','draft'=>'draft','suspended'=>'pending',default=>'closed'} }}">{{ __('ui.'.$student->enrollment_status) }}</span></td>
                     <td style="white-space:nowrap">
-                        <a href="{{ route('staff.students.detail', ['studentNationalId' => $student->student_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.view', [], null, 'View') }}</a>
+                        <a href="{{ route('staff.students.detail', ['studentNationalId' => $student->national_id]) }}" class="btn btn--outline btn--sm" wire:navigate>{{ __('ui.view', [], null, 'View') }}</a>
                         @if($canManageEnrollments)
-                        <a href="{{ route('staff.enrollments.transfer', ['studentNationalId' => $student->student_id]) }}" class="btn btn--outline--secondary btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
+                        <a href="{{ route('staff.enrollments.transfer', ['studentNationalId' => $student->national_id]) }}" class="btn btn--outline--secondary btn--sm" wire:navigate>{{ __('ui.transfer', [], null, 'Transfer') }}</a>
                         @endif
                     </td>
                 </tr>
