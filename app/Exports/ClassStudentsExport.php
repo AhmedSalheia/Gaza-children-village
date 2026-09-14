@@ -30,7 +30,7 @@ final class ClassStudentsExport implements
         return $this->students->map(
             function ($student): array {
                 return [
-                    $student->student_code ?? '',
+                    $student->national_id ?? '',
                     $student->name_ar ?? '',
                     $student->name_en ?? '',
                     $student->enrollment_status ?? '',

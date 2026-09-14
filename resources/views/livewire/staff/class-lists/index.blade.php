@@ -1004,7 +1004,7 @@
                                     >
 
                                         <a
-                                            href="{{ route('staff.students.detail', ['studentProfileId' => $student->student_id]) }}"
+                                            href="{{ route('staff.students.detail', ['studentNationalId' => $student->national_id]) }}"
                                             wire:navigate
                                             style="
                                                 display:block;
