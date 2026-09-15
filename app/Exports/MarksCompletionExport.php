@@ -49,7 +49,7 @@ final class MarksCompletionExport implements FromCollection, ShouldAutoSize, Wit
 
     public function collection(): Collection
     {
-        $cgNameField = $this->locale === 'ar' ? 'cg.name_ar' : 'cg.name_ar';
+        $cgNameField = $this->locale === 'ar' ? 'cg.name_ar' : 'cg.name_en';
         $subjectNameField = $this->locale === 'ar' ? 's.name_ar' : 's.name_en';
         $staffNameField = $this->locale === 'ar' ? 'p.full_name_ar' : 'p.full_name_en';
 
