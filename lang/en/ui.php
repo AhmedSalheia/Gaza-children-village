@@ -492,7 +492,7 @@ return [
     'saving' => 'Saving…',
     'scan_queue' => 'Scan Queue',
     'score' => 'Score',
-    'search' => 'Search by name or code…',
+    'search' => 'Search by name or National Id',
     'search_guardians' => 'Search by name or code…',
     'search_institutions' => 'Search by name or code…',
     'search_people' => 'Search by name…',
@@ -635,7 +635,7 @@ return [
 'upload_excel_file'=>'excel File Upload',
 'upload_excel_description'=>'File description',
 'excel_only_max_50mb'=>'Excel Only Max 50mb',
-
+'no_formal_requests'=>'Formal Requests No',
 'upload_excel' => 'Upload Excel', 'upload_students_excel' => 'Upload Students Excel', 'excel_file' => 'Excel File', 'import_students' => 'Import Students', 'importing' => 'Importing...', 'uploading_file' => 'Uploading file...', 'student_excel_help' => 'Upload the Excel file downloaded from this page or a file using the same column structure.', 'student_excel_formats' => 'Accepted formats: XLSX, XLS — maximum file size: 50 MB.', 'student_excel_required' => 'Please select an Excel file.', 'student_excel_invalid' => 'The selected file is invalid.', 'student_excel_format' => 'The file must be an Excel file (.xlsx or .xls).', 'student_excel_max' => 'The maximum file size is 50 MB.', 'student_excel_no_semester' => 'No active institution semester is available for your current staff position.', 'student_excel_no_periods' => 'You do not have permission to import students for any operational period.', 'student_excel_empty' => 'The Excel file contains no student records.', 'student_excel_import_success' => ':count students were imported successfully.', 'student_excel_import_skipped' => ':count existing records were skipped.',
 'budget' => 'Budget',
 'staffing' => 'Staffing',

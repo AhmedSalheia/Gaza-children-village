@@ -55,7 +55,7 @@
                                 @endif
                             </td>
                             <td><code style="font-size:var(--text-sm)">{{ $institution->code }}</code></td>
-                            <td>{{ optional($institution->institutionType)->name_ar }}</td>
+                            <td>{{ optional($institution->institutionType)->name_en}}</td>
                             <td>
                                 <span class="badge badge--{{ $institution->is_active ? 'active' : 'archived' }}">
                                     {{ $institution->is_active ? __('ui.active', [], null, 'Active') : __('ui.inactive', [], null, 'Inactive') }}
