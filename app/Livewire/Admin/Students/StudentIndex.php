@@ -94,7 +94,7 @@ final class StudentIndex extends Component
 
     public function institutions(): Collection
     {
-        return DB::table('institutions')->where('is_active', true)->orderBy('name_ar')->get(['id', 'name_ar']);
+        return DB::table('institutions')->where('institution_type_id',1)->where('is_active', true)->orderBy('code')->get(['id', 'name_ar','code']);
     }
 
     public function statusOptions(): array
