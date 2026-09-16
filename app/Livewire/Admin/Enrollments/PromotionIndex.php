@@ -57,7 +57,7 @@ final class PromotionIndex extends Component
                 'pp.reviewed_by',
                 'pp.reviewed_at',
                 'pp.created_at',
-                'sp.student_code',
+                'p.national_id',
                 'p.full_name_ar as student_name',
                 'cg.name_ar as current_class_group',
                 'target_al.name_ar as proposed_level',

@@ -39,7 +39,7 @@ final class GuardianIndex extends Component
             ->join('people as p', 'p.id', '=', 'gp.person_id')
             ->select([
                 'gp.id',
-                'gp.guardian_code',
+                'p.national_id',
                 'gp.lifecycle_status',
                 'p.full_name_ar',
                 'p.full_name_en',
@@ -47,7 +47,7 @@ final class GuardianIndex extends Component
             ->when($this->search !== '', function ($q): void {
                 $s = "%{$this->search}%";
                 $q->where(function ($inner) use ($s): void {
-                    $inner->where('gp.guardian_code', 'like', $s)
+                    $inner->where('p.national_id', 'like', $s)
                         ->orWhere('p.full_name_ar', 'like', $s)
                         ->orWhere('p.full_name_en', 'like', $s);
                 });

@@ -46,7 +46,7 @@ final class TransferIndex extends Component
                 'se.enrolled_on',
                 'se.completed_on',
                 'se.notes',
-                'sp.student_code',
+                'p.national_id',
                 'p.full_name_ar as student_name',
                 'cg.name_ar as class_group_name',
                 'i.name_ar as institution_name',
@@ -55,7 +55,7 @@ final class TransferIndex extends Component
             ->when($this->search !== '', function ($q): void {
                 $s = "%{$this->search}%";
                 $q->where(function ($inner) use ($s): void {
-                    $inner->where('sp.student_code', 'like', $s)
+                    $inner->where('p.national_id', 'like', $s)
                         ->orWhere('p.full_name_ar', 'like', $s);
                 });
             })

@@ -35,7 +35,7 @@
                     <tr>
                         <td>
                             <div style="font-weight:600" dir="rtl">{{ $transfer->student_name }}</div>
-                            <code style="font-size:var(--text-xs)">{{ $transfer->student_code }}</code>
+                            <code style="font-size:var(--text-xs)">{{ $transfer->national_id }}</code>
                         </td>
                         <td dir="rtl">{{ $transfer->class_group_name }}</td>
                         <td>{{ $transfer->institution_name }}</td>

@@ -19,7 +19,7 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>{{ __('ui.code', [], null, 'Code') }}</th>
+                    <th>{{ __('ui.student_code', [], null, 'Code') }}</th>
                     <th>{{ __('ui.name', [], null, 'Name') }}</th>
                     <th>{{ __('ui.status', [], null, 'Status') }}</th>
                     <th></th>
@@ -28,7 +28,7 @@
             <tbody>
                 @forelse($guardians as $guardian)
                     <tr>
-                        <td><code>{{ $guardian->guardian_code }}</code></td>
+                        <td><code>{{ $guardian->national_id }}</code></td>
                         <td>
                             <span dir="rtl">{{ $guardian->full_name_ar }}</span>
                             @if($guardian->full_name_en)

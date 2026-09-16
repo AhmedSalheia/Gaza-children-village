@@ -55,7 +55,7 @@
                     <tr>
                         <td>
                             <div style="font-weight:600" dir="rtl">{{ $enrollment->student_name }}</div>
-                            <code style="font-size:var(--text-xs)">{{ $enrollment->student_code }}</code>
+                            <code style="font-size:var(--text-xs)">{{ $enrollment->national_id }}</code>
                         </td>
                         <td dir="rtl">{{ $enrollment->class_group_name }}</td>
                         <td>{{ $enrollment->level_name }}</td>

@@ -34,7 +34,7 @@
                     <tr>
                         <td>
                             <div style="font-weight:600" dir="rtl">{{ $proposal->student_name }}</div>
-                            <code style="font-size:var(--text-xs)">{{ $proposal->student_code }}</code>
+                            <code style="font-size:var(--text-xs)">{{ $proposal->national_id }}</code>
                         </td>
                         <td dir="rtl">{{ $proposal->current_class_group }}</td>
                         <td>
@@ -42,7 +42,7 @@
                                 {{ __('ui.'. $proposal->proposed_status) }}
                             </span>
                         </td>
-                        <td>{{ __('ui.'.$proposal->proposed_level) ?? '-'  }}</td>
+                        <td>{{ __(''.$proposal->proposed_level) ?? '-'  }}</td>
                         <td>
                             <span class="badge badge--{{ match($proposal->review_status) { 'approved' => 'active', 'rejected' => 'closed', default => 'pending' } }}">
                                 {{ __('ui.'.$proposal->review_status)  }}

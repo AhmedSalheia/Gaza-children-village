@@ -71,13 +71,13 @@
     </li>
     @endif
 
-    @if($navCan('import.upload'))
+    {{-- @if($navCan('import.upload'))
     <li class="portal-nav__item">
         <a href="{{ route('admin.imports.index') }}" class="portal-nav__link {{ active('admin/imports*') }}">
             {{ __('ui.imports', [], null, 'Imports') }}
         </a>
     </li>
-    @endif
+    @endif --}}
 
     @if($navCan('staff_profile.view'))
     <li class="portal-nav__item">

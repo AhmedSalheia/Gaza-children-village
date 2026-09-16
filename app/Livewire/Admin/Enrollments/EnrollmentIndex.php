@@ -68,7 +68,7 @@ final class EnrollmentIndex extends Component
                 'se.enrolled_on',
                 'se.activated_on',
                 'se.completed_on',
-                'sp.student_code',
+                'p.national_id',
                 'p.full_name_ar as student_name',
                 'cg.name_ar as class_group_name',
                 'al.name_ar as level_name',
@@ -77,7 +77,7 @@ final class EnrollmentIndex extends Component
             ->when($this->search !== '', function ($q): void {
                 $s = "%{$this->search}%";
                 $q->where(function ($inner) use ($s): void {
-                    $inner->where('sp.student_code', 'like', $s)
+                    $inner->where('p.national_id', 'like', $s)
                         ->orWhere('p.full_name_ar', 'like', $s);
                 });
             })

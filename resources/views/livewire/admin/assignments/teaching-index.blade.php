@@ -1,10 +1,12 @@
-@php
+    @php
     /** @var \App\Livewire\Admin\Assignments\TeachingAssignments $this */
 @endphp
 
 <div>
 
-    {{-- Page header --}}
+    {{-- =========================================================
+         Page header
+    ========================================================== --}}
     <div class="page-header">
 
         <h1 class="page-title">
@@ -22,7 +24,9 @@
     </div>
 
 
-    {{-- Flash message --}}
+    {{-- =========================================================
+         Flash message
+    ========================================================== --}}
     @if($flashMessage)
         <div class="alert alert--{{ $flashType === 'success' ? 'success' : 'danger' }}">
             {{ $flashMessage }}
@@ -30,9 +34,20 @@
     @endif
 
 
-    {{-- Filters --}}
-    <div class="filters-bar">
+    {{-- =========================================================
+         Filters
+    ========================================================== --}}
+    <div
+        class="filters-bar"
+        style="
+            display:flex;
+            align-items:flex-end;
+            gap:var(--space-4);
+            flex-wrap:wrap;
+        "
+    >
 
+        {{-- Semester filter --}}
         <div>
 
             <label class="form-label">
@@ -42,7 +57,11 @@
             <select
                 wire:model.live="instSemId"
                 class="form-control form-select"
-                style="max-inline-size:280px">
+                style="
+                    width:280px;
+                    max-width:100%;
+                "
+            >
 
                 <option value="0">
                     {{ __('assignments.select_semester') }}
@@ -73,7 +92,11 @@
                 <select
                     wire:model.live="classGroupId"
                     class="form-control form-select"
-                    style="max-inline-size:220px">
+                    style="
+                        width:220px;
+                        max-width:100%;
+                    "
+                >
 
                     <option value="0">
                         {{ __('assignments.all_classes') }}
@@ -93,12 +116,19 @@
 
 
         {{-- History --}}
-        <label class="flex items-center gap-2 text-sm text-gray-700">
+        <label
+            class="flex items-center gap-2 text-sm text-gray-700"
+            style="
+                padding-bottom:8px;
+                white-space:nowrap;
+            "
+        >
 
             <input
                 type="checkbox"
                 wire:model.live="showHistory"
-                class="rounded">
+                class="rounded"
+            >
 
             {{ __('assignments.show_history') }}
 
@@ -107,7 +137,9 @@
     </div>
 
 
-    {{-- Create form --}}
+    {{-- =========================================================
+         Create form
+    ========================================================== --}}
     @if($showForm && $canManage)
 
         <div class="form-section">
@@ -136,7 +168,8 @@
 
                         <select
                             wire:model="formPositionId"
-                            class="form-control form-select">
+                            class="form-control form-select"
+                        >
 
                             <option value="0">
                                 {{ __('assignments.select_position') }}
@@ -169,7 +202,8 @@
 
                         <select
                             wire:model="formClassGroupId"
-                            class="form-control form-select">
+                            class="form-control form-select"
+                        >
 
                             <option value="0">
                                 {{ __('assignments.select_class') }}
@@ -202,7 +236,8 @@
 
                         <select
                             wire:model="formSubjectId"
-                            class="form-control form-select">
+                            class="form-control form-select"
+                        >
 
                             <option value="0">
                                 {{ __('assignments.select_subject') }}
@@ -239,7 +274,8 @@
                         <input
                             type="date"
                             wire:model="formStartsOn"
-                            class="form-control">
+                            class="form-control"
+                        >
 
                         @error('formStartsOn')
                             <p class="form-error">
@@ -257,13 +293,15 @@
 
                     <button
                         wire:click="save"
-                        class="btn btn--primary btn--sm">
+                        class="btn btn--primary btn--sm"
+                    >
                         {{ __('ui.save') }}
                     </button>
 
                     <button
                         wire:click="$set('showForm', false)"
-                        class="btn btn--outline btn--sm">
+                        class="btn btn--outline btn--sm"
+                    >
                         {{ __('ui.cancel') }}
                     </button>
 
@@ -276,7 +314,9 @@
     @endif
 
 
-    {{-- End assignment --}}
+    {{-- =========================================================
+         End assignment
+    ========================================================== --}}
     @if($endingId)
 
         <div class="form-section form-section--danger">
@@ -302,7 +342,8 @@
                     <input
                         type="date"
                         wire:model="endDate"
-                        class="form-control">
+                        class="form-control"
+                    >
 
                     @error('endDate')
                         <p class="form-error">
@@ -324,7 +365,8 @@
                         type="text"
                         wire:model="endReason"
                         placeholder="{{ __('assignments.reason_ending_placeholder') }}"
-                        class="form-control">
+                        class="form-control"
+                    >
 
                     @error('endReason')
                         <p class="form-error">
@@ -341,13 +383,15 @@
 
                 <button
                     wire:click="confirmEnd"
-                    class="btn btn--danger btn--sm">
+                    class="btn btn--danger btn--sm"
+                >
                     {{ __('assignments.confirm_end') }}
                 </button>
 
                 <button
                     wire:click="cancelEnd"
-                    class="btn btn--outline btn--sm">
+                    class="btn btn--outline btn--sm"
+                >
                     {{ __('ui.cancel') }}
                 </button>
 
@@ -358,7 +402,9 @@
     @endif
 
 
-    {{-- Replace assignment --}}
+    {{-- =========================================================
+         Replace assignment
+    ========================================================== --}}
     @if($replacingId)
 
         <div class="form-section form-section--warning">
@@ -383,7 +429,8 @@
 
                     <select
                         wire:model="replacePositionId"
-                        class="form-control form-select">
+                        class="form-control form-select"
+                    >
 
                         <option value="0">
                             {{ __('assignments.select_new_position') }}
@@ -417,7 +464,8 @@
                     <input
                         type="date"
                         wire:model="replaceDate"
-                        class="form-control">
+                        class="form-control"
+                    >
 
                     @error('replaceDate')
                         <p class="form-error">
@@ -439,7 +487,8 @@
                         type="text"
                         wire:model="replaceReason"
                         placeholder="{{ __('assignments.reason_replacement_placeholder') }}"
-                        class="form-control">
+                        class="form-control"
+                    >
 
                     @error('replaceReason')
                         <p class="form-error">
@@ -456,13 +505,15 @@
 
                 <button
                     wire:click="confirmReplace"
-                    class="btn btn--warning btn--sm">
+                    class="btn btn--warning btn--sm"
+                >
                     {{ __('assignments.confirm_replace') }}
                 </button>
 
                 <button
                     wire:click="cancelReplace"
-                    class="btn btn--outline btn--sm">
+                    class="btn btn--outline btn--sm"
+                >
                     {{ __('ui.cancel') }}
                 </button>
 
@@ -473,7 +524,9 @@
     @endif
 
 
-    {{-- Table --}}
+    {{-- =========================================================
+         Table
+    ========================================================== --}}
     @if($instSemId === 0)
 
         <div class="empty-state">
@@ -572,10 +625,12 @@
                             {{-- From --}}
                             <td>
 
-                                <span style="
-                                    font-size:var(--text-sm);
-                                    color:var(--text-secondary)
-                                ">
+                                <span
+                                    style="
+                                        font-size:var(--text-sm);
+                                        color:var(--text-secondary)
+                                    "
+                                >
                                     {{ $row->starts_on }}
                                 </span>
 
@@ -585,10 +640,12 @@
                             {{-- To --}}
                             <td>
 
-                                <span style="
-                                    font-size:var(--text-sm);
-                                    color:var(--text-secondary)
-                                ">
+                                <span
+                                    style="
+                                        font-size:var(--text-sm);
+                                        color:var(--text-secondary)
+                                    "
+                                >
                                     {{ $row->ends_on ?? '—' }}
                                 </span>
 
@@ -598,15 +655,17 @@
                             {{-- Status --}}
                             <td>
 
-                                <span class="badge badge--{{ match($row->status) {
+                                <span
+                                    class="badge badge--{{ match($row->status) {
 
-                                    'active' => 'active',
+                                        'active' => 'active',
 
-                                    'superseded' => 'pending',
+                                        'superseded' => 'pending',
 
-                                    default => 'closed'
+                                        default => 'closed'
 
-                                } }}">
+                                    } }}"
+                                >
 
                                     {{ __('ui.'.$row->status) }}
 
@@ -626,13 +685,15 @@
 
                                             <button
                                                 wire:click="startEnd({{ $row->id }})"
-                                                class="btn btn--danger btn--sm">
+                                                class="btn btn--danger btn--sm"
+                                            >
                                                 {{ __('ui.end') }}
                                             </button>
 
                                             <button
                                                 wire:click="startReplace({{ $row->id }})"
-                                                class="btn btn--outline btn--sm">
+                                                class="btn btn--outline btn--sm"
+                                            >
                                                 {{ __('assignments.replace') }}
                                             </button>
 
@@ -667,5 +728,6 @@
     @endif
 
 </div>
+
 
 @include('livewire.admin._partials.page-styles')

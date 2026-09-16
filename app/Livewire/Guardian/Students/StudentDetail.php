@@ -71,7 +71,7 @@ final class StudentDetail extends Component
         return DB::table('student_profiles as sp')
             ->join('people as p', 'p.id', '=', 'sp.person_id')
             ->where('sp.id', $this->studentProfileId)
-            ->select('sp.id', 'sp.student_code', 'sp.lifecycle_status',
+            ->select('sp.id', 'p.national_id', 'sp.lifecycle_status',
                 'p.full_name_ar', 'p.full_name_en', 'p.birth_date', 'p.birth_date_precision')
             ->first();
     }
