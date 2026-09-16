@@ -24,31 +24,6 @@
             <img src="{{ asset('assets/img/gcv-logo-dark.png') }}" class="h-full" alt="GCV logo" />
         </a>
 
-        <nav class="portal-header__nav" role="navigation" aria-label="{{ __('auth.admin_portal') }}">
-            @auth('admin')
-                @php
-                    /**
-                     * Compute the authenticated admin's permission set once per layout render.
-                     * Used by admin-nav to conditionally show navigation links.
-                     * Key format: 'student.view' => true (only permitted keys are present).
-                     */
-                    $adminId = auth('admin')->id();
-                    $navPermissions = $adminId
-                        ? \Illuminate\Support\Facades\DB::table('administrative_account_roles as ar')
-                            ->join('role_permissions as rp', 'rp.role_id', '=', 'ar.role_id')
-                            ->join('permissions as p', 'p.id', '=', 'rp.permission_id')
-                            ->where('ar.administrative_account_id', $adminId)
-                            ->whereNull('ar.revoked_at')
-                            ->pluck('p.key')
-                            ->flip()
-                            ->toArray()
-                        : [];
-                    $navCan = fn (string $key): bool => array_key_exists($key, $navPermissions);
-                @endphp
-                @include('layouts.partials.admin-nav', ['navCan' => $navCan])
-            @endauth
-        </nav>
-
         <div class="portal-header__actions">
             {{-- Notification bell (in-app notifications) --}}
             @auth('admin')
@@ -72,6 +47,8 @@
 
 {{-- Main content --}}
 <div class="portal-body">
+    @include('layouts.partials.admin-nav')
+
     @if(session('success') || session('error'))
         <div class="flash-region">
             @if(session('success'))
