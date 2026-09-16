@@ -468,7 +468,7 @@ final class StudentList extends Component
                     '%' . $this->search . '%'
                 )
                 ->orWhere(
-                    'sp.student_code',
+                    'p.national_id',
                     'like',
                     '%' . $this->search . '%'
                 );

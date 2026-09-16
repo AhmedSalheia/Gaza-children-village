@@ -627,6 +627,8 @@ return [
 'upload_excel_file'=>'رفع ملف اكسل',
 'upload_excel_description'=>'وصف الملف',
 'excel_only_max_50mb'=>'ملفات Excel فقط (بحد أقصى 50 ميجابايت)',
+'no_formal_requests'=>'لا يوجد طلبات رسمية',
+'Search by name or code…'=>'البحث عبر الاسم ورقم الهوية'
 
 
 

@@ -296,8 +296,7 @@
 
 
                 <button
-                    type="button"
-                    wire:click="uploadExcelFile"
+                    type="submit"
                     class="btn btn--primary btn--sm"
                     wire:loading.attr="disabled"
                     wire:target="uploadExcelFile"
