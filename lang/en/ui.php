@@ -427,6 +427,129 @@ return [
         'Women\'s Center' => 'Women Center',
         'Storage Unit' => 'Storage Unit',
     ],
+            'add_institution'=>'Institution Add',
+                    'organization'=>'Organization',
+                    'institution_type'=>'Institution Type',
+                        'add_institution' => 'Add institution',
+    'enter_institution_data' => 'Enter the institution information and save it.',
+
+    'institution_auto_organization' => 'The institution will automatically be linked to the GCV organization.',
+
+    'select_institution_type' => 'Select institution type',
+
+    'institution_name_ar_placeholder' => 'Example: Children Village',
+
+    'institution_name_en_placeholder' => 'Example: GCV Institution',
+
+    'auto_generated' => 'Automatically generated',
+    'institution_code_auto_help' => 'The institution code is generated automatically from the institution type and the new institution ID.',
+        'institution_code_placeholder'=>'Academy-6',
+        'manage_institutions'=>'institutions Manage',
+        'formal_management_inbox' => 'Formal Requests Management',
+
+'formal_management_inbox_description' => 'Review and manage formal institution requests submitted to management.',
+
+'management_filter_description' => 'Filter formal requests by status or institution.',
+
+'management_requests' => 'Management Requests',
+
+'management_requests_description' => 'Formal requests requiring management review or action.',
+
+'no_management_requests' => 'No formal requests found',
+
+'no_management_requests_description' => 'There are currently no formal requests matching the selected filters.',
+
+'status_submitted_to_management' => 'Submitted to Management',
+
+'status_under_management_review' => 'Under Management Review',
+
+'status_clarification_requested' => 'Clarification Requested',
+
+'status_accepted' => 'Accepted',
+
+'status_rejected' => 'Rejected',
+
+'status_responded' => 'Responded',
+
+'status_closed' => 'Closed',
+
+'priority_low' => 'Low',
+
+'priority_medium' => 'Medium',
+
+'priority_high' => 'High',
+
+'priority_urgent' => 'Urgent',
+
+'title' => 'Title',
+
+'priority' => 'Priority',
+'formal_requests' => 'Formal Requests',
+'formal_management_inbox' => 'Formal Requests Management',
+'request_details' => 'Request Details',
+'request_details_description' => 'Complete information about this formal request.',
+
+'arabic_title' => 'Arabic Title',
+
+
+
+'due_date' => 'Due Date',
+'signed' => 'Signed',
+'hash' => 'Content Hash',
+'body' => 'Request Body',
+
+
+'results' => 'Results',
+
+'supporting_attachments' => 'Supporting Attachments',
+'attachments_description' => 'Documents and files attached to this request.',
+'no_attachments' => 'No Attachments',
+'no_attachments_description' => 'No supporting documents have been attached to this request.',
+'attachment_id' => 'Attachment',
+
+'management_actions' => 'Management Actions',
+'management_actions_description' => 'Available management actions for this request.',
+
+'start_review_btn' => 'Start Review',
+'approve_btn' => 'Approve Request',
+'reject_btn' => 'Reject Request',
+'clarify_btn' => 'Request Clarification',
+'add_response' => 'Add Response',
+
+'close_confirm' => 'Are you sure you want to close this request?',
+'close_request' => 'Close Request',
+
+'accept_request' => 'Accept Request',
+'acceptance_note_placeholder' => 'Add an acceptance note if needed...',
+'confirm_accept' => 'Confirm Acceptance',
+
+'reject_request' => 'Reject Request',
+'rejection_reason_placeholder' => 'Enter the reason for rejecting this request...',
+'confirm_reject' => 'Confirm Rejection',
+
+'clarify_placeholder' => 'Enter the question or clarification required from the institution...',
+'send' => 'Send',
+
+'management_response' => 'Management Response',
+'response_placeholder' => 'Enter the management response to this request...',
+'submit_response' => 'Submit Response',
+
+'comments' => 'Comments',
+'comments_description' => 'Comments and internal management notes related to this request.',
+'no_comments' => 'No Comments',
+'no_comments_description' => 'No comments have been added to this request yet.',
+
+'internal_note' => 'Internal Note',
+'add_internal_note_placeholder' => 'Write an internal management note...',
+'add_note' => 'Add Note',
+
+    'active_institution' => 'Institution is active',
+    'inactive_institution_help' => 'Inactive institutions remain stored to preserve historical records.',
+
+    'save' => 'Save',
+    'saving' => 'Saving...',
+
+
     'Done' => 'Done',
     'suspended' => 'suspended',
     'Civil Registry' => 'Civil Registry',

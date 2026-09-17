@@ -7,6 +7,7 @@ namespace App\Livewire\Admin\FormalRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Modules\Authorization\Data\PermissionKey;
@@ -14,27 +15,14 @@ use Modules\Requests\Models\InstitutionFormalRequest;
 use Modules\Requests\Models\InstitutionFormalRequestComment;
 use Modules\Requests\Services\InstitutionFormalRequestService;
 
-/**
- * Admin portal: review and respond to a formal institution request.
- *
- * Requires formal_request.respond permission.
- * Provides: start review, request clarification, accept, reject, respond, close.
- *
- * Comments with audience='internal' are hidden from this management view.
- *
- * Authorization:
- *   - $requestId is #[Locked] — Livewire rejects any forged hydration value.
- *   - loadRequest() restricts to managementVisible() scope, so drafts and
- *     pre-submission requests (draft, internal_review, signed, returned) are
- *     inaccessible even if an admin guesses or forges the ID.
- */
+#[Layout('layouts.admin')]
 final class ManagementReview extends Component
 {
     /** Route-bound request ID — locked to prevent Livewire hydration forgery. */
     #[Locked]
     public int $requestId;
 
-    public string $action = '';   // 'accept' | 'reject' | 'clarify' | 'respond' | ''
+    public string $action = '';
 
     public string $comment = '';
 
@@ -61,6 +49,7 @@ final class ManagementReview extends Component
                 request: $this->loadRequest(),
                 actorAccountId: (int) Auth::guard('admin')->id(),
             );
+
             $this->flashMessage = 'Review started.';
         } catch (\RuntimeException $e) {
             $this->errors[] = $e->getMessage();
@@ -84,6 +73,7 @@ final class ManagementReview extends Component
                 actorAccountId: (int) Auth::guard('admin')->id(),
                 question: $this->comment,
             );
+
             $this->comment = '';
             $this->action = '';
             $this->flashMessage = 'Clarification requested.';
@@ -103,6 +93,7 @@ final class ManagementReview extends Component
                 actorAccountId: (int) Auth::guard('admin')->id(),
                 comment: $this->comment !== '' ? $this->comment : null,
             );
+
             $this->comment = '';
             $this->action = '';
             $this->flashMessage = 'Request accepted.';
@@ -128,6 +119,7 @@ final class ManagementReview extends Component
                 actorAccountId: (int) Auth::guard('admin')->id(),
                 reason: $this->comment,
             );
+
             $this->comment = '';
             $this->action = '';
             $this->flashMessage = 'Request rejected.';
@@ -153,6 +145,7 @@ final class ManagementReview extends Component
                 actorAccountId: (int) Auth::guard('admin')->id(),
                 responseBody: ['text' => $this->responseText],
             );
+
             $this->responseText = '';
             $this->action = '';
             $this->flashMessage = 'Response recorded.';
@@ -171,6 +164,7 @@ final class ManagementReview extends Component
                 request: $this->loadRequest(),
                 actorAccountId: (int) Auth::guard('admin')->id(),
             );
+
             $this->flashMessage = 'Request closed.';
         } catch (\RuntimeException $e) {
             $this->errors[] = $e->getMessage();
@@ -197,6 +191,7 @@ final class ManagementReview extends Component
                 audience: InstitutionFormalRequestComment::AUDIENCE_MANAGEMENT,
                 commentText: $this->comment,
             );
+
             $this->comment = '';
             $this->flashMessage = 'Comment added.';
         } catch (\RuntimeException $e) {
@@ -206,19 +201,14 @@ final class ManagementReview extends Component
 
     public function render(): View
     {
-        // Re-check permission on every render so that removing the grant from an
-        // active admin session takes effect on the next Livewire round-trip.
         $this->requirePermission();
 
         $request = $this->loadRequest();
+
         $comments = $request->comments()
             ->visibleToManagement()
             ->get();
 
-        // Load supporting evidence so management can inspect attachments before
-        // making an accept/reject decision. Using the service keeps the query
-        // consistent with the staff-side list (institution scoping is on the
-        // underlying request row which was already verified above).
         $attachments = app(InstitutionFormalRequestService::class)
             ->listAttachments($request);
 
@@ -231,9 +221,6 @@ final class ManagementReview extends Component
 
     private function loadRequest(): InstitutionFormalRequest
     {
-        // Restrict to management-visible statuses (submitted_to_management and beyond).
-        // Pre-submission requests (draft, internal_review, signed, returned) are
-        // invisible here even if an admin forges or guesses the ID.
         return InstitutionFormalRequest::managementVisible()
             ->where('id', $this->requestId)
             ->firstOrFail();
@@ -247,18 +234,25 @@ final class ManagementReview extends Component
             abort(403);
         }
 
-        // Canonical admin RBAC table: administrative_account_roles (Accounts module).
-        // Revoked grants are excluded via revoked_at IS NULL.
         $hasPermission = DB::table('administrative_account_roles as aar')
             ->join('role_permissions as rp', 'rp.role_id', '=', 'aar.role_id')
             ->join('permissions as p', 'p.id', '=', 'rp.permission_id')
-            ->where('aar.administrative_account_id', $account->getKey())
+            ->where(
+                'aar.administrative_account_id',
+                $account->getKey()
+            )
             ->whereNull('aar.revoked_at')
-            ->where('p.key', PermissionKey::FORMAL_REQUEST_RESPOND)
+            ->where(
+                'p.key',
+                PermissionKey::FORMAL_REQUEST_RESPOND
+            )
             ->exists();
 
         if (! $hasPermission) {
-            abort(403, __('ui.unauthorized', [], null, 'You are not authorised to access this page.'));
+            abort(
+                403,
+                __('ui.unauthorized', [], null, 'You are not authorised to access this page.')
+            );
         }
     }
 }

@@ -2,60 +2,39 @@
     /** @var \App\Livewire\Admin\Institutions\InstitutionIndex $this */
 @endphp
 
-<div class="institutions-page">
+<div>
 
     {{-- =========================================================
          PAGE HEADER
     ========================================================== --}}
-    <div
-        style="
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:var(--space-5);
-            margin-block-end:var(--space-6);
-            flex-wrap:wrap;
-        "
-    >
+    <div class="page-header">
 
         <div>
-
             <h1 class="page-title">
-                <i
-                    class="bi bi-buildings"
-                    aria-hidden="true"
-                    style="margin-inline-end:8px;"
-                ></i>
-
-                {{ __('ui.institutions', [], null, 'المؤسسات') }}
+                {{ __('ui.institutions', [], null, 'Institutions') }}
             </h1>
 
-            <p
+            <div
                 style="
-                    margin:6px 0 0;
+                    margin-block-start:4px;
                     color:var(--text-secondary);
                     font-size:var(--text-sm);
                 "
             >
-                إدارة المؤسسات التابعة لمنظمة GCV
-            </p>
-
+                {{ __('ui.manage_institutions', [], null, 'Manage organization institutions') }}
+            </div>
         </div>
 
-        <div>
+        <div style="display:flex;gap:var(--space-2);align-items:center;">
 
             <button
                 type="button"
                 wire:click="openCreateForm"
-                class="btn btn--primary"
+                class="btn btn--outline btn--sm"
             >
-                <i
-                    class="bi bi-building-add"
-                    aria-hidden="true"
-                ></i>
-
+                <i class="bi bi-plus-lg" aria-hidden="true"></i>
                 <span>
-                    {{ __('ui.add_institution', [], null, 'إضافة مؤسسة') }}
+                    {{ __('ui.add_institution', [], null, 'Add institution') }}
                 </span>
             </button>
 
@@ -67,30 +46,42 @@
     {{-- =========================================================
          SUCCESS MESSAGE
     ========================================================== --}}
-    @if ($successMessage)
+    @if($successMessage)
 
         <div
             style="
-                margin-block-end:var(--space-5);
-                padding:14px 16px;
-                border:1px solid #bbf7d0;
-                border-radius:var(--radius-md);
-                background:#f0fdf4;
-                color:#166534;
                 display:flex;
                 align-items:center;
-                gap:10px;
+                gap:var(--space-3);
+                margin-block-end:var(--space-4);
+                padding:12px 16px;
+                border-radius:var(--radius-md);
+                background:#ecfdf5;
+                border:1px solid #a7f3d0;
+                color:#065f46;
             "
         >
 
-            <i
-                class="bi bi-check-circle-fill"
-                aria-hidden="true"
-            ></i>
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
 
-            <span>
+            <span style="flex:1">
                 {{ $successMessage }}
             </span>
+
+            <button
+                type="button"
+                wire:click="$set('successMessage', null)"
+                style="
+                    border:0;
+                    background:transparent;
+                    cursor:pointer;
+                    color:inherit;
+                    padding:4px;
+                "
+                aria-label="{{ __('ui.close', [], null, 'Close') }}"
+            >
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
 
         </div>
 
@@ -100,55 +91,56 @@
     {{-- =========================================================
          CREATE FORM
     ========================================================== --}}
-    @if ($showCreateForm)
+    @if($showCreateForm)
 
         <div
-            class="card"
             style="
-                margin-block-end:var(--space-6);
+                margin-block-end:var(--space-5);
+                padding:var(--space-5);
+                border:1px solid var(--border-color);
+                border-radius:var(--radius-md);
+                background:var(--surface-primary);
             "
         >
 
-            {{-- Form Header --}}
+            {{-- FORM HEADER --}}
             <div
                 style="
                     display:flex;
                     align-items:center;
                     justify-content:space-between;
                     gap:var(--space-4);
-                    margin-block-end:var(--space-6);
-                    padding-block-end:var(--space-4);
-                    border-block-end:1px solid var(--border-color);
+                    flex-wrap:wrap;
+                    margin-block-end:var(--space-5);
                 "
             >
 
                 <div>
 
-                    <h2
+                    <div
                         style="
-                            margin:0;
-                            font-size:var(--text-lg);
+                            display:flex;
+                            align-items:center;
+                            gap:var(--space-2);
                             font-weight:700;
-                            color:var(--text-primary);
+                            font-size:var(--text-lg);
                         "
                     >
-                        <i
-                            class="bi bi-building-add"
-                            aria-hidden="true"
-                            style="margin-inline-end:8px;"
-                        ></i>
+                        <i class="bi bi-building-add" aria-hidden="true"></i>
 
-                        إضافة مؤسسة جديدة
-                    </h2>
+                        <span>
+                            {{ __('ui.add_institution', [], null, 'Add institution') }}
+                        </span>
+                    </div>
 
                     <div
                         style="
-                            margin-block-start:5px;
+                            margin-block-start:4px;
                             color:var(--text-secondary);
                             font-size:var(--text-sm);
                         "
                     >
-                        أدخل بيانات المؤسسة وسيتم إنشاء الكود تلقائيًا.
+                        {{ __('ui.enter_institution_data', [], null, 'Enter the institution information and save it.') }}
                     </div>
 
                 </div>
@@ -156,423 +148,335 @@
                 <button
                     type="button"
                     wire:click="closeCreateForm"
-                    class="btn btn--secondary"
+                    class="btn btn--outline btn--sm"
                 >
-                    <i
-                        class="bi bi-x-lg"
-                        aria-hidden="true"
-                    ></i>
-
-                    إغلاق
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    <span>
+                        {{ __('ui.close', [], null, 'Close') }}
+                    </span>
                 </button>
 
             </div>
 
 
-            {{-- Form --}}
-            <form wire:submit="save">
+            {{-- FORM FIELDS --}}
+            <div
+                style="
+                    display:grid;
+                    grid-template-columns:repeat(2,minmax(0,1fr));
+                    gap:var(--space-4);
+                "
+                class="institution-form-grid"
+            >
 
-                <div class="institution-create-grid">
+                {{-- ORGANIZATION --}}
+                <div>
 
-                    {{-- =================================================
-                         ORGANIZATION
-                    ================================================== --}}
-                    <div>
+                    <label
+                        for="institution-organization"
+                        style="
+                            display:block;
+                            margin-block-end:6px;
+                            font-weight:600;
+                            font-size:var(--text-sm);
+                        "
+                    >
+                        {{ __('ui.organization', [], null, 'Organization') }}
+                    </label>
 
-                        <label
-                            for="organization-display"
-                            class="institution-field-label"
-                        >
-                            المنظمة
-                        </label>
+                    <input
+                        id="institution-organization"
+                        type="text"
+                        class="form-control"
+                        value="GCV"
+                        disabled
+                    >
 
-                        <input
-                            id="organization-display"
-                            type="text"
-                            class="form-control"
-                            value="GCV"
-                            readonly
-                            disabled
-                        >
+                    <input
+                        type="hidden"
+                        wire:model="organizationId"
+                    >
 
-                        <input
-                            type="hidden"
-                            wire:model="organizationId"
-                        >
+                    <div
+                        style="
+                            margin-block-start:5px;
+                            font-size:var(--text-xs);
+                            color:var(--text-secondary);
+                        "
+                    >
+                        {{ __('ui.institution_auto_organization', [], null, 'The institution will automatically be linked to the GCV organization.') }}
+                    </div>
 
-                        <div class="institution-help">
-                            جميع المؤسسات الحالية تابعة لمنظمة GCV.
+                    @error('organizationId')
+                        <div class="form-error">
+                            {{ $message }}
                         </div>
+                    @enderror
 
-                        @error('organizationId')
-                            <div class="institution-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
+                </div>
 
 
-                    {{-- =================================================
-                         INSTITUTION TYPE
-                    ================================================== --}}
-                    <div>
+                {{-- INSTITUTION TYPE --}}
+                <div>
 
-                        <label
-                            for="institution-type"
-                            class="institution-field-label"
-                        >
-                            نوع المؤسسة
-                            <span class="required">*</span>
-                        </label>
+                    <label
+                        for="institution-type"
+                        style="
+                            display:block;
+                            margin-block-end:6px;
+                            font-weight:600;
+                            font-size:var(--text-sm);
+                        "
+                    >
+                        {{ __('ui.institution_type', [], null, 'Institution type') }}
+                        <span style="color:#dc2626">*</span>
+                    </label>
 
-                        <select
-                            id="institution-type"
-                            wire:model.live="institutionTypeId"
-                            class="form-control"
-                            required
-                        >
+                  <select
+    id="institution-type"
+    wire:model="institutionTypeId"
+    class="form-control form-select"
+>
+    <option value="">
+        {{ __('ui.select_institution_type', [], null, 'Select institution type') }}
+    </option>
 
-                            <option value="">
-                                اختر نوع المؤسسة
-                            </option>
-
-                            @foreach ($institutionTypes as $type)
-
-                                <option value="{{ $type->id }}">
-                                    {{ $type->name_ar }}
-
-                                    @if ($type->code)
-                                        — {{ $type->code }}
-                                    @endif
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                        <div class="institution-help">
-                            سيتم استخدام كود نوع المؤسسة في بداية الكود النهائي.
+    @foreach($institutionTypes as $type)
+        <option value="{{ $type->id }}">
+            {{ __('ui.institution_types.' . $type->name_en, [], $type->name_ar ?: $type->name_en) }}
+        </option>
+    @endforeach
+</select>
+                    @error('institutionTypeId')
+                        <div class="form-error">
+                            {{ $message }}
                         </div>
+                    @enderror
 
-                        @error('institutionTypeId')
-                            <div class="institution-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
+                </div>
 
 
-                    {{-- =================================================
-                         ARABIC NAME
-                    ================================================== --}}
-                    <div>
+                {{-- ARABIC NAME --}}
+                <div>
 
-                        <label
-                            for="institution-name-ar"
-                            class="institution-field-label"
-                        >
-                            اسم المؤسسة بالعربية
-                            <span class="required">*</span>
-                        </label>
+                    <label
+                        for="institution-name-ar"
+                        style="
+                            display:block;
+                            margin-block-end:6px;
+                            font-weight:600;
+                            font-size:var(--text-sm);
+                        "
+                    >
+                        {{ __('ui.name_ar', [], null, 'Arabic name') }}
+                        <span style="color:#dc2626">*</span>
+                    </label>
+
+                    <input
+                        id="institution-name-ar"
+                        type="text"
+                        wire:model="nameAr"
+                        class="form-control"
+                        placeholder="{{ __('ui.institution_name_ar_placeholder', [], null, 'Example: Children Village') }}"
+                        autocomplete="off"
+                        dir="rtl"
+                    >
+
+                    @error('nameAr')
+                        <div class="form-error">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
+
+
+                {{-- ENGLISH NAME --}}
+                <div>
+
+                    <label
+                        for="institution-name-en"
+                        style="
+                            display:block;
+                            margin-block-end:6px;
+                            font-weight:600;
+                            font-size:var(--text-sm);
+                        "
+                    >
+                        {{ __('ui.name_en', [], null, 'English name') }}
+                    </label>
+
+                    <input
+                        id="institution-name-en"
+                        type="text"
+                        wire:model="nameEn"
+                        class="form-control"
+                        placeholder="{{ __('ui.institution_name_en_placeholder', [], null, 'Example: GCV Institution') }}"
+                        autocomplete="off"
+                        dir="ltr"
+                    >
+
+                    @error('nameEn')
+                        <div class="form-error">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
+
+
+                {{-- CODE --}}
+  {{-- CODE --}}
+<div>
+
+    <label
+        for="institution-code"
+        style="
+            display:block;
+            margin-block-end:6px;
+            font-weight:600;
+            font-size:var(--text-sm);
+        "
+    >
+        {{ __('ui.code', [], null, 'Code') }}
+        <span style="color:#dc2626">*</span>
+    </label>
+
+    <input
+        id="institution-code"
+        type="text"
+        wire:model="code"
+        class="form-control"
+        placeholder="{{ __('ui.institution_code_placeholder', [], null, 'Enter institution code') }}"
+        autocomplete="off"
+        dir="ltr"
+    >
+
+    <div
+        style="
+            margin-block-start:5px;
+            font-size:var(--text-xs);
+            color:var(--text-secondary);
+        "
+    >
+    </div>
+
+    @error('code')
+        <div class="form-error">
+            {{ $message }}
+        </div>
+    @enderror
+
+</div>
+
+
+                {{-- STATUS --}}
+                <div>
+
+                    <label
+                        style="
+                            display:block;
+                            margin-block-end:6px;
+                            font-weight:600;
+                            font-size:var(--text-sm);
+                        "
+                    >
+                        {{ __('ui.status', [], null, 'Status') }}
+                    </label>
+
+                    <label
+                        style="
+                            display:flex;
+                            align-items:center;
+                            gap:10px;
+                            min-height:42px;
+                            cursor:pointer;
+                        "
+                    >
 
                         <input
-                            id="institution-name-ar"
-                            type="text"
-                            wire:model="nameAr"
-                            class="form-control"
-                            placeholder="مثال: أكاديمية غزة"
-                            autocomplete="off"
-                            required
-                        >
-
-                        @error('nameAr')
-                            <div class="institution-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-
-                    {{-- =================================================
-                         ENGLISH NAME
-                    ================================================== --}}
-                    <div>
-
-                        <label
-                            for="institution-name-en"
-                            class="institution-field-label"
-                        >
-                            اسم المؤسسة بالإنجليزية
-                            <span class="required">*</span>
-                        </label>
-
-                        <input
-                            id="institution-name-en"
-                            type="text"
-                            wire:model="nameEn"
-                            class="form-control"
-                            placeholder="Example: Gaza Academy"
-                            autocomplete="off"
-                            dir="ltr"
-                            required
-                        >
-
-                        @error('nameEn')
-                            <div class="institution-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-
-                    {{-- =================================================
-                         GENERATED CODE
-                    ================================================== --}}
-                    <div>
-
-                        <label
-                            for="institution-code"
-                            class="institution-field-label"
-                        >
-                            كود المؤسسة
-                        </label>
-
-                        <input
-                            id="institution-code"
-                            type="text"
-                            class="form-control"
-                            value="سيتم إنشاؤه تلقائيًا بعد الحفظ"
-                            readonly
-                            disabled
-                            dir="ltr"
+                            type="checkbox"
+                            wire:model="isActive"
                             style="
-                                background:var(--surface-secondary);
-                                font-family:monospace;
-                                font-weight:700;
-                                letter-spacing:.3px;
-                            "
-                        >
-
-                        <div class="institution-help">
-                            الكود غير قابل للإدخال اليدوي.
-                            سيتم توليده بعد إنشاء السجل باستخدام
-                            <strong>نوع المؤسسة</strong>
-                            و<strong>ID الحقيقي للمؤسسة الجديدة</strong>.
-                        </div>
-
-                    </div>
-
-
-                    {{-- =================================================
-                         ACTIVE
-                    ================================================== --}}
-                    <div>
-
-                        <label
-                            class="institution-field-label"
-                        >
-                            حالة المؤسسة
-                        </label>
-
-                        <label
-                            style="
-                                display:flex;
-                                align-items:center;
-                                gap:10px;
-                                min-height:42px;
+                                width:18px;
+                                height:18px;
                                 cursor:pointer;
                             "
                         >
 
-                            <input
-                                type="checkbox"
-                                wire:model="isActive"
-                                style="
-                                    width:18px;
-                                    height:18px;
-                                "
-                            >
+                        <span>
+                            {{ __('ui.active_institution', [], null, 'Institution is active') }}
+                        </span>
 
-                            <span>
-                                المؤسسة نشطة
-                            </span>
-
-                        </label>
-
-                        @error('isActive')
-                            <div class="institution-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                </div>
-
-
-                {{-- =================================================
-                     CODE GENERATION INFORMATION
-                ================================================== --}}
-                <div
-                    style="
-                        margin-block-start:var(--space-5);
-                        padding:var(--space-4);
-                        border:1px dashed var(--border-color);
-                        border-radius:var(--radius-md);
-                        background:var(--surface-secondary);
-                    "
-                >
+                    </label>
 
                     <div
                         style="
-                            display:flex;
-                            align-items:flex-start;
-                            gap:12px;
+                            margin-block-start:5px;
+                            font-size:var(--text-xs);
+                            color:var(--text-secondary);
                         "
                     >
-
-                        <i
-                            class="bi bi-info-circle"
-                            aria-hidden="true"
-                            style="
-                                font-size:18px;
-                                margin-block-start:2px;
-                            "
-                        ></i>
-
-                        <div>
-
-                            <div
-                                style="
-                                    font-weight:700;
-                                    color:var(--text-primary);
-                                "
-                            >
-                                التوليد التلقائي للكود
-                            </div>
-
-                            <div
-                                style="
-                                    margin-block-start:4px;
-                                    font-size:var(--text-sm);
-                                    color:var(--text-secondary);
-                                    line-height:1.8;
-                                "
-                            >
-
-                                يتم إنشاء الكود تلقائيًا بعد حفظ المؤسسة.
-
-                                يعتمد الجزء الأول من الكود على
-                                <strong>
-                                    كود نوع المؤسسة
-                                </strong>،
-
-                                بينما يعتمد الرقم الأخير على
-                                <strong>
-                                    ID الخاص بالمؤسسة الجديدة
-                                </strong>.
-
-                                <br>
-
-                                مثال:
-
-                                إذا كان كود نوع المؤسسة:
-
-                                <strong dir="ltr">
-                                    academy
-                                </strong>
-
-                                وكان الـ ID الذي أنشأته قاعدة البيانات:
-
-                                <strong dir="ltr">
-                                    26
-                                </strong>
-
-                                فسيكون الكود النهائي:
-
-                                <strong dir="ltr">
-                                    GCV-academy-026
-                                </strong>
-
-                            </div>
-
-                        </div>
-
+                        {{ __('ui.inactive_institution_help', [], null, 'Inactive institutions remain stored to preserve historical records.') }}
                     </div>
 
+                    @error('isActive')
+                        <div class="form-error">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
                 </div>
 
+            </div>
 
-                {{-- =================================================
-                     FORM ACTIONS
-                ================================================== --}}
-                <div
-                    style="
-                        display:flex;
-                        align-items:center;
-                        justify-content:flex-start;
-                        gap:var(--space-3);
-                        margin-block-start:var(--space-6);
-                        padding-block-start:var(--space-5);
-                        border-block-start:1px solid var(--border-color);
-                        flex-wrap:wrap;
-                    "
+
+            {{-- FORM ACTIONS --}}
+            <div
+                style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:flex-end;
+                    gap:var(--space-2);
+                    margin-block-start:var(--space-5);
+                    padding-block-start:var(--space-4);
+                    border-block-start:1px solid var(--border-color);
+                "
+            >
+
+                <button
+                    type="button"
+                    wire:click="closeCreateForm"
+                    class="btn btn--outline btn--sm"
+                >
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+
+                    <span>
+                        {{ __('ui.cancel', [], null, 'Cancel') }}
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    wire:click="save"
+                    wire:loading.attr="disabled"
+                    wire:target="save"
+                    class="btn btn--primary btn--sm"
                 >
 
-                    <button
-                        type="submit"
-                        class="btn btn--primary"
-                        wire:loading.attr="disabled"
-                        wire:target="save"
-                    >
+                    <span wire:loading.remove wire:target="save">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
+                        {{ __('ui.save', [], null, 'Save') }}
+                    </span>
 
-                        <span
-                            wire:loading.remove
-                            wire:target="save"
-                        >
-                            <i
-                                class="bi bi-check-lg"
-                                aria-hidden="true"
-                            ></i>
+                    <span wire:loading wire:target="save">
+                        <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                        {{ __('ui.saving', [], null, 'Saving...') }}
+                    </span>
 
-                            حفظ المؤسسة
-                        </span>
+                </button>
 
-                        <span
-                            wire:loading
-                            wire:target="save"
-                        >
-                            <i
-                                class="bi bi-arrow-repeat"
-                                aria-hidden="true"
-                            ></i>
-
-                            جاري الحفظ...
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        wire:click="closeCreateForm"
-                        class="btn btn--secondary"
-                    >
-                        <i
-                            class="bi bi-x-lg"
-                            aria-hidden="true"
-                        ></i>
-
-                        إلغاء
-                    </button>
-
-                </div>
-
-            </form>
+            </div>
 
         </div>
 
@@ -582,570 +486,291 @@
     {{-- =========================================================
          FILTERS
     ========================================================== --}}
-    <div
-        class="card"
-        style="
-            margin-block-end:var(--space-6);
-        "
-    >
+    <div class="filters-bar">
 
-        <div
-            style="
-                display:flex;
-                align-items:center;
-                gap:10px;
-                margin-block-end:var(--space-5);
-            "
+        {{-- SEARCH --}}
+        <input
+            type="search"
+            wire:model.live.debounce.300ms="search"
+            class="form-control"
+            placeholder="{{ __('ui.search_institutions', [], null, 'Search institution name or code...') }}"
+            style="max-inline-size:280px"
         >
 
-            <i
-                class="bi bi-funnel"
-                aria-hidden="true"
-            ></i>
 
-            <h2
-                style="
-                    margin:0;
-                    font-size:var(--text-lg);
-                    font-weight:700;
-                    color:var(--text-primary);
-                "
-            >
-                البحث والتصفية
-            </h2>
+        {{-- TYPE --}}
+        <select
+            wire:model.live="typeFilter"
+            class="form-control form-select"
+            style="max-inline-size:220px"
+        >
 
-        </div>
+            <option value="">
+                {{ __('ui.all_types', [], null, 'All types') }}
+            </option>
 
+           @foreach($institutionTypes as $type)
 
-        <div class="institution-filter-grid">
+    <option value="{{ $type->id }}">
+        {{ __('ui.institution_types.' . $type->name_en, [], $type->name_ar ?: $type->name_en) }}
+    </option>
 
-            {{-- Search --}}
-            <div>
+@endforeach
 
-                <label
-                    for="institution-search"
-                    class="institution-field-label"
-                >
-                    البحث
-                </label>
-
-                <div style="position:relative;">
-
-                    <i
-                        class="bi bi-search"
-                        aria-hidden="true"
-                        style="
-                            position:absolute;
-                            inset-inline-start:12px;
-                            top:50%;
-                            transform:translateY(-50%);
-                            color:var(--text-secondary);
-                            pointer-events:none;
-                        "
-                    ></i>
-
-                    <input
-                        id="institution-search"
-                        type="search"
-                        wire:model.live.debounce.400ms="search"
-                        class="form-control"
-                        style="padding-inline-start:38px;"
-                        placeholder="اسم المؤسسة أو الكود..."
-                    >
-
-                </div>
-
-            </div>
+        </select>
 
 
-            {{-- Type --}}
-            <div>
+        {{-- STATUS --}}
+        <select
+            wire:model.live="statusFilter"
+            class="form-control form-select"
+            style="max-inline-size:180px"
+        >
 
-                <label
-                    for="institution-type-filter"
-                    class="institution-field-label"
-                >
-                    نوع المؤسسة
-                </label>
+            <option value="all">
+                {{ __('ui.all_statuses', [], null, 'All statuses') }}
+            </option>
 
-                <select
-                    id="institution-type-filter"
-                    wire:model.live="typeFilter"
-                    class="form-control"
-                >
+            <option value="active">
+                {{ __('ui.active', [], null, 'Active') }}
+            </option>
 
-                    <option value="">
-                        جميع الأنواع
-                    </option>
+            <option value="inactive">
+                {{ __('ui.inactive', [], null, 'Inactive') }}
+            </option>
 
-                    @foreach ($institutionTypes as $type)
-
-                        <option value="{{ $type->id }}">
-                            {{ $type->name_ar }}
-                        </option>
-
-                    @endforeach
-
-                </select>
-
-            </div>
-
-
-            {{-- Status --}}
-            <div>
-
-                <label
-                    for="institution-status-filter"
-                    class="institution-field-label"
-                >
-                    الحالة
-                </label>
-
-                <select
-                    id="institution-status-filter"
-                    wire:model.live="statusFilter"
-                    class="form-control"
-                >
-
-                    <option value="all">
-                        جميع الحالات
-                    </option>
-
-                    <option value="active">
-                        نشطة
-                    </option>
-
-                    <option value="inactive">
-                        غير نشطة
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
+        </select>
 
     </div>
 
 
     {{-- =========================================================
-         INSTITUTIONS TABLE
+         TABLE
     ========================================================== --}}
-    <div class="card">
+    <div class="data-table-wrapper">
 
-        <div
-            style="
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
-                gap:var(--space-4);
-                margin-block-end:var(--space-5);
-                flex-wrap:wrap;
-            "
-        >
+        <table class="data-table">
 
-            <div>
+            <thead>
 
-                <h2
-                    style="
-                        margin:0;
-                        font-size:var(--text-lg);
-                        font-weight:700;
-                        color:var(--text-primary);
-                    "
-                >
-                    قائمة المؤسسات
-                </h2>
+                <tr>
 
-                <div
-                    style="
-                        margin-block-start:4px;
-                        color:var(--text-secondary);
-                        font-size:var(--text-sm);
-                    "
-                >
-                    عرض المؤسسات المسجلة في النظام
-                </div>
+                    <th>
+                        {{ __('ui.name', [], null, 'Institution') }}
+                    </th>
 
-            </div>
+                    <th>
+                        {{ __('ui.code', [], null, 'Code') }}
+                    </th>
 
-            <div
-                style="
-                    color:var(--text-secondary);
-                    font-size:var(--text-sm);
-                "
-            >
-                إجمالي النتائج:
-                <strong>
-                    {{ $institutions->total() }}
-                </strong>
-            </div>
+                    <th>
+                        {{ __('ui.type', [], null, 'Type') }}
+                    </th>
 
-        </div>
+                    <th>
+                        {{ __('ui.status', [], null, 'Status') }}
+                    </th>
+
+                </tr>
+
+            </thead>
 
 
-        {{-- Table --}}
-        <div
-            style="
-                overflow-x:auto;
-            "
-        >
+            <tbody>
 
-            <table class="data-table">
-
-                <thead>
+                @forelse($institutions as $institution)
 
                     <tr>
 
-                        <th>
-                            #
-                        </th>
+                        {{-- NAME --}}
+                        <td>
 
-                        <th>
-                            المؤسسة
-                        </th>
-
-                        <th>
-                            الكود
-                        </th>
-
-                        <th>
-                            نوع المؤسسة
-                        </th>
-
-                        <th>
-                            الحالة
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @forelse ($institutions as $institution)
-
-                        <tr>
-
-                            {{-- ID --}}
-                            <td>
-                                <span
-                                    dir="ltr"
-                                    style="
-                                        font-family:monospace;
-                                        font-weight:600;
-                                    "
-                                >
-                                    {{ $institution->id }}
-                                </span>
-                            </td>
-
-
-                            {{-- Institution --}}
-                            <td>
-
-                                <div
-                                    style="
-                                        font-weight:700;
-                                        color:var(--text-primary);
-                                    "
-                                >
-                                    {{ $institution->name_ar }}
-                                </div>
-
-                                @if ($institution->name_en)
-
-                                    <div
-                                        dir="ltr"
-                                        style="
-                                            margin-block-start:3px;
-                                            color:var(--text-secondary);
-                                            font-size:var(--text-sm);
-                                            text-align:right;
-                                        "
-                                    >
-                                        {{ $institution->name_en }}
-                                    </div>
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- Code --}}
-                            <td>
-
-                                <span
-                                    dir="ltr"
-                                    style="
-                                        font-family:monospace;
-                                        font-weight:700;
-                                        letter-spacing:.3px;
-                                    "
-                                >
-                                    {{ $institution->code ?: '—' }}
-                                </span>
-
-                            </td>
-
-
-                            {{-- Type --}}
-                            <td>
-
-                                @if ($institution->institutionType)
-
-                                    <div>
-                                        {{ $institution->institutionType->name_ar }}
-                                    </div>
-
-                                    @if ($institution->institutionType->code)
-
-                                        <div
-                                            dir="ltr"
-                                            style="
-                                                margin-block-start:3px;
-                                                color:var(--text-secondary);
-                                                font-size:var(--text-sm);
-                                            "
-                                        >
-                                            {{ $institution->institutionType->code }}
-                                        </div>
-
-                                    @endif
-
-                                @else
-
-                                    <span
-                                        style="
-                                            color:var(--text-secondary);
-                                        "
-                                    >
-                                        —
-                                    </span>
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- Status --}}
-                            <td>
-
-                                @if ($institution->is_active)
-
-                                    <span
-                                        style="
-                                            display:inline-flex;
-                                            align-items:center;
-                                            gap:6px;
-                                            padding:5px 10px;
-                                            border-radius:999px;
-                                            background:#dcfce7;
-                                            color:#166534;
-                                            font-size:var(--text-sm);
-                                            font-weight:600;
-                                        "
-                                    >
-
-                                        <i
-                                            class="bi bi-check-circle-fill"
-                                            aria-hidden="true"
-                                        ></i>
-
-                                        نشطة
-
-                                    </span>
-
-                                @else
-
-                                    <span
-                                        style="
-                                            display:inline-flex;
-                                            align-items:center;
-                                            gap:6px;
-                                            padding:5px 10px;
-                                            border-radius:999px;
-                                            background:#f3f4f6;
-                                            color:#4b5563;
-                                            font-size:var(--text-sm);
-                                            font-weight:600;
-                                        "
-                                    >
-
-                                        <i
-                                            class="bi bi-pause-circle-fill"
-                                            aria-hidden="true"
-                                        ></i>
-
-                                        غير نشطة
-
-                                    </span>
-
-                                @endif
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-
-                            <td
-                                colspan="5"
+                            <div
                                 style="
-                                    text-align:center;
-                                    padding:var(--space-8);
-                                    color:var(--text-secondary);
+                                    display:flex;
+                                    align-items:center;
+                                    gap:10px;
                                 "
                             >
 
                                 <div
                                     style="
-                                        font-size:34px;
-                                        margin-block-end:10px;
+                                        width:34px;
+                                        height:34px;
+                                        min-width:34px;
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        border-radius:var(--radius-md);
+                                        background:var(--surface-secondary);
                                     "
                                 >
                                     <i
-                                        class="bi bi-buildings"
+                                        class="bi bi-building"
                                         aria-hidden="true"
                                     ></i>
                                 </div>
 
-                                <div
-                                    style="
-                                        font-weight:600;
-                                        color:var(--text-primary);
-                                    "
-                                >
-                                    لا توجد مؤسسات
+                                <div>
+
+                                    <div
+                                        style="
+                                            font-weight:600;
+                                        "
+                                        dir="rtl"
+                                    >
+                                        {{ $institution->name_ar }}
+                                    </div>
+
+                                    @if($institution->name_en)
+
+                                        <div
+                                            style="
+                                                margin-block-start:2px;
+                                                font-size:var(--text-xs);
+                                                color:var(--text-secondary);
+                                            "
+                                            dir="ltr"
+                                        >
+                                            {{ $institution->name_en }}
+                                        </div>
+
+                                    @endif
+
                                 </div>
 
-                                <div
-                                    style="
-                                        margin-block-start:5px;
-                                        font-size:var(--text-sm);
-                                    "
-                                >
-                                    لم يتم العثور على مؤسسات مطابقة للبحث الحالي.
-                                </div>
+                            </div>
 
-                            </td>
-
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
+                        </td>
 
 
-        {{-- Pagination --}}
-        @if ($institutions->hasPages())
+                        {{-- CODE --}}
+                        <td>
 
-            <div
-                style="
-                    margin-block-start:var(--space-5);
-                    padding-block-start:var(--space-5);
-                    border-block-start:1px solid var(--border-color);
-                "
-            >
-                {{ $institutions->links() }}
-            </div>
+                            <code
+                                style="
+                                    font-size:var(--text-xs);
+                                    direction:ltr;
+                                    unicode-bidi:embed;
+                                "
+                            >
+                                {{ $institution->code }}
+                            </code>
 
-        @endif
+                        </td>
+
+
+                        {{-- TYPE --}}
+                        <td>
+
+                            {{ $institution->institutionType?->name_ar
+                                ?: $institution->institutionType?->name_en
+                                ?: __('ui.not_specified', [], null, 'Not specified') }}
+
+                        </td>
+
+
+                        {{-- STATUS --}}
+                        <td>
+
+                            <span
+                                class="badge badge--{{ $institution->is_active ? 'active' : 'archived' }}"
+                            >
+
+                                @if($institution->is_active)
+
+                                    {{ __('ui.active', [], null, 'Active') }}
+
+                                @else
+
+                                    {{ __('ui.inactive', [], null, 'Inactive') }}
+
+                                @endif
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="empty-state"
+                        >
+                            {{ __('ui.no_institutions', [], null, 'No institutions found.') }}
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
 
     </div>
 
 
     {{-- =========================================================
-         PAGE STYLES
+         PAGINATION
     ========================================================== --}}
-    <style>
-
-        .institution-create-grid {
-            display:grid;
-            grid-template-columns:repeat(2, minmax(0, 1fr));
-            gap:var(--space-5);
-        }
-
-        .institution-filter-grid {
-            display:grid;
-            grid-template-columns:
-                minmax(220px, 1.5fr)
-                minmax(180px, 1fr)
-                minmax(180px, 1fr);
-            gap:var(--space-5);
-        }
-
-        .institution-field-label {
-            display:block;
-            margin-block-end:8px;
-            font-size:var(--text-sm);
-            font-weight:600;
-            color:var(--text-primary);
-        }
-
-        .institution-help {
-            margin-block-start:6px;
-            font-size:var(--text-sm);
-            color:var(--text-secondary);
-            line-height:1.6;
-        }
-
-        .institution-error {
-            margin-block-start:6px;
-            color:#dc2626;
-            font-size:var(--text-sm);
-        }
-
-        .required {
-            color:#dc2626;
-        }
-
-        @media (max-width: 900px) {
-
-            .institution-create-grid {
-                grid-template-columns:1fr;
-            }
-
-            .institution-filter-grid {
-                grid-template-columns:1fr;
-            }
-
-        }
-
-        @media (max-width: 640px) {
-
-            .institutions-page .btn {
-                width:100%;
-                justify-content:center;
-            }
-
-            .institutions-page
-            > div:first-child
-            > div:last-child {
-                width:100%;
-            }
-
-            .institutions-page
-            > div:first-child
-            > div:last-child
-            .btn {
-                width:100%;
-            }
-
-        }
-
-    </style>
-
-
-    {{-- =========================================================
-         SHARED PAGE STYLES
-    ========================================================== --}}
-    @include('livewire.admin._partials.page-styles')
+    <div class="pagination">
+        <div class="pagination__info">{{ $institutions->total() }} {{ __('ui.total', [], null, 'total') }}</div>
+        {{ $institutions->links() }}
+    </div>
 
 </div>
+
+
+@include('livewire.admin._partials.page-styles')
+
+
+<style>
+    .institution-form-grid {
+        width: 100%;
+    }
+
+    .form-error {
+        margin-block-start: 5px;
+        color: #dc2626;
+        font-size: var(--text-xs);
+    }
+
+    .data-table tbody tr {
+        transition: background-color .15s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background: var(--surface-secondary);
+    }
+
+    @media (max-width: 768px) {
+
+        .institution-form-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .page-header {
+            align-items: flex-start !important;
+        }
+
+        .filters-bar {
+            align-items: stretch !important;
+        }
+
+        .filters-bar .form-control,
+        .filters-bar .form-select {
+            max-inline-size: none !important;
+            width: 100%;
+        }
+
+        .data-table-wrapper {
+            overflow-x: auto;
+        }
+
+    }
+</style>

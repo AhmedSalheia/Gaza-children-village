@@ -8,24 +8,22 @@ use App\Livewire\Admin\Concerns\HasAdminAuth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Modules\Organization\Models\Institution;
 use Modules\Organization\Models\Scopes\ActiveInstitutionScope;
+use Modules\Organization\Models\InstitutionType;
 
+/**
+ * Searchable, filterable list of all GCV institutions.
+ */
 final class InstitutionIndex extends Component
 {
     use HasAdminAuth;
     use WithPagination;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Filters
-    |--------------------------------------------------------------------------
-    */
 
     #[Url(as: 'q')]
     public string $search = '';
@@ -38,7 +36,7 @@ final class InstitutionIndex extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | Create Form
+    | Create institution form
     |--------------------------------------------------------------------------
     */
 
@@ -48,9 +46,8 @@ final class InstitutionIndex extends Component
 
     public string $institutionTypeId = '';
 
-    /**
-     * هذا الحقل للعرض فقط أثناء الإضافة.
-     * الكود النهائي يتم إنشاؤه بعد الحصول على ID الحقيقي.
+    /*
+     * Institution code is entered manually by the user.
      */
     public string $code = '';
 
@@ -62,27 +59,20 @@ final class InstitutionIndex extends Component
 
     public ?string $successMessage = null;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Mount
-    |--------------------------------------------------------------------------
-    */
-
     public function mount(): void
     {
         $this->requirePermission('institution.view');
 
         /*
-         * جميع مؤسسات GCV مرتبطة بالمنظمة الرئيسية.
-         *
-         * نأخذ organization_id من مؤسسة موجودة مسبقًا.
+         * All GCV institutions belong to the same organization.
+         * Get the organization automatically from an existing institution.
          */
-        $existingInstitution = Institution::withoutGlobalScope(
-            ActiveInstitutionScope::class
-        )->first();
+        $organizationId = Institution::withoutGlobalScope(ActiveInstitutionScope::class)
+            ->orderBy('id')
+            ->value('organization_id');
 
-        if ($existingInstitution) {
-            $this->organizationId = (string) $existingInstitution->organization_id;
+        if ($organizationId !== null) {
+            $this->organizationId = (string) $organizationId;
         }
     }
 
@@ -109,318 +99,23 @@ final class InstitutionIndex extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | Create Form
-    |--------------------------------------------------------------------------
-    */
-
-    public function openCreateForm(): void
-    {
-        $this->requirePermission('institution.create');
-
-        $this->successMessage = null;
-
-        $this->resetCreateForm();
-
-        /*
-         * إعادة تحميل organization_id بعد reset.
-         */
-        $existingInstitution = Institution::withoutGlobalScope(
-            ActiveInstitutionScope::class
-        )->first();
-
-        if ($existingInstitution) {
-            $this->organizationId = (string) $existingInstitution->organization_id;
-        }
-
-        $this->showCreateForm = true;
-    }
-
-    public function closeCreateForm(): void
-    {
-        $this->showCreateForm = false;
-
-        $this->resetCreateForm();
-
-        $this->resetValidation();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Name
-    |--------------------------------------------------------------------------
-    */
-
-    public function updatedNameEn(): void
-    {
-        /*
-         * لا يتم إنشاء الكود النهائي هنا.
-         *
-         * السبب:
-         * ID الحقيقي للمؤسسة الجديدة غير معروف
-         * إلا بعد تنفيذ INSERT.
-         */
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Code Preview
-    |--------------------------------------------------------------------------
-    */
-
-    public function generateCodePreview(): void
-    {
-        /*
-         * لا يتم توليد الكود النهائي قبل الحفظ.
-         *
-         * لأن الـ ID النهائي يتم تحديده بواسطة قاعدة البيانات
-         * عند إنشاء السجل.
-         *
-         * لذلك يبقى الحقل:
-         *
-         * سيتم إنشاؤه تلقائيًا بعد الحفظ
-         */
-        $this->code = '';
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Save
-    |--------------------------------------------------------------------------
-    */
-
-    public function save(): void
-    {
-        $this->requirePermission('institution.create');
-
-        $validated = $this->validate([
-            'organizationId' => [
-                'required',
-                'integer',
-                'exists:organizations,id',
-            ],
-
-            'institutionTypeId' => [
-                'required',
-                'integer',
-                'exists:institution_types,id',
-            ],
-
-            'nameAr' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'nameEn' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'isActive' => [
-                'boolean',
-            ],
-        ]);
-
-        DB::transaction(function () use ($validated): void {
-
-            /*
-             * ---------------------------------------------------------
-             * 1. إنشاء المؤسسة أولًا
-             * ---------------------------------------------------------
-             *
-             * لا نضع code هنا لأننا نحتاج إلى ID الحقيقي.
-             */
-
-            $institution = new Institution();
-
-            $institution->organization_id = (int) $validated['organizationId'];
-
-            $institution->institution_type_id = (int) $validated['institutionTypeId'];
-
-            $institution->name_ar = trim($validated['nameAr']);
-
-            $institution->name_en = trim($validated['nameEn']);
-
-            $institution->is_active = (bool) $validated['isActive'];
-
-            $institution->save();
-
-            /*
-             * ---------------------------------------------------------
-             * 2. بعد الحفظ أصبح لدينا ID حقيقي
-             * ---------------------------------------------------------
-             */
-
-            $institutionId = (int) $institution->id;
-
-            /*
-             * ---------------------------------------------------------
-             * 3. إنشاء الكود باستخدام:
-             *
-             *    نوع المؤسسة + ID الحقيقي
-             * ---------------------------------------------------------
-             */
-
-            $institution->code = $this->generateInstitutionCodeFromId(
-                $institutionId
-            );
-
-            /*
-             * ---------------------------------------------------------
-             * 4. حفظ الكود النهائي
-             * ---------------------------------------------------------
-             */
-
-            $institution->save();
-
-            /*
-             * حفظ الكود لعرضه إذا لزم الأمر.
-             */
-            $this->code = $institution->code;
-        });
-
-        /*
-         * رسالة النجاح
-         */
-        $this->successMessage = 'تمت إضافة المؤسسة بنجاح.';
-
-        /*
-         * إغلاق النموذج
-         */
-        $this->showCreateForm = false;
-
-        /*
-         * تنظيف الحقول
-         */
-        $this->resetCreateForm();
-
-        /*
-         * إعادة الصفحة الأولى
-         */
-        $this->resetPage();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Generate Institution Code
-    |--------------------------------------------------------------------------
-    */
-
-    private function generateInstitutionCodeFromId(
-        int $institutionId
-    ): string {
-        /*
-         * جلب نوع المؤسسة المختار.
-         */
-        $institutionType = DB::table('institution_types')
-            ->where('id', (int) $this->institutionTypeId)
-            ->first([
-                'id',
-                'code',
-                'name_en',
-            ]);
-
-        if (!$institutionType) {
-            throw new \RuntimeException(
-                'نوع المؤسسة غير موجود.'
-            );
-        }
-
-        /*
-         * استخدام code الخاص بنوع المؤسسة.
-         *
-         * مثال:
-         * academy
-         * school
-         * clinic
-         * warehouse
-         */
-        $typeCode = trim(
-            (string) $institutionType->code
-        );
-
-        /*
-         * في حال كان code فارغًا،
-         * نستخدم name_en كبديل.
-         */
-        if ($typeCode === '') {
-            $typeCode = Str::slug(
-                (string) $institutionType->name_en
-            );
-        }
-
-        $typeCode = Str::lower($typeCode);
-
-        /*
-         * fallback نهائي.
-         */
-        if ($typeCode === '') {
-            $typeCode = 'institution';
-        }
-
-        /*
-         * النتيجة:
-         *
-         * GCV-academy-026
-         * GCV-school-027
-         * GCV-clinic-028
-         */
-        return sprintf(
-            'GCV-%s-%03d',
-            $typeCode,
-            $institutionId
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Reset Create Form
-    |--------------------------------------------------------------------------
-    */
-
-    private function resetCreateForm(): void
-    {
-        $this->institutionTypeId = '';
-
-        $this->code = '';
-
-        $this->nameAr = '';
-
-        $this->nameEn = '';
-
-        $this->isActive = true;
-
-        $this->resetValidation();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Institutions
+    | Institution list
     |--------------------------------------------------------------------------
     */
 
     public function institutions(): LengthAwarePaginator
     {
-        return Institution::withoutGlobalScope(
-            ActiveInstitutionScope::class
-        )
+        return Institution::withoutGlobalScope(ActiveInstitutionScope::class)
             ->with('institutionType')
+            ->when($this->search !== '', function ($q): void {
+                $s = "%{$this->search}%";
 
-            ->when(
-                $this->search !== '',
-                function ($q): void {
-                    $s = "%{$this->search}%";
-
-                    $q->where(function ($inner) use ($s): void {
-                        $inner
-                            ->where('name_ar', 'like', $s)
-                            ->orWhere('name_en', 'like', $s)
-                            ->orWhere('code', 'like', $s);
-                    });
-                }
-            )
-
+                $q->where(function ($inner) use ($s): void {
+                    $inner->where('name_ar', 'like', $s)
+                        ->orWhere('name_en', 'like', $s)
+                        ->orWhere('code', 'like', $s);
+                });
+            })
             ->when(
                 $this->typeFilter !== '',
                 fn ($q) => $q->where(
@@ -428,30 +123,19 @@ final class InstitutionIndex extends Component
                     $this->typeFilter
                 )
             )
-
-            ->when(
-                $this->statusFilter !== 'all',
-                function ($q): void {
-                    $q->where(
-                        'is_active',
-                        $this->statusFilter === 'active'
-                    );
-                }
-            )
-
-            /*
-             * عرض المؤسسات حسب ID من الأحدث إلى الأقدم.
-             *
-             * وبذلك تكون آخر مؤسسة منشأة في الأعلى.
-             */
-            ->orderByDesc('id')
-
+            ->when($this->statusFilter !== 'all', function ($q): void {
+                $q->where(
+                    'is_active',
+                    $this->statusFilter === 'active'
+                );
+            })
+            ->orderBy('name_ar')
             ->paginate(20);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Institution Types
+    | Institution types
     |--------------------------------------------------------------------------
     */
 
@@ -469,20 +153,170 @@ final class InstitutionIndex extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | Render
+    | Create form
     |--------------------------------------------------------------------------
     */
 
+    public function openCreateForm(): void
+    {
+        $this->requirePermission('institution.create');
+
+        $this->resetValidation();
+        $this->successMessage = null;
+
+        /*
+         * Refresh organization ID in case the component was opened
+         * after data changed.
+         */
+        $organizationId = Institution::withoutGlobalScope(ActiveInstitutionScope::class)
+            ->orderBy('id')
+            ->value('organization_id');
+
+        if ($organizationId !== null) {
+            $this->organizationId = (string) $organizationId;
+        }
+
+        $this->showCreateForm = true;
+    }
+
+    public function closeCreateForm(): void
+    {
+        $this->showCreateForm = false;
+
+        $this->resetCreateForm();
+        $this->resetValidation();
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'organizationId' => [
+                'required',
+                'integer',
+                'exists:organizations,id',
+            ],
+
+            'institutionTypeId' => [
+                'required',
+                'integer',
+                'exists:institution_types,id',
+            ],
+
+            /*
+             * Code must now be entered manually.
+             */
+            'code' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('institutions', 'code'),
+            ],
+
+            'nameAr' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'nameEn' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'isActive' => [
+                'boolean',
+            ],
+        ];
+    }
+
+    protected function validationAttributes(): array
+    {
+        return [
+            'organizationId' => 'المنظمة',
+            'institutionTypeId' => 'نوع المؤسسة',
+            'code' => 'كود المؤسسة',
+            'nameAr' => 'اسم المؤسسة بالعربي',
+            'nameEn' => 'اسم المؤسسة بالإنجليزي',
+            'isActive' => 'حالة المؤسسة',
+        ];
+    }
+
+    public function save(): void
+    {
+        $this->requirePermission('institution.create');
+
+        $this->successMessage = null;
+
+        $this->validate();
+
+        /*
+         * Do not use Institution::create() here because the model
+         * intentionally excludes "code" from $fillable.
+         */
+        $institution = new Institution();
+
+        $institution->organization_id = (int) $this->organizationId;
+
+        $institution->institution_type_id = (int) $this->institutionTypeId;
+
+        $institution->name_ar = trim($this->nameAr);
+
+        $institution->name_en = trim($this->nameEn) !== ''
+            ? trim($this->nameEn)
+            : null;
+
+        $institution->is_active = $this->isActive;
+
+        /*
+         * Code is entered manually by the user.
+         */
+        $institution->code = trim($this->code);
+
+        $institution->save();
+
+        $this->successMessage = 'تمت إضافة المؤسسة بنجاح.';
+
+        $this->showCreateForm = false;
+
+        $this->resetCreateForm();
+
+        $this->resetPage();
+    }
+
+    private function resetCreateForm(): void
+    {
+        /*
+         * Keep organization ID because all GCV institutions belong
+         * to the same organization.
+         */
+        $organizationId = Institution::withoutGlobalScope(ActiveInstitutionScope::class)
+            ->orderBy('id')
+            ->value('organization_id');
+
+        $this->institutionTypeId = '';
+
+        /*
+         * Clear manually entered code after saving/closing.
+         */
+        $this->code = '';
+
+        $this->nameAr = '';
+
+        $this->nameEn = '';
+
+        $this->isActive = true;
+
+        if ($organizationId !== null) {
+            $this->organizationId = (string) $organizationId;
+        }
+    }
+
     public function render(): View
     {
-        return view(
-            'livewire.admin.institutions.index',
-            [
-                'institutions' => $this->institutions(),
-
-                'institutionTypes' => $this->institutionTypes(),
-            ]
-        )->layout('layouts.admin');
+        return view('livewire.admin.institutions.index', [
+            'institutions' => $this->institutions(),
+            'institutionTypes' => $this->institutionTypes(),
+        ])->layout('layouts.admin');
     }
 }
-

@@ -21,6 +21,76 @@ return [
         'Women\'s Center'=>'مركز نسائي',
         'Storage Unit'=>'المخزن',
         ],
+        'formal_management_inbox' => 'صندوق إدارة الطلبات الرسمية',
+
+'formal_management_inbox_description' => 'مراجعة وإدارة الطلبات الرسمية المقدمة من المؤسسات إلى الإدارة.',
+
+'management_filter_description' => 'تصفية الطلبات الرسمية حسب الحالة أو المؤسسة.',
+
+'management_requests' => 'طلبات الإدارة',
+
+'management_requests_description' => 'الطلبات الرسمية التي تتطلب مراجعة أو إجراء من الإدارة.',
+
+'no_management_requests' => 'لا توجد طلبات رسمية',
+
+'no_management_requests_description' => 'لا توجد حاليًا طلبات رسمية مطابقة للفلاتر المحددة.',
+
+'status_submitted_to_management' => 'تم الإرسال إلى الإدارة',
+
+'status_under_management_review' => 'قيد مراجعة الإدارة',
+
+'status_clarification_requested' => 'مطلوب توضيح',
+
+'status_accepted' => 'مقبول',
+
+'status_rejected' => 'مرفوض',
+
+'status_responded' => 'تم الرد',
+
+'status_closed' => 'مغلق',
+
+'priority_low' => 'منخفضة',
+
+'priority_medium' => 'متوسطة',
+
+'priority_high' => 'عالية',
+
+'priority_urgent' => 'عاجلة',
+
+'title' => 'العنوان',
+
+'priority' => 'الأولوية',
+        'institution_code_placeholder'=>'أكاديمية-6',
+        'manage_institutions'=>'ادارة المؤسسات',
+            'add_institution' => 'إضافة مؤسسة',
+    'enter_institution_data' => 'أدخل بيانات المؤسسة ثم احفظها.',
+    'close' => 'إغلاق',
+
+    'organization' => 'المنظمة',
+    'institution_auto_organization' => 'سيتم ربط المؤسسة تلقائيًا بمنظمة GCV.',
+
+    'institution_type' => 'نوع المؤسسة',
+    'select_institution_type' => 'اختر نوع المؤسسة',
+
+    'name_ar' => 'الاسم بالعربية',
+    'institution_name_ar_placeholder' => 'مثال: قرية الأطفال',
+
+    'name_en' => 'الاسم بالإنجليزية',
+    'institution_name_en_placeholder' => 'مثال: GCV Institution',
+
+    'code' => 'الرمز',
+    'auto_generated' => 'يُنشأ تلقائيًا',
+    'institution_code_auto_help' => 'يتم إنشاء رمز المؤسسة تلقائيًا اعتمادًا على نوع المؤسسة ورقم المؤسسة الجديدة.',
+
+    'status' => 'الحالة',
+    'active_institution' => 'المؤسسة نشطة',
+    'inactive_institution_help' => 'تبقى المؤسسات غير النشطة محفوظة للحفاظ على السجلات التاريخية.',
+
+    'cancel' => 'إلغاء',
+    'save' => 'حفظ',
+    'saving' => 'جارٍ الحفظ...',
+
+
     'transferred' => 'منقول',
     'uploaded'=>'تم الرفع',
     'parsing'=>'تحليل',
@@ -305,6 +375,61 @@ return [
     'institution' => 'المؤسسة',
     'Confirm'=>'تأكيد',
     'Done'=>'تم',
+    'formal_requests' => 'الطلبات الرسمية',
+'formal_management_inbox' => 'إدارة الطلبات الرسمية',
+'request_details' => 'تفاصيل الطلب',
+'request_details_description' => 'المعلومات الكاملة الخاصة بهذا الطلب الرسمي.',
+
+'arabic_title' => 'العنوان بالعربية',
+
+
+'due_date' => 'تاريخ الاستحقاق',
+'signed' => 'التوقيع',
+'hash' => 'بصمة المحتوى',
+'body' => 'محتوى الطلب',
+'results' => 'النتائج',
+
+'supporting_attachments' => 'المرفقات الداعمة',
+'attachments_description' => 'الملفات والمستندات المرفقة بهذا الطلب.',
+'no_attachments' => 'لا توجد مرفقات',
+'no_attachments_description' => 'لم يتم إرفاق أي مستندات داعمة بهذا الطلب.',
+'attachment_id' => 'المرفق',
+
+'management_actions' => 'إجراءات الإدارة',
+'management_actions_description' => 'الإجراءات الإدارية المتاحة لهذا الطلب.',
+
+'start_review_btn' => 'بدء المراجعة',
+'approve_btn' => 'اعتماد الطلب',
+'reject_btn' => 'رفض الطلب',
+'clarify_btn' => 'طلب توضيح',
+'add_response' => 'إضافة رد',
+
+'close_confirm' => 'هل أنت متأكد من رغبتك في إغلاق هذا الطلب؟',
+'close_request' => 'إغلاق الطلب',
+
+'accept_request' => 'اعتماد الطلب',
+'acceptance_note_placeholder' => 'أضف ملاحظة الاعتماد إن وجدت...',
+'confirm_accept' => 'تأكيد الاعتماد',
+
+'reject_request' => 'رفض الطلب',
+'rejection_reason_placeholder' => 'اكتب سبب رفض الطلب...',
+'confirm_reject' => 'تأكيد الرفض',
+
+'clarify_placeholder' => 'اكتب السؤال أو التوضيح المطلوب من المؤسسة...',
+'send' => 'إرسال',
+
+'management_response' => 'رد الإدارة',
+'response_placeholder' => 'اكتب رد الإدارة على الطلب...',
+'submit_response' => 'إرسال الرد',
+
+'comments' => 'التعليقات',
+'comments_description' => 'التعليقات والملاحظات الداخلية المتعلقة بهذا الطلب.',
+'no_comments' => 'لا توجد تعليقات',
+'no_comments_description' => 'لم تتم إضافة أي تعليقات إلى هذا الطلب حتى الآن.',
+
+'internal_note' => 'ملاحظة داخلية',
+'add_internal_note_placeholder' => 'اكتب ملاحظة داخلية للإدارة...',
+'add_note' => 'إضافة ملاحظة',
     'institution_semesters' => 'الفصول الدراسية للمؤسسة',
     'institutions' => 'المؤسسات',
     'late' => 'متأخر',
