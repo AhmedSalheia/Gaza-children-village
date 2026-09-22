@@ -230,6 +230,31 @@ final class PermissionCatalogueSeeder extends Seeder
             'document_verification' => [
                 PermissionKey::DOCUMENT_VERIFICATION_AUTHENTICATED_READ,
             ],
+            'inventory' => [
+    PermissionKey::INVENTORY_VIEW,
+    PermissionKey::INVENTORY_ITEM_VIEW,
+    PermissionKey::INVENTORY_ITEM_MANAGE,
+
+    PermissionKey::INVENTORY_WAREHOUSE_VIEW,
+    PermissionKey::INVENTORY_WAREHOUSE_MANAGE,
+
+    PermissionKey::INVENTORY_RECEIPT_CREATE,
+
+    PermissionKey::INVENTORY_ISSUE_CREATE,
+    PermissionKey::INVENTORY_ISSUE_APPROVE,
+
+    PermissionKey::INVENTORY_TRANSFER_CREATE,
+    PermissionKey::INVENTORY_TRANSFER_APPROVE,
+
+    PermissionKey::INVENTORY_COUNT_VIEW,
+    PermissionKey::INVENTORY_COUNT_PERFORM,
+
+    PermissionKey::INVENTORY_REALLOCATION_VIEW,
+    PermissionKey::INVENTORY_REALLOCATION_APPROVE,
+
+    PermissionKey::INVENTORY_REPORT_VIEW,
+    PermissionKey::INVENTORY_EXPORT,
+],
         ];
 
         foreach ($groups as $group => $keys) {
@@ -261,6 +286,7 @@ final class PermissionCatalogueSeeder extends Seeder
             RoleCode::COUNSELOR => 'Counselor',
             RoleCode::OPERATIONS_VIEWER => 'Operations Viewer',
             RoleCode::STAFF_MANAGER => 'Staff Manager',
+            RoleCode::WAREHOUSE_KEEPER => 'Warehouse Keeper',
         ];
 
         foreach ($roles as $code => $label) {
@@ -714,6 +740,32 @@ final class PermissionCatalogueSeeder extends Seeder
                 PermissionKey::PERSON_UPDATE,
                 PermissionKey::INSTITUTION_VIEW,
             ],
+            RoleCode::WAREHOUSE_KEEPER => [
+    PermissionKey::INVENTORY_VIEW,
+
+    PermissionKey::INVENTORY_ITEM_VIEW,
+    PermissionKey::INVENTORY_ITEM_MANAGE,
+
+    PermissionKey::INVENTORY_WAREHOUSE_VIEW,
+    PermissionKey::INVENTORY_WAREHOUSE_MANAGE,
+
+    PermissionKey::INVENTORY_RECEIPT_CREATE,
+
+    PermissionKey::INVENTORY_ISSUE_CREATE,
+    PermissionKey::INVENTORY_ISSUE_APPROVE,
+
+    PermissionKey::INVENTORY_TRANSFER_CREATE,
+    PermissionKey::INVENTORY_TRANSFER_APPROVE,
+
+    PermissionKey::INVENTORY_COUNT_VIEW,
+    PermissionKey::INVENTORY_COUNT_PERFORM,
+
+    PermissionKey::INVENTORY_REALLOCATION_VIEW,
+    PermissionKey::INVENTORY_REALLOCATION_APPROVE,
+
+    PermissionKey::INVENTORY_REPORT_VIEW,
+    PermissionKey::INVENTORY_EXPORT,
+],
         ];
 
         foreach ($matrix as $roleCode => $permKeys) {

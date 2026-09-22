@@ -177,3 +177,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     // ── Unprotected smoke-test placeholder ────────────────────────────────
     Route::get('/', static fn () => response()->noContent())->name('placeholder');
 });
+
+
+
+require base_path('routes/inventory.php');

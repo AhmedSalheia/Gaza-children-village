@@ -380,6 +380,34 @@ final class PermissionKey
     // -----------------------------------------------------------------
     public const DOCUMENT_VERIFICATION_AUTHENTICATED_READ = 'document_verification.authenticated_read';
 
+
+// -----------------------------------------------------------------
+// Inventory / Warehouse management
+// -----------------------------------------------------------------
+public const INVENTORY_VIEW = 'inventory.view';
+
+public const INVENTORY_ITEM_VIEW = 'inventory.item.view';
+public const INVENTORY_ITEM_MANAGE = 'inventory.item.manage';
+
+public const INVENTORY_WAREHOUSE_VIEW = 'inventory.warehouse.view';
+public const INVENTORY_WAREHOUSE_MANAGE = 'inventory.warehouse.manage';
+
+public const INVENTORY_RECEIPT_CREATE = 'inventory.receipt.create';
+
+public const INVENTORY_ISSUE_CREATE = 'inventory.issue.create';
+public const INVENTORY_ISSUE_APPROVE = 'inventory.issue.approve';
+
+public const INVENTORY_TRANSFER_CREATE = 'inventory.transfer.create';
+public const INVENTORY_TRANSFER_APPROVE = 'inventory.transfer.approve';
+
+public const INVENTORY_COUNT_VIEW = 'inventory.count.view';
+public const INVENTORY_COUNT_PERFORM = 'inventory.count.perform';
+
+public const INVENTORY_REALLOCATION_VIEW = 'inventory.reallocation.view';
+public const INVENTORY_REALLOCATION_APPROVE = 'inventory.reallocation.approve';
+
+public const INVENTORY_REPORT_VIEW = 'inventory.report.view';
+public const INVENTORY_EXPORT = 'inventory.export';
     // -----------------------------------------------------------------
     // All keys — used by seeder and architecture test.
     // -----------------------------------------------------------------

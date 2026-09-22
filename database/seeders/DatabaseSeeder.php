@@ -17,10 +17,12 @@ use Modules\Organization\Database\Seeders\InstitutionTypeReferenceSeeder;
 use Modules\Organization\Database\Seeders\OrganizationReferenceSeeder;
 use Modules\Reporting\Database\Seeders\ReportDefinitionSeeder;
 use Modules\Workflow\Database\Seeders\WorkflowDefinitionSeeder;
+use Database\Seeders\InventoryPermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
+  
 
     /**
      * Seed the application's database.
@@ -56,6 +58,8 @@ class DatabaseSeeder extends Seeder
             InstitutionTypeFeatureRuleReferenceSeeder::class,
             InstitutionReferenceSeeder::class,
             PermissionCatalogueSeeder::class,
+                InventoryPermissionSeeder::class,
+
             AcademicLevelReferenceSeeder::class,
             DemoSubjectReferenceSeeder::class,
             WorkflowDefinitionSeeder::class,

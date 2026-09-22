@@ -39,6 +39,7 @@ final class RoleCode
     public const OPERATIONS_VIEWER = 'operations_viewer';
 
     public const STAFF_MANAGER = 'staff_manager';
+    public const WAREHOUSE_KEEPER = 'warehouse_keeper';
 
     /** @return list<string> */
     public static function all(): array

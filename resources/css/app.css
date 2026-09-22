@@ -16,7 +16,7 @@
 
 /* Design token system */
 @import './tokens.css';
-
+@import './inventory.css';
 /* Tailwind */
 @tailwind base;
 @tailwind components;
