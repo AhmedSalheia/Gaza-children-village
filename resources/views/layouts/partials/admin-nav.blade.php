@@ -106,6 +106,18 @@
     </li>
 @endif
 
+{{-- Medical Portal --}}
+@if($navCan('medical.view'))
+    <li class="portal-nav__item">
+        <a
+            href="{{ route('admin.medical.index') }}"
+            class="portal-nav__link {{ active('admin/medical*') }}"
+        >
+            {{ __('medical.title', [], null, 'Medical Portal') }}
+        </a>
+    </li>
+@endif
+
     @if($navCan('teaching_assignment.manage'))
     <li class="portal-nav__item">
         <a href="{{ route('admin.assignments.teaching') }}" class="portal-nav__link {{ active('admin/assignments/teaching') }}">

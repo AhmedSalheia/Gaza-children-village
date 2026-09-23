@@ -34,5 +34,6 @@ Route::post('/attend', [ScanController::class, 'store'])
 //
 Route::get('/verify/{code}', DocumentVerificationController::class)
     ->name('document.verify');
-    
+
 require base_path('routes/inventory.php');
+require base_path('routes/medical.php');

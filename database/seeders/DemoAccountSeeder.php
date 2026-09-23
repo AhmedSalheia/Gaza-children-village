@@ -61,6 +61,8 @@ final class DemoAccountSeeder extends Seeder
             'calendar@gcv.demo' => 'calendar_manager',
             'accounts@gcv.demo' => 'account_manager',
             'warehouse@gcv.demo' => 'warehouse_keeper',
+          'medical@gcv.demo' => 'medical_manager',
+
         ];
 
         foreach ($admins as $username => $roleCode) {

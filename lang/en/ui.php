@@ -524,6 +524,7 @@ return [
 'hash' => 'Content Hash',
 'body' => 'Request Body',
 
+'items_below_reorder_level' => 'Items below reorder level',
 
 'results' => 'Results',
 
