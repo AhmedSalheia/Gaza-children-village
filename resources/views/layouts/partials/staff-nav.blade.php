@@ -78,22 +78,22 @@
     @endif
 
     {{-- Attendance: teacher daily entry --}}
-    @if($navCan('student_attendance.enter'))
+    {{-- @if($navCan('student_attendance.enter'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.attendance.index') }}" class="portal-nav__link {{ active('staff/attendance') }} {{ active('staff/attendance/sheet*') }}">
             {{ __('ui.attendance', [], null, 'Attendance') }}
         </a>
     </li>
-    @endif
+    @endif --}}
 
     {{-- Attendance: secretary review queue --}}
-    @if($navCan('student_attendance.return'))
+    {{-- @if($navCan('student_attendance.return'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.attendance.queue') }}" class="portal-nav__link {{ active('staff/attendance/queue*') }} {{ active('staff/attendance/verify*') }}">
             {{ __('ui.attendance_queue', [], null, 'Attendance Queue') }}
         </a>
     </li>
-    @endif
+    @endif --}}
 
     {{-- Staff Page: secretary|Principal|Deputy --}}
     @if($navCan('staff_position.view'))
@@ -105,22 +105,22 @@
     @endif
 
     {{-- Staff Attendance: secretary daily entry --}}
-    @if($navCan('staff_attendance.enter'))
+    {{-- @if($navCan('staff_attendance.enter'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.staff-attendance.index') }}" class="portal-nav__link {{ active('staff/staff-attendance') }}">
             {{ __('ui.staff_attendance', [], null, 'Staff Attendance') }}
         </a>
     </li>
-    @endif
+    @endif --}}
 
     {{-- Staff Attendance: QR scan review (secretary/deputy) --}}
-    @if($navCan('attendance_scan.review'))
+    {{-- @if($navCan('attendance_scan.review'))
     <li class="portal-nav__item">
         <a href="{{ route('staff.staff-attendance.scan-queue') }}" class="portal-nav__link {{ active('staff/staff-attendance/scan-queue*') }}">
             {{ __('ui.scan_queue', [], null, 'Scan Queue') }}
         </a>
     </li>
-    @endif
+    @endif --}}
 
     {{-- Staff Attendance: dashboard (principal/deputy) --}}
     @if($navCan('staff_attendance.read') and !$navCan('staff_attendance.enter'))

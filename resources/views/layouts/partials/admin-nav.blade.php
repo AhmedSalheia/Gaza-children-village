@@ -30,6 +30,29 @@
             {{ __('ui.dashboard', [], null, 'Dashboard') }}
         </a>
     </li>
+        {{-- inventory  --}}
+@if($navCan('inventory.view'))
+    <li class="portal-nav__item">
+        <a
+            href="{{ route('admin.inventory.index') }}"
+            class="portal-nav__link {{ active('admin/inventory*') }}"
+        >
+            {{ __('ui.inventory.title', [], null, 'Inventory') }}
+        </a>
+    </li>
+@endif
+
+{{-- Medical Portal --}}
+@if($navCan('medical.view'))
+    <li class="portal-nav__item">
+        <a
+            href="{{ route('admin.medical.index') }}"
+            class="portal-nav__link {{ active('admin/medical*') }}"
+        >
+            {{ __('medical.title', [], null, 'Medical Portal') }}
+        </a>
+    </li>
+@endif
 
     @if($navCan('student.view'))
     <li class="portal-nav__item">
@@ -94,29 +117,7 @@
         </a>
     </li>
     @endif
-    {{-- inventory  --}}
-@if($navCan('inventory.view'))
-    <li class="portal-nav__item">
-        <a
-            href="{{ route('admin.inventory.index') }}"
-            class="portal-nav__link {{ active('admin/inventory*') }}"
-        >
-            {{ __('ui.inventory.title', [], null, 'Inventory') }}
-        </a>
-    </li>
-@endif
 
-{{-- Medical Portal --}}
-@if($navCan('medical.view'))
-    <li class="portal-nav__item">
-        <a
-            href="{{ route('admin.medical.index') }}"
-            class="portal-nav__link {{ active('admin/medical*') }}"
-        >
-            {{ __('medical.title', [], null, 'Medical Portal') }}
-        </a>
-    </li>
-@endif
 
     @if($navCan('teaching_assignment.manage'))
     <li class="portal-nav__item">

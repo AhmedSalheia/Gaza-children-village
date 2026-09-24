@@ -202,6 +202,8 @@ h1, h2, h3, .heading-display {
 
     height: calc(100vh - var(--header-height));
     width: 15vw;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .portal-nav {

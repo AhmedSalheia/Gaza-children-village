@@ -230,6 +230,7 @@
 
                     <input
                         type="file"
+                        wire:method
                         wire:model="studentFile"
                         accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         class="form-control"
